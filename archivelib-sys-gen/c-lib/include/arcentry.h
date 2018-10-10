@@ -132,7 +132,7 @@ class AL_CLASS_TYPE ALEntry {
  * default versions for me.
  */
     protected :
-        AL_PROTO operator=( ALEntry AL_DLL_FAR & );
+        ALEntry AL_PROTO operator=( ALEntry AL_DLL_FAR & );
         AL_PROTO ALEntry( ALEntry AL_DLL_FAR & );
 /*
  * Member functions
@@ -233,7 +233,7 @@ class AL_CLASS_TYPE ALEntryList {
  * default versions for me.
  */
     protected :
-        AL_PROTO operator=( ALEntryList AL_DLL_FAR & );
+        ALEntry AL_PROTO operator=( ALEntryList AL_DLL_FAR & );
         AL_PROTO ALEntryList( ALEntryList AL_DLL_FAR & );
 /*
  * Member Functions
@@ -323,4 +323,3 @@ inline int AL_PROTO ALEntryList::ClearMarks( const char AL_DLL_FAR *name )
 
 #endif /* #if defined( __cplusplus ) */
 #endif /* #ifdef _ARCENTRY_H         */
-

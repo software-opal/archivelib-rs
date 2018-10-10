@@ -126,8 +126,7 @@ void AL_CFUNCTION _ALAssertFailure( const char AL_DLL_FAR *condition,
 #endif
      FatalAppExit( 0, "Application terminated" );
 #else
-     cerr << buf1 << "\n" << flush;
+     std::cerr << buf1 << "\n" << std::flush;
      abort();
 #endif
 }
-

@@ -436,7 +436,7 @@ int AL_FUNCTION matche( const char *p, char *t)
 int matche_after_star( register const char *p, register char *t)
 {
     register int match = 0;
-    register nextp;
+    register char nextp;
 
     /* pass over existing ? and * in pattern */
     while (*p == MATCH_CHAR_SINGLE ||

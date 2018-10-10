@@ -22,6 +22,8 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if defined( __cplusplus )
 
+#include "archiveb.h"
+
 /*
  * Most of our enumerated types are defined in ALDEFS.H so C programs
  * have easy access to them.  But C and VB have no use for these

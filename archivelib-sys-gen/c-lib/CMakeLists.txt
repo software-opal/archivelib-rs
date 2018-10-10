@@ -15,8 +15,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB sources src/*.cpp)
 file(GLOB headers include/*.h)
 add_library(archivelib SHARED ${sources})
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-add_definitions(-DAL_UNIX)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -fpermissive")
+add_definitions(-DAL_UNIX -DAL_SUN4)
+
 
 install(TARGETS archivelib
   LIBRARY DESTINATION lib

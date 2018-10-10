@@ -30,7 +30,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if !defined( AL_BUILDING_DLL )
 
-#include <iostream.h>
+#include <iostream>
 
 /*
  * class _ALControlStream
@@ -155,7 +155,7 @@ class ALEditControlStream : public ostream
  * as an endl written to a normal stream.  The difference is that an
  * eol on a regular stream has a "/n/r" pair, and this guy doesn't.
  */
-ostream& gfendl( ostream &s );
+ostream& gfendl( std::ostream &s );
 
 #endif /* #if !defined( AL_BUILDING_DLL ) */
 

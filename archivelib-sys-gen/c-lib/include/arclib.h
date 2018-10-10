@@ -37,7 +37,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 /* All these includes needed for various library features */
 
-#include "iostream.h"
+#include <iostream>
 #include "string.h"
 
 #include "aldefs.h"

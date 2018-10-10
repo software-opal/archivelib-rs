@@ -21,6 +21,9 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #define _ARCHIVEB_H
 
 #if defined( __cplusplus )
+
+#include "arcentry.h"
+
 /*
  * class ALArchiveBase
  *

@@ -188,12 +188,13 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #  define AL_OS2
 #  define AL_FLAT_MODEL
 #elif defined( AL_SUN4 )
-#  define AL_UNIX
+#  if !defined( AL_UNIX )
+#    define AL_UNIX
+#  endif
 #  if !defined( AL_GCC ) && !defined( __cplusplus )
 #    define AL_KR
 #  endif
 #else
-  #error "Unknown compiler!"
 #endif
 
 #if defined( AL_WINDOWS_MEMORY ) || defined( AL_WINDOWS_GUI ) || defined( AL_WIN32S )

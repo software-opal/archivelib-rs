@@ -69,7 +69,7 @@ class AL_CLASS_TYPE ALBarGraph : public ALMonitor {
  */
      public :
           AL_PROTO ALBarGraph( ALMonitorType monitor_type,
-                               ostream AL_DLL_FAR& stream = cout,
+                               std::ostream AL_DLL_FAR& stream = std::cout,
                                int bar_length = 25 );
           virtual AL_PROTO ~ALBarGraph();
 #if defined( AL_USING_DLL ) || defined( AL_BUILDING_DLL )
@@ -97,7 +97,7 @@ class AL_CLASS_TYPE ALBarGraph : public ALMonitor {
      protected :
           int miCurrentOffset;
           const int miBarLength;
-          ostream AL_DLL_FAR & mrStream;
+          std::ostream AL_DLL_FAR & mrStream;
      public :
           AL_CLASS_TAG( _ALBarGraphTag );
 };

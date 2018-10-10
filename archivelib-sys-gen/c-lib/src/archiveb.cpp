@@ -905,4 +905,526 @@ int AL_PROTO ALArchiveBase::Create( ALArchiveBase AL_DLL_FAR &source_archive,
 //
     CopyJobs( source_archive, source_list );
 //
-// Write out the directory offset, then the dire
+// Write out the directory offset, then the directory itself.
+//
+    mlDirectoryOffset = mpArchiveStorageObject->Tell();
+    mpArchiveStorageObject->Seek( 0L );
+    mpArchiveStorageObject->WritePortableLong( mlDirectoryOffset );
+    if ( mpArchiveStorageObject->mStatus < 0 ) {
+        source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus = mpArchiveStorageObject->mStatus;
+    }
+    source_list.mrMonitor.ArchiveOperation( AL_START_DIRECTORY_WRITE,this, 0 );
+    WriteDirectory( source_list );
+    source_list.mrMonitor.ArchiveOperation( AL_END_DIRECTORY_WRITE, this, 0 );
+    source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+//
+// Update the error status, and then we are done.
+//
+    ScanStatus( source_list );
+    return mStatus;
+}
+
+//
+// int ALArchiveBase::Append( ALEntryList &list )
+//
+// ARGUMENTS:
+//
+//  list  : A list of objects to append to this.
+//
+// RETURNS
+//
+//  AL_SUCCESS if things go okay, < AL_SUCCESS if they didn't.
+//
+// DESCRIPTION
+//
+//  This routine is one of the public functions.  It is called to add
+//  a list of standalone objects to an existing archive, this.
+//  To accomplish this, we have to read in the existing directory, then
+//  add the new batch of objects to the archive.  Finally, I write out
+//  the old directory, then the directory for the new batch of objects.
+//
+//  There is another version of Append() that takes as input a list of
+//  entries that are in another archive.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+int AL_PROTO ALArchiveBase::Append( ALEntryList AL_DLL_FAR &list )
+{
+    ALEntryList old_list;
+//
+// Open the storage object for this.
+//
+    ALOpenInputFile archive( *mpArchiveStorageObject );
+//
+// I read in the current directory for this archive.  I am going to
+// write over the directory with new stuff, so I will have to write it
+// back out later.
+//
+    ReadDirectory( old_list );
+    if ( mStatus < 0 )
+        return mStatus;
+//
+// The list of new objects I am going to add needs to be scanned for
+// duplicates.  First I clear duplicate entries from the list itself.
+// Then I clear any duplicates between the current list and the
+// stuff already in the archive.
+//
+    list.UnmarkDuplicates( list, "Duplicate entry in list passed to Append()" );
+    list.UnmarkDuplicates( old_list, "Duplicate entry in list passed to Append()" );
+//
+// I get the monitor set up, for the batch of entries I am about to do.
+//
+    list.mrMonitor.ArchiveOperation( AL_ARCHIVE_OPEN, this, 0 );
+    list.mrMonitor.mlJobSoFar = 0L;
+    if ( list.mrMonitor.miMonitorType == AL_MONITOR_JOB )
+        list.mrMonitor.mlJobSize = CalculateJobSize( list );
+//
+// The new entries start at the position currently occupied by the
+// directory.  I seek to that point, then call AddJobs() to do the
+// dirty work.
+//
+    mpArchiveStorageObject->Seek( mlDirectoryOffset );
+    AddJobs( list );
+    if ( mStatus < 0 ) {
+        list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus;
+    }
+//
+// Now that all the new stuff is in the archive, I can figure
+// out where the directory belongs, and write it out to position
+// 0 in the archive.
+//
+    mlDirectoryOffset = mpArchiveStorageObject->Tell();
+    mpArchiveStorageObject->Seek( 0L );
+    mpArchiveStorageObject->WritePortableLong( mlDirectoryOffset );
+    if ( mpArchiveStorageObject->mStatus < 0 ) {
+        list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus = mpArchiveStorageObject->mStatus;
+    }
+//
+// Now I write the old directory out, and then add in the new
+// directory entries.
+//
+    list.mrMonitor.ArchiveOperation( AL_START_DIRECTORY_WRITE, this, 0 );
+    WriteDirectory( old_list );
+    AddDirectoryEntries( list );
+//
+// Update the monitor, check for errors, then leave.
+//
+    list.mrMonitor.ArchiveOperation( AL_END_DIRECTORY_WRITE, this, 0 );
+    list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+    ScanStatus( list );
+    return mStatus;
+}
+
+//
+// int ALArchiveBase::Append( ALArchiveBase &source_archive,
+//                            ALEntryList &source_list )
+//
+// ARGUMENTS:
+//
+//  source_archive   : The archive where the objects that we are going
+//                     use can be found.
+//
+//  source_list      : The ALEntryList that has a batch of marked entries.
+//
+// RETURNS
+//
+//  AL_SUCCESS if things work, < AL_SUCCESS if they don't.
+//
+// DESCRIPTION
+//
+//  This append function works just like the previous one, except it
+//  is appending jobs that have already been compressed and can be found
+//  in a different archive.  It has to go through exactly the same process,
+//  which consists of reading the current directory in from this, appending
+//  the new compressed objects to this, then writing out the old directory
+//  and the new list.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+int AL_PROTO ALArchiveBase::Append( ALArchiveBase AL_DLL_FAR &source_archive,
+                                    ALEntryList AL_DLL_FAR &source_list )
+{
+    ALEntryList old_list;
+//
+// Open the storage object associated with this.
+//
+    ALOpenInputFile archive( *mpArchiveStorageObject );
+
+    source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_OPEN, this, 0 );
+//
+// I have to read the current directory into memory, because as soon as
+// I start to write objects out to this, I am going to obliterate
+// the directory.
+//
+    ReadDirectory( old_list );
+    if ( mStatus < 0 ) {
+        source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus;
+    }
+//
+// We don't want to create an archive that has duplicate entries, that would
+// be a bad thing.  So I first comb all the duplicate entries out of the list
+// of objects to append.  I then compare that list for duplicates against
+// the list of objects already in the library, and comb out any matches
+// there as well.
+//
+    source_list.UnmarkDuplicates( source_list, "Duplicate entry in list passed to Append()" );
+    source_list.UnmarkDuplicates( old_list, "Duplicate entry in list passed to Append()" );
+//
+// I am going to start writing new stuff at the location where the
+// the directory starts right now.
+//
+    mpArchiveStorageObject->Seek( mlDirectoryOffset );
+//
+// Before starting to copy jobs, I have to set up the monitor.
+// This includes calculating the total number of compressed bytes
+// in all the marked jobs.  I could do this a lot easier by calling
+// the CalculateCompressedBytes() function, but it's too late to change now.
+//
+    source_list.mrMonitor.mlJobSoFar = 0L;
+    source_list.mrMonitor.mlJobSize = 0L;
+    for ( ALEntry *job = source_list.GetFirstEntry();
+          job != 0;
+          job = job->GetNextEntry() ) {
+        if ( job->GetMark() )
+            source_list.mrMonitor.mlJobSize += job->mlCompressedSize;
+    }
+//
+// CopyJobs() does the hard work for me.
+//
+    CopyJobs( source_archive, source_list );
+    if ( mStatus < 0 ) {
+        source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus;
+    }
+//
+// The jobs are now in, I just have to update the directory with
+// the old files and the new files.
+//
+    mlDirectoryOffset = mpArchiveStorageObject->Tell();
+    mpArchiveStorageObject->Seek( 0L );
+    mpArchiveStorageObject->WritePortableLong( mlDirectoryOffset );
+    if ( mpArchiveStorageObject->mStatus < 0 ) {
+        source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+        return mStatus = mpArchiveStorageObject->mStatus;
+    }
+    source_list.mrMonitor.ArchiveOperation( AL_START_DIRECTORY_WRITE, this, 0 );
+    WriteDirectory( old_list );
+    AddDirectoryEntries( source_list );
+//
+// Wrap it up.
+//
+    source_list.mrMonitor.ArchiveOperation( AL_END_DIRECTORY_WRITE, this, 0 );
+    source_list.mrMonitor.ArchiveOperation( AL_ARCHIVE_CLOSE, this, 0 );
+    ScanStatus( source_list );
+    return mStatus;
+}
+
+//
+// int ALArchiveBase::ReadDirectory( ALEntryList &list )
+//
+// ARGUMENTS:
+//
+//  list : The target for the directory listing.
+//
+// RETURNS
+//
+//  AL_SUCCESS or < AL_SUCCESS if things don't work.
+//
+// DESCRIPTION
+//
+//  This function reads the directory from archive this and places the
+//  results in the list parameter.  I have to apologize for the fact
+//  that it is so long.  The only thing I can say in my defense is that
+//  even though it is really long, it is also really simple, not tricky
+//  bits here.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+int AL_PROTO ALArchiveBase::ReadDirectory( ALEntryList AL_DLL_FAR &list )
+{
+    list.mrMonitor.ArchiveOperation( AL_START_DIRECTORY_READ, this, 0 );
+    ALOpenInputFile archive( *mpArchiveStorageObject );
+    if ( mpArchiveStorageObject->mStatus < 0 )
+        return mStatus = mpArchiveStorageObject->mStatus;
+//
+// First I seek to the start of the directory (offset found at 0), and
+// read in the version.  This function only supports the directory
+// structure defined in version 0x100.
+//
+    mpArchiveStorageObject->Seek( 0 );
+    mpArchiveStorageObject->ReadPortableLong( mlDirectoryOffset );
+    mpArchiveStorageObject->Seek( mlDirectoryOffset );
+    mpArchiveStorageObject->ReadPortableShort( miVersion );
+    if ( miVersion != 0x100 )
+        return mStatus.SetError( AL_INVALID_ARCHIVE,
+                                 "%s is not a valid archive file",
+                                 mpArchiveStorageObject->mName.GetSafeName() );
+//
+// Read in any customized archive data defined by a derived class.
+//
+    ReadArchiveData();
+//
+// Read in the comment, deleting the old one if necessary.
+//
+    if ( mszComment )
+        delete[] mszComment;
+    mszComment = mpArchiveStorageObject->ReadString();
+//
+// Now, the big loop.  I have to read in each entry, one at a time, and
+// add it to the list.  If I broke this out into a separate routine it
+// would make the whole thing a lot more manageable.
+//
+    for ( ; ; ) {
+        if ( mpArchiveStorageObject->mStatus < 0 )
+            return mStatus = mpArchiveStorageObject->mStatus;
+        char *name = mpArchiveStorageObject->ReadString();
+        if ( name == 0 )
+            break;
+//
+// The directory ends with a blank name.
+//
+        if ( strlen( name ) == 0 ) {
+            delete[] name;
+            break;
+        }
+//
+// Derived classes are responsible for providing a version of
+// CreateCompressionEngine() that will convert the engine_type
+// integer into a created compression engine.  The derived class is
+// then also responsible for reading in the engine data from the archive.
+//
+        int engine_type = mpArchiveStorageObject->ReadChar();
+        ALCompressionEngine *engine = CreateCompressionEngine( engine_type );
+        if ( engine )
+            engine->ReadEngineData( mpArchiveStorageObject );
+        else {
+            char *temp = mpArchiveStorageObject->ReadString();
+            if ( temp )
+                delete[] temp;
+            return mStatus.SetError( AL_CANT_CREATE_ENGINE,
+                                     "Failure creating compression engine for object %s",
+                                     name );
+        }
+//
+// Now we go through a nearly identical process to create the storage object.
+// The derived class is responsible for writing a CreateStorageObject()
+// function that converts an object_type integer to a created storage
+// object.  The derived class also has to read in the storage object
+// data.
+//
+        int object_type = mpArchiveStorageObject->ReadChar();
+        ALStorage *storage_object = CreateStorageObject( name, object_type );
+        delete[] name; // Don't need it any more
+        name = 0;
+        if ( storage_object )
+            storage_object->ReadStorageObjectData( mpArchiveStorageObject );
+        else {
+            char *temp = mpArchiveStorageObject->ReadString();
+            if ( temp )
+                delete[] temp;
+            return mStatus.SetError( AL_CANT_CREATE_STORAGE_OBJECT,
+                                     "Failure creating storage object for object %s",
+                                     name );
+        }
+//
+// The rest of the stuff in the entry is pretty straightforward.
+//
+        mpArchiveStorageObject->ReadPortableLong( storage_object->mlSize );
+        ALEntry *job = new ALEntry( list, storage_object, engine );
+        mpArchiveStorageObject->ReadPortableLong( job->mlCompressedSize );
+        mpArchiveStorageObject->ReadPortableLong( job->mlCrc32 );
+        mpArchiveStorageObject->ReadPortableLong( job->mlCompressedObjectPosition );
+        char *comment = mpArchiveStorageObject->ReadString();
+        job->SetComment( comment );
+        if ( comment )
+            delete[] comment;
+        long unix_time;
+        mpArchiveStorageObject->ReadPortableLong( unix_time );
+        storage_object->mTimeDate.SetTimeDate( unix_time );
+        short int packed_attributes;
+        mpArchiveStorageObject->ReadPortableShort( packed_attributes );
+        storage_object->mAttributes.SetFromPackedAttributes( packed_attributes );
+    }
+    list.mrMonitor.ArchiveOperation( AL_END_DIRECTORY_READ, this, 0 );
+    return mStatus;
+}
+
+//
+// int ALArchiveBase::WriteArchiveData()
+//
+// ARGUMENTS:
+//
+//  None.
+//
+// RETURNS
+//
+//  AL_SUCCESS if everything writes out okay, or < AL_SUCCESS for trouble.
+//
+// DESCRIPTION
+//
+//  Derived classes can write out customized archive data, for whatever
+//  reasons they deem necessary.  Our base class has nothing that it
+//  needs to save, so it just writes out a zero length string, which takes
+//  two bytes to save.  Instead of using WriteString like I ought to, for
+//  some reason I write the 0 out directly.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+int AL_PROTO ALArchiveBase::WriteArchiveData()
+{
+    return mpArchiveStorageObject->WritePortableShort( 0 );
+}
+
+//
+// int ALArchiveBase::ReadArchiveData()
+//
+// ARGUMENTS:
+//
+//  None.
+//
+// RETURNS
+//
+//  AL_SUCCESS if things went well, < AL_SUCCESS it things go sour.
+//
+// DESCRIPTION
+//
+//  The base class doesn't store anything in the archive specific
+//  data area.  That means that when I am reading the archive specific
+//  data in, I should see a zero length string, which is the same thing
+//  as a single short of value 0.  I read it in and verify it here.
+//
+//  Note that derived classes are free to override this function, but
+//  nothing we ship with ArchiveLib does so.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+int AL_PROTO ALArchiveBase::ReadArchiveData()
+{
+    short temp;
+    mpArchiveStorageObject->ReadPortableShort( temp );
+    AL_ASSERT( temp == 0, "ReadArchiveData(): archive data != 0" );
+    return mpArchiveStorageObject->mStatus;
+}
+
+//
+// int ALArchiveBase::Delete( ALEntryList &list,
+//                            ALArchiveBase &destination )
+//
+// ARGUMENTS:
+//
+//  list        : A list of the objects to delete from the archive.
+//
+//  destination : The destination archive, which is the result after
+//                deleting all the objects from this.
+//
+// RETURNS
+//
+//  AL_SUCCESS if things went well, < AL_SUCCESS otherwise.
+//
+// DESCRIPTION
+//
+//  Delete is really more like copy.  It doesn't actually delete objects
+//  out of an existing archive.  Instead it deletes by excluding the
+//  specified objects from a copy command, copying only those objects
+//  that aren't in the delete list.  The resulting archive looks as if
+//  it is one that has had objects deleted from it.
+//
+//  After deleting, we do some renaming to make it look like the delete
+//  operation did what you really expected.  As a result, the original
+//  archive (this) has been renamed to a backup, and the new archive
+//  now has the original name of this.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+//   July 7, 1994  1.0B  : Had to cast the argument to Rename().  One of
+//                         the UNIX compilers was having trouble with the
+//                         implicit conversion of ALName to const char *
+//
+int AL_PROTO ALArchiveBase::Delete( ALEntryList AL_DLL_FAR &list,
+                                    ALArchiveBase AL_DLL_FAR &destination )
+{
+    destination.SetComment( mszComment );
+    list.ToggleMarks();
+    destination.Create( *this, list );
+    list.ToggleMarks();
+    ALName temp = mpArchiveStorageObject->mName;
+    mpArchiveStorageObject->RenameToBackup();
+    destination.mpArchiveStorageObject->Rename( (const char *) temp );
+    if ( destination.mStatus < 0 )
+        return mStatus = destination.mStatus;
+    return mStatus;
+}
+
+//
+// int ALArchiveBase::FillListBox( HWND hDlg, int list_box = -1 )
+//
+// ARGUMENTS:
+//
+//  hDlg       : The handle of the dialog box that has a list box in it.
+//               If the value of list_box is set to -1, it means that
+//               hDlg doesn't refer to a dialog box, instead it refers
+//               to the actual list box itself.
+//
+//  list_box   : This is set to the id of the list box control found in
+//               the hDlg dialog box.  If this value is set to -1, it
+//               means the hDlg parameter is the handle of the list box.
+//
+// RETURNS
+//
+//  The count of marked items stuffed into the list box.
+//
+// DESCRIPTION
+//
+//  This is a quicky useful function to read the names of all the
+//  storage objects out of this, then stuffing them all into a list
+//  box.
+//
+// REVISION HISTORY
+//
+//   May 23, 1994  1.0A  : First release
+//
+
+#if defined( AL_WINDOWS_GUI )
+int AL_PROTO ALArchiveBase::FillListBox( HWND hDlg, int list_box /* = -1 */ )
+{
+    ALEntryList list;
+    HWND window;
+    ReadDirectory( list );
+    if ( list_box != -1 )
+        window = GetDlgItem( hDlg, (short int) list_box );
+    else
+        window = hDlg;
+    int count;
+    if ( ( count = list.FillListBox( window ) ) == 0 ) {
+        if ( mStatus < 0 ) {
+            SendMessage( window, LB_RESETCONTENT, 0, 0 );
+            SendMessage( window,
+                         LB_ADDSTRING,
+                         0,
+                         (LPARAM)( (LPSTR) "Error!" ) );
+        }
+    }
+    return count;
+}
+#endif

@@ -23,7 +23,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #if defined( __cplusplus )
 
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 
 /*
  * class ALName
@@ -158,7 +158,7 @@ class AL_CLASS_TYPE ALName {
 };
 
 /*
- * ostream& operator << ( ostream& stream, const ALName  &object )
+ * std::ostream& operator << ( std::ostream& stream, const ALName  &object )
  *
  * ARGUMENTS:
  *
@@ -184,7 +184,7 @@ class AL_CLASS_TYPE ALName {
  *
  */
 
-inline ostream& operator << ( ostream& stream, const ALName AL_DLL_FAR &object )
+inline std::ostream& operator << ( std::ostream& stream, const ALName AL_DLL_FAR &object )
 {
 #if defined( AL_USING_DLL ) && !defined( AL_LARGE_MODEL ) && !defined( AL_FLAT_MODEL )
     const char _far *p = (STRINGF) object;
@@ -204,4 +204,3 @@ inline ostream& operator << ( ostream& stream, const ALName AL_DLL_FAR &object )
 #endif /* #if defined( __cplusplus ) */
 
 #endif /* #ifndef _OBJNAME_H         */
-

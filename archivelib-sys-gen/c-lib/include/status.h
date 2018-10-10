@@ -110,7 +110,7 @@ class AL_CLASS_TYPE ALStatus {
  */
     public :
         int AL_PROTO SetError( int error, const char AL_DLL_FAR *fmt, ... );
-        AL_PROTO GetStatusCode(){ return miStatus; }
+        int AL_PROTO GetStatusCode(){ return miStatus; }
         const char AL_DLL_FAR * AL_PROTO GetStatusString();
         const char AL_DLL_FAR * AL_PROTO GetStatusDetail() const;
         AL_PROTO operator int(){ return miStatus; }
@@ -125,7 +125,7 @@ class AL_CLASS_TYPE ALStatus {
 
 };
 
-inline ostream& operator << ( ostream& stream, const ALStatus AL_DLL_FAR &status )
+inline std::ostream& operator << ( std::ostream& stream, const ALStatus AL_DLL_FAR &status )
 {
 #if defined( AL_USING_DLL ) && !defined( AL_LARGE_MODEL ) && !defined( AL_FLAT_MODEL )
     const char _far *p = status.GetStatusDetail();
@@ -145,4 +145,3 @@ inline ostream& operator << ( ostream& stream, const ALStatus AL_DLL_FAR &status
 #endif /* #if defined( __cplusplus ) */
 
 #endif /* #ifdef _STATUS_H           */
-

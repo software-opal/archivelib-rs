@@ -65,7 +65,7 @@ class AL_CLASS_TYPE ALSpinner : public ALMonitor {
  */
     public :
         AL_PROTO ALSpinner( ALMonitorType monitor_type,
-                            ostream AL_DLL_FAR & stream = cout );
+                            std::ostream AL_DLL_FAR & stream = std::cout );
         virtual AL_PROTO ~ALSpinner();
 #if defined( AL_USING_DLL ) || defined( AL_BUILDING_DLL )
         void AL_DLL_FAR * AL_PROTO operator new( size_t size );
@@ -90,7 +90,7 @@ class AL_CLASS_TYPE ALSpinner : public ALMonitor {
  */
     protected :
         static int miSpinIndex;
-        ostream AL_DLL_FAR & mrStream;
+        std::ostream AL_DLL_FAR & mrStream;
     public :
         AL_CLASS_TAG( _ALSpinnerTag );
 };
