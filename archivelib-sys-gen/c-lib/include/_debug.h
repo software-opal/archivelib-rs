@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -57,11 +57,11 @@ void AL_CFUNCTION _ALAssertFailure( const char AL_DLL_FAR *condition,
  * The only way we have access to TOOLHELP.DLL is if we are *really*
  * running under Windows, not some bogus imitation.
  */
-#if !defined( AL_WINDOWS_GUI ) 
+#if !defined( AL_WINDOWS_GUI )
 #  define IsBadWritePtr( p, s ) 0
 #endif
 /*
- * AL_ASSERT_OBJECT() is a great macro.  It is used to test the 
+ * AL_ASSERT_OBJECT() is a great macro.  It is used to test the
  * validity of an object.  This is a two step process.  First,
  * we make sure we are dealing with a good pointer.  If not, an
  * asserting error is triggered.  This is much better than the
@@ -70,7 +70,7 @@ void AL_CFUNCTION _ALAssertFailure( const char AL_DLL_FAR *condition,
  * a properly constructed object from the specified class.  Of
  * course, in NDEBUG mode this all goes away.
  *
- */ 
+ */
 
 /*
  * I had to change the name of the arguments to this macro in order
@@ -136,7 +136,7 @@ enum _ALClassTags {
  * adds a new data member and member function to the class.  The
  * data member is an object of a class uniquely created by the
  * macro.  The reason the data member is a class object instead
- * of a simple integer or character tag is this: By making it a 
+ * of a simple integer or character tag is this: By making it a
  * class object, we can automatically assign it a valid value
  * when constructed, and an invalid value when destroyed.
  *
@@ -150,8 +150,8 @@ enum _ALClassTags {
  * and destructors, generating an assertion failure if the object
  * doesn't look like the correct type.
  *
- * Note that the ASSERT_OBJECT() statements generate no code when the 
- * library is compiled with NDEBUG, so this class will not be 
+ * Note that the ASSERT_OBJECT() statements generate no code when the
+ * library is compiled with NDEBUG, so this class will not be
  * generating much low overhead.  However, the data member will
  * still be taking up a single byte in each instance.
  *

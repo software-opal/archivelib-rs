@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -34,7 +34,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to create a dangerous situation when 
+//  When using a DLL, it is easy to create a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -42,7 +42,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation schemed, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -129,10 +129,10 @@ void AL_DLL_FAR * AL_PROTO ALEntryList::operator new( size_t size )
 //  frequently you will ask ArchiveLib to create ALEntry objects for you,
 //  maybe by pulling them out of a list box, or reading them in from and
 //  archive.  Note that ALEntry objects aren't allowed to ever exist
-//  outside a list, each entry absolutely has to appear in a list.  
+//  outside a list, each entry absolutely has to appear in a list.
 //
 //  dtor issues relating to the ALEntry object are very important.  Since
-//  ALEntry objects always are part of a list, it made sense for the 
+//  ALEntry objects always are part of a list, it made sense for the
 //  ALEntryList destructor to clean up all the entries in its list.  So
 //  even though you might have created this ALEntry object, you don't get to
 //  delete it, that will be done for you.
@@ -142,7 +142,7 @@ void AL_DLL_FAR * AL_PROTO ALEntryList::operator new( size_t size )
 //  even think about trying it yourself!
 //
 //  You can think of an ALEntryList as a directory of an archive, and each
-//  ALEntry object in the list is a single entry in that directory.  
+//  ALEntry object in the list is a single entry in that directory.
 //
 // REVISION HISTORY
 //
@@ -277,7 +277,7 @@ int AL_PROTO ALEntry::Duplicate( ALEntryList &list )
                 if ( strcmp( name, job->mpStorageObject->mName ) == 0 )
                     return 1;
             } else {
-#if defined( AL_SUN4 ) 
+#if defined( AL_SUN4 )
                 if ( strcasecmp( name, job->mpStorageObject->mName ) == 0 )
 #else
                 if ( stricmp( name, job->mpStorageObject->mName ) == 0 )
@@ -340,11 +340,11 @@ void AL_PROTO ALEntry::InsertBefore( ALEntry &job )
 //
 //  Before adding an object to an archive, you may want to change or set
 //  its comment.  You do so by calling this function before performing any
-//  operation that will write the directory, such as Create() or 
+//  operation that will write the directory, such as Create() or
 //  WriteDirectory().  It has to dynamically allocate the space in the
 //  ALEntry object in order to store the new comment.  This is good for
 //  you, because it means you don't have to worry about who owns the comment
-//  you just passed in.  
+//  you just passed in.
 //
 // REVISION HISTORY
 //
@@ -510,7 +510,7 @@ AL_PROTO ALEntryList::~ALEntryList()
 //
 // DESCRIPTION
 //
-//  This protected function is used internally to help out a couple of the 
+//  This protected function is used internally to help out a couple of the
 //  public functions.  It rips through every entry of the list, checks to
 //  see if storage object associate with the entry has a name that matches
 //  the wildcard specification, and sets the mark if it does.
@@ -591,7 +591,7 @@ int AL_PROTO ALEntryList::ToggleMarks()
 //
 // DESCRIPTION
 //
-//  This function is used to iterate through the list.  Each entry has 
+//  This function is used to iterate through the list.  Each entry has
 //  a pointer to the next and previous entries, so this function is really
 //  simple.  The only complications comes from trying to detect the end of
 //  the list, which is denoted by the list head instance of ALEntry.  We
@@ -667,7 +667,7 @@ ALEntry AL_DLL_FAR * AL_PROTO ALEntryList::GetFirstEntry()
 //
 //  I think this function is a little confusing.  At first blush, you would
 //  probably expect this function to scan all the items in a single list,
-//  and unmark any object that turn out to have duplicates elsewhere 
+//  and unmark any object that turn out to have duplicates elsewhere
 //  in the list.  Unfortunately, it doesn't work that way.
 //
 //  Instead, this function goes through the list specified by this, and
@@ -766,7 +766,7 @@ int AL_PROTO ALEntryList::DeleteUnmarked()
 //  through an ALEntryList, and finds all the marked entries.  For every
 //  marked entry, it stuffs the name of the storage object into the list box.
 //  This means that if you are planning on letting the user select a list
-//  of storage objects, you can initialize the list with just one 
+//  of storage objects, you can initialize the list with just one
 //  function call.
 //
 // REVISION HISTORY

@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -34,7 +34,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -42,7 +42,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -69,7 +69,7 @@ void AL_DLL_FAR * AL_PROTO ALMonitor::operator new( size_t size )
 // ARGUMENTS:
 //
 //  monitor_type : One of the enumerated types from ALDEFS.H.  The only
-//                 two types supported are AL_MONITOR_OBJECTS and 
+//                 two types supported are AL_MONITOR_OBJECTS and
 //                 AL_MONITOR_JOB.
 // RETURNS
 //
@@ -156,7 +156,7 @@ AL_PROTO ALMonitor::~ALMonitor()
 //  on whether the monitor is of type AL_MONITOR_JOB or AL_MONITOR_OBJECTS.
 //
 //  In AL_MONITOR_OBJECTS mode, the byte count is going be calculated by
-//  taking the current offset of the object and subtracting the starting 
+//  taking the current offset of the object and subtracting the starting
 //  position of the object.  We have to subtract out the starting position,
 //  because sometimes we are going to be monitoring an object that resides
 //  in an archive, and its starting position will not be at location 0.

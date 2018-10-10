@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -37,7 +37,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -45,7 +45,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -131,9 +131,9 @@ AL_PROTO ALStatus::~ALStatus()
 //             less than 0 (AL_SUCCESS) will always be interpreted as
 //             an error.
 //
-//  fmt     :  A sprintf style formatting string.  This is for the 
+//  fmt     :  A sprintf style formatting string.  This is for the
 //             message that is going to go into the status detail message.
-//   
+//
 //  ...     :  Any additional arguments needed by the formatting string.
 //
 //
@@ -201,7 +201,7 @@ int AL_PROTO ALStatus::SetError( int error, const char AL_DLL_FAR *fmt, ... )
 //  helpful to translate that number into ASCII text, so a user or
 //  programmer can read the description.  This function is used to
 //  do just that.  It translates the current error code into a short
-//  ASCII text string.  Note that this is not the same as the detail 
+//  ASCII text string.  Note that this is not the same as the detail
 //  string, which is tailored for each specific occurrence of an error code.
 //
 // REVISION HISTORY
@@ -293,7 +293,7 @@ const char AL_DLL_FAR * AL_PROTO ALStatus::GetStatusDetail() const
 //
 // DESCRIPTION
 //
-//  Somewhere in ArchiveLib I want to be able to copy one status 
+//  Somewhere in ArchiveLib I want to be able to copy one status
 //  into another.  This function does just that.  It has to allocate
 //  new space to make a copy of the detail string, and be sure to
 //  free up any old space, and all that.
@@ -311,7 +311,7 @@ ALStatus AL_DLL_FAR & AL_PROTO ALStatus::operator = ( ALStatus AL_DLL_FAR &rhs )
             mszStatusDetail = 0;
         }
     } else {
-        if ( mszStatusDetail == 0 )        
+        if ( mszStatusDetail == 0 )
             mszStatusDetail = new char[ miStatusDetailLength ];
         if ( mszStatusDetail )
             strcpy( mszStatusDetail, rhs.mszStatusDetail );

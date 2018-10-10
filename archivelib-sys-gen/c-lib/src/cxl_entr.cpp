@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -36,7 +36,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  storage  : A handle for (pointer to) the storage object that is
 //             being described in this ALEntry object.
 //
-//  engine   : A handle for (pointer to) the compression engine that 
+//  engine   : A handle for (pointer to) the compression engine that
 //             will be/was used to compress/expand the storage object.
 //
 // RETURNS
@@ -125,9 +125,9 @@ extern "C" void AL_FUNCTION deleteALEntry( hALEntry entry )
 //  C++ member function ALEntry::Duplicate().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and calls the member function.  The return 
+//  to the desired class, and calls the member function.  The return
 //  from the member function is passed right back to the calling routine.
 //
 // REVISION HISTORY
@@ -135,7 +135,7 @@ extern "C" void AL_FUNCTION deleteALEntry( hALEntry entry )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryDuplicate( hALEntry this_object, hALEntryList list )
 {
     AL_ASSERT_OBJECT( this_object, ALEntry, "ALEntryDuplicate" );
@@ -162,9 +162,9 @@ ALEntryDuplicate( hALEntry this_object, hALEntryList list )
 //  C++ member function ALEntry::GetNextEntry().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and calls the member function.  The return 
+//  to the desired class, and calls the member function.  The return
 //  from the member function is passed right back to the calling routine
 //  after being cast to the appropriate C/VB type.
 //
@@ -196,9 +196,9 @@ extern "C" hALEntry AL_FUNCTION ALEntryGetNextEntry( hALEntry this_object )
 //  C++ member function ALEntry::SetMark().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and calls the member function.  
+//  to the desired class, and calls the member function.
 //
 // REVISION HISTORY
 //
@@ -228,9 +228,9 @@ extern "C" void AL_FUNCTION ALEntrySetMark( hALEntry this_object )
 //  C++ member function ALEntry::ClearMark().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and calls the member function.  
+//  to the desired class, and calls the member function.
 //
 // REVISION HISTORY
 //
@@ -260,9 +260,9 @@ extern "C" void AL_FUNCTION ALEntryClearMark( hALEntry this_object )
 //  C++ member function ALEntry::SetMarkState().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and calls the member function.  
+//  to the desired class, and calls the member function.
 //
 // REVISION HISTORY
 //
@@ -295,10 +295,10 @@ extern "C" void AL_FUNCTION ALEntrySetMarkState( hALEntry this_object,
 //  C++ data member ALEntry::mpStorageObject.  For more information on
 //  what this data member actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and gets the data member.  The data member
-//  is passed right back to the calling routine after being cast to the 
+//  is passed right back to the calling routine after being cast to the
 //  appropriate C/VB type.
 //
 // REVISION HISTORY
@@ -334,9 +334,9 @@ extern "C" hALStorage AL_FUNCTION ALEntryGetStorage( hALEntry this_object )
 //  C++ data member ALEntry::mpStorageObject.  For more information on
 //  what this data member actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and accesses the data member.  
+//  to the desired class, and accesses the data member.
 //
 // REVISION HISTORY
 //
@@ -372,16 +372,16 @@ extern "C" void AL_FUNCTION ALEntrySetStorage( hALEntry this_object,
 //  C++ data member ALEntry::mpStorageObject.  For more information on
 //  what this data member actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and accesses the data member.  
+//  to the desired class, and accesses the data member.
 //
 // REVISION HISTORY
 //
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntrySetComment( hALEntry this_object, char *comment )
 {
     AL_ASSERT_OBJECT( this_object, ALEntry, "ALEntrySetComment" );
@@ -409,7 +409,7 @@ ALEntrySetComment( hALEntry this_object, char *comment )
 //  C++ member ALEntry::GetCompressedSize.  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
@@ -444,7 +444,7 @@ extern "C" long AL_FUNCTION ALEntryGetCompressedSize( hALEntry this_object )
 //  C++ member function ALEntry::GetCrc32().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
@@ -469,7 +469,7 @@ extern "C" long AL_FUNCTION ALEntryGetCrc32( hALEntry this_object )
 //
 // RETURNS
 //
-//  A 1 or 0, indicating the object's mark state.  
+//  A 1 or 0, indicating the object's mark state.
 //
 // DESCRIPTION
 //
@@ -477,7 +477,7 @@ extern "C" long AL_FUNCTION ALEntryGetCrc32( hALEntry this_object )
 //  C++ member function ALEntry::GetMark().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
@@ -511,7 +511,7 @@ extern "C" int AL_FUNCTION ALEntryGetMark( hALEntry this_object )
 //  C++ member function ALEntry::CompressionRatio().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
@@ -545,12 +545,12 @@ extern "C" int AL_FUNCTION ALEntryCompressionRatio( hALEntry this_object )
 //  C++ member function ALEntry::GetComment().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
 //
-//  C strings aren't happy in VB, so there is a special function just to 
+//  C strings aren't happy in VB, so there is a special function just to
 //  convert strings to vB format.  Don't call this function from
 //  Visual Basic, there is an easier way!
 //
@@ -583,7 +583,7 @@ extern "C" char *AL_FUNCTION ALEntryGetComment( hALEntry this_object )
 //  C++ member function ALEntry::GetComment().  For more information on
 //  what this member function actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and calls the member function.  The return data
 //  from the member function is passed back directly to the calling module.
@@ -616,8 +616,8 @@ extern "C" long AL_FUNCTION ALEntryGetCommentVB( hALEntry this_object )
 //
 // RETURNS
 //
-//  A valid handle for (pointer to) an ALCompressionEngine object. It is 
-//  possible to get a return value of 0, since an ALEntry is not required to 
+//  A valid handle for (pointer to) an ALCompressionEngine object. It is
+//  possible to get a return value of 0, since an ALEntry is not required to
 //  have a valid ALCompressionEngine object attached to it.
 //
 // DESCRIPTION
@@ -626,10 +626,10 @@ extern "C" long AL_FUNCTION ALEntryGetCommentVB( hALEntry this_object )
 //  C++ data member ALEntry::mpCompressionEngine.  For more information on
 //  what this data member actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
 //  to the desired class, and gets the data member.  The data member
-//  is passed right back to the calling routine after being cast to the 
+//  is passed right back to the calling routine after being cast to the
 //  appropriate C/VB type.
 //
 // REVISION HISTORY
@@ -664,9 +664,9 @@ extern "C" hALEngine AL_FUNCTION ALEntryGetEngine( hALEntry this_object )
 //  C++ data member ALEntry::mpCompressionEngine.  For more information on
 //  what this data member actually does, see ARCENTRY.CPP.
 //
-//  Like most of the translation functions, this routine checks the 
+//  Like most of the translation functions, this routine checks the
 //  arguments for correct type (in debug mode), then casts this_object
-//  to the desired class, and accesses the data member.  
+//  to the desired class, and accesses the data member.
 //
 // REVISION HISTORY
 //

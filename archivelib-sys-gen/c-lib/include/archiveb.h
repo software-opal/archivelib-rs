@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -34,7 +34,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  * The derived class for a given archive type has several very important
  * virtual functions it has to provide.  The most important two are
  * CreateCompressionEngine() and CreateStorageObject().  These
- * two functions are called when the directory is being read from 
+ * two functions are called when the directory is being read from
  * a given archive.  In the directory, the type of a storage object
  * and the compression engine used to create it are defined as just
  * plain integers.  Somewhere, somebody has to look at these integers
@@ -85,12 +85,12 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *  miVersion                : The archive version.  This version field
  *                             refers to the format version of the archive,
- *                             which won't necessarily be the save as 
+ *                             which won't necessarily be the save as
  *                             the format of ArchiveLib.
  *
  *  miDeleteStorageObject    : If this flag is set, the storage object
  *                             associated with the archive object will
- *                             have its object destroyed in the 
+ *                             have its object destroyed in the
  *                             archive destructor.  This saves you
  *                             from having to do the job explicitly
  *                             in your code.
@@ -108,7 +108,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *  AddJobs()                    : Protected function used to create
  *  CopyJobs()                   : Protected function used to create
  *  AddDirectoryEntries()        : Protected function used to create, append
- *  CalculateJobSize()           : Protected function to help monitor 
+ *  CalculateJobSize()           : Protected function to help monitor
  *  CalculateCompressedJobSize() : Protected function to help monitor
  *  ScanStatus()                 : Protected function to update status
  *  CreateCompressionEngine()    : Virtual fn used when extracting
@@ -130,7 +130,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *  GetVersion()                 : Get the archive's version
  *  GetStorageObject()           : Get pointer to the archive's storage object
  *  FillListBox()                : Fill a list box with the archive's entries
- *  
+ *
  * REVISION HISTORY
  *
  *  May 26, 1994  1.0A  : First release

@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -75,9 +75,9 @@ void AL_DLL_FAR * AL_PROTO ALCopyEngine::operator new( size_t size )
 // DESCRIPTION
 //
 //  The copy engine doesn't have to store any data, because it just
-//  performs a straight binary copy, without any frills.  Because of 
-//  this simplicity, it doesn't have any data members to initialize.  
-//  The only thing it does initialize is the base class, with the 
+//  performs a straight binary copy, without any frills.  Because of
+//  this simplicity, it doesn't have any data members to initialize.
+//  The only thing it does initialize is the base class, with the
 //  appropriate enum value and string identifier.
 //
 // REVISION HISTORY
@@ -132,7 +132,7 @@ AL_PROTO ALCopyEngine::~ALCopyEngine()
 //
 // DESCRIPTION
 //
-//  This is ostensibly a compression engine, but really all it does 
+//  This is ostensibly a compression engine, but really all it does
 //  is copy input directly to the output.  The most exciting thing it
 //  does during the entire process is initialize CRC checking.
 //
@@ -177,7 +177,7 @@ int AL_PROTO ALCopyEngine::Compress( ALStorage AL_DLL_FAR &input,
 //
 // ARGUMENTS:
 //
-//  input     : A reference to the storage object containing the 
+//  input     : A reference to the storage object containing the
 //              compressed data.
 //
 //  output    : A reference to the storage object that is going to receive
@@ -192,7 +192,7 @@ int AL_PROTO ALCopyEngine::Compress( ALStorage AL_DLL_FAR &input,
 //
 // DESCRIPTION
 //
-//  This is a decompression routine, but really it just performs a 
+//  This is a decompression routine, but really it just performs a
 //  straight binary copy of input to output.  This is the copy engine you
 //  use when you just want to copy/archive files, and aren't worried
 //  about saving disk space.

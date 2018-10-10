@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -153,7 +153,7 @@ void AL_DLL_FAR * AL_PROTO ALName::operator new( size_t size )
 //
 //  This is one of those C++ functions that makes converts out of C
 //  programmers.  It allows me to add two strings together to create
-//  a third.  I really like that. 
+//  a third.  I really like that.
 //
 //  The implementation is pretty easy.  I allocate a new character buffer of
 //  the correct length, the copy the two strings into it.  I use this
@@ -203,7 +203,7 @@ ALName ALName::operator+( const char AL_DLL_FAR *rhs )
 //
 //  This constructor first initializes the mCase member in an initializer.
 //  mCase is a const member, which is nice, because you can make it public.
-//  But, it means you can't initialize it *in* the constructor, you have 
+//  But, it means you can't initialize it *in* the constructor, you have
 //  to do it before the body.
 //
 //  Things are pretty easy after that.  We allocate enough space to hold
@@ -216,7 +216,7 @@ ALName ALName::operator+( const char AL_DLL_FAR *rhs )
 //   May 26, 1994  1.0A  : First release
 //
 
-AL_PROTO ALName::ALName( const char AL_DLL_FAR *s /* = "" */, 
+AL_PROTO ALName::ALName( const char AL_DLL_FAR *s /* = "" */,
                          ALCase name_case /* = AL_MIXED */ )
      : mCase( name_case )
 {
@@ -245,12 +245,12 @@ AL_PROTO ALName::ALName( const char AL_DLL_FAR *s /* = "" */,
 //
 //  This constructor first initializes the mCase member in an initializer.
 //  mCase is a const member, which is nice, because you can make it public.
-//  But, it means you can't initialize it *in* the constructor, you have 
+//  But, it means you can't initialize it *in* the constructor, you have
 //  to do it before the body.
 //
 //  Things are pretty easy after that.  We allocate enough space to hold
-//  a copy of the string in the rhs, and then copy it.  The old name gets 
-//  set to 0, since this name hasn't been around long enough to have been 
+//  a copy of the string in the rhs, and then copy it.  The old name gets
+//  set to 0, since this name hasn't been around long enough to have been
 //  renamed.  We could have copied the old name from the rhs, but I think
 //  this way makes more sense.
 //  And that's it.
@@ -338,7 +338,7 @@ operator = ( const char AL_DLL_FAR * rhs )
 //
 //  This function is very similar to the copy constructor, but it has
 //  one additional twist.  When we copy the rhs string value into our
-//  string, we move our old name into the backup copy member, 
+//  string, we move our old name into the backup copy member,
 //  mszOldName.  That way, if we change our mind, we can easily
 //  switch back to the old name.
 //
@@ -365,7 +365,7 @@ operator = ( const ALName AL_DLL_FAR & rhs )
 //
 // DESCRIPTION
 //
-//  All this function has to do is free up the two pieces of 
+//  All this function has to do is free up the two pieces of
 //  dynamic memory.  I just can't get out of that old C habit of
 //  checking a pointer for NULL before deleting it.
 //
@@ -414,7 +414,7 @@ AL_PROTO ALName::~ALName()
 //  in the new file name, and sticks the new extension there.
 //
 //  If you apply this function to a filename, you can then rename the file
-//  by calling ALStorage::Rename() with no argument.  When you do this, 
+//  by calling ALStorage::Rename() with no argument.  When you do this,
 //  the rename function uses the saved OldName and current name as its
 //  arguments for the rename() function.
 //
@@ -477,21 +477,21 @@ ChangeExtension( const char AL_DLL_FAR *new_extension /* = ".bak" */ )
 // DESCRIPTION
 //
 //  This function is used to change the the last character of the extension
-//  in filename stored in an ALName object.  A lot of times you will want to 
+//  in filename stored in an ALName object.  A lot of times you will want to
 //  do this in order to create a backup.  For example, you could change
 //  TEMP.DAT to TEMP.DA@.
 //
 //  This function makes a copy of the current name in mszOldName, so we
 //  can keep track of it later.  It then searches for the end of the
-//  current file name, and changes it.  
+//  current file name, and changes it.
 //
 //  Note that if the filename doesn't have an extension, we do something
-//  funny.  Instead of just changing the last character, we create a 
+//  funny.  Instead of just changing the last character, we create a
 //  new extension, and append that instead.  So if the filename is
 //  "TEST", the new name will be "TEST.@".
 //
 //  If you apply this function to a filename, you can then rename the file
-//  by calling ALStorage::Rename() with no argument.  When you do this, 
+//  by calling ALStorage::Rename() with no argument.  When you do this,
 //  the rename function uses the saved OldName and current name as its
 //  arguments for the rename() function.
 //
@@ -697,8 +697,8 @@ ALName AL_DLL_FAR & AL_PROTO ALName::StripFileName()
 // DESCRIPTION
 //
 //  In the wildcard parsing code, sometimes I need to get just the
-//  filename and extension of a file, which means stripping off the 
-//  drive and path information.  This is pretty easy to do, I just find 
+//  filename and extension of a file, which means stripping off the
+//  drive and path information.  This is pretty easy to do, I just find
 //  the start of the filename, and move it up to the start of the string.
 //
 // REVISION HISTORY

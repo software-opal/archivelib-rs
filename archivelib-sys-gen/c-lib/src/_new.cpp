@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -69,7 +69,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 //
 // If Debug is not turned on, none of this stuff happens.  I also don't
-// work with Microsoft huge model, things get nasty in there.  
+// work with Microsoft huge model, things get nasty in there.
 //
 #if defined( _DEBUG ) && !( defined( AL_MICROSOFT ) && defined( _M_I86HM ) )
 
@@ -129,7 +129,7 @@ int PointerInHeap( void *p )
 //
 // This is the Borland MS-DOS version.  It looks like it also works under
 // Win 32s, which might be more reasonable, since we do support Borland
-// in that mode. 
+// in that mode.
 //
 // Like the previous function, this guy just uses the heapwalk API to
 // check the local heap for the presence of the pointer.
@@ -228,7 +228,7 @@ int PointerInHeap( void * ){ return 1; }
 //  It allocates a block of memory as requested, and includes eight
 //  extra bytes.  Four bytes are reserved at the start and end of the memory
 //  block for our "pickets".  These pickets hold a fixed pattern in memory
-//  that can be tested for accidental modification.  When ::delete() is 
+//  that can be tested for accidental modification.  When ::delete() is
 //  called, we check the area to see if the caller munged it, and
 //  cause an assertion error if they did.  The other four bytes are needed
 //  to keep the size of the block on hand.  Otherwise I wouldn't know how
@@ -290,7 +290,7 @@ void *operator new( size_t size )
 //  we don't do this, some of the other code here will GPF if you call delete
 //  with a really bad pointer.  Those GPFs are a lot less informative than
 //  our nice assertion failures.
-// 
+//
 //  If it looks like it is a valid pointer, the next thing we do is try to
 //  see if the pointer is in our heap.  A common mistake is trying to free
 //  a pointer twice, or freeing a pointer that has been incremented or

@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -35,7 +35,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -43,7 +43,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -82,7 +82,7 @@ void AL_DLL_FAR * AL_PROTO ALCompressionEngine::operator new( size_t size )
 //
 // DESCRIPTION
 //
-//  This constructor can only be called by derived classes, and all they 
+//  This constructor can only be called by derived classes, and all they
 //  do with it is call it to set up the compression type and integer
 //  members.  This class has a couple of pure virtual functions, so
 //  you can't instantiate a freestanding object.
@@ -92,7 +92,7 @@ void AL_DLL_FAR * AL_PROTO ALCompressionEngine::operator new( size_t size )
 //   May 23, 1994  1.0A  : First release
 //
 
-AL_PROTO 
+AL_PROTO
 ALCompressionEngine::ALCompressionEngine( ALCompressionType compression_type_int,
                                           const char *compression_type_string )
     : miCompressionType( compression_type_int ),
@@ -116,7 +116,7 @@ ALCompressionEngine::ALCompressionEngine( ALCompressionType compression_type_int
 //
 //  Compression engines can write private data out to the archive
 //  directory to provide customization information. For example, the
-//  Greenleaf compression engine writes its compression level 
+//  Greenleaf compression engine writes its compression level
 //  using this function.  By default, there is no data, which is what
 //  this function writes out, a 0 length string.
 //
@@ -125,7 +125,7 @@ ALCompressionEngine::ALCompressionEngine( ALCompressionType compression_type_int
 //   May 23, 1994  1.0A  : First release
 //
 
-int AL_PROTO 
+int AL_PROTO
 ALCompressionEngine::WriteEngineData( ALStorage AL_DLL_FAR * archive )
 {
     return archive->WritePortableShort( 0 );
@@ -147,7 +147,7 @@ ALCompressionEngine::WriteEngineData( ALStorage AL_DLL_FAR * archive )
 //
 //  Compression engines can write private data out to the archive
 //  directory to provide customization information. For example, the
-//  Greenleaf compression engine writes its compression level 
+//  Greenleaf compression engine writes its compression level
 //  using this function.  By default, no data is written out.  This
 //  function expects to find a zero length string, and complains
 //  with a fatal error if it doesn't.
@@ -157,7 +157,7 @@ ALCompressionEngine::WriteEngineData( ALStorage AL_DLL_FAR * archive )
 //   May 23, 1994  1.0A  : First release
 //
 
-int AL_PROTO 
+int AL_PROTO
 ALCompressionEngine::ReadEngineData( ALStorage AL_DLL_FAR * archive )
 {
     short temp;

@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -78,7 +78,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *                         to the end of the data.  When writing, this
  *                         index is continually updated to reflect the
  *                         end of the user written data.
- *                         
+ *
  *  muWriteIndex         : The index in the I/O buffer where the next byte
  *                         is going to be written.
  *
@@ -120,8 +120,8 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *  miStorageObjectType  : An integer that is assigned when the object was
  *                         constructed.  Usually one of the enumerated
  *                         constants found in ALDEFS.H.  This is the number
- *                         that gets stored in the Archive directory with 
- *                         the object, so we can figure out what type of 
+ *                         that gets stored in the Archive directory with
+ *                         the object, so we can figure out what type of
  *                         object to create when extracting.
  *
  *  muBufferSize         : The size of the I/O buffer.
@@ -169,7 +169,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *                         when ReadChar() runs out of stuff to read.
  *  FlushBuffer()        : Called to flush the I/O buffer to the underlying
  *                         object.  Called when WriteChar() has gone too far.
- *  Seek()               : Called to reposition the I/O pointer of the 
+ *  Seek()               : Called to reposition the I/O pointer of the
  *                         underlying object.
  *  YieldTime()          : Called whenever a FlushBuffer() or LoadBuffer()
  *                         takes place.  Used to update the Monitor attached
@@ -248,7 +248,7 @@ class AL_CLASS_TYPE ALStorage {
         char AL_DLL_FAR * AL_PROTO ReadString();
         virtual int AL_PROTO
         WriteStorageObjectData( ALStorage AL_DLL_FAR * archive );
-        virtual int AL_PROTO 
+        virtual int AL_PROTO
         ReadStorageObjectData( ALStorage AL_DLL_FAR * archive );
 /*
  * The file I/O access public interface
@@ -256,10 +256,10 @@ class AL_CLASS_TYPE ALStorage {
     public :
         int AL_PROTO ReadChar();
         int AL_PROTO WriteChar( int c );
-        size_t AL_PROTO ReadBuffer( unsigned char AL_DLL_FAR *buffer, 
+        size_t AL_PROTO ReadBuffer( unsigned char AL_DLL_FAR *buffer,
                                     size_t length );
         /* Please keep this arg const, breaks WriteString o/w */
-        size_t AL_PROTO WriteBuffer( const unsigned char AL_DLL_FAR *buffer, 
+        size_t AL_PROTO WriteBuffer( const unsigned char AL_DLL_FAR *buffer,
                                      size_t length );
         virtual int AL_PROTO Open();
         virtual int AL_PROTO Create();
@@ -279,7 +279,7 @@ class AL_CLASS_TYPE ALStorage {
  * File manipulation public interface
  */
     public :
-        virtual int AL_PROTO Rename( const char AL_DLL_FAR *new_name = 0, 
+        virtual int AL_PROTO Rename( const char AL_DLL_FAR *new_name = 0,
                                      int delete_on_clash = 1 ) = 0;
         virtual int AL_PROTO UnRename( int delete_on_clash = 1 ) = 0;
         virtual int AL_PROTO RenameToBackup( int delete_on_clash = 1 ) = 0;
@@ -339,7 +339,7 @@ class AL_CLASS_TYPE ALStorage {
  *
  * DESCRIPTION
  *
- *  This is an inline function that is able to quickly do buffered I/O. 
+ *  This is an inline function that is able to quickly do buffered I/O.
  *  By utilizing an I/O buffer we can make this routine very fast, since
  *  it doesn't have to call a virtual function.  The virtual function
  *  only has to be called when LoadBuffer() gets called.
@@ -382,7 +382,7 @@ inline int AL_PROTO ALStorage::ReadChar()
  *
  * DESCRIPTION
  *
- *  This is an inline function that is able to quickly do buffered I/O. 
+ *  This is an inline function that is able to quickly do buffered I/O.
  *  By utilizing an I/O buffer we can make this routine very fast, since
  *  it doesn't have to call a virtual function.  The virtual function
  *  only has to be called when FlushBuffer() gets called.

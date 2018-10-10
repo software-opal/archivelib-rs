@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -49,7 +49,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
            struct x##_bogus_struct {                       \
                int x##_bogus_unused_member;                \
            };                                              \
-           typedef struct x##_bogus_struct AL_DLL_FAR * x  
+           typedef struct x##_bogus_struct AL_DLL_FAR * x
 
 DECLARE_AL_HANDLE( hALArchive );
 DECLARE_AL_HANDLE( hALMonitor );
@@ -78,8 +78,8 @@ int AL_FUNCTION ALEngineDecompress( hALEngine this_object,
 int AL_FUNCTION ALEngineGetTypeCode( hALEngine this_object );
 char AL_DLL_FAR * AL_FUNCTION ALEngineGetTypeString( hALEngine this_object );
 int AL_FUNCTION ALEngineGetStatusCode( hALEngine this_object );
-int AL_FUNCTION ALEngineSetError( hALEngine this_object, 
-                                  int error_code, 
+int AL_FUNCTION ALEngineSetError( hALEngine this_object,
+                                  int error_code,
                                   char AL_DLL_FAR *text );
 char AL_DLL_FAR * AL_FUNCTION ALEngineGetStatusString( hALEngine this_object );
 char AL_DLL_FAR * AL_FUNCTION ALEngineGetStatusDetail( hALEngine this_object );
@@ -108,18 +108,18 @@ short int AL_FUNCTION ALGreenleafEngineGetLevel( hALEngine this_object );
  * ALStorage functions
  */
 void AL_FUNCTION deleteALStorage( hALStorage this_object );
-int AL_FUNCTION ALStorageCompare( hALStorage this_object, 
+int AL_FUNCTION ALStorageCompare( hALStorage this_object,
                                   hALStorage test_object );
 int AL_FUNCTION ALStorageIsOpen( hALStorage this_object );
 int AL_FUNCTION ALStorageReadChar( hALStorage this_object );
-int AL_FUNCTION ALStorageReadShort( hALStorage this_object, 
+int AL_FUNCTION ALStorageReadShort( hALStorage this_object,
                                     short int AL_DLL_FAR *short_data );
-int AL_FUNCTION ALStorageReadLong( hALStorage this_object, 
+int AL_FUNCTION ALStorageReadLong( hALStorage this_object,
                                    long AL_DLL_FAR *long_data );
 int AL_FUNCTION ALStorageWriteLong( hALStorage this_object, long long_data );
-int AL_FUNCTION ALStorageWriteShort( hALStorage this_object, 
+int AL_FUNCTION ALStorageWriteShort( hALStorage this_object,
                                      short int short_data );
-int AL_FUNCTION ALStorageWriteString( hALStorage this_object, 
+int AL_FUNCTION ALStorageWriteString( hALStorage this_object,
                                       char AL_DLL_FAR *string_data );
 long AL_FUNCTION ALStorageGetCrc32( hALStorage this_object );
 long AL_FUNCTION ALStorageGetSize( hALStorage this_object );
@@ -127,7 +127,7 @@ long AL_FUNCTION ALStorageTell( hALStorage this_object );
 size_t AL_FUNCTION ALStorageReadBuffer( hALStorage this_object,
                                         unsigned char AL_DLL_FAR *buffer,
                                         size_t length );
-size_t AL_FUNCTION ALStorageWriteBuffer( hALStorage this_object, 
+size_t AL_FUNCTION ALStorageWriteBuffer( hALStorage this_object,
                                          unsigned char AL_DLL_FAR *buffer,
                                          size_t length );
 void AL_FUNCTION ALStorageInitCrc32( hALStorage this_object, long seed );
@@ -137,30 +137,30 @@ int AL_FUNCTION ALStorageDelete( hALStorage this_object );
 int AL_FUNCTION ALStorageFlushBuffer( hALStorage this_object );
 int AL_FUNCTION ALStorageLoadBuffer( hALStorage this_object, long address );
 int AL_FUNCTION ALStorageOpen( hALStorage this_object );
-int AL_FUNCTION ALStorageRename( hALStorage this_object, 
-                                 char *new_name, 
+int AL_FUNCTION ALStorageRename( hALStorage this_object,
+                                 char *new_name,
                                  int delete_on_clash );
-int AL_FUNCTION ALStorageRenameToBackup( hALStorage this_object, 
+int AL_FUNCTION ALStorageRenameToBackup( hALStorage this_object,
                                          int delete_on_clash );
 int AL_FUNCTION ALStorageSeek( hALStorage this_object, long address );
-int AL_FUNCTION ALStorageUnRename( hALStorage this_object, 
+int AL_FUNCTION ALStorageUnRename( hALStorage this_object,
                                    int delete_on_clash );
 int AL_FUNCTION ALStorageWriteChar( hALStorage this_object, int c );
 int AL_FUNCTION ALStorageGetType( hALStorage this_object );
-void AL_FUNCTION ALStorageSetMonitor( hALStorage this_object, 
+void AL_FUNCTION ALStorageSetMonitor( hALStorage this_object,
                                       hALMonitor monitor );
 long AL_FUNCTION ALStorageGetUnixTime( hALStorage this_object );
 long AL_FUNCTION ALStorageToJulian( hALStorage this_object );
 void AL_FUNCTION ALStorageFromJulian( hALStorage this_object, long jdn );
-void AL_FUNCTION 
-ALStorageSetTimeDateFromStruc( hALStorage this_object, 
+void AL_FUNCTION
+ALStorageSetTimeDateFromStruc( hALStorage this_object,
                                struct tm AL_DLL_FAR * time_struct );
-void AL_FUNCTION ALStorageSetTimeDateFromUnix( hALStorage this_object, 
+void AL_FUNCTION ALStorageSetTimeDateFromUnix( hALStorage this_object,
                                                long unix_time );
-void AL_FUNCTION 
-ALStorageGetStrucFromTimeDate( hALStorage this_object, 
+void AL_FUNCTION
+ALStorageGetStrucFromTimeDate( hALStorage this_object,
                                struct tm AL_DLL_FAR * time_struct );
-unsigned short int AL_FUNCTION 
+unsigned short int AL_FUNCTION
 ALStoragePackedAttributes( hALStorage this_object );
 
 #if defined( AL_UNIX )
@@ -182,15 +182,15 @@ ALStorageSetFromDosAttributes( hALStorage this_object,
 unsigned short int AL_FUNCTION ALStorageGetDosAttributes( hALStorage this_object );
 #endif
 
-void AL_FUNCTION 
-ALStorageSetFromPackedAtts( hALStorage this_object, 
+void AL_FUNCTION
+ALStorageSetFromPackedAtts( hALStorage this_object,
                             unsigned short int packed_attributes );
 char AL_DLL_FAR * AL_FUNCTION ALStorageGetName( hALStorage this_object );
 void AL_FUNCTION ALStorageSetName( hALStorage this_object,
                                    char AL_DLL_FAR *object_name );
-int AL_FUNCTION ALStorageWildCardMatch( hALStorage this_object, 
+int AL_FUNCTION ALStorageWildCardMatch( hALStorage this_object,
                                         char AL_DLL_FAR *pattern );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALStorageChangeExtension( hALStorage this_object,
                           char AL_DLL_FAR *new_extension );
 char AL_DLL_FAR * AL_FUNCTION
@@ -199,11 +199,11 @@ ALStorageChangeTrailingChar( hALStorage this_object,
 char AL_DLL_FAR * AL_FUNCTION ALStorageGetOldName( hALStorage this_object );
 int AL_FUNCTION ALStorageGetStatusCode( hALStorage this_object );
 int AL_FUNCTION ALStorageSetError( hALStorage this_object,
-                                   int error_code, 
+                                   int error_code,
                                    char AL_DLL_FAR * text );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALStorageGetStatusString( hALStorage this_object );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALStorageGetStatusDetail( hALStorage this_object );
 
 #if !defined( AL_UNIX )
@@ -218,10 +218,10 @@ int AL_FUNCTION ALStorageValidTimeDate( hALStorage this_object );
  */
 #if defined( AL_VB )
 long AL_FUNCTION
-ALStorageChangeExtensionVB( hALStorage this_object, 
+ALStorageChangeExtensionVB( hALStorage this_object,
                             char AL_DLL_FAR *new_extension );
 long AL_FUNCTION
-ALStorageChangeTrailingCharVB( hALStorage this_object, 
+ALStorageChangeTrailingCharVB( hALStorage this_object,
                                char new_char );
 long AL_FUNCTION ALStorageGetNameVB( hALStorage this_object );
 long AL_FUNCTION ALStorageGetOldNameVB( hALStorage this_object );
@@ -270,7 +270,7 @@ long AL_FUNCTION ALMonitorSetJobSoFar( hALMonitor this_object,
                                        long job_so_far );
 
 #if defined( AL_WINDOWS_GUI )
-hALMonitor AL_FUNCTION 
+hALMonitor AL_FUNCTION
 newALWindowsMessage( enum ALMonitorType monitor_type,
                      HWND progress_text_window,
                      enum ALWindowsMessageType message_type,
@@ -286,13 +286,13 @@ hALMonitor AL_FUNCTION newALSpinner( enum ALMonitorType );
  */
 
 hALEntry AL_FUNCTION newALEntry( hALEntryList list,
-                                 hALStorage storage, 
+                                 hALStorage storage,
                                  hALEngine engine );
 void AL_FUNCTION deleteALEntry( hALEntry this_object );
 int AL_FUNCTION ALEntryDuplicate( hALEntry this_object, hALEntryList list );
 int AL_FUNCTION ALEntryCompressionRatio( hALEntry this_object );
 int AL_FUNCTION ALEntryGetMark( hALEntry this_object );
-int AL_FUNCTION ALEntrySetComment( hALEntry this_object, 
+int AL_FUNCTION ALEntrySetComment( hALEntry this_object,
                                    char AL_DLL_FAR *comment );
 long AL_FUNCTION ALEntryGetCompressedSize( hALEntry this_object );
 long AL_FUNCTION ALEntryGetCrc32( hALEntry this_object );
@@ -300,10 +300,10 @@ hALEntry AL_FUNCTION ALEntryGetNextEntry( hALEntry this_object );
 char AL_DLL_FAR *AL_FUNCTION ALEntryGetComment( hALEntry this_object );
 void AL_FUNCTION ALEntryClearMark( hALEntry this_object );
 void AL_FUNCTION ALEntrySetMark( hALEntry this_object );
-void AL_FUNCTION ALEntrySetMarkState( hALEntry this_object, 
+void AL_FUNCTION ALEntrySetMarkState( hALEntry this_object,
                                       short int new_state );
 hALStorage AL_FUNCTION ALEntryGetStorage( hALEntry this_object );
-void AL_FUNCTION ALEntrySetStorage( hALEntry this_object, 
+void AL_FUNCTION ALEntrySetStorage( hALEntry this_object,
                                     hALStorage storage_object );
 hALEngine AL_FUNCTION ALEntryGetEngine( hALEntry this_object );
 void AL_FUNCTION ALEntrySetEngine( hALEntry this_object, hALEngine engine );
@@ -321,23 +321,23 @@ long AL_FUNCTION ALEntryGetCommentVB( hALEntry this_object );
 
 hALEntryList AL_FUNCTION newALEntryList( hALMonitor monitor );
 void AL_FUNCTION deleteALEntryList( hALEntryList this_object );
-int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object, 
+int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object,
                                         char AL_DLL_FAR *pattern );
 int AL_FUNCTION ALEntryListDeleteUnmarked( hALEntryList this_object );
-int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object, 
+int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object,
                                      char AL_DLL_FAR *pattern );
 int AL_FUNCTION ALEntryListToggleMarks( hALEntryList this_object );
-void AL_FUNCTION ALEntryListUnmarkDuplicates( hALEntryList this_object, 
-                                              hALEntryList list, char 
+void AL_FUNCTION ALEntryListUnmarkDuplicates( hALEntryList this_object,
+                                              hALEntryList list, char
                                               AL_DLL_FAR *error_message );
 hALEntry AL_FUNCTION ALEntryListGetFirstEntry( hALEntryList this_object );
 int AL_FUNCTION ALEntryListGetStatusCode( hALEntryList this_object );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALEntryListGetStatusString( hALEntryList this_object );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALEntryListGetStatusDetail( hALEntryList this_object );
-int AL_FUNCTION ALEntryListAddWildCardFiles( hALEntryList this_object, 
-                                             char AL_DLL_FAR *pattern, 
+int AL_FUNCTION ALEntryListAddWildCardFiles( hALEntryList this_object,
+                                             char AL_DLL_FAR *pattern,
                                              int traverse );
 /*
  * ALEntry functions for Visual Basic only.
@@ -348,20 +348,20 @@ long AL_FUNCTION ALEntryListGetStatusDetailVB( hALEntryList this_object );
 #endif
 
 #if defined( AL_WINDOWS_GUI )
-int AL_FUNCTION ALEntryListAddFromDialog( hALEntryList this_object, 
-                                          HWND hWnd, 
+int AL_FUNCTION ALEntryListAddFromDialog( hALEntryList this_object,
+                                          HWND hWnd,
                                           int list_box_id );
-int AL_FUNCTION ALEntryListAddFromWindow( hALEntryList this_object, 
+int AL_FUNCTION ALEntryListAddFromWindow( hALEntryList this_object,
                                           HWND hWnd );
-int AL_FUNCTION ALEntryListSetMarksFromDialog( hALEntryList this_object, 
-                                               HWND hWnd, 
+int AL_FUNCTION ALEntryListSetMarksFromDialog( hALEntryList this_object,
+                                               HWND hWnd,
                                                int id );
-int AL_FUNCTION ALEntryListSetMarksFromWindow( hALEntryList this_object, 
+int AL_FUNCTION ALEntryListSetMarksFromWindow( hALEntryList this_object,
                                                   HWND hWnd );
-int AL_FUNCTION ALEntryListFillListBoxWindow( hALEntryList this_object, 
+int AL_FUNCTION ALEntryListFillListBoxWindow( hALEntryList this_object,
                                               HWND hWnd );
-int AL_FUNCTION ALEntryListFillListBoxDialog( hALEntryList this_object, 
-                                              HWND hDlg, 
+int AL_FUNCTION ALEntryListFillListBoxDialog( hALEntryList this_object,
+                                              HWND hDlg,
                                               int list_box_id );
 #endif
 
@@ -382,21 +382,21 @@ int AL_FUNCTION ALArchiveDelete( hALArchive this_object,
                                  hALEntryList list,
                                  hALArchive destination_archive );
 char AL_DLL_FAR * AL_FUNCTION ALArchiveGetComment( hALArchive this_object );
-int AL_FUNCTION ALArchiveSetComment( hALArchive this_object, 
+int AL_FUNCTION ALArchiveSetComment( hALArchive this_object,
                                      char AL_DLL_FAR *comment );
-int AL_FUNCTION ALArchiveReadDirectory( hALArchive this_object, 
+int AL_FUNCTION ALArchiveReadDirectory( hALArchive this_object,
                                         hALEntryList list );
-int AL_FUNCTION ALArchiveWriteDirectory( hALArchive this_object, 
+int AL_FUNCTION ALArchiveWriteDirectory( hALArchive this_object,
                                          hALEntryList list );
 int AL_FUNCTION ALArchiveGetVersion( hALArchive this_object );
 hALStorage AL_FUNCTION ALArchiveGetStorage( hALArchive this_object );
 int AL_FUNCTION ALArchiveGetStatusCode( hALArchive this_object );
-int AL_FUNCTION ALArchiveSetError( hALArchive this_object, 
-                                   int error_code, 
+int AL_FUNCTION ALArchiveSetError( hALArchive this_object,
+                                   int error_code,
                                    char AL_DLL_FAR *text );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALArchiveGetStatusString( hALArchive this_object );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALArchiveGetStatusDetail( hALArchive this_object );
 
 /*
@@ -410,10 +410,10 @@ long AL_FUNCTION ALArchiveGetStatusDetailVB( hALArchive this_object );
 #endif
 
 #if defined( AL_WINDOWS_GUI )
-int AL_FUNCTION ALArchiveFillListBoxDialog( hALArchive this_object, 
-                                            HWND hDlg, 
+int AL_FUNCTION ALArchiveFillListBoxDialog( hALArchive this_object,
+                                            HWND hDlg,
                                             int list_box);
-int AL_FUNCTION ALArchiveFillListBoxWindow( hALArchive this_object, 
+int AL_FUNCTION ALArchiveFillListBoxWindow( hALArchive this_object,
                                             HWND hWnd );
 #endif
 
@@ -427,29 +427,29 @@ hALArchive AL_FUNCTION newALArchiveFromStorage( hALStorage object );
  * Note: this function has been replaced by the more properly
  * named ALEntryListAddWildCardFiles.  Calls the same C++ member fn.
  */
-int AL_FUNCTION ALArchiveAddFilesToList( hALArchive this_object, 
-                                         hALEntryList list, 
-                                         char AL_DLL_FAR * pattern, 
+int AL_FUNCTION ALArchiveAddFilesToList( hALArchive this_object,
+                                         hALEntryList list,
+                                         char AL_DLL_FAR * pattern,
                                          int traverse_flag );
 
 /*
  * ALCompressed functions
  */
- 
-hALCompressed AL_FUNCTION newALCompressed( hALStorage storage, 
+
+hALCompressed AL_FUNCTION newALCompressed( hALStorage storage,
                                            hALEngine engine );
 void AL_FUNCTION deleteALCompressed( hALCompressed this_object );
-int AL_FUNCTION ALCompressedExtract( hALCompressed this_object, 
+int AL_FUNCTION ALCompressedExtract( hALCompressed this_object,
                                      hALStorage output_object );
-int AL_FUNCTION ALCompressedInsert( hALCompressed this_object, 
+int AL_FUNCTION ALCompressedInsert( hALCompressed this_object,
                                     hALStorage input_object );
 int AL_FUNCTION ALCompressedGetStatusCode( hALCompressed this_object );
-int AL_FUNCTION ALCompressedSetError( hALCompressed this_object, 
-                                      int error_code, 
+int AL_FUNCTION ALCompressedSetError( hALCompressed this_object,
+                                      int error_code,
                                       char AL_DLL_FAR *text );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALCompressedGetStatusString( hALCompressed this_object );
-char AL_DLL_FAR * AL_FUNCTION 
+char AL_DLL_FAR * AL_FUNCTION
 ALCompressedGetStatusDetail( hALCompressed this_object );
 
 /*
@@ -515,5 +515,5 @@ int printf( char *fmt, ... );
 }
 #endif
 
-#endif 
+#endif
 #endif /* #ifndef _ALCXL_H */

@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -39,7 +39,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  The main bad thing is that when we call the constructor from an
 //  EXE, we allocate the storage for the new object from inside our EXE.
 //  When we destroy the same object, the destructor frees up the memory
-//  inside the DLL.  This is bad, because you can mangle the heap inside 
+//  inside the DLL.  This is bad, because you can mangle the heap inside
 //  the DLL by trying to free an object that doesn't belong to it.
 //
 //  The fix to this conundrum is to allocate the object inside the DLL,
@@ -188,7 +188,7 @@ AL_PROTO ALOpenInputFile::~ALOpenInputFile()
 //
 // DESCRIPTION
 //
-//  This is just like ALOpenInputFile, except instead of calling 
+//  This is just like ALOpenInputFile, except instead of calling
 //  ALStorage::Open(), it calls ALStorage::Create().  Note that if
 //  the file is already open, we keep track of the fact and leave it
 //  alone.
@@ -220,7 +220,7 @@ AL_PROTO ALOpenOutputFile::ALOpenOutputFile( ALStorage AL_DLL_FAR &file )
 // DESCRIPTION
 //
 //  If the file was closed when the constructor was called, we close
-//  it in the constructor.  
+//  it in the constructor.
 //
 // REVISION HISTORY
 //
@@ -249,7 +249,7 @@ AL_PROTO ALOpenOutputFile::~ALOpenOutputFile()
 //
 // DESCRIPTION
 //
-//  This is just a combination of the ALOpenOutputFile() and 
+//  This is just a combination of the ALOpenOutputFile() and
 //  ALOpenInputFile() guys rolled into one.  To combine them, we
 //  just create this object that contains one of both objects.
 //
@@ -259,7 +259,7 @@ AL_PROTO ALOpenOutputFile::~ALOpenOutputFile()
 //
 //  So all the constructor has to do here is call the other two
 //  constructors in an initializer list.
-// 
+//
 // REVISION HISTORY
 //
 //   May 22, 1994  1.0A  : First release

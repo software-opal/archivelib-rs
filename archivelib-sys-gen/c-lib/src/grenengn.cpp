@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -39,7 +39,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -47,7 +47,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -76,7 +76,7 @@ void AL_DLL_FAR * AL_PROTO ALGreenleafEngine::operator new( size_t size )
 // ARGUMENTS:
 //
 //  compression_level   : This is one of the enumerated types found in ALDEFS.H,
-//                        namely AL_GREENLEAF_LEVEL_0 through 
+//                        namely AL_GREENLEAF_LEVEL_0 through
 //                        AL_GREENLEAF_LEVEL_4.  Level 4 gives the most
 //                        compression, but takes up the most memory as well.
 //
@@ -364,7 +364,7 @@ WriteEngineData( ALStorage AL_DLL_FAR * archive )
 //  Every compression engine used in ArchiveLib gets the opportunity
 //  to store data it needs to save in order to characterize its compression
 //  process.  The Greenleaf compression engine only needs to save a single
-//  integer, which contains the compression level used.  
+//  integer, which contains the compression level used.
 //
 //  During the creation of the compression engine, this function gets called
 //  in order to load the engine's private data.  All we do is read in

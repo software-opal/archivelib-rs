@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -57,7 +57,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -65,7 +65,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -93,7 +93,7 @@ void AL_DLL_FAR * AL_PROTO ALFile::operator new( size_t size )
 //
 // ARGUMENTS:
 //
-//  file_name    : The initial file name of the ALFile object you are 
+//  file_name    : The initial file name of the ALFile object you are
 //                 creating.  By default, this is a blank string, which
 //                 will get converted to a temporary name before opening
 //                 the actual disk file.
@@ -105,7 +105,7 @@ void AL_DLL_FAR * AL_PROTO ALFile::operator new( size_t size )
 //                 always be converted to upper case, lower case, or left
 //                 in mixed case.  Under MS-DOS, you shouldn't use mixed
 //                 case, because the O/S file naming convention is case
-//                 insensitive.  ArchiveLib will think "TEMP.BAK" and 
+//                 insensitive.  ArchiveLib will think "TEMP.BAK" and
 //                 "temp.bak" are different, when they really aren't.
 //
 // RETURNS
@@ -152,8 +152,8 @@ AL_PROTO ALFile::ALFile( const char AL_DLL_FAR *file_name /* = "" */,
 //  the file gets closed, and that its buffers get flushed to the disk
 //  file.
 //
-//  Note that in debug mode, the destructor also checks this for the 
-//  correct class type.  This helps flag erroneous or duplicated 
+//  Note that in debug mode, the destructor also checks this for the
+//  correct class type.  This helps flag erroneous or duplicated
 //  destructor calls.
 //
 // REVISION HISTORY
@@ -180,7 +180,7 @@ AL_PROTO ALFile::~ALFile()
 //
 // RETURNS
 //
-//  AL_SUCCESS, AL_SEEK_ERROR, AL_END_OF_FILE, or possibly another 
+//  AL_SUCCESS, AL_SEEK_ERROR, AL_END_OF_FILE, or possibly another
 //  error code < AL_SUCCESS.
 //
 // DESCRIPTION
@@ -194,7 +194,7 @@ AL_PROTO ALFile::~ALFile()
 //  After that operation is performed, muReadIndex is set to 0, indicating
 //  that the next read from the I/O buffer will take place at location 0.
 //  mlFilePointer is set to address plus the number of bytes read, so
-//  we know where the next read from the file will take place.  And 
+//  we know where the next read from the file will take place.  And
 //  muBufferValidData is set to the count of bytes read in from this
 //  location.  That lets us know how far we can read in the I/O buffer
 //  before we run out of space.
@@ -357,7 +357,7 @@ int AL_PROTO ALFile::Seek( long address )
 //
 // ARGUMENTS:
 //
-//  None. 
+//  None.
 //
 // RETURNS
 //
@@ -456,9 +456,9 @@ int AL_PROTO ALFile::Open()
 //
 // ARGUMENTS:
 //
-//  i    : A numeric argument that can somehow be incorporated into 
+//  i    : A numeric argument that can somehow be incorporated into
 //         the temporary file name.  Create() will call this function
-//         while incrementing this number in an attempt to find a unique 
+//         while incrementing this number in an attempt to find a unique
 //         name.
 //
 // RETURNS
@@ -511,7 +511,7 @@ void AL_PROTO ALFile::MakeTempName( int i )
 //  It takes care of setting up the I/O buffer and initializing the
 //  data members used to support the class.
 //
-//  Next, function checks to see if we have a valid filename.  If 
+//  Next, function checks to see if we have a valid filename.  If
 //  not, a  search is made for a valid temporary file name.  In either
 //  case, the file is then opened with R/W access, in O_CREAT
 //  mode, obliterating any existing file with the same name.
@@ -593,7 +593,7 @@ int AL_PROTO ALFile::Create()
 //
 // DESCRIPTION
 //
-//  This function is called when you are done accessing a file, and want 
+//  This function is called when you are done accessing a file, and want
 //  to free up its resources.  The first thing it does is check to see
 //  if the file was ever actually opened.  If it was, we flush the output
 //  buffer, then calculate and store the file length.  Finally, we close
@@ -627,7 +627,7 @@ int AL_PROTO ALFile::Close()
     times.modtime = mTimeDate.GetUnixTime();
     utime( (char *) mName, &times );
 #elif defined( AL_WIN32S )
-// Can you do this under NT?  I don't know how.    
+// Can you do this under NT?  I don't know how.
 #else
         _dos_setftime( miHandle, mTimeDate.GetDosDate(), mTimeDate.GetDosTime() );
 #endif
@@ -683,7 +683,7 @@ int AL_PROTO ALFile::RenameToBackup( int delete_on_clash /* = 1 */ )
 }
 
 //
-// int ALFile::Rename( const char *new_name /* = 0 */, 
+// int ALFile::Rename( const char *new_name /* = 0 */,
 //                     int delete_on_clash /* = 1 */ )
 //
 // ARGUMENTS:
@@ -694,7 +694,7 @@ int AL_PROTO ALFile::RenameToBackup( int delete_on_clash /* = 1 */ )
 //                     the mName member has already been updated with a
 //                     new name.  In this case, the old name of the
 //                     file is renamed to the new name.
-// 
+//
 //  delete_on_clash  : If this flag is set, it means that we will overwrite
 //                     an existing file with this file if the names clash.
 //                     For example, if I am renaming TEMP.DAT to TEMP.BAK,

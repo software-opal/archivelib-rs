@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -52,12 +52,12 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  This C/VB translation function provides access to the ALMemory 
+//  This C/VB translation function provides access to the ALMemory
 //  constructor.  Note that the constructor has the same name under
 //  MS-DOS and Windows, but it does have slightly different capabilities.
 //  Because of this, the Windows version also has different argument types.
 //
-//  This function passes all of its arguments to the C++ constructor 
+//  This function passes all of its arguments to the C++ constructor
 //  in unchanged form.  It then takes the return from the function, casts
 //  it to a C/VB acceptable type, and returns it otherwise unchanged.
 //
@@ -72,8 +72,8 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 
 #if defined( AL_WINDOWS_MEMORY )
-extern "C" hALStorage AL_FUNCTION 
-newALMemory( char AL_DLL_FAR *buffer_name, 
+extern "C" hALStorage AL_FUNCTION
+newALMemory( char AL_DLL_FAR *buffer_name,
              char AL_HUGE *user_buffer,
              DWORD user_buffer_size )
 {
@@ -81,10 +81,10 @@ newALMemory( char AL_DLL_FAR *buffer_name,
         return (hALStorage) new ALMemory( buffer_name );
     else
         return (hALStorage) new ALMemory( buffer_name, user_buffer, user_buffer_size );
-}             
+}
 
 #else
-extern "C" hALStorage AL_FUNCTION newALMemory( char AL_DLL_FAR *buffer_name, 
+extern "C" hALStorage AL_FUNCTION newALMemory( char AL_DLL_FAR *buffer_name,
                                                char AL_DLL_FAR *user_buffer,
                                                int user_buffer_size )
 {
@@ -110,7 +110,7 @@ extern "C" hALStorage AL_FUNCTION newALMemory( char AL_DLL_FAR *buffer_name,
 // DESCRIPTION
 //
 //  This C/VB translation function provides access to the C++ data member
-//  ALMemory::mfUserOwnsBuffer.  
+//  ALMemory::mfUserOwnsBuffer.
 //
 //  This function first tests its only argument for correct type (when in
 //  debug mode), then casts and accesses the data member.  The value of
@@ -134,7 +134,7 @@ extern "C" int AL_FUNCTION ALMemoryGetBufferOwner( hALStorage this_object )
 }
 
 //
-// extern "C" void ALMemorySetBufferOwner( hALStorage this_object, 
+// extern "C" void ALMemorySetBufferOwner( hALStorage this_object,
 //                                         int user_owns_buffer )
 //
 // ARGUMENTS:
@@ -170,12 +170,12 @@ extern "C" int AL_FUNCTION ALMemoryGetBufferOwner( hALStorage this_object )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" void AL_FUNCTION ALMemorySetBufferOwner( hALStorage this_object, 
+extern "C" void AL_FUNCTION ALMemorySetBufferOwner( hALStorage this_object,
                                                     int user_owns_buffer )
 {
     AL_ASSERT_OBJECT( this_object, ALMemory, "ALMemorySetBufferOwner" );
     ( (ALMemory *) this_object )->mfUserOwnsBuffer = user_owns_buffer;
-}                                                      
+}
 
 // WINDOWS ONLY PROCEDURE
 //
@@ -322,7 +322,7 @@ extern "C" char AL_HUGE * AL_FUNCTION ALMemoryGetBuffer( hALStorage this_object 
 }
 
 #else
-    
+
 extern "C" char AL_DLL_FAR *AL_FUNCTION ALMemoryGetBuffer( hALStorage this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALMemory, "ALMemoryGetBuffer" );

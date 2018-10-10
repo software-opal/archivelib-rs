@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -79,7 +79,7 @@ void AL_DLL_FAR * AL_PROTO ALMemory::operator new( size_t size )
 //                     char *user_buffer = 0,
 //                     int user_buffer_size = 0,
 //                     ALCase name_case = AL_MIXED )
-// 
+//
 // ARGUMENTS:
 //
 //  buffer_name  : An arbitrary name assigned to the buffer.  Buffer
@@ -101,7 +101,7 @@ void AL_DLL_FAR * AL_PROTO ALMemory::operator new( size_t size )
 //                     you need to indicate how large it is here.  Under
 //                     Windows this is a DWORD instead of a size_t.
 //
-//  name_case    : This decides whether you want the file name to be 
+//  name_case    : This decides whether you want the file name to be
 //                 case sensitive when making comparisons.  MS-DOS
 //                 file names are case-insensitive.  You can make memory
 //                 buffers either mixed case, forced upper, or forced
@@ -124,7 +124,7 @@ void AL_DLL_FAR * AL_PROTO ALMemory::operator new( size_t size )
 //
 //   May 22, 1994  1.0A  : First release
 //
-#if defined( AL_WINDOWS_MEMORY ) 
+#if defined( AL_WINDOWS_MEMORY )
 //
 // The Windows and MS-DOS constructors are nearly identical.
 //
@@ -334,7 +334,7 @@ int AL_PROTO ALMemory::Delete()
 }
 
 //
-// int ALMemory::Rename( const char *new_name /* = 0 */, 
+// int ALMemory::Rename( const char *new_name /* = 0 */,
 //                       int /* delete_on_clash = 1 */ )
 //
 // ARGUMENTS:
@@ -363,7 +363,7 @@ int AL_PROTO ALMemory::Delete()
 //   May 22, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALMemory::Rename( const char AL_DLL_FAR *new_name /* = 0 */, 
+int AL_PROTO ALMemory::Rename( const char AL_DLL_FAR *new_name /* = 0 */,
                                int /* delete_on_clash = 1 */ )
 {
     if ( new_name )
@@ -621,7 +621,7 @@ int AL_PROTO ALMemory::GrowUserBuffer( long minimum_new_size )
 //  you have filled up the cache with what is usually 4K bytes of data.
 //  This routine is also called if you have hot data in the I/O buffer
 //  and you decide to do a seek(), or a read().
-//  
+//
 //  All we have to do here is take the hot data in the I/O buffer and
 //  write it out to our massive memory object.  The big complication is
 //  that sometimes the memory object isn't big enough, so while we are
@@ -691,10 +691,10 @@ int AL_PROTO ALMemory::FlushBuffer()
 //  that the I/O buffer gets freed up by the base class, so this suddenly
 //  might not be a giant heavyweight object any more.
 //
-//  After freeing things up in the base class, we check to see if 
+//  After freeing things up in the base class, we check to see if
 //  we have allocated more space than we really need.  If so, we do
 //  a realloc() of some sort to give space back to the O/S.
-//  
+//
 // REVISION HISTORY
 //
 //   May 22, 1994  1.0A  : First release
@@ -740,7 +740,7 @@ int AL_PROTO ALMemory::Close()
 //
 // RETURNS
 //
-//  AL_SUCCESS, AL_CANT_ALLOCATE_MEMORY, or various error codes that 
+//  AL_SUCCESS, AL_CANT_ALLOCATE_MEMORY, or various error codes that
 //  filter on down from other routines.
 //
 // DESCRIPTION
@@ -808,14 +808,14 @@ int AL_PROTO ALMemory::Create()
 //
 // RETURNS
 //
-//  AL_SUCCESS, AL_CANT_OPEN_FILE, or various error codes that 
+//  AL_SUCCESS, AL_CANT_OPEN_FILE, or various error codes that
 //  filter on down from other routines.
 //
 // DESCRIPTION
 //
 //  This is like opening an existing file.  Since there is supposed to be
 //  an existing memory buffer already, we gripe if we can't find one.
-//  
+//
 // REVISION HISTORY
 //
 //   May 22, 1994  1.0A  : First release

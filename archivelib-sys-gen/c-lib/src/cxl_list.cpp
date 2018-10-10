@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -82,8 +82,8 @@ extern "C" hALEntryList AL_FUNCTION newALEntryList( hALMonitor monitor )
 //  member function ALEntryList::GetFirstEntry().  This routine is
 //  the first one called when iterating through an entire list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -96,7 +96,7 @@ extern "C" hALEntryList AL_FUNCTION newALEntryList( hALMonitor monitor )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" hALEntry AL_FUNCTION 
+extern "C" hALEntry AL_FUNCTION
 ALEntryListGetFirstEntry( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListGetFirstEntry" );
@@ -131,19 +131,19 @@ ALEntryListGetFirstEntry( hALEntryList this_object )
 //  used to remove the marks from any ALEntry objects in the list that
 //  are duplicated in another list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
-//  handles (in debug mode), then calls the member function.  
+//  handles (in debug mode), then calls the member function.
 //
 // REVISION HISTORY
 //
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" void AL_FUNCTION 
+extern "C" void AL_FUNCTION
 ALEntryListUnmarkDuplicates( hALEntryList this_object,
                              hALEntryList list,
                              char *error_message )
@@ -154,8 +154,8 @@ ALEntryListUnmarkDuplicates( hALEntryList this_object,
 }
 
 //
-// extern "C" int ALEntryListSetMarksFromDialog( hALEntryList this_object, 
-//                                               HWND hDlg, 
+// extern "C" int ALEntryListSetMarksFromDialog( hALEntryList this_object,
+//                                               HWND hDlg,
 //                                               int id )
 //
 // ARGUMENTS:
@@ -180,8 +180,8 @@ ALEntryListUnmarkDuplicates( hALEntryList this_object,
 //  used to set marks in an ALEntryList based on selections made
 //  in a list box.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  Note that since this routine looks to a dialog for its input,
@@ -198,7 +198,7 @@ ALEntryListUnmarkDuplicates( hALEntryList this_object,
 
 #if defined( AL_WINDOWS_GUI )
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListSetMarksFromDialog( hALEntryList this_object, HWND hDlg, int id )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListSetMarksFromDialog" );
@@ -208,7 +208,7 @@ ALEntryListSetMarksFromDialog( hALEntryList this_object, HWND hDlg, int id )
 #endif
 
 //
-// extern "C" int ALEntryListSetMarksFromWindow( hALEntryList this_object, 
+// extern "C" int ALEntryListSetMarksFromWindow( hALEntryList this_object,
 //                                               HWND hWnd )
 //
 // ARGUMENTS:
@@ -228,8 +228,8 @@ ALEntryListSetMarksFromDialog( hALEntryList this_object, HWND hDlg, int id )
 //  called to transfer the marks a user makes in a list box into
 //  the ALEntryList.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -243,7 +243,7 @@ ALEntryListSetMarksFromDialog( hALEntryList this_object, HWND hDlg, int id )
 
 #if defined( AL_WINDOWS_GUI )
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListSetMarksFromWindow( hALEntryList this_object, HWND hWnd )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListSetMarksFromWindow" );
@@ -274,8 +274,8 @@ ALEntryListSetMarksFromWindow( hALEntryList this_object, HWND hWnd )
 //  is used to transfer the selections a user made in a list box into
 //  marks in the list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -289,7 +289,7 @@ ALEntryListSetMarksFromWindow( hALEntryList this_object, HWND hWnd )
 
 #if defined( AL_WINDOWS_GUI )
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListFillListBoxWindow( hALEntryList this_object,
                               HWND hWnd )
 {
@@ -325,11 +325,11 @@ ALEntryListFillListBoxWindow( hALEntryList this_object,
 //  member function ALEntryList::FillListBox().  This routine is called
 //  to fill a list box with the names of storage objects in the list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
-//  Note that since this routine wants to use a list box that is 
+//  Note that since this routine wants to use a list box that is
 //  embedded in a dialog box, it isn't much use to VB.
 //
 //  This routine first performs type checking on the passed object
@@ -343,7 +343,7 @@ ALEntryListFillListBoxWindow( hALEntryList this_object,
 
 #if defined( AL_WINDOWS_GUI )
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListFillListBoxDialog( hALEntryList this_object,
                               HWND hDlg,
                               int list_box_id )
@@ -383,14 +383,14 @@ extern "C" void AL_FUNCTION deleteALEntryList( hALEntryList this_object )
 }
 
 //
-// extern "C" int ALEntryListSetMarks( hALEntryList this_object, 
+// extern "C" int ALEntryListSetMarks( hALEntryList this_object,
 //                                     char *pattern )
 //
 // ARGUMENTS:
 //
 //  this_object    : Handle for (pointer to) an ALEntryList object.
 //
-//  pattern        : A regular expression (wildcard) that will be used as 
+//  pattern        : A regular expression (wildcard) that will be used as
 //                   a pattern to set marks in the list.
 //
 // RETURNS
@@ -404,8 +404,8 @@ extern "C" void AL_FUNCTION deleteALEntryList( hALEntryList this_object )
 //  to set marks for ALEntry objects in the list that match the wild
 //  card pattern.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -417,7 +417,7 @@ extern "C" void AL_FUNCTION deleteALEntryList( hALEntryList this_object )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object, 
+extern "C" int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object,
                                                 char AL_DLL_FAR *pattern )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListSetMarks" );
@@ -425,14 +425,14 @@ extern "C" int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object,
 }
 
 //
-// extern "C" int ALEntryListClearMarks( hALEntryList this_object, 
+// extern "C" int ALEntryListClearMarks( hALEntryList this_object,
 //                                       char *pattern )
 //
 // ARGUMENTS:
 //
 //  this_object    : Handle for (pointer to) an ALEntryList object.
 //
-//  pattern        : A regular expression (wildcard) that will be used as 
+//  pattern        : A regular expression (wildcard) that will be used as
 //                   a pattern to clear marks in the list.
 //
 // RETURNS
@@ -445,8 +445,8 @@ extern "C" int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object,
 //  member function ALEntryList::ClearMarks().  It is used to clear
 //  the marks of entries in the list that match the wildcard pattern.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -458,7 +458,7 @@ extern "C" int AL_FUNCTION ALEntryListSetMarks( hALEntryList this_object,
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object, 
+extern "C" int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object,
                                                   char AL_DLL_FAR *pattern )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListClearMarks" );
@@ -483,8 +483,8 @@ extern "C" int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object,
 //  member function ALEntryList::DeleteUnmarked().  This function is used
 //  to delete ALEntry objects from the list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -496,7 +496,7 @@ extern "C" int AL_FUNCTION ALEntryListClearMarks( hALEntryList this_object,
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListDeleteUnmarked( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListDeleteUnmarked" );
@@ -520,8 +520,8 @@ ALEntryListDeleteUnmarked( hALEntryList this_object )
 //  member function ALEntryList::ToggleMarks().  This function is used
 //  toggle the marks of *every* entry in the list.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -554,10 +554,10 @@ extern "C" int AL_FUNCTION ALEntryListToggleMarks( hALEntryList this_object )
 //
 //  This is a C/VB translation function that provides access to the C++
 //  member function ALStatus::GetStatusCode(), for the mStatus data
-//  member for the ALEntryList object.  
+//  member for the ALEntryList object.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -569,7 +569,7 @@ extern "C" int AL_FUNCTION ALEntryListToggleMarks( hALEntryList this_object )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION 
+extern "C" int AL_FUNCTION
 ALEntryListGetStatusCode( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListGetStatusCode" );
@@ -595,11 +595,11 @@ ALEntryListGetStatusCode( hALEntryList this_object )
 //
 //  This is C translation function that provides access to the C++
 //  member function ALStatus::GetStatusString(), for the mStatus data
-//  member for the ALEntryList object.  This is the short string 
+//  member for the ALEntryList object.  This is the short string
 //  translation, not the status detail.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -611,7 +611,7 @@ ALEntryListGetStatusCode( hALEntryList this_object )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" char AL_DLL_FAR * AL_FUNCTION 
+extern "C" char AL_DLL_FAR * AL_FUNCTION
 ALEntryListGetStatusString( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListGetStatusString" );
@@ -643,8 +643,8 @@ ALEntryListGetStatusString( hALEntryList this_object )
 //  member for the ALEntryList object.  This is the detailed message,
 //  not to be confused with the short translation.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -656,7 +656,7 @@ ALEntryListGetStatusString( hALEntryList this_object )
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" char AL_DLL_FAR * AL_FUNCTION 
+extern "C" char AL_DLL_FAR * AL_FUNCTION
 ALEntryListGetStatusDetail( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListGetStatusString" );
@@ -684,11 +684,11 @@ ALEntryListGetStatusDetail( hALEntryList this_object )
 //
 //  This is VB translation function that provides access to the C++
 //  member function ALStatus::GetStatusString(), for the mStatus data
-//  member for the ALEntryList object.  This is the short string 
+//  member for the ALEntryList object.  This is the short string
 //  translation, not the status detail.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -704,7 +704,7 @@ ALEntryListGetStatusDetail( hALEntryList this_object )
 
 #if defined( AL_VB )
 
-extern "C" long AL_FUNCTION 
+extern "C" long AL_FUNCTION
 ALEntryListGetStatusStringVB( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryLisGetStatusStringVB" );
@@ -737,8 +737,8 @@ ALEntryListGetStatusStringVB( hALEntryList this_object )
 //  member for the ALEntryList object.  This is the detailed status
 //  string, not the short status translation.
 //
-//  Like most of the translation functions, you don't get to see much here.  
-//  For detailed information on what happens in the member function, check 
+//  Like most of the translation functions, you don't get to see much here.
+//  For detailed information on what happens in the member function, check
 //  ARCENTRY.CPP.
 //
 //  This routine first performs type checking on the passed object
@@ -754,7 +754,7 @@ ALEntryListGetStatusStringVB( hALEntryList this_object )
 
 #if defined( AL_VB )
 
-extern "C" long AL_FUNCTION 
+extern "C" long AL_FUNCTION
 ALEntryListGetStatusDetailVB( hALEntryList this_object )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListGetStatusDetailVB" );

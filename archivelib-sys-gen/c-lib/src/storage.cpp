@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -36,7 +36,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 // DESCRIPTION
 //
-//  When using a DLL, it is easy to get into a dangerous situation when 
+//  When using a DLL, it is easy to get into a dangerous situation when
 //  creating objects whose ctor and dtor are both in the DLL.  The problem
 //  arises because when you create an object using new, the memory for
 //  the object will be allocated from the EXE.  However, when you destroy
@@ -44,7 +44,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //  the DLL doesn't really own that memory, bad things can happen.
 //
 //  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using 
+//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
 //  a subsegment allocation scheme, it might do some sort of local free
 //  before returning the space to the windows heap.  That is the point where
 //  you could conceivably cook your heap.
@@ -229,7 +229,7 @@ static unsigned long ccitt_32[ 256 ] =
 //  are called.  It does CRC checking on a buffer full of data at
 //  a time.  Hopefully this means the compiler can optimize the
 //  heck out of this code.
-//  
+//
 // REVISION HISTORY
 //
 //   May 26, 1994  1.0A  : First release
@@ -259,12 +259,12 @@ void AL_PROTO ALStorage::UpdateCrc( size_t count )
 // DESCRIPTION
 //
 //  Any derived class needs to have its own Open() function.  However,
-//  the derived class can also call this Open() function in the base 
+//  the derived class can also call this Open() function in the base
 //  class to do some odds and ends for it.  The most important thing it
 //  does is allocate the I/O buffer, which is what makes ALStorage a
 //  relatively fast way to read and write data.  Although the buffer
 //  is in place, there is no data in it, so this guy also sets up the
-//  indices and pointers to reflect that.  
+//  indices and pointers to reflect that.
 //
 //  Upon exit, all you need to to is start reading or writing, and the
 //  whole thing should be ready to go.
@@ -308,14 +308,14 @@ int AL_PROTO ALStorage::Open()
 // DESCRIPTION
 //
 //  This function is nearly identical to ALStorage::Open().
-// 
+//
 //  Any derived class needs to have its own Create() function.  However,
-//  the derived class can also call this Create() function in the base 
+//  the derived class can also call this Create() function in the base
 //  class to do some odds and ends for it.  The most important thing it
 //  does is allocate the I/O buffer, which is what makes ALStorage a
 //  relatively fast way to read and write data.  Although the buffer
 //  is in place, there is no data in it, so this guy also sets up the
-//  indices and pointers to reflect that.  
+//  indices and pointers to reflect that.
 //
 //  Upon exit, all you need to to is start writing, and the
 //  whole thing should be ready to go.
@@ -437,7 +437,7 @@ long AL_PROTO ALStorage::GetCrc32()
 // DESCRIPTION
 //
 //  Calling this function kicks off the CRC calculation for a given
-//  storage object should be done immediately after the object is 
+//  storage object should be done immediately after the object is
 //  opened.  Once the miUpdateCrcFlag is set, the CRC will be updated
 //  every time a LoadBuffer() or FlushBuffer() is called.
 //
@@ -471,12 +471,12 @@ void AL_PROTO ALStorage::InitCrc32( unsigned long seed /* = 0xffffffffL */ )
 //
 //  We could write a simple version of this function by just calling
 //  ReadChar() over and over, but it would be nice to do things
-//  a little more efficiently.  Since we have this nice big buffer 
+//  a little more efficiently.  Since we have this nice big buffer
 //  full of data ready to read, it makes sense to copy big chunks of
 //  it in one fell swoop.  That is what this guy does.  It sits in a loop
 //  doing a memcpy() followed by LoadBuffer() until all of the data
 //  that has been asked for got moved.  As data is read in, we have to
-//  update the data member muReadIndex.  Other data members will get 
+//  update the data member muReadIndex.  Other data members will get
 //  updated by LoadBuffer().
 //
 // REVISION HISTORY
@@ -532,12 +532,12 @@ size_t AL_PROTO ALStorage::ReadBuffer( unsigned char *buf,
 //
 //  We could write a simple version of this function by just calling
 //  WriteChar() over and over, but it would be nice to do things
-//  a little more efficiently.  Since we have this nice big buffer 
+//  a little more efficiently.  Since we have this nice big buffer
 //  just waiting for data, it makes sense to copy big chunks to
 //  it in one fell swoop.  That is what this guy does.  It sits in a loop
 //  doing a memcpy() followed by FlushBuffer() until all of the data
 //  that was ready to go has been sent. As data is written, we have to
-//  update the data member muWriteIndex.  Other data members will get 
+//  update the data member muWriteIndex.  Other data members will get
 //  updated by FlushBuffer().
 //
 // REVISION HISTORY
@@ -592,7 +592,7 @@ size_t AL_PROTO ALStorage::WriteBuffer( const unsigned char *buf,
 //
 //  In order to make sure our archives can be read and written on all sorts
 //  of systems, we have a few functions that are used to write numerical
-//  data in a portable fashion.  This function writes short integers in 
+//  data in a portable fashion.  This function writes short integers in
 //  little endian format (which is not native Intel format).  The complementary
 //  function, ReadPortableShort(), reads short integers back using the
 //  same format.
@@ -625,9 +625,9 @@ int AL_PROTO ALStorage::WritePortableShort( short int short_data )
 //
 //  In order to make sure our archives can be read and written on all sorts
 //  of systems, we have a few functions that are used to write numerical
-//  data in a portable fashion.  This function writes long integers in 
-//  little endian format (which is not native Intel format).  The 
-//  complementary function, ReadPortableLong(), reads long integers back 
+//  data in a portable fashion.  This function writes long integers in
+//  little endian format (which is not native Intel format).  The
+//  complementary function, ReadPortableLong(), reads long integers back
 //  using the same format.
 //
 // REVISION HISTORY
@@ -660,8 +660,8 @@ int AL_PROTO ALStorage::WritePortableLong( long long_data )
 //
 //  In order to make sure our archives can be read and written on all sorts
 //  of systems, we have a few functions that are used to read numerical
-//  data in a portable fashion.  This function reads short integers in 
-//  little endian format (which is not native Intel format).  The 
+//  data in a portable fashion.  This function reads short integers in
+//  little endian format (which is not native Intel format).  The
 //  complementary function, WritePortableShort(), writes short integers out
 //  using the same format.
 //
@@ -693,8 +693,8 @@ int AL_PROTO ALStorage::ReadPortableShort( short int & short_data )
 //
 //  In order to make sure our archives can be read and written on all sorts
 //  of systems, we have a few functions that are used to read numerical
-//  data in a portable fashion.  This function reads long integers in 
-//  little endian format (which is not native Intel format).  The 
+//  data in a portable fashion.  This function reads long integers in
+//  little endian format (which is not native Intel format).  The
 //  complementary function, WritePortableLong(), writes long integers out
 //  using the same format.
 //
@@ -857,7 +857,7 @@ long AL_PROTO ALStorage::Tell()
 //  at a few different points in the process of reading or writing data
 //  from storage objects.  During normal reading and writing, it
 //  will get called every time the buffer is loaded or flushed.
-//  
+//
 //  If we are in Windows mode, we execute a PeekMessage() loop.  This
 //  makes sure that we aren't hogging the CPU.  By doing it this way,
 //  the programmer can be ensure that he/she is being a good citizen
@@ -905,7 +905,7 @@ void AL_PROTO ALStorage::YieldTime()
 //
 // DESCRIPTION
 //
-//  All storage objects have the ability to create a private data block 
+//  All storage objects have the ability to create a private data block
 //  that will be stored along with the directory when creating an archive.
 //  None of the classes predefined in ArchiveLib use this data block, which
 //  means they use this function instead of providing their own virtual
@@ -937,7 +937,7 @@ int AL_PROTO ALStorage::WriteStorageObjectData( ALStorage * archive )
 //
 // DESCRIPTION
 //
-//  All storage objects have the ability to create a private data block 
+//  All storage objects have the ability to create a private data block
 //  that will be stored along with the directory when creating an archive.
 //  None of the classes predefined in ArchiveLib use this data block, which
 //  means they use this function instead of providing their own virtual
@@ -980,14 +980,4 @@ int AL_PROTO ALStorage::ReadStorageObjectData( ALStorage * archive )
 //
 // REVISION HISTORY
 //
-//   August 10, 1994 1.0B : First release.
-//
-
-char *_al_copyright =  "Copyright (c) 1994 Greenleaf Software, Inc.\n"
-                       "All Rights Reserved.\n";
-
-char AL_DLL_FAR * AL_PROTO ALStorage::ReadCopyright()
-{
-    return _al_copyright;
-}
-
+//   August 10, 1994

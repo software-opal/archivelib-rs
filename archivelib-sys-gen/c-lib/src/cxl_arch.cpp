@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -24,7 +24,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #include "alcxl.h"
 
 //
-// extern "C" int ALArchiveExtract( hALArchive this_object, 
+// extern "C" int ALArchiveExtract( hALArchive this_object,
 //                                  hALEntryList list )
 //
 // ARGUMENTS:
@@ -54,7 +54,7 @@ extern "C" int AL_FUNCTION ALArchiveExtract( hALArchive this_object, hALEntryLis
 }
 
 //
-// extern "C" int ALArchiveCreate( hALArchive this_object, 
+// extern "C" int ALArchiveCreate( hALArchive this_object,
 //                                 hALEntryList list )
 //
 // ARGUMENTS:
@@ -69,10 +69,10 @@ extern "C" int AL_FUNCTION ALArchiveExtract( hALArchive this_object, hALEntryLis
 //
 // DESCRIPTION
 //
-//  This is the C/VB wrapper function that supports the 
+//  This is the C/VB wrapper function that supports the
 //  ALArchiveBase::Create(ALEntryList&) function.  For details on the
 //  internals, see ARCHIVEB.CPP.  Note that the two arguments
-//  are checked for correct type.  The second version of 
+//  are checked for correct type.  The second version of
 //  ALArchiveBase::Create() is found below.
 //
 //
@@ -89,8 +89,8 @@ extern "C" int AL_FUNCTION ALArchiveCreate( hALArchive this_object, hALEntryList
 }
 
 //
-// extern "C" int ALArchiveCreateFromArchive( hALArchive this_object, 
-//                                            hALArchive input_archive, 
+// extern "C" int ALArchiveCreateFromArchive( hALArchive this_object,
+//                                            hALArchive input_archive,
 //                                            hALEntryList list )
 //
 // ARGUMENTS:
@@ -136,7 +136,7 @@ extern "C" int AL_FUNCTION ALArchiveCreateFromArchive( hALArchive this_object, h
 }
 
 //
-// extern "C" int ALArchiveAppend( hALArchive this_object, 
+// extern "C" int ALArchiveAppend( hALArchive this_object,
 //                                 hALEntryList list )
 //
 // ARGUMENTS:
@@ -156,7 +156,7 @@ extern "C" int AL_FUNCTION ALArchiveCreateFromArchive( hALArchive this_object, h
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::Append(ALEntrylist&). For details on how the member 
+//  ALArchiveBase::Append(ALEntrylist&). For details on how the member
 //  function actually works, see ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
@@ -177,8 +177,8 @@ extern "C" int AL_FUNCTION ALArchiveAppend( hALArchive this_object, hALEntryList
 }
 
 //
-// extern "C" int ALArchiveAppendFromArchive( hALArchive this_object, 
-//                                            hALArchive input_archive, 
+// extern "C" int ALArchiveAppendFromArchive( hALArchive this_object,
+//                                            hALArchive input_archive,
 //                                            hALEntryList list )
 //
 // ARGUMENTS:
@@ -228,7 +228,7 @@ extern "C" int AL_FUNCTION ALArchiveAppendFromArchive( hALArchive this_object, h
 }
 
 //
-// extern "C" int ALArchiveReadDirectory( hALArchive this_object, 
+// extern "C" int ALArchiveReadDirectory( hALArchive this_object,
 //                                        hALEntryList list )
 //
 // ARGUMENTS:
@@ -248,7 +248,7 @@ extern "C" int AL_FUNCTION ALArchiveAppendFromArchive( hALArchive this_object, h
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::ReadDirectory(ALEntrylist&).  For details on how 
+//  ALArchiveBase::ReadDirectory(ALEntrylist&).  For details on how
 //  the member function actually works, take a look at ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
@@ -268,7 +268,7 @@ extern "C" int AL_FUNCTION ALArchiveReadDirectory( hALArchive this_object, hALEn
 }
 
 //
-// extern "C" int ALArchiveWriteDirectory( hALArchive this_object, 
+// extern "C" int ALArchiveWriteDirectory( hALArchive this_object,
 //                                         hALEntryList list )
 //
 // ARGUMENTS:
@@ -288,7 +288,7 @@ extern "C" int AL_FUNCTION ALArchiveReadDirectory( hALArchive this_object, hALEn
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::WriteDirectory(ALEntrylist&).  For details on how 
+//  ALArchiveBase::WriteDirectory(ALEntrylist&).  For details on how
 //  the member function actually works, take a look at ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
@@ -324,7 +324,7 @@ extern "C" int AL_FUNCTION ALArchiveWriteDirectory( hALArchive this_object, hALE
 //                  All of the marked objects in the list will be
 //                  deleted (by not copying) from the output_archive.
 //
-//  output_archive: This archive will get some of the files from 
+//  output_archive: This archive will get some of the files from
 //                  this_object.  It will then be renamed to have the
 //                  original name of this_object.
 //
@@ -335,7 +335,7 @@ extern "C" int AL_FUNCTION ALArchiveWriteDirectory( hALArchive this_object, hALE
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::Delete().  For details on how the member function 
+//  ALArchiveBase::Delete().  For details on how the member function
 //  actually works, take a look at ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
@@ -358,7 +358,7 @@ extern "C" int AL_FUNCTION ALArchiveDelete( hALArchive this_object,
 }
 
 //
-// extern "C" int ALArchiveSetComment( hALArchive this_object, 
+// extern "C" int ALArchiveSetComment( hALArchive this_object,
 //                                     char *comment )
 //
 // ARGUMENTS:
@@ -377,7 +377,7 @@ extern "C" int AL_FUNCTION ALArchiveDelete( hALArchive this_object,
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::SetComment().  For details on how the member function 
+//  ALArchiveBase::SetComment().  For details on how the member function
 //  actually works, take a look at ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
@@ -415,7 +415,7 @@ extern "C" int AL_FUNCTION ALArchiveSetComment( hALArchive this_object, char *co
 // DESCRIPTION
 //
 //  This is the C wrapper function for the C++ function
-//  ALArchiveBase::GetComment().  For details on how the member function 
+//  ALArchiveBase::GetComment().  For details on how the member function
 //  actually works, take a look at ARCHIVEB.CPP.  Very important
 //  to note that this is for C ONLY!  VB strings take a special
 //  return type, see the next function.
@@ -453,7 +453,7 @@ extern "C" char * AL_FUNCTION ALArchiveGetComment( hALArchive this_object )
 // DESCRIPTION
 //
 //  This is the VB wrapper function for the C++ function
-//  ALArchiveBase::GetComment().  For details on how the member function 
+//  ALArchiveBase::GetComment().  For details on how the member function
 //  actually works, take a look at ARCHIVEB.CPP.  Very important
 //  to note that this is for VB ONLY!  We have to do something
 //  special to translate a C character string to a VB native string
@@ -500,12 +500,12 @@ extern "C" long AL_FUNCTION ALArchiveGetCommentVB( hALArchive this_object )
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::GetStorageObject().  For details on how the member 
-//  function actually works, take a look at ARCHIVEB.CPP.  
+//  ALArchiveBase::GetStorageObject().  For details on how the member
+//  function actually works, take a look at ARCHIVEB.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -539,7 +539,7 @@ extern "C" hALStorage AL_FUNCTION ALArchiveGetStorage( hALArchive this_object )
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::FillListBox().  For details on how the member 
+//  ALArchiveBase::FillListBox().  For details on how the member
 //  function actually works, take a look at ARCHIVEB.CPP.  Note that
 //  even though there is only a single C++ function, we have two
 //  different incarnations for the wrapper function.  One that uses
@@ -548,7 +548,7 @@ extern "C" hALStorage AL_FUNCTION ALArchiveGetStorage( hALArchive this_object )
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -586,7 +586,7 @@ extern "C" int AL_FUNCTION ALArchiveFillListBoxWindow( hALArchive this_object,
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::FillListBox().  For details on how the member 
+//  ALArchiveBase::FillListBox().  For details on how the member
 //  function actually works, take a look at ARCHIVEB.CPP.  Note that
 //  even though there is only a single C++ function, we have two
 //  different incarnations for the wrapper function.  One that uses
@@ -595,7 +595,7 @@ extern "C" int AL_FUNCTION ALArchiveFillListBoxWindow( hALArchive this_object,
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -627,15 +627,15 @@ extern "C" int AL_FUNCTION ALArchiveFillListBoxDialog( hALArchive this_object,
 // DESCRIPTION
 //
 //  This is the C/VB wrapper function for the C++ function
-//  ALArchiveBase::~ALArchiveBase().  For details on how the member 
-//  function actually works, take a look at ARCHIVEB.CPP.  
+//  ALArchiveBase::~ALArchiveBase().  For details on how the member
+//  function actually works, take a look at ARCHIVEB.CPP.
 //
 //  Note that this destructor function is virtual, and should be called
 //  to destroy any derived classes as well.
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -678,7 +678,7 @@ extern "C" void AL_FUNCTION deleteALArchive( hALArchive this_object )
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -710,12 +710,12 @@ extern "C" int AL_FUNCTION ALArchiveSetError( hALArchive this_object,
 //
 //  This is the C/VB wrapper function for the C++ function
 //  ALName::GetStatusCode() as implemented for objects of type
-//  ALArchiveBase.  For details on how the member 
+//  ALArchiveBase.  For details on how the member
 //  function actually works, take a look at OBJNAME.CPP.
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -751,7 +751,7 @@ extern "C" int AL_FUNCTION ALArchiveGetStatusCode( hALArchive this_object )
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -779,7 +779,7 @@ ALArchiveGetStatusString( hALArchive this_object )
 //
 // RETURNS
 //
-//  Always returns a VB handle (pointer?) to a short string translation of 
+//  Always returns a VB handle (pointer?) to a short string translation of
 // the current error code for the ALArchiveBase object.
 //
 // DESCRIPTION
@@ -835,7 +835,7 @@ extern "C" long AL_FUNCTION ALArchiveGetStatusStringVB( hALArchive this_object )
 //
 //  All that happens here is that the arguments are checked for correct
 //  type (when in debug mode), and a call is made to the appropriate
-//  member function, with lots of casting.  
+//  member function, with lots of casting.
 //
 // REVISION HISTORY
 //
@@ -863,7 +863,7 @@ ALArchiveGetStatusDetail( hALArchive this_object )
 //
 // RETURNS
 //
-//  Always returns a VB handle (pointer?) to a translation of 
+//  Always returns a VB handle (pointer?) to a translation of
 //  the current status detail for the ALArchiveBase object.
 //
 // DESCRIPTION
@@ -907,22 +907,4 @@ extern "C" long AL_FUNCTION ALArchiveGetStatusDetailVB( hALArchive archive )
 // RETURNS
 //
 //  Always returns the integer version of the object.  The current version
-//  is 0x100.  Note that this is the version of the Archive, not of the
-//  library.
-//
-// DESCRIPTION
-//
-//  This is the VB/C wrapper function for the C++ function
-//  ALArchiveBase::GetVersion().  For details on this function,
-//  take a look at source file ARCHIVEB.CPP.
-//
-// REVISION HISTORY
-//
-//   May 24, 1994  1.0A  : First release
-//
-
-extern "C" int AL_FUNCTION ALArchiveGetVersion( hALArchive this_object )
-{
-    AL_ASSERT_OBJECT( this_object, ALArchiveBase, "ALArchiveGetVersion" );
-    return ( (ALArchiveBase *) this_object )->GetVersion();
-}
+//  is 0x100.  Note that this is the version of the Archive, not of

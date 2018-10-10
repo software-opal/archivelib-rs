@@ -1,18 +1,18 @@
 /*
 Copyright 1990-2008 Light Infocon Tecnologia S/A
 
-Este arquivo é parte do programa LightBase - Banco de Dados Textual Documental
+Este arquivo Ã© parte do programa LightBase - Banco de Dados Textual Documental
 
-O LightBase é um software livre; você pode redistribui-lo e/ou modifica-lo dentro 
-dos termos da Licença Pública Geral GNU como publicada pela Fundação do Software 
-Livre (FSF); na versão 2 da Licença.
+O LightBase Ã© um software livre; vocÃª pode redistribui-lo e/ou modifica-lo dentro
+dos termos da LicenÃ§a PÃºblica Geral GNU como publicada pela FundaÃ§Ã£o do Software
+Livre (FSF); na versÃ£o 2 da LicenÃ§a.
 
-Este programa é distribuído na esperança que possa ser útil, mas SEM NENHUMA 
-GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer MERCADO ou APLICAÇÃO 
-EM PARTICULAR. Veja a Licença Pública Geral GNU para maiores detalhes.
+Este programa Ã© distribuÃ­do na esperanÃ§a que possa ser Ãºtil, mas SEM NENHUMA
+GARANTIA; sem uma garantia implÃ­cita de ADEQUAÃ‡ÃƒO a qualquer MERCADO ou APLICAÃ‡ÃƒO
+EM PARTICULAR. Veja a LicenÃ§a PÃºblica Geral GNU para maiores detalhes.
 
-Você deve ter recebido uma cópia da Licença Pública Geral GNU versao 2, sob o 
-título "LICENCA.txt", junto com este programa, se não, escreva para a Fundação do 
+VocÃª deve ter recebido uma cÃ³pia da LicenÃ§a PÃºblica Geral GNU versao 2, sob o
+tÃ­tulo "LICENCA.txt", junto com este programa, se nÃ£o, escreva para a FundaÃ§Ã£o do
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
@@ -39,7 +39,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // DESCRIPTION
 //
 //  This is the C/VB translation function for the C++ constructor
-//  ALArchive::ALArchive(char *).  See ARCHIVE.CPP for details on what 
+//  ALArchive::ALArchive(char *).  See ARCHIVE.CPP for details on what
 //  happens in the constructor.
 //
 //  Unlike most translation functions, this constructor doesn't have to check
@@ -78,7 +78,7 @@ extern "C" hALArchive AL_FUNCTION newALArchive( char *name )
 // DESCRIPTION
 //
 //  This is the C/VB translation function for the C++ constructor
-//  ALArchive::ALArchive(ALStorage&).  See ARCHIVE.CPP for details on what 
+//  ALArchive::ALArchive(ALStorage&).  See ARCHIVE.CPP for details on what
 //  happens in the constructor.
 //
 //  Like most translation functions, this one checks the type off its single
@@ -174,8 +174,8 @@ extern "C" int AL_FUNCTION ALArchiveAddFilesToList( hALArchive, hALEntryList lis
 // DESCRIPTION
 //
 //  This is C translation function that provides access to the C++
-//  member function ALArchive::MakeEntriesFromListBox().  Like most of the 
-//  translation functions, you don't get to see much here.  For detailed 
+//  member function ALArchive::MakeEntriesFromListBox().  Like most of the
+//  translation functions, you don't get to see much here.  For detailed
 //  information on what happens in the constructor, check ARCHIVE.CPP.
 //
 //  You might think that this function looks like a member of ALEntryList,
@@ -225,8 +225,8 @@ extern "C" int AL_FUNCTION ALEntryListAddFromDialog( hALEntryList this_object,
 // DESCRIPTION
 //
 //  This is C translation function that provides access to the C++
-//  member function ALArchive::MakeEntriesFromListBox().  Like most of the 
-//  translation functions, you don't get to see much here.  For detailed 
+//  member function ALArchive::MakeEntriesFromListBox().  Like most of the
+//  translation functions, you don't get to see much here.  For detailed
 //  information on what happens in the constructor, check ARCHIVE.CPP.
 //
 //  You might think that this function looks like a member of ALEntryList,
@@ -254,8 +254,8 @@ extern "C" int AL_FUNCTION ALEntryListAddFromWindow( hALEntryList this_object,
 #endif
 
 //
-// extern "C" int ALEntryListAddWildCardFiles( hALEntryList this_object, 
-//                                             char *pattern, 
+// extern "C" int ALEntryListAddWildCardFiles( hALEntryList this_object,
+//                                             char *pattern,
 //                                             int traverse )
 //
 // ARGUMENTS:
@@ -294,9 +294,9 @@ extern "C" int AL_FUNCTION ALEntryListAddFromWindow( hALEntryList this_object,
 //   May 24, 1994  1.0A  : First release
 //
 
-extern "C" int AL_FUNCTION 
-ALEntryListAddWildCardFiles( hALEntryList this_object, 
-                             char AL_DLL_FAR *pattern, 
+extern "C" int AL_FUNCTION
+ALEntryListAddWildCardFiles( hALEntryList this_object,
+                             char AL_DLL_FAR *pattern,
                              int traverse )
 {
     AL_ASSERT_OBJECT( this_object, ALEntryList, "ALEntryListAddWildCardFiles" );
