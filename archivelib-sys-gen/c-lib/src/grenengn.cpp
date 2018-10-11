@@ -16,9 +16,12 @@ título "LICENCA.txt", junto com este programa, se não, escreva para a Fundaç�
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include "all.hpp"
+
+#include "arclib.h"
+#pragma hdrstop
 
 #include "grenengn.h"
+#include "_openf.h"
 #include "_r.h"
 
 
@@ -187,7 +190,7 @@ int AL_PROTO ALGreenleafEngine::Compress( ALStorage AL_DLL_FAR &input,
 {
     int incompressible;
 
-    // ALOpenFiles files( input, output );
+    ALOpenFiles files( input, output );
 
     long input_start = input.Tell();
     long output_start = output.Tell();
@@ -278,7 +281,7 @@ int AL_PROTO ALGreenleafEngine::Decompress( ALStorage AL_DLL_FAR &input,
                                             ALStorage AL_DLL_FAR &output,
                                             long compressed_length )
 {
-    // ALOpenFiles files( input, output );
+    ALOpenFiles files( input, output );
 
     output.InitCrc32();
     if ( miCompressionLevel == AL_GREENLEAF_COPY ) {
@@ -385,3 +388,4 @@ int AL_PROTO ALGreenleafEngine::ReadEngineData( ALStorage AL_DLL_FAR * archive )
     AL_ASSERT( temp == 2, "ReadEngineData: engine data size is not 2, it should be" );
     return archive->ReadPortableShort( miCompressionLevel );
 }
+

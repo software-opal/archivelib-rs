@@ -883,5 +883,3 @@ int AL_PROTO ALFile::Delete()
                                  errno );
     return AL_SUCCESS;
 }
-
-

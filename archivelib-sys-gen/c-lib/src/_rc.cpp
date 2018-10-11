@@ -17,22 +17,23 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
 
+#include "arclib.h"
+#pragma hdrstop
 
 #include "_r.h"
-#include <cstring>
 
 #ifdef AL_SYMANTEC
-  #include <stdlib.h>
+#include <stdlib.h>
 #else
 
-  #if defined( AL_BORLAND )
-    #if defined( __BCOPT__ )
-      #undef __BCOPT__
-    #endif
-  #endif
-  #include <malloc.h>
+#if defined( AL_BORLAND )
+#if defined( __BCOPT__ )
+#undef __BCOPT__
+#endif
 #endif
 
+#include <malloc.h>
+#endif
 #define _519 "Incorrect compression level parameter passed to compressor.  Compression level = %d"
 #define _520 "Memory allocation failure in compression startup"
 #define _445(_200,_446)((short )((_446<<_154)^(_278[_200+2]))&(_153-1))

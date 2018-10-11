@@ -19,8 +19,7 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef _60
 #define _60
 #include <limits.h>
-#include "_custom/stor.h"
-
+#include "arclib.h"
 typedef unsigned short ushort; typedef unsigned char uchar; typedef
 unsigned int uint;
 #define _132 (CHAR_BIT*sizeof(ushort))
