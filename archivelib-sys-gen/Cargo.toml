@@ -1,8 +1,9 @@
 [package]
 name = "archivelib-sys-gen"
+build = "build.rs"
 version = "0.1.0"
 authors = ["Opal Symes <leesdolphin@gmail.com>"]
 
-[dependencies]
-cpp_to_rust_generator="*"
-cpp_utils="*"
+[build-dependencies]
+cc = { version = "*", features = ["parallel"] }
+bindgen = "*"

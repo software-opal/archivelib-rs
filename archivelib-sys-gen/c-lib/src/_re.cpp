@@ -17,9 +17,10 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
 
-#include "arclib.h"
-#pragma hdrstop
 #include "_r.h"
+#include <cstring>
+
+
 #define _519 "Incorrect compression level parameter passed to compressor.  Compression level = %d"
 #define _520 "Memory allocation failure in expansion startup"
 #define _521 "Internal 1 error in Greenleaf Decompression routine"

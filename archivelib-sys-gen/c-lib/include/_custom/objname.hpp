@@ -20,10 +20,9 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef _OBJNAME_H
 #define _OBJNAME_H
 
-#if defined( __cplusplus )
+#include "_debug.h"
 
-#include <string.h>
-#include <iostream>
+#if defined( __cplusplus )
 
 /*
  * class ALName
@@ -108,8 +107,6 @@ class AL_CLASS_TYPE ALName {
         AL_PROTO ALName( const ALName AL_DLL_FAR & );
         AL_PROTO ALName( const char AL_DLL_FAR *s = "",
                          ALCase name_case = AL_MIXED );
-        ALName AL_DLL_FAR & AL_PROTO operator = ( const ALName AL_DLL_FAR & rhs );
-        ALName AL_DLL_FAR & AL_PROTO operator = ( const char AL_DLL_FAR * rhs );
         AL_PROTO ~ALName();
 #if defined( AL_USING_DLL ) || defined( AL_BUILDING_DLL )
         void AL_DLL_FAR * AL_PROTO operator new( size_t size );
@@ -156,50 +153,6 @@ class AL_CLASS_TYPE ALName {
         const ALCase mCase;
         AL_CLASS_TAG( _ALNameTag );
 };
-
-/*
- * std::ostream& operator << ( std::ostream& stream, const ALName  &object )
- *
- * ARGUMENTS:
- *
- *  stream  : An I/O stream.
- *
- *  object  : A reference to an ALName object.
- *
- * RETURNS
- *
- *  A reference to the stream provided as an operator.
- *
- * DESCRIPTION
- *
- * This stream operator makes it easy to send ALName objects
- * to an output stream.  I need to define this function as inline,
- * because it is tough to use far references to ostreams from a DLL.
- * There are other problems associated with using this function
- * in a DLL, and I don't understand them all.
- *
- * REVISION HISTORY
- *
- *   May 26, 1994  1.0A  : First release
- *
- */
-
-inline std::ostream& operator << ( std::ostream& stream, const ALName AL_DLL_FAR &object )
-{
-#if defined( AL_USING_DLL ) && !defined( AL_LARGE_MODEL ) && !defined( AL_FLAT_MODEL )
-    const char _far *p = (STRINGF) object;
-    char *near_string = new char[ _fstrlen( p ) + 1 ];
-    if ( near_string ) {
-        _fstrcpy( near_string, p );
-        stream << near_string;
-        delete near_string;
-    } else
-         stream << "Memory allocation failure!";
-#else
-    stream << (STRINGF) object;
-#endif
-    return stream;
-}
 
 #endif /* #if defined( __cplusplus ) */
 

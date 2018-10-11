@@ -20,7 +20,6 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef _TIMEDATE_H
 #define _TIMEDATE_H
 
-#include <time.h>
 
 /*
  * class ALOpenInputFile

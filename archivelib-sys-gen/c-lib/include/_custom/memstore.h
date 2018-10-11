@@ -20,8 +20,6 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef _MEMSTORE_H
 #define _MEMSTORE_H
 
-#include "arclib.h"
-
 #if defined( __cplusplus )
 
 /*
@@ -171,7 +169,6 @@ class AL_CLASS_TYPE ALMemory : public ALStorage {
         size_t muUserBufferSize;
         char AL_DLL_FAR *mpcUserBuffer;
 #endif
-        AL_CLASS_TAG( _ALMemoryTag );
 };
 
 #endif /* #if defined( __cplusplus ) */

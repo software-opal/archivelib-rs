@@ -167,22 +167,6 @@ enum _ALClassTags {
  *
  *#define AL_CLASS_TAG( x ) int GoodTag(){ return 1; }
  */
+#define AL_CLASS_TAG( x ) int GoodTag(){ return 1; }
 
-#if defined( NDEBUG ) && !defined( AL_CLASS_TAG )
-#  define AL_CLASS_TAG( x ) class AL_CLASS_TYPE _ALTag##x {                   \
-               public :                                                       \
-                   unsigned char mucTagVal;                                   \
-              } mMyTag;                                                       \
-              int AL_PROTO GoodTag(){ return 1; }
-#endif  /* #if defined( NDEBUG ) && !defined( AL_CLASS_TAG ) */
-
-#if !defined( NDEBUG ) && !defined( AL_CLASS_TAG )
-#  define AL_CLASS_TAG( x ) class AL_CLASS_TYPE _ALTag##x {                   \
-               public :                                                       \
-                   AL_PROTO _ALTag##x(){ mucTagVal = x; }                     \
-                   AL_PROTO ~_ALTag##x(){ mucTagVal = _ALDeletedObjectTag; }  \
-                   unsigned char mucTagVal;                                   \
-              } mMyTag;                                                       \
-              int AL_PROTO GoodTag(){ return mMyTag.mucTagVal == x; }
-#endif /* #if !defined( NDEBUG ) && !defined( AL_CLASS_TAG ) */
 #endif /* #ifndef __DEBUG_H      */
