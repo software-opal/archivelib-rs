@@ -125,6 +125,8 @@ class AL_CLASS_TYPE ALStatus {
 
 };
 
+
+#ifndef BINDGEN
 inline std::ostream& operator << ( std::ostream& stream, const ALStatus AL_DLL_FAR &status )
 {
 #if defined( AL_USING_DLL ) && !defined( AL_LARGE_MODEL ) && !defined( AL_FLAT_MODEL )
@@ -141,6 +143,7 @@ inline std::ostream& operator << ( std::ostream& stream, const ALStatus AL_DLL_F
     return stream << status.GetStatusDetail();
 #endif
 }
+#endif
 
 #endif /* #if defined( __cplusplus ) */
 

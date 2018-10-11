@@ -532,7 +532,8 @@ int AL_PROTO ALFile::Create()
     if ( mStatus < AL_SUCCESS )
         return mStatus;
     if ( (char *) mName == 0 || strlen( mName ) == 0 ) {
-        for ( int i = 0 ; i < 999 ; i++ ) {
+      int i;
+        for (  i = 0 ; i < 999 ; i++ ) {
             MakeTempName( i );
             miHandle = open( mName,
 #ifdef AL_UNIX

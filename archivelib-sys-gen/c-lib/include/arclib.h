@@ -37,8 +37,10 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 /* All these includes needed for various library features */
 
+#ifndef BINDGEN
 #include <iostream>
 #include "string.h"
+#endif
 
 #include "aldefs.h"
 #include "_debug.h"

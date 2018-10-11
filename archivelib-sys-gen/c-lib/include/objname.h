@@ -22,9 +22,10 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if defined( __cplusplus )
 
+#ifndef BINDGEN
 #include <string.h>
 #include <iostream>
-
+#endif
 /*
  * class ALName
  *
@@ -157,6 +158,8 @@ class AL_CLASS_TYPE ALName {
         AL_CLASS_TAG( _ALNameTag );
 };
 
+
+#ifndef BINDGEN
 /*
  * std::ostream& operator << ( std::ostream& stream, const ALName  &object )
  *
@@ -200,6 +203,8 @@ inline std::ostream& operator << ( std::ostream& stream, const ALName AL_DLL_FAR
 #endif
     return stream;
 }
+
+#endif
 
 #endif /* #if defined( __cplusplus ) */
 
