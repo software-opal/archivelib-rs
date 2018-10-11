@@ -5,5 +5,5 @@ version = "0.1.0"
 authors = ["Opal Symes <leesdolphin@gmail.com>"]
 
 [build-dependencies]
-cc = { version = "*", features = ["parallel"] }
+cc = "*"
 bindgen = "*"

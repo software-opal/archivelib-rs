@@ -8,11 +8,25 @@ fn main() {
   cc::Build::new()
     .cpp(true) // Switch to C++ library compilation.
     .warnings(false)
-    .define("AL_UNIX", None)
     .define("AL_SUN4", None)
+    .define("AL_UNIX", None)
     .include("c-lib/include")
-    .file("c-lib/src/_rc.cpp")
-    .file("c-lib/src/_re.cpp")
+    .include("c-lib/include/_custom")
+    .files(
+      PathBuf::from("c-lib/src/")
+        .read_dir()
+        .unwrap()
+        .map(|v| v.unwrap().path())
+        .filter(|path| path.is_file())
+        .filter(|path| {
+          if let Some(ext) = path.extension() {
+            if "cpp" == ext {
+              return true;
+            }
+          }
+          return false;
+        }),
+    )
     .compile("libarchivelib.a");
 
   // The bindgen::Builder is the main entry point
@@ -20,10 +34,15 @@ fn main() {
   // the resulting bindings.
   let bindings = bindgen::Builder::default()
     .header("c-lib/include/all.hpp")
-    .whitelist_type("RCompress")
-    .whitelist_type("RExpand")
+    .header("c-lib/include/compat.hpp")
+    .whitelist_type("ALGreenleafEngine")
+    .whitelist_type("ALGreenleafCompressionLevels")
     .whitelist_type("ALMemory")
     .whitelist_type("ALStorage")
+    .whitelist_type("RCompress")
+    .whitelist_type("RExpand")
+    .whitelist_function("newALGreenleafEngine")
+    .constified_enum("ALGreenleafCompressionLevels")
     .generate()
     .expect("Unable to generate bindings");
 

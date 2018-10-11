@@ -3,3 +3,13 @@
 #![allow(non_snake_case)]
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn something() {
+    unsafe { newALGreenleafEngine(ALGreenleafCompressionLevels_AL_GREENLEAF_LEVEL_4) };
+  }
+}
