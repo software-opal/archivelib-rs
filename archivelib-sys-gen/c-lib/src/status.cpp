@@ -16,12 +16,12 @@ título "LICENCA.txt", junto com este programa, se não, escreva para a Fundaç�
 Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+#include "all.hpp"
 
-#include "arclib.h"
-#pragma hdrstop
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <cstring>
 
 //
 // void * ALStatus::operator new( size_t size )
@@ -319,4 +319,3 @@ ALStatus AL_DLL_FAR & AL_PROTO ALStatus::operator = ( ALStatus AL_DLL_FAR &rhs )
     miStatus = rhs.miStatus;
     return *this;
 }
-
