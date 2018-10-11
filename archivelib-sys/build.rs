@@ -15,9 +15,9 @@ fn main() {
     .whitelist_type("ALGreenleafCompressionLevels")
     .whitelist_type("ALMemory")
     .whitelist_type("ALStorage")
-    .whitelist_type("RCompress")
-    .whitelist_type("RExpand")
-    .whitelist_function("newALGreenleafEngine")
+    .whitelist_function("newAL.*")
+    .whitelist_function("deleteAL.*")
+    .whitelist_function("AL.*")
     .constified_enum("ALGreenleafCompressionLevels")
     .generate()
     .expect("Unable to generate bindings");
@@ -28,6 +28,22 @@ fn main() {
     .write_to_file(out_path.join("bindings.rs"))
     .expect("Couldn't write bindings!");
 
+  let mut files = PathBuf::from("c-lib/src/")
+    .read_dir()
+    .unwrap()
+    .map(|v| v.unwrap().path())
+    .filter(|path| path.is_file())
+    .filter(|path| {
+      if let Some(ext) = path.extension() {
+        if "cpp" == ext {
+          return true;
+        }
+      }
+      return false;
+    })
+    .collect::<Vec<_>>();
+  files.sort();
+
   cc::Build::new()
     .cpp(true) // Switch to C++ library compilation.
     .warnings(false)
@@ -35,20 +51,6 @@ fn main() {
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)
     .include("c-lib/include")
-    .files(
-      PathBuf::from("c-lib/src/")
-        .read_dir()
-        .unwrap()
-        .map(|v| v.unwrap().path())
-        .filter(|path| path.is_file())
-        .filter(|path| {
-          if let Some(ext) = path.extension() {
-            if "cpp" == ext {
-              return true;
-            }
-          }
-          return false;
-        }),
-    )
+    .files(files)
     .compile("libarchivelib.a");
 }
