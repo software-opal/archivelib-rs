@@ -107,7 +107,7 @@ void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
 //
 // The Windows and MS-DOS constructors are nearly identical.
 //
-AL_PROTO ALMemory::ALMemory(char AL_HUGE *user_buffer /* = 0 */,
+AL_PROTO ALMemory::ALMemory(uint8_t AL_HUGE *user_buffer /* = 0 */,
                             DWORD user_buffer_size /* = 0 */)
     : ALStorage(4096) {
   if (user_buffer != 0) {
@@ -124,7 +124,7 @@ AL_PROTO ALMemory::ALMemory(char AL_HUGE *user_buffer /* = 0 */,
 
 #else // #if defined( AL_WINDOWS_MEMORY )
 
-AL_PROTO ALMemory::ALMemory(char AL_DLL_FAR *user_buffer /* = 0 */,
+AL_PROTO ALMemory::ALMemory(uint8_t AL_DLL_FAR *user_buffer /* = 0 */,
                             int user_buffer_size /* = 0 */)
     : ALStorage(4096) {
   if (user_buffer != 0) {
@@ -248,7 +248,7 @@ int AL_PROTO ALMemory::LoadBuffer(long address) {
   //
   // Another note: AL_HUGE is _huge for win16, but blank for win32.
   //
-  char AL_HUGE *temp = mpcUserBuffer + address;
+  uint8_t AL_HUGE *temp = mpcUserBuffer + address;
   for (unsigned i = 0; i < muBufferValidData; i++)
     mpcBuffer[i] = *temp++;
 //    memcpy( mpcBuffer, mpcUserBuffer +          address, muBufferValidData );
@@ -395,14 +395,14 @@ int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
         GlobalReAlloc((HGLOBAL)mhUserMemoryHandle, trial_size, GMEM_MOVEABLE);
   }
   if (new_handle == 0) {
-    mpcUserBuffer = (char AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
+    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
     return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
                             "Allocation failure when attempting to "
                             "allocate a buffer "
                             "of %ld bytes for ALMemory",
                             minimum_new_size);
   }
-  mpcUserBuffer = (char AL_HUGE *)GlobalLock(new_handle);
+  mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock(new_handle);
   mhUserMemoryHandle = new_handle;
   muUserBufferSize = trial_size;
   return AL_SUCCESS;
@@ -425,14 +425,14 @@ int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
   if (trial_size >= 65000U)
     trial_size = 65000U;
   if (trial_size >= minimum_new_size) {
-    char *new_buf = (char *)realloc(mpcUserBuffer, (size_t)trial_size);
+    uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)trial_size);
     if (new_buf) {
       mpcUserBuffer = new_buf;
       muUserBufferSize = (size_t)trial_size;
       return AL_SUCCESS;
     }
   }
-  char *new_buf = (char *)realloc(mpcUserBuffer, (size_t)minimum_new_size);
+  uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)minimum_new_size);
   if (new_buf) {
     mpcUserBuffer = new_buf;
     muUserBufferSize = (size_t)trial_size;
@@ -493,7 +493,7 @@ int AL_PROTO ALMemory::FlushBuffer() {
     // Can't use memcpy with huge pointers, at least not with the optimized
     // versions.
     //
-    char AL_HUGE *temp = mpcUserBuffer + mlFilePointer;
+    uint8_t AL_HUGE *temp = mpcUserBuffer + mlFilePointer;
     for (unsigned int i = 0; i < muWriteIndex; i++)
       *temp++ = mpcBuffer[i];
 //        memcpy( mpcUserBuffer +          mlFilePointer, mpcBuffer,
@@ -558,10 +558,10 @@ int AL_PROTO ALMemory::Close() {
         GlobalReAlloc((HGLOBAL)mhUserMemoryHandle, mlSize, GMEM_MOVEABLE);
     if (new_handle != 0)
       mhUserMemoryHandle = new_handle;
-    mpcUserBuffer = (char AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
+    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
     muUserBufferSize = mlSize;
 #else
-    char *new_buf = (char *)realloc(mpcUserBuffer, (size_t)mlSize);
+    uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)mlSize);
     if (new_buf)
       mpcUserBuffer = new_buf;
     muUserBufferSize = (size_t)mlSize;
@@ -609,7 +609,7 @@ int AL_PROTO ALMemory::Create() {
 #if defined(AL_WINDOWS_MEMORY)
   mhUserMemoryHandle = GlobalAlloc(GMEM_MOVEABLE, MEMORY_BLOCK_BYTES);
   if (mhUserMemoryHandle) {
-    mpcUserBuffer = (char AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
+    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
     muUserBufferSize = MEMORY_BLOCK_BYTES;
   } else {
     mpcUserBuffer = 0;
@@ -621,7 +621,7 @@ int AL_PROTO ALMemory::Create() {
                             MEMORY_BLOCK_BYTES, mName.GetSafeName());
   }
 #else
-  mpcUserBuffer = (char *)calloc(MEMORY_BLOCK_BYTES, sizeof(char));
+  mpcUserBuffer = (uint8_t *)calloc(MEMORY_BLOCK_BYTES, sizeof(uint8_t));
   muUserBufferSize = MEMORY_BLOCK_BYTES;
   if (mpcUserBuffer == 0)
     return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,

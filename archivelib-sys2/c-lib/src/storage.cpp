@@ -168,7 +168,7 @@ int AL_PROTO ALStorage::Open() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (muBufferSize != 0)
-    mpcBuffer = new unsigned char[muBufferSize];
+    mpcBuffer = new uint8_t[muBufferSize];
   muBufferValidData = 0;
   muWriteIndex = 0;
   muReadIndex = 0;
@@ -222,7 +222,7 @@ int AL_PROTO ALStorage::Open() {
 int AL_PROTO ALStorage::Create() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
-  mpcBuffer = new unsigned char[muBufferSize];
+  mpcBuffer = new uint8_t[muBufferSize];
   muBufferValidData = 0;
   muWriteIndex = 0;
   muReadIndex = 0;
@@ -296,7 +296,7 @@ int AL_PROTO ALStorage::Close() {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t AL_PROTO ALStorage::ReadBuffer(unsigned char *buf, size_t length) {
+size_t AL_PROTO ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
   size_t bytes_left_to_read = length;
   size_t buffer_bytes_available;
 
@@ -355,7 +355,7 @@ size_t AL_PROTO ALStorage::ReadBuffer(unsigned char *buf, size_t length) {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t AL_PROTO ALStorage::WriteBuffer(const unsigned char *buf,
+size_t AL_PROTO ALStorage::WriteBuffer(uint8_t *buf,
                                        size_t length) {
   size_t buffer_bytes_free;
   size_t write_bytes_left = length;

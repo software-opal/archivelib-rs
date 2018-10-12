@@ -11,7 +11,7 @@
 
 #ifndef CREATE_BUFFER
 #define CREATE_BUFFER(buf_name, input_buffer, length)                          \
-  ALMemory *buf_name = new ALMemory((char *)input_buffer, length);             \
+  ALMemory *buf_name = new ALMemory(input_buffer, length);             \
   buf_name->Create();                                                          \
   CHECK_AL_STATUS(buf_name->mStatus);
 #endif

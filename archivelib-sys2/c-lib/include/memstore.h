@@ -87,9 +87,9 @@ class AL_CLASS_TYPE ALMemory : public ALStorage {
 
 public:
 #ifdef AL_WINDOWS_MEMORY
-  AL_PROTO ALMemory(char AL_HUGE *user_buffer = 0, DWORD user_buffer_size = 0);
+  AL_PROTO ALMemory(uint8_t AL_HUGE *user_buffer = 0, DWORD user_buffer_size = 0);
 #else
-  AL_PROTO ALMemory(char AL_DLL_FAR *user_buffer = 0, int user_buffer_size = 0);
+  AL_PROTO ALMemory(uint8_t AL_DLL_FAR *user_buffer = 0, int user_buffer_size = 0);
 #endif
   virtual AL_PROTO ~ALMemory();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
@@ -142,10 +142,10 @@ public: /* Should some of these might be better off private */
 #ifdef AL_WINDOWS_MEMORY
   HGLOBAL mhUserMemoryHandle;
   long muUserBufferSize;
-  char AL_HUGE *mpcUserBuffer;
+  uint8_t AL_HUGE *mpcUserBuffer;
 #else
   size_t muUserBufferSize;
-  char AL_DLL_FAR *mpcUserBuffer;
+  uint8_t AL_DLL_FAR *mpcUserBuffer;
 #endif
   AL_CLASS_TAG(_ALMemoryTag);
 };

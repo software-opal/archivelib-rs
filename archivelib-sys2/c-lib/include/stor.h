@@ -163,12 +163,10 @@ protected:
    * The file I/O access public interface
    */
 public:
-  int AL_PROTO ReadChar();
-  int AL_PROTO WriteChar(int c);
-  size_t AL_PROTO ReadBuffer(unsigned char AL_DLL_FAR *buffer, size_t length);
-  /* Please keep this arg const, breaks WriteString o/w */
-  size_t AL_PROTO WriteBuffer(const unsigned char AL_DLL_FAR *buffer,
-                              size_t length);
+  int16_t AL_PROTO ReadChar();
+  int AL_PROTO WriteChar(uint8_t c);
+  size_t AL_PROTO ReadBuffer(uint8_t AL_DLL_FAR *buffer, size_t length);
+  size_t AL_PROTO WriteBuffer(uint8_t AL_DLL_FAR *buffer, size_t length);
   virtual int AL_PROTO Open();
   virtual int AL_PROTO Create();
   virtual int AL_PROTO Close();
@@ -191,7 +189,7 @@ public:
    * Data members
    */
 protected:
-  unsigned char AL_DLL_FAR *mpcBuffer;
+  uint8_t AL_DLL_FAR *mpcBuffer;
   size_t muBufferValidData;
   size_t muWriteIndex;
   size_t muReadIndex;
@@ -239,7 +237,7 @@ public:
  *
  */
 
-inline int AL_PROTO ALStorage::ReadChar() {
+inline int16_t AL_PROTO ALStorage::ReadChar() {
   int result;
 
   AL_ASSERT(
@@ -286,7 +284,7 @@ inline int AL_PROTO ALStorage::ReadChar() {
  *
  */
 
-inline int AL_PROTO ALStorage::WriteChar(int c) {
+inline int AL_PROTO ALStorage::WriteChar(uint8_t c) {
   int result;
 
   /*    assert( muReadIndex == 0 ); */ /* Can't write if I've done a read */
@@ -298,7 +296,7 @@ inline int AL_PROTO ALStorage::WriteChar(int c) {
   if (result < 0)
     return mStatus;
   else
-    return mpcBuffer[muWriteIndex++] = (char)c;
+    return mpcBuffer[muWriteIndex++] = c;
 }
 
 #endif /* #if defined( __cplusplus ) */
