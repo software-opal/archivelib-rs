@@ -10,15 +10,11 @@ fn main() {
   // the resulting bindings.
   let bindings = bindgen::Builder::default()
     .clang_arg("-xc++")
-    .header("c-lib/include/all.hpp")
-    .whitelist_type("ALGreenleafEngine")
-    .whitelist_type("ALGreenleafCompressionLevels")
-    .whitelist_type("ALMemory")
-    .whitelist_type("ALStorage")
-    .whitelist_function("newAL.*")
-    .whitelist_function("deleteAL.*")
-    .whitelist_function("AL.*")
-    .constified_enum("ALGreenleafCompressionLevels")
+    .header("c-lib/wrapper.h")
+    .whitelist_function("compress")
+    .whitelist_function("decompress")
+    .whitelist_function("clean")
+    .whitelist_function("reverse*")
     .generate()
     .expect("Unable to generate bindings");
 
@@ -50,7 +46,10 @@ fn main() {
     .define("AL_CUSTOM", None)
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)
+    .include("c-lib/")
     .include("c-lib/include")
+    .file("c-lib/api.cpp")
+    .file("c-lib/enum_rev.cpp")
     .files(files)
     .compile("libarchivelib.a");
 }

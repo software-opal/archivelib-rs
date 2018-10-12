@@ -3,5 +3,4 @@
 #define BINDGEN
 #define AL_CUSTOM
 
-#include "_r.h"
-#include "alcxl.h"
+#include "api.h"

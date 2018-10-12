@@ -785,7 +785,7 @@ int AL_PROTO ALMemory::Create()
                                  mName.GetSafeName() );
     }
 #else
-    mpcUserBuffer = (char *) malloc( 16384 );
+    mpcUserBuffer = (char *) calloc( 16384 , sizeof(char));
     muUserBufferSize = 16384;
     if ( mpcUserBuffer == 0 )
         return mStatus.SetError( AL_CANT_ALLOCATE_MEMORY,
