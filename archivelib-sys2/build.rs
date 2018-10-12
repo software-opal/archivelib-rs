@@ -42,7 +42,7 @@ fn main() {
 
   cc::Build::new()
     .cpp(true) // Switch to C++ library compilation.
-    .warnings(false)
+    .warnings(true)
     .define("AL_CUSTOM", None)
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)

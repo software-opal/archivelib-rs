@@ -30,7 +30,6 @@
 
 #include "status.h"
 #include "stor.h"
-#include "cmpengn.h"
 
 #if defined(AL_SUN4) && defined(AL_GCC)
 

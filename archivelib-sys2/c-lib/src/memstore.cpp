@@ -1,5 +1,4 @@
 #include "arclib.h"
-#pragma hdrstop
 
 #include "memstore.h"
 
@@ -110,7 +109,7 @@ void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
 //
 AL_PROTO ALMemory::ALMemory(char AL_HUGE *user_buffer /* = 0 */,
                             DWORD user_buffer_size /* = 0 */)
-    : ALStorage(4096, AL_MEMORY_OBJECT) {
+    : ALStorage(4096) {
   if (user_buffer != 0) {
     mpcUserBuffer = user_buffer;
     mfUserOwnsBuffer = 1;
@@ -127,7 +126,7 @@ AL_PROTO ALMemory::ALMemory(char AL_HUGE *user_buffer /* = 0 */,
 
 AL_PROTO ALMemory::ALMemory(char AL_DLL_FAR *user_buffer /* = 0 */,
                             int user_buffer_size /* = 0 */)
-    : ALStorage(4096, AL_MEMORY_OBJECT) {
+    : ALStorage(4096) {
   if (user_buffer != 0) {
     mpcUserBuffer = user_buffer;
     mfUserOwnsBuffer = 1;
@@ -256,8 +255,6 @@ int AL_PROTO ALMemory::LoadBuffer(long address) {
 #else
   memcpy(mpcBuffer, mpcUserBuffer + (size_t)address, muBufferValidData);
 #endif
-  if (miUpdateCrcFlag)
-    UpdateCrc(muBufferValidData);
   muReadIndex = 0; // Reading can resume at this location
   mlFilePointer += muBufferValidData;
   return muBufferValidData;
@@ -488,8 +485,6 @@ int AL_PROTO ALMemory::FlushBuffer() {
   // is nothing in the buffer to flush out.
   //
   if (muWriteIndex != 0) {
-    if (miUpdateCrcFlag)
-      UpdateCrc(muWriteIndex);
     if ((long)(muWriteIndex + mlFilePointer) > (long)muUserBufferSize)
       if (GrowUserBuffer(muWriteIndex + mlFilePointer) < 0)
         return mStatus;

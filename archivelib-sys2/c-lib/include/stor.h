@@ -104,22 +104,6 @@
  *
  *  muBufferSize         : The size of the I/O buffer.
  *
- *  mpMonitor            : A pointer to the monitor attached to this object.
- *                         During the archiving process, this pointer gets
- *                         set by the archive routine for each storage object
- *                         as it is being processes.  A value of 0 just
- *                         means no monitor is watching this object at the
- *                         moment.
- *
- *  mTimeDate            : The time and date stamp for the file, this usually
- *                         gets set when the object is opened using Open(),
- *                         it is also set when we read in a storage object's
- *                         information using ReadDirectory().
- *
- *  mAttributes          : The attributes associated with the file. R/H/S/A.
- *
- *  mName                : The name of the storage object.
- *
  *  mStatus              : The current status of the object.
  *
  * MEMBER FUNCTIONS
@@ -130,12 +114,6 @@
  *  operator new()       : The memory allocation operator.  This is only
  *                         used if the library is in a DLL.
  *  ~ALStorage()         : Virtual destructor.
- *  UpdateCrc()          : Protected function used internally when the
- *                         crc is being calculated
- *  ReadString()         : Read a string in ArchiveLib's proprietary format.
- *  WriteStorageObjectData() : Protected function to write custom data needed
- *                             for a particular derived classe.
- *  ReadStorageObjectData()  : Protected function read that data back in.
  *  ReadChar()           : Superfast inline function to read a bytee
  *  WriteChar()          : Fast inline function to write a byte.
  *  ReadBuffer()         : Function to read blocks of data.
@@ -149,26 +127,11 @@
  *                         object.  Called when WriteChar() has gone too far.
  *  Seek()               : Called to reposition the I/O pointer of the
  *                         underlying object.
- *  YieldTime()          : Called whenever a FlushBuffer() or LoadBuffer()
- *                         takes place.  Used to update the Monitor attached
- *                         to the file, and to yield time to the O/S.
- *  Compare()            : Compare two storage objects.
- *  InitCrc32()          : Called to start calculating the CRC for an object.
- *  WritePortableShort() : Write 16 bit integer in little endian format.
- *  WritePortableLong()  : Write 32 bit integer in little endian format.
- *  ReadPortableShort()  : Read 16 bit integer in little endian format.
- *  ReadPortableLong()   : Read 32 bit integer in little endian format.
- *  WriteString()        : Write string in ArchiveLib format.
- *  Rename()             : Rename the underlying object.
- *  UnRename()           : Undo a rename operation.
- *  RenameToBackup()     : Rename to a special backup name.
  *  Delete()             : Delete an underlying storage object.
- *  GetCrc32()           : Return value of the CRC member.
  *  GetSize()            : Reeturn value of the size member.
  *  IsOpen()             : Indicate if the file is open.
  *  Tell()               : Indicate where the next read or write will
  *                         take place.
- *  ReadCopyright()      : A function to get at the Greenleaf Copyright.
  *
  * REVISION HISTORY
  *
@@ -181,7 +144,7 @@ class AL_CLASS_TYPE ALStorage {
    * Constructors, destructors, assignment operator
    */
 protected:
-  AL_PROTO ALStorage(size_t buffer_size, const ALStorageType storage_type);
+  AL_PROTO ALStorage(size_t buffer_size);
   ALStorage AL_DLL_FAR &AL_PROTO operator=(const ALStorage AL_DLL_FAR &);
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
   void AL_DLL_FAR *AL_PROTO operator new(size_t size);
@@ -197,20 +160,6 @@ protected:
   /*
    * Member functions, grouped somewhat
    *
-   *
-   * Private member manipulation
-   */
-protected:
-  void AL_PROTO UpdateCrc(size_t count);
-  /*
-   * This is private, because it allocates memory in the DLL, so it
-   * must be deleted in the DLL as well.
-   */
-private:
-  char AL_DLL_FAR *AL_PROTO ReadString();
-  virtual int AL_PROTO WriteStorageObjectData(ALStorage AL_DLL_FAR *archive);
-  virtual int AL_PROTO ReadStorageObjectData(ALStorage AL_DLL_FAR *archive);
-  /*
    * The file I/O access public interface
    */
 public:
@@ -226,12 +175,6 @@ public:
   virtual int AL_PROTO LoadBuffer(long address) = 0;
   virtual int AL_PROTO FlushBuffer() = 0;
   virtual int AL_PROTO Seek(long address) = 0;
-  void AL_PROTO InitCrc32(unsigned long seed = 0xffffffffl);
-  int AL_PROTO WritePortableShort(short int short_data);
-  int AL_PROTO WritePortableLong(long long_data);
-  int AL_PROTO ReadPortableShort(short int AL_DLL_FAR &short_data);
-  int AL_PROTO ReadPortableLong(long AL_DLL_FAR &long_data);
-  int AL_PROTO WriteString(const char AL_DLL_FAR *string_data);
   /*
    * File manipulation public interface
    */
@@ -241,11 +184,9 @@ public:
    * Access functions
    */
 public:
-  long AL_PROTO GetCrc32();
   long AL_PROTO GetSize() const { return mlSize; }
   int AL_PROTO IsOpen() { return mpcBuffer != 0; }
   long AL_PROTO Tell();
-  char AL_DLL_FAR *AL_PROTO ReadCopyright();
   /*
    * Data members
    */
@@ -256,14 +197,10 @@ protected:
   size_t muReadIndex;
   long mlFilePointer;
   long mlSize;
-  long mlCrc32;
-  short int miUpdateCrcFlag;
-  short int miCreated;
   /*
    * Public members
    */
 public:
-  const ALStorageType miStorageObjectType;
   const size_t muBufferSize;
   ALStatus mStatus;
   AL_CLASS_TAG(_ALStorageTag);

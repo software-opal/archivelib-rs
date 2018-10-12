@@ -6,8 +6,6 @@
 
 #if defined(__cplusplus)
 
-#include "cmpengn.h"
-
 /*
  * class ALGreenleafEngine : public ALCompressionEngine
  *
@@ -64,13 +62,15 @@
  *
  */
 
-class AL_CLASS_TYPE ALGreenleafEngine : public ALCompressionEngine {
+class AL_CLASS_TYPE ALGreenleafEngine {
   /*
    * Declarations, friends, constructors, destructors
    */
 public:
-  AL_PROTO ALGreenleafEngine(short int compression_level = AL_GREENLEAF_LEVEL_2,
-                             short int fail_uncompressible = 0);
+  AL_PROTO
+  ALGreenleafEngine(enum ALGreenleafCompressionLevels compression_level =
+                        AL_GREENLEAF_LEVEL_2,
+                    bool fail_uncompressible = true);
   virtual AL_PROTO ~ALGreenleafEngine();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
   void AL_DLL_FAR *AL_PROTO operator new(size_t size);
@@ -83,19 +83,13 @@ protected:
   AL_PROTO ALGreenleafEngine(ALGreenleafEngine AL_DLL_FAR &);
   ALGreenleafEngine AL_DLL_FAR &AL_PROTO
   operator=(ALGreenleafEngine AL_DLL_FAR &rhs);
-  /*
-   * Member functions
-   */
-protected:
-  virtual int AL_PROTO WriteEngineData(ALStorage AL_DLL_FAR *archive);
-  virtual int AL_PROTO ReadEngineData(ALStorage AL_DLL_FAR *archive);
 
 public:
-  virtual int AL_PROTO Compress(ALStorage AL_DLL_FAR &input,
-                                ALStorage AL_DLL_FAR &output);
-  virtual int AL_PROTO Decompress(ALStorage AL_DLL_FAR &input,
-                                  ALStorage AL_DLL_FAR &output,
-                                  long compressed_length = -1);
+  int AL_PROTO Compress(ALStorage AL_DLL_FAR &input,
+                        ALStorage AL_DLL_FAR &output);
+  int AL_PROTO Decompress(ALStorage AL_DLL_FAR &input,
+                          ALStorage AL_DLL_FAR &output,
+                          long compressed_length = -1);
   short int AL_PROTO CompressionLevel() { return miCompressionLevel; }
   /*
    * Data members
@@ -105,6 +99,7 @@ protected:
   short int miFailUncompressible;
 
 public:
+  ALStatus mStatus;
   AL_CLASS_TAG(_ALGreenleafEngineTag);
 };
 

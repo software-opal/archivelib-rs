@@ -1,5 +1,4 @@
 #include "arclib.h"
-#pragma hdrstop
 
 #include "grenengn.h"
 #include "_rc.hpp"
@@ -84,10 +83,9 @@ void AL_DLL_FAR *AL_PROTO ALGreenleafEngine::operator new(size_t size) {
 //
 
 AL_PROTO ALGreenleafEngine::ALGreenleafEngine(
-    short int compression_level /* = AL_GREENLEAF_LEVEL_2 */,
-    short int fail_uncompressible /* = 0 */)
-    : ALCompressionEngine(AL_COMPRESSION_GREENLEAF, "Greenleaf") {
-  miCompressionLevel = compression_level;
+    enum ALGreenleafCompressionLevels compression_level,
+    bool fail_uncompressible)
+    : miCompressionLevel(compression_level) {
   miFailUncompressible = fail_uncompressible;
 }
 
@@ -170,7 +168,6 @@ int AL_PROTO ALGreenleafEngine::Compress(ALStorage AL_DLL_FAR &input,
 
   long input_start = input.Tell();
   long output_start = output.Tell();
-  input.InitCrc32();
   RCompress rc(input, output, miCompressionLevel + 10, miFailUncompressible);
 
   if (rc.mStatus < 0)
@@ -186,7 +183,6 @@ int AL_PROTO ALGreenleafEngine::Compress(ALStorage AL_DLL_FAR &input,
   if (incompressible) {
     input.Seek(input_start);
     output.Seek(output_start);
-    input.InitCrc32();
     miCompressionLevel = AL_GREENLEAF_COPY;
     int c;
     for (;;) {
@@ -255,7 +251,6 @@ int AL_PROTO ALGreenleafEngine::Decompress(ALStorage AL_DLL_FAR &input,
                                            long compressed_length) {
   ALOpenFiles files(input, output);
 
-  output.InitCrc32();
   if (miCompressionLevel == AL_GREENLEAF_COPY) {
     int c;
     for (; compressed_length; compressed_length--) {
@@ -279,82 +274,4 @@ int AL_PROTO ALGreenleafEngine::Decompress(ALStorage AL_DLL_FAR &input,
   else if (output.mStatus < 0)
     return mStatus = output.mStatus;
   return mStatus;
-}
-
-//
-// int ALGreenleafEngine::WriteEngineData( ALStorage * archive )
-//
-// ARGUMENTS:
-//
-//  A pointer to the storage area where the data is to be written.
-//
-// RETURNS
-//
-//  AL_SUCCESS if the data was written properly, else an error code
-//  less than AL_SUCCESS.
-//
-// DESCRIPTION
-//
-//  Every compression engine used in ArchiveLib gets the opportunity
-//  to store data it needs to save in order to characterize its compression
-//  process.  The Greenleaf compression engine only needs to save a single
-//  integer, which contains the compression level used.  This is the
-//  function that does so.
-//
-//  Data like this is stored in string format, which consists of a single
-//  short integer describing the number of bytes in the string, followed
-//  by the string.  We store in this portable format so that even a program
-//  that doesn't know about compression engines would be able to read in
-//  archive directory data.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-int AL_PROTO ALGreenleafEngine::WriteEngineData(ALStorage AL_DLL_FAR *archive) {
-  archive->WritePortableShort(2);
-  return archive->WritePortableShort(miCompressionLevel);
-}
-
-//
-// int ALGreenleafEngine::ReadEngineData( ALStorage * archive )
-//
-// ARGUMENTS:
-//
-//  A pointer to the storage area where the data is to be read.
-//
-// RETURNS
-//
-//  AL_SUCCESS if the data was read properly, else an error code
-//  less than AL_SUCCESS.
-//
-// DESCRIPTION
-//
-//  Every compression engine used in ArchiveLib gets the opportunity
-//  to store data it needs to save in order to characterize its compression
-//  process.  The Greenleaf compression engine only needs to save a single
-//  integer, which contains the compression level used.
-//
-//  During the creation of the compression engine, this function gets called
-//  in order to load the engine's private data.  All we do is read in
-//  the compression level, along with a little error checking.
-//
-//  Data like this is stored in string format, which consists of a single
-//  short integer describing the number of bytes in the string, followed
-//  by the string.  We store in this portable format so that even a program
-//  that doesn't know about compression engines would be able to read in
-//  archive directory data.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-int AL_PROTO ALGreenleafEngine::ReadEngineData(ALStorage AL_DLL_FAR *archive) {
-  short temp;
-  archive->ReadPortableShort(temp);
-  AL_ASSERT(temp == 2,
-            "ReadEngineData: engine data size is not 2, it should be");
-  return archive->ReadPortableShort(miCompressionLevel);
 }

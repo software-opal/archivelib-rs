@@ -1,5 +1,5 @@
 #include "arclib.h"
-#pragma hdrstop
+
 
 #include "_openf.h"
 

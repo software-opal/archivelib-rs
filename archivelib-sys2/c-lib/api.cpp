@@ -54,13 +54,18 @@ AllocatedMemory build_output(ALStorage *out) {
   size_t actual_len = out->ReadBuffer((unsigned char *)data, data_len);
   out->Close();
   if (out->mStatus.GetStatusCode() != AL_SUCCESS) {
+    AllocatedMemory status = build_error_from_status_obj(&out->mStatus);
     delete out;
     free(data);
-    return build_error_from_status_obj(&out->mStatus);
+    return status;
+  } else {
+    delete out;
   }
-  delete out;
   if (data_len != actual_len) {
-    data = (u_int8_t *)realloc(data, actual_len);
+    uint8_t *tmp = (u_int8_t *)realloc(data, actual_len);
+    if (tmp != NULL) {
+      data = tmp;
+    }
   }
 
   return AllocatedMemory{
