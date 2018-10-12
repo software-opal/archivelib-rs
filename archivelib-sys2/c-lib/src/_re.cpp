@@ -9,7 +9,7 @@
 #define _521 "Internal 1 error in Greenleaf Decompression routine"
 #define _522 "Internal 2 error in Greenleaf Decompression routine"
 
-RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int _269) {
+RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int32_t _269) {
   _161 = &_266;
   _162 = &_267;
   _248 = _268;
@@ -18,28 +18,28 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int _269) {
     mStatus.SetError(AL_ILLEGAL_PARAMETER, _519, _269 - 10);
     _175 = 2;
   } else
-    _175 = (short)(1 << _269);
-  _176 = (short)(_175 - 1);
-  _166 = new uchar[_175 + 2];
+    _175 = (int16_t)(1 << _269);
+  _176 = (int16_t)(_175 - 1);
+  _166 = new uint8_t[_175 + 2];
   if (_166)
-    memset(_166, 0, (_175 + 2) * sizeof(uchar));
-  _240 = new ushort[_148];
+    memset(_166, 0, (_175 + 2) * sizeof(uint8_t));
+  _240 = new uint16_t[_148];
   if (_240)
-    memset(_240, 0, _148 * sizeof(ushort));
-  _241 = new ushort[_149];
+    memset(_240, 0, _148 * sizeof(uint16_t));
+  _241 = new uint16_t[_149];
   if (_241)
-    memset(_241, 0, _149 * sizeof(ushort));
-  _242 = new uchar[_159];
+    memset(_241, 0, _149 * sizeof(uint16_t));
+  _242 = new uint8_t[_159];
   if (_242)
-    memset(_242, 0, _159 * sizeof(uchar));
-  _189 = new ushort[2 * _141 - 1];
+    memset(_242, 0, _159 * sizeof(uint8_t));
+  _189 = new uint16_t[2 * _141 - 1];
   if (_189)
-    memset(_189, 0, (2 * _141 - 1) * sizeof(ushort));
-  _190 = new ushort[2 * _141 - 1];
+    memset(_189, 0, (2 * _141 - 1) * sizeof(uint16_t));
+  _190 = new uint16_t[2 * _141 - 1];
   if (_190)
-    memset(_190, 0, (2 * _141 - 1) * sizeof(ushort));
-  _180 = new uchar[_141];
-  _181 = new uchar[_152];
+    memset(_190, 0, (2 * _141 - 1) * sizeof(uint16_t));
+  _180 = new uint8_t[_141];
+  _181 = new uint8_t[_152];
   if (!_166 || !_240 || !_241 || !_242 || !_189 || !_190 || !_180 || !_181) {
     mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, _520);
   }
@@ -62,15 +62,15 @@ RExpand::~RExpand() {
   if (_181)
     delete[] _181;
 }
-int RExpand::Expand() {
-  int _231;
-  short _226;
-  short _276;
-  short _203;
-  short _200;
-  uchar *_278;
-  short _279;
-  short _280;
+int32_t RExpand::Expand() {
+  int32_t _231;
+  int16_t _226;
+  int16_t _276;
+  int16_t _203;
+  int16_t _200;
+  uint8_t *_278;
+  int16_t _279;
+  int16_t _280;
   _278 = _166;
   _279 = _175;
   _280 = _176;
@@ -80,17 +80,17 @@ int RExpand::Expand() {
   _200 = 0;
   while (_243 < 5) {
     if ((_203 = _249()) <= UCHAR_MAX) {
-      _278[_200] = (uchar)_203;
+      _278[_200] = (uint8_t)_203;
       if (++_200 >= _279) {
         _200 = 0;
-        if ((short)_162->WriteBuffer(_278, _279) != _279)
+        if ((int16_t)_162->WriteBuffer(_278, _279) != _279)
           goto _282;
       }
     } else {
-      _276 = (short)(_203 - (UCHAR_MAX + 1 - _135));
+      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - _135));
       if (_276 == _144)
         break;
-      _226 = (short)((_200 - _250() - 1) & _280);
+      _226 = (int16_t)((_200 - _250() - 1) & _280);
       if (_226 < _279 - _140 - 1 && _200 < _279 - _140 - 1) {
         while (--_276 >= 0)
           _278[_200++] = _278[_226++];
@@ -99,10 +99,10 @@ int RExpand::Expand() {
           _278[_200] = _278[_226];
           if (++_200 >= _279) {
             _200 = 0;
-            if ((short)_162->WriteBuffer(_278, _279) != _279)
+            if ((int16_t)_162->WriteBuffer(_278, _279) != _279)
               goto _282;
           }
-          _226 = (short)((_226 + 1) & _280);
+          _226 = (int16_t)((_226 + 1) & _280);
         }
       }
     }
@@ -112,8 +112,8 @@ int RExpand::Expand() {
 _282:
   return _231;
 }
-ushort RExpand::_249() {
-  ushort _276, _283;
+uint16_t RExpand::_249() {
+  uint16_t _276, _283;
   if (_244 == 0) {
     _244 = _252(16);
     _253(_145, _147, 3);
@@ -137,8 +137,8 @@ ushort RExpand::_249() {
   _256(_180[_276]);
   return _276;
 }
-ushort RExpand::_250() {
-  ushort _276, _283;
+uint16_t RExpand::_250() {
+  uint16_t _276, _283;
   _276 = _241[_182 >> 8];
   if (_276 >= _142) {
     _283 = 1U << 7;
@@ -153,7 +153,7 @@ ushort RExpand::_250() {
   _256(_181[_276]);
   if (_276 != 0) {
     _276--;
-    _276 = (short)((1U << _276) + _252(_276));
+    _276 = (int16_t)((1U << _276) + _252(_276));
   }
   return _276;
 }
@@ -161,15 +161,15 @@ void RExpand::_251() {
   _244 = 0;
   _257();
 }
-ushort RExpand::_252(int _219) {
-  ushort _284;
-  _284 = (ushort)(_182 >> (2 * CHAR_BIT - _219));
+uint16_t RExpand::_252(int32_t _219) {
+  uint16_t _284;
+  _284 = (uint16_t)(_182 >> (2 * CHAR_BIT - _219));
   _256(_219);
   return _284;
 }
-void RExpand::_253(short _254, short _220, short _221) {
-  short _226, _203, _219;
-  ushort _283;
+void RExpand::_253(int16_t _254, int16_t _220, int16_t _221) {
+  int16_t _226, _203, _219;
+  uint16_t _283;
   _219 = _252(_220);
   if (_219 == 0) {
     _203 = _252(_220);
@@ -180,7 +180,7 @@ void RExpand::_253(short _254, short _220, short _221) {
   } else {
     _226 = 0;
     while (_226 < _219) {
-      _203 = (short)(_182 >> 13);
+      _203 = (int16_t)(_182 >> 13);
       if (_203 == 7) {
         _283 = 1U << 12;
         while (_283 & _182) {
@@ -189,7 +189,7 @@ void RExpand::_253(short _254, short _220, short _221) {
         }
       }
       _256((_203 < 7) ? 3 : _203 - 3);
-      _181[_226++] = (uchar)_203;
+      _181[_226++] = (uint8_t)_203;
       if (_226 == _221) {
         _203 = _252(2);
         while (--_203 >= 0)
@@ -202,8 +202,8 @@ void RExpand::_253(short _254, short _220, short _221) {
   }
 }
 void RExpand::_255() {
-  short _226, _203, _219;
-  ushort _283;
+  int16_t _226, _203, _219;
+  uint16_t _283;
   _219 = _252(_143);
   if (_219 == 0) {
     _203 = _252(_143);
@@ -230,30 +230,30 @@ void RExpand::_255() {
         if (_203 == 0)
           _203 = 1;
         else if (_203 == 1)
-          _203 = (short)(_252(4) + 3);
+          _203 = (int16_t)(_252(4) + 3);
         else
-          _203 = (short)(_252(_143) + 20);
+          _203 = (int16_t)(_252(_143) + 20);
         while (--_203 >= 0)
           _180[_226++] = 0;
       } else
-        _180[_226++] = (uchar)(_203 - 2);
+        _180[_226++] = (uint8_t)(_203 - 2);
     }
     while (_226 < _141)
       _180[_226++] = 0;
     _258(_141, _180, 12, _240, _148);
   }
 }
-void RExpand::_256(int _219) {
+void RExpand::_256(int32_t _219) {
   while (_219 > _172) {
     _219 -= _172;
-    _182 = (ushort)((_182 << _172) + (_245 >> (CHAR_BIT - _172)));
+    _182 = (uint16_t)((_182 << _172) + (_245 >> (CHAR_BIT - _172)));
     if (_246 <= 0) {
       _247 = _242;
       if (_248 >= 0 && _248 < _159) {
-        _246 = (short)_161->ReadBuffer(_242, (size_t)_248);
+        _246 = (int16_t)_161->ReadBuffer(_242, (size_t)_248);
         _248 -= _246;
       } else
-        _246 = (short)_161->ReadBuffer(_242, _159);
+        _246 = (int16_t)_161->ReadBuffer(_242, _159);
       if (_246 <= 0)
         _243++;
     }
@@ -261,8 +261,8 @@ void RExpand::_256(int _219) {
     _246--;
     _172 = CHAR_BIT;
   }
-  _172 = (short)(_172 - _219);
-  _182 = (ushort)((_182 << _219) + (_245 >> (CHAR_BIT - _219)));
+  _172 = (int16_t)(_172 - _219);
+  _182 = (uint16_t)((_182 << _219) + (_245 >> (CHAR_BIT - _219)));
   _245 <<= _219;
 }
 void RExpand::_257() {
@@ -275,50 +275,51 @@ void RExpand::_257() {
 #if defined(AL_BORLAND) && defined(AL_FLAT_MODEL)
 #pragma option -Od
 #endif
-void RExpand::_258(int _259, uchar *_260, int _261, ushort *_262, ushort _263) {
-  ushort _277[17], _287[17], _288[18], *_204;
-  uint _226, _289, _209, _290, _291, _292, _293, _283;
+void RExpand::_258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
+                   uint16_t _263) {
+  uint16_t _277[17], _287[17], _288[18], *_204;
+  uint32_t _226, _289, _209, _290, _291, _292, _293, _283;
   for (_226 = 1; _226 <= 16; _226++)
     _277[_226] = 0;
-  for (_226 = 0; (int)_226 < _259; _226++)
+  for (_226 = 0; (int32_t)_226 < _259; _226++)
     _277[_260[_226]]++;
   _288[1] = 0;
   for (_226 = 1; _226 <= 16; _226++)
-    _288[_226 + 1] = (ushort)(_288[_226] + (_277[_226] << (16 - _226)));
-  if (_288[17] != (ushort)(1U << 16)) {
+    _288[_226 + 1] = (uint16_t)(_288[_226] + (_277[_226] << (16 - _226)));
+  if (_288[17] != (uint16_t)(1U << 16)) {
     mStatus.SetError(AL_INTERNAL_ERROR, _521);
     _243 = 10;
     return;
   }
   _291 = 16 - _261;
-  for (_226 = 1; (int)_226 <= _261; _226++) {
+  for (_226 = 1; (int32_t)_226 <= _261; _226++) {
     _288[_226] >>= _291;
-    _287[_226] = (ushort)(1U << (_261 - _226));
+    _287[_226] = (uint16_t)(1U << (_261 - _226));
   }
   while (_226 <= 16) {
-    _287[_226] = (ushort)(1U << (16 - _226));
+    _287[_226] = (uint16_t)(1U << (16 - _226));
     _226++;
   }
   _226 = _288[_261 + 1] >> _291;
-  if (_226 != (ushort)(1U << 16)) {
+  if (_226 != (uint16_t)(1U << 16)) {
     _289 = 1U << _261;
     while (_226 != _289)
       _262[_226++] = 0;
   }
   _292 = _259;
   _283 = 1U << (15 - _261);
-  for (_290 = 0; (int)_290 < _259; _290++) {
+  for (_290 = 0; (int32_t)_290 < _259; _290++) {
     if ((_209 = _260[_290]) == 0)
       continue;
     _293 = _288[_209] + _287[_209];
-    if ((int)_209 <= _261) {
+    if ((int32_t)_209 <= _261) {
       if (_293 > _263) {
         mStatus.SetError(AL_INTERNAL_ERROR, _522);
         _243 = 10;
         return;
       }
       for (_226 = _288[_209]; _226 < _293; _226++)
-        _262[_226] = (ushort)_290;
+        _262[_226] = (uint16_t)_290;
     } else {
       _289 = _288[_209];
       _204 = &_262[_289 >> _291];
@@ -326,7 +327,7 @@ void RExpand::_258(int _259, uchar *_260, int _261, ushort *_262, ushort _263) {
       while (_226 != 0) {
         if (*_204 == 0) {
           _190[_292] = _189[_292] = 0;
-          *_204 = (ushort)_292++;
+          *_204 = (uint16_t)_292++;
         }
         if (_289 & _283)
           _204 = &_190[*_204];
@@ -335,8 +336,8 @@ void RExpand::_258(int _259, uchar *_260, int _261, ushort *_262, ushort _263) {
         _289 <<= 1;
         _226--;
       }
-      *_204 = (ushort)_290;
+      *_204 = (uint16_t)_290;
     }
-    _288[_209] = (ushort)_293;
+    _288[_209] = (uint16_t)_293;
   }
 }

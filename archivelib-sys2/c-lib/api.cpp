@@ -5,12 +5,12 @@
 #include <string>
 
 #include "api.h"
-#include "grenengn.h"
 #include "memstore.h"
+#include "grenengn.h"
 #include "enum_rev.hpp"
 
 #ifndef CREATE_BUFFER
-#define CREATE_BUFFER(buf_name, name, input_buffer, length)                    \
+#define CREATE_BUFFER(buf_name, input_buffer, length)                          \
   ALMemory *buf_name = new ALMemory((char *)input_buffer, length);             \
   buf_name->Create();                                                          \
   CHECK_AL_STATUS(buf_name->mStatus);
@@ -76,14 +76,13 @@ AllocatedMemory build_output(ALStorage *out) {
 }
 
 extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
-  std::string name = "compress";
-  CREATE_BUFFER(in, name, input_buffer, length)
-  CREATE_BUFFER(out, name, NULL, 0)
+  CREATE_BUFFER(in, input_buffer, length)
+  CREATE_BUFFER(out, NULL, 0)
 
-  ALGreenleafEngine *engn = new ALGreenleafEngine(AL_GREENLEAF_LEVEL_4, false);
-  engn->Compress(*in, *out);
-  CHECK_AL_STATUS(engn->mStatus);
-  delete engn;
+  SimpleStatus status = al_compress(AL_GREENLEAF_LEVEL_4, *in, *out);
+  if (status.status != AL_SUCCESS) {
+    return status;
+  }
   in->Close();
   CHECK_AL_STATUS(in->mStatus);
   delete in;
@@ -91,14 +90,13 @@ extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
   return build_output(out);
 }
 extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length) {
-  std::string name = "decompress";
-  CREATE_BUFFER(in, name, input_buffer, length)
-  CREATE_BUFFER(out, name, NULL, 0)
+  CREATE_BUFFER(in, input_buffer, length)
+  CREATE_BUFFER(out, NULL, 0)
 
-  ALGreenleafEngine *engn = new ALGreenleafEngine(AL_GREENLEAF_LEVEL_4, false);
-  engn->Decompress(*in, *out);
-  CHECK_AL_STATUS(engn->mStatus);
-  delete engn;
+  SimpleStatus status = al_decompress(AL_GREENLEAF_LEVEL_4, *in, *out);
+  if (status.status != AL_SUCCESS) {
+    return status;
+  }
   in->Close();
   CHECK_AL_STATUS(in->mStatus);
   delete in;

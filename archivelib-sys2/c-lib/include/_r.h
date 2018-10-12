@@ -1,12 +1,13 @@
 #ifndef _60
 #define _60
 #include <limits.h>
+#include <stdint.h>
 #include "aldefs.h"
 
-typedef unsigned short ushort;
-typedef unsigned char uchar;
-typedef unsigned int uint;
-#define _132 (CHAR_BIT * sizeof(ushort))
+typedef uint16_t uint16_t;
+typedef uint8_t uint8_t;
+typedef uint32_t uint32_t;
+#define _132 (CHAR_BIT * sizeof(uint16_t))
 #define _133 16
 #define _134 '\0'
 #define _135 3

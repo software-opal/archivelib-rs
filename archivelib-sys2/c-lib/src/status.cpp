@@ -1,6 +1,5 @@
 #include "arclib.h"
 
-
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -320,4 +319,15 @@ ALStatus AL_DLL_FAR &AL_PROTO ALStatus::operator=(ALStatus AL_DLL_FAR &rhs) {
   }
   miStatus = rhs.miStatus;
   return *this;
+}
+
+SimpleStatus ALStatus::copyToSimple() {
+  const char *data = GetStatusDetail();
+  size_t len = strlen(data) + 1;
+  u_int8_t *raw_data = NULL;
+  if (len > 1) {
+    raw_data = (u_int8_t *)calloc(len, sizeof(char));
+    memcpy(raw_data, data, len);
+  }
+  return SimpleStatus{miStatus, raw_data, len};
 }

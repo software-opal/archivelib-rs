@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include "include/simple_status.h"
 
 #define _CHECK_RETURN_CODE(status, line)                                       \
   {                                                                            \
@@ -19,11 +20,7 @@
   }
 #define CHECK_AL_STATUS(status) _CHECK_AL_STATUS(status, __LINE__)
 
-typedef struct AllocatedMemory {
-  int status;
-  u_int8_t *data;
-  size_t length;
-} AllocatedMemory;
+typedef SimpleStatus AllocatedMemory;
 
 extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length);
 extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length);

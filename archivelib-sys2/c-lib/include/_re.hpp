@@ -5,38 +5,39 @@ class RExpand {
 private:
   ALStorage *_161;
   ALStorage *_162;
-  short _175;
-  short _176;
-  uchar *_166;
-  ushort *_240;
-  ushort *_241;
-  uchar *_242;
-  ushort *_189;
-  ushort *_190;
-  uchar *_180;
-  uchar *_181;
-  short _243;
-  ushort _244;
-  ushort _182;
-  short _172;
-  uchar _245;
-  short _246;
-  uchar *_247;
+  int16_t _175;
+  int16_t _176;
+  uint8_t *_166;
+  uint16_t *_240;
+  uint16_t *_241;
+  uint8_t *_242;
+  uint16_t *_189;
+  uint16_t *_190;
+  uint8_t *_180;
+  uint8_t *_181;
+  int16_t _243;
+  uint16_t _244;
+  uint16_t _182;
+  int16_t _172;
+  uint8_t _245;
+  int16_t _246;
+  uint8_t *_247;
   long _248;
-  ushort _249();
-  ushort _250();
+  uint16_t _249();
+  uint16_t _250();
   void _251();
-  ushort _252(int _219);
-  void _253(short _254, short _220, short _221);
+  uint16_t _252(int32_t _219);
+  void _253(int16_t _254, int16_t _220, int16_t _221);
   void _255();
-  void _256(int _219);
+  void _256(int32_t _219);
   void _257();
-  void _258(int _259, uchar *_260, int _261, ushort *_262, ushort _263);
+  void _258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
+            uint16_t _263);
 
 public:
-  RExpand(ALStorage &_233, ALStorage &_202, long _264, int _234);
+  RExpand(ALStorage &_233, ALStorage &_202, long _264, int32_t _234);
   ~RExpand();
-  int Expand();
+  int32_t Expand();
   ALStatus mStatus;
 
 protected:

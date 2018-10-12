@@ -5,117 +5,6 @@
 #include "_re.hpp"
 
 //
-// void * ALGreenleafEngine::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  :  The number of bytes needed to create a new object.
-//
-// RETURNS
-//
-//  A pointer to the newly allocated storage area, or 0 if no storage
-//  was available.
-//
-// DESCRIPTION
-//
-//  When using a DLL, it is easy to get into a dangerous situation when
-//  creating objects whose ctor and dtor are both in the DLL.  The problem
-//  arises because when you create an object using new, the memory for
-//  the object will be allocated from the EXE.  However, when you destroy
-//  the object using delete, the memory is freed inside the DLL.  Since
-//  the DLL doesn't really own that memory, bad things can happen.
-//
-//  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
-//  a subsegment allocation scheme, it might do some sort of local free
-//  before returning the space to the windows heap.  That is the point where
-//  you could conceivably cook your heap.
-//
-//  By providing our own version of operator new inside this class, we
-//  ensure that all memory allocation for the class will be done from
-//  inside the DLL, not the EXE calling the DLL.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALGreenleafEngine::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
-
-//
-// ALGreenleafEngine::
-// ALGreenleafEngine( short int compression_level = AL_GREENLEAF_LEVEL_2,
-//                    short int fail_uncompressible = 0 )
-//
-// ARGUMENTS:
-//
-//  compression_level   : This is one of the enumerated types found in ALDEFS.H,
-//                        namely AL_GREENLEAF_LEVEL_0 through
-//                        AL_GREENLEAF_LEVEL_4.  Level 4 gives the most
-//                        compression, but takes up the most memory as well.
-//
-//  fail_uncompressible : This flag is used to indicate the disposition
-//                        of an uncompressible file.  If this flag is set,
-//                        the compression of an incompressible file will
-//                        be interrupted, and the file will be recompressed
-//                        using a straight copy.  Note that this requires
-//                        a Seek() operation!
-//
-// RETURNS
-//
-//  Nothing, a constructor.
-//
-// DESCRIPTION
-//
-//  The constructor for the Greenleaf engine has a pretty simple life.  All
-//  it has to do is call the base class constructor, then define a couple of
-//  data members.  This is a lightweight object until the compression
-//  or expansion routines are invoked, at which time the memory requirements
-//  go through the roof.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-AL_PROTO ALGreenleafEngine::ALGreenleafEngine(
-    enum ALGreenleafCompressionLevels compression_level,
-    bool fail_uncompressible)
-    : miCompressionLevel(compression_level) {
-  miFailUncompressible = fail_uncompressible;
-}
-
-//
-// ALGreenleafEngine::~ALGreenleafEngine()
-//
-// ARGUMENTS:
-//
-//  None.
-//
-// RETURNS
-//
-//  Nothing.
-//
-// DESCRIPTION
-//
-//  The destructor for objects of this class doesn't have to do
-//  anything.  In debug mode, we at least check for the validity
-//  of the object.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-AL_PROTO ALGreenleafEngine::~ALGreenleafEngine() {
-  AL_ASSERT(GoodTag(), "~ALGreenleafEngine: attempt to delete invalid object");
-}
-
-//
 // int ALGreenleafEngine::Compress( ALStorage &input,
 //                                  ALStorage &output )
 //
@@ -160,43 +49,26 @@ AL_PROTO ALGreenleafEngine::~ALGreenleafEngine() {
 //   August 10, 1994 1.0B : Added proper support for the incompressible
 //                          option.
 
-int AL_PROTO ALGreenleafEngine::Compress(ALStorage AL_DLL_FAR &input,
-                                         ALStorage AL_DLL_FAR &output) {
-  int incompressible;
+SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
+                         ALStorage AL_DLL_FAR &input,
+                         ALStorage AL_DLL_FAR &output) {
+  bool fail_uncompressible = false;
 
   ALOpenFiles files(input, output);
 
-  long input_start = input.Tell();
-  long output_start = output.Tell();
-  RCompress rc(input, output, miCompressionLevel + 10, miFailUncompressible);
+  RCompress rc(input, output, compression_level + 10, fail_uncompressible);
 
   if (rc.mStatus < 0)
-    return mStatus = rc.mStatus;
-  else
-    incompressible = rc.Compress();
+    return rc.mStatus.copyToSimple();
+
+  rc.Compress();
   if (rc.mStatus < 0)
-    return mStatus = rc.mStatus;
+    return rc.mStatus.copyToSimple();
   else if (input.mStatus < 0)
-    return mStatus = input.mStatus;
+    return input.mStatus.copyToSimple();
   else if (output.mStatus < 0)
-    return mStatus = output.mStatus;
-  if (incompressible) {
-    input.Seek(input_start);
-    output.Seek(output_start);
-    miCompressionLevel = AL_GREENLEAF_COPY;
-    int c;
-    for (;;) {
-      c = input.ReadChar();
-      if (c < 0)
-        break;
-      output.WriteChar(c);
-    }
-    if (input.mStatus < AL_SUCCESS)
-      return mStatus = input.mStatus;
-    if (output.mStatus < AL_SUCCESS)
-      return mStatus = output.mStatus;
-  }
-  return mStatus;
+    return output.mStatus.copyToSimple();
+  return SIMPLE_STATUS_SUCCESS();
 }
 
 //
@@ -246,32 +118,22 @@ int AL_PROTO ALGreenleafEngine::Compress(ALStorage AL_DLL_FAR &input,
 //   May 26, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALGreenleafEngine::Decompress(ALStorage AL_DLL_FAR &input,
-                                           ALStorage AL_DLL_FAR &output,
-                                           long compressed_length) {
+SimpleStatus al_decompress(ALGreenleafCompressionLevels compression_level,
+                           ALStorage AL_DLL_FAR &input,
+                           ALStorage AL_DLL_FAR &output,
+                           long compressed_length) {
   ALOpenFiles files(input, output);
 
-  if (miCompressionLevel == AL_GREENLEAF_COPY) {
-    int c;
-    for (; compressed_length; compressed_length--) {
-      c = input.ReadChar();
-      if (c < 0)
-        break;
-      output.WriteChar(c);
-    }
-  } else {
-    RExpand re(input, output, compressed_length, miCompressionLevel + 10);
+  RExpand re(input, output, compressed_length, compression_level + 10);
 
-    if (re.mStatus < 0)
-      return mStatus = re.mStatus;
-    else
-      re.Expand();
-    if (re.mStatus < 0)
-      return mStatus = re.mStatus;
-  }
-  if (input.mStatus < 0)
-    return mStatus = input.mStatus;
+  if (re.mStatus < 0)
+    return re.mStatus.copyToSimple();
+  re.Expand();
+  if (re.mStatus < 0)
+    return re.mStatus.copyToSimple();
+  else if (input.mStatus < 0)
+    return input.mStatus.copyToSimple();
   else if (output.mStatus < 0)
-    return mStatus = output.mStatus;
-  return mStatus;
+    return output.mStatus.copyToSimple();
+  return SIMPLE_STATUS_SUCCESS();
 }
