@@ -3,19 +3,12 @@
 #include "_re.hpp"
 #include <cstring>
 
-#define _519                                                                   \
-  "Incorrect compression level parameter passed to compressor.  Compression "  \
-  "level = %d"
-#define _520 "Memory allocation failure in expansion startup"
-#define _521 "Internal 1 error in Greenleaf Decompression routine"
-#define _522 "Internal 2 error in Greenleaf Decompression routine"
-
 RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _161 = &_266;
   _162 = &_267;
   _248 = _268;
   ;
-  if (_269 > _137 || _269 < _138) {
+  if (_269 > CONST__137 || _269 < CONST__138) {
     mStatus.SetError(AL_ILLEGAL_PARAMETER, _519, _269 - 10);
     _175 = 2;
   } else
@@ -24,23 +17,23 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _166 = new uint8_t[_175 + 2];
   if (_166)
     memset(_166, 0, (_175 + 2) * sizeof(uint8_t));
-  _240 = new uint16_t[_148];
+  _240 = new uint16_t[CONST__148];
   if (_240)
-    memset(_240, 0, _148 * sizeof(uint16_t));
-  _241 = new uint16_t[_149];
+    memset(_240, 0, CONST__148 * sizeof(uint16_t));
+  _241 = new uint16_t[CONST__149];
   if (_241)
-    memset(_241, 0, _149 * sizeof(uint16_t));
-  _242 = new uint8_t[_159];
+    memset(_241, 0, CONST__149 * sizeof(uint16_t));
+  _242 = new uint8_t[CONST__159];
   if (_242)
-    memset(_242, 0, _159 * sizeof(uint8_t));
-  _189 = new uint16_t[2 * _141 - 1];
+    memset(_242, 0, CONST__159 * sizeof(uint8_t));
+  _189 = new uint16_t[2 * CONST__141 - 1];
   if (_189)
-    memset(_189, 0, (2 * _141 - 1) * sizeof(uint16_t));
-  _190 = new uint16_t[2 * _141 - 1];
+    memset(_189, 0, (2 * CONST__141 - 1) * sizeof(uint16_t));
+  _190 = new uint16_t[2 * CONST__141 - 1];
   if (_190)
-    memset(_190, 0, (2 * _141 - 1) * sizeof(uint16_t));
-  _180 = new uint8_t[_141];
-  _181 = new uint8_t[_152];
+    memset(_190, 0, (2 * CONST__141 - 1) * sizeof(uint16_t));
+  _180 = new uint8_t[CONST__141];
+  _181 = new uint8_t[CONST__152];
   if (!_166 || !_240 || !_241 || !_242 || !_189 || !_190 || !_180 || !_181) {
     mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, _520);
   }
@@ -88,11 +81,11 @@ int32_t RExpand::Expand() {
           goto _282;
       }
     } else {
-      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - _135));
-      if (_276 == _144)
+      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - CONST__135));
+      if (_276 == CONST__144)
         break;
       _226 = (int16_t)((_200 - _250() - 1) & _280);
-      if (_226 < _279 - _140 - 1 && _200 < _279 - _140 - 1) {
+      if (_226 < _279 - CONST__140 - 1 && _200 < _279 - CONST__140 - 1) {
         while (--_276 >= 0)
           _278[_200++] = _278[_226++];
       } else {
@@ -117,15 +110,15 @@ uint16_t RExpand::_249() {
   uint16_t _276, _283;
   if (_244 == 0) {
     _244 = _252(16);
-    _253(_145, _147, 3);
+    _253(CONST__145, CONST__147, 3);
     _255();
-    _253(_142, _540, -1);
+    _253(CONST__142, CONST__540, -1);
     if (mStatus < 0)
       return 0;
   }
   _244--;
   _276 = _240[_182 >> 4];
-  if (_276 >= _141) {
+  if (_276 >= CONST__141) {
     _283 = 1U << 3;
     do {
       if (_182 & _283)
@@ -133,7 +126,7 @@ uint16_t RExpand::_249() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= _141);
+    } while (_276 >= CONST__141);
   }
   _256(_180[_276]);
   return _276;
@@ -141,7 +134,7 @@ uint16_t RExpand::_249() {
 uint16_t RExpand::_250() {
   uint16_t _276, _283;
   _276 = _241[_182 >> 8];
-  if (_276 >= _142) {
+  if (_276 >= CONST__142) {
     _283 = 1U << 7;
     do {
       if (_182 & _283)
@@ -149,7 +142,7 @@ uint16_t RExpand::_250() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= _142);
+    } while (_276 >= CONST__142);
   }
   _256(_181[_276]);
   if (_276 != 0) {
@@ -199,24 +192,24 @@ void RExpand::_253(int16_t _254, int16_t _220, int16_t _221) {
     }
     while (_226 < _254)
       _181[_226++] = 0;
-    _258(_254, _181, 8, _241, _149);
+    _258(_254, _181, 8, _241, CONST__149);
   }
 }
 void RExpand::_255() {
   int16_t _226, _203, _219;
   uint16_t _283;
-  _219 = _252(_143);
+  _219 = _252(CONST__143);
   if (_219 == 0) {
-    _203 = _252(_143);
-    for (_226 = 0; _226 < _141; _226++)
+    _203 = _252(CONST__143);
+    for (_226 = 0; _226 < CONST__141; _226++)
       _180[_226] = 0;
-    for (_226 = 0; _226 < _148; _226++)
+    for (_226 = 0; _226 < CONST__148; _226++)
       _240[_226] = _203;
   } else {
     _226 = 0;
     while (_226 < _219) {
       _203 = _241[_182 >> 8];
-      if (_203 >= _145) {
+      if (_203 >= CONST__145) {
         _283 = 1U << 7;
         do {
           if (_182 & _283)
@@ -224,7 +217,7 @@ void RExpand::_255() {
           else
             _203 = _189[_203];
           _283 >>= 1;
-        } while (_203 >= _145);
+        } while (_203 >= CONST__145);
       }
       _256(_181[_203]);
       if (_203 <= 2) {
@@ -233,15 +226,15 @@ void RExpand::_255() {
         else if (_203 == 1)
           _203 = (int16_t)(_252(4) + 3);
         else
-          _203 = (int16_t)(_252(_143) + 20);
+          _203 = (int16_t)(_252(CONST__143) + 20);
         while (--_203 >= 0)
           _180[_226++] = 0;
       } else
         _180[_226++] = (uint8_t)(_203 - 2);
     }
-    while (_226 < _141)
+    while (_226 < CONST__141)
       _180[_226++] = 0;
-    _258(_141, _180, 12, _240, _148);
+    _258(CONST__141, _180, 12, _240, CONST__148);
   }
 }
 void RExpand::_256(int32_t _219) {
@@ -250,11 +243,11 @@ void RExpand::_256(int32_t _219) {
     _182 = (uint16_t)((_182 << _172) + (_245 >> (CHAR_BIT - _172)));
     if (_246 <= 0) {
       _247 = _242;
-      if (_248 >= 0 && _248 < _159) {
+      if (_248 >= 0 && _248 < CONST__159) {
         _246 = (int16_t)_161->ReadBuffer(_242, (size_t)_248);
         _248 -= _246;
       } else
-        _246 = (int16_t)_161->ReadBuffer(_242, _159);
+        _246 = (int16_t)_161->ReadBuffer(_242, CONST__159);
       if (_246 <= 0)
         _243++;
     }
