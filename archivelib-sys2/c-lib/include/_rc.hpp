@@ -1,19 +1,17 @@
+#ifndef __RC_H
+#define __RC_H
 
 #include "_r.h"
+
+#if defined(__cplusplus)
 
 class RCompress {
 private:
   ALStorage *_161;
   ALStorage *_162;
-#if defined(AL_LARGE_DATA) || defined(AL_FLAT_MODEL) || defined(AL_UNIX)
   int16_t *_163;
   int16_t *_164;
   uint8_t *_165;
-#else
-  int16_t _far *_163;
-  int16_t _far *_164;
-  uint8_t _far *_165;
-#endif
   uint8_t *_166;
   uint64_t _533;
   uint64_t _534;
@@ -79,3 +77,6 @@ protected:
   RCompress(RCompress &);
   RCompress &operator=(RCompress &);
 };
+
+#endif
+#endif

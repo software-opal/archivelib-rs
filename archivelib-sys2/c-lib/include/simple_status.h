@@ -9,9 +9,7 @@ typedef struct SimpleStatus {
   size_t length;
 } SimpleStatus;
 
-#ifndef SIMPLE_STATUS_SUCCESS
 #define SIMPLE_STATUS_SUCCESS()                                                \
   SimpleStatus { AL_SUCCESS, NULL, 0 }
-#endif
 
 #endif

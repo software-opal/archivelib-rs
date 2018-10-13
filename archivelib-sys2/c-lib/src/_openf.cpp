@@ -1,97 +1,6 @@
 #include "arclib.h"
-
-
 #include "_openf.h"
 
-//
-// void * ALOpenInputFile::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  : The size of the object being created.
-//
-// RETURNS
-//
-//  A pointer to the storage allocated for the object.
-//
-// DESCRIPTION
-//
-//  When we construct an object when using the DLL, trouble can arise.
-//  The main bad thing is that when we call the constructor from an
-//  EXE, we allocate the storage for the new object from inside our EXE.
-//  When we destroy the same object, the destructor frees up the memory
-//  inside the DLL.  This is bad, because you can mangle the heap inside
-//  the DLL by trying to free an object that doesn't belong to it.
-//
-//  The fix to this conundrum is to allocate the object inside the DLL,
-//  and we can make this happen by overloading the new operator.  We don't
-//  bother unless it's a DLL deal.
-//
-//  This lecture will be repeated at times throughout the source in this
-//  project.
-//
-// REVISION HISTORY
-//
-//   May 22, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALOpenInputFile::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
-
-//
-// void * ALOpenOutputFile::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  : The size of the object being created.
-//
-// RETURNS
-//
-//  A pointer to the storage allocated for the object.
-//
-// DESCRIPTION
-//
-//  See the function directly above.
-//
-// REVISION HISTORY
-//
-//   May 22, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALOpenOutputFile::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
-
-//
-// void * ALOpenFiles::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  : The size of the object being created.
-//
-// RETURNS
-//
-//  A pointer to the storage allocated for the object.
-//
-// DESCRIPTION
-//
-//  See the function directly above.
-//
-// REVISION HISTORY
-//
-//   May 22, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALOpenFiles::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
 
 //
 // ALOpenInputFile::ALOpenInputFile( ALStorage &file )
@@ -117,8 +26,8 @@ void  * ALOpenFiles::operator new(size_t size) {
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenInputFile::ALOpenInputFile(ALStorage  &file) {
-  mpFile = &file;
+ALOpenInputFile::ALOpenInputFile(ALStorage  &file) {
+mpFile = &file;
   miFileWasOpen = file.IsOpen();
   if (!miFileWasOpen)
     file.Open();

@@ -139,23 +139,21 @@
  *
  */
 
-class  ALStorage {
+class ALStorage {
   /*
    * Constructors, destructors, assignment operator
    */
 protected:
-   ALStorage(size_t buffer_size);
-  ALStorage  & operator=(const ALStorage  &);
-#if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void  * operator new(size_t size);
-#endif
+  ALStorage(size_t buffer_size);
+  ALStorage &operator=(const ALStorage &);
+
 public:
-  virtual  ~ALStorage();
+  virtual ~ALStorage();
   /*
    * I don't want to allow the copy constructor to exist.
    */
 protected:
-   ALStorage(const ALStorage  &);
+  ALStorage(const ALStorage &);
 
   /*
    * Member functions, grouped somewhat
@@ -163,33 +161,33 @@ protected:
    * The file I/O access public interface
    */
 public:
-  int16_t  ReadChar();
-  int  WriteChar(uint8_t c);
-  size_t  ReadBuffer(uint8_t  *buffer, size_t length);
-  size_t  WriteBuffer(uint8_t  *buffer, size_t length);
-  virtual int  Open();
-  virtual int  Create();
-  virtual int  Close();
-  virtual int  LoadBuffer(long address) = 0;
-  virtual int  FlushBuffer() = 0;
-  virtual int  Seek(long address) = 0;
+  int16_t ReadChar();
+  int WriteChar(uint8_t c);
+  size_t ReadBuffer(uint8_t *buffer, size_t length);
+  size_t WriteBuffer(uint8_t *buffer, size_t length);
+  virtual int Open();
+  virtual int Create();
+  virtual int Close();
+  virtual int LoadBuffer(long address) = 0;
+  virtual int FlushBuffer() = 0;
+  virtual int Seek(long address) = 0;
   /*
    * File manipulation public interface
    */
 public:
-  virtual int  Delete() = 0;
+  virtual int Delete() = 0;
   /*
    * Access functions
    */
 public:
-  long  GetSize() const { return mlSize; }
-  int  IsOpen() { return mpcBuffer != 0; }
-  long  Tell();
+  long GetSize() const { return mlSize; }
+  int IsOpen() { return mpcBuffer != 0; }
+  long Tell();
   /*
    * Data members
    */
 protected:
-  uint8_t  *mpcBuffer;
+  uint8_t *mpcBuffer;
   size_t muBufferValidData;
   size_t muWriteIndex;
   size_t muReadIndex;
@@ -237,7 +235,7 @@ public:
  *
  */
 
-inline int16_t  ALStorage::ReadChar() {
+inline int16_t ALStorage::ReadChar() {
   int result;
 
   AL_ASSERT(
@@ -284,7 +282,7 @@ inline int16_t  ALStorage::ReadChar() {
  *
  */
 
-inline int  ALStorage::WriteChar(uint8_t c) {
+inline int ALStorage::WriteChar(uint8_t c) {
   int result;
 
   /*    assert( muReadIndex == 0 ); */ /* Can't write if I've done a read */
@@ -299,6 +297,5 @@ inline int  ALStorage::WriteChar(uint8_t c) {
     return mpcBuffer[muWriteIndex++] = c;
 }
 
-#endif /* #if defined( __cplusplus ) */
-
-#endif /* #ifndef _STOR_H         */
+#endif
+#endif

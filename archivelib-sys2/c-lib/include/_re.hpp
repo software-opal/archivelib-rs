@@ -1,5 +1,9 @@
+#ifndef __RE_H
+#define __RE_H
 
 #include "_r.h"
+
+#if defined(__cplusplus)
 
 class RExpand {
 public:
@@ -44,3 +48,6 @@ protected:
   RExpand(RExpand &);
   RExpand &operator=(RExpand &);
 };
+
+#endif
+#endif

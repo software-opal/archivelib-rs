@@ -3,6 +3,8 @@
 
 #include "arclib.h"
 
+#if defined(__cplusplus)
+
 /*
  * class ALOpenInputFile
  *
@@ -33,23 +35,20 @@
  *
  */
 
-class  ALOpenInputFile {
+class ALOpenInputFile {
 public:
-   ALOpenInputFile(ALStorage  &file);
-   ~ALOpenInputFile();
-#if defined(AL_BUILDING_DLL) || defined(AL_USING_DLL)
-  void  * operator new(size_t size);
-#endif
+  ALOpenInputFile(ALStorage &file);
+  ~ALOpenInputFile();
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-   ALOpenInputFile(ALOpenInputFile  &);
-  ALOpenInputFile  &operator=(ALOpenInputFile  &);
+  ALOpenInputFile(ALOpenInputFile &);
+  ALOpenInputFile &operator=(ALOpenInputFile &);
 
 protected:
   int miFileWasOpen;
-  ALStorage  *mpFile;
+  ALStorage *mpFile;
 };
 
 /*
@@ -82,23 +81,20 @@ protected:
  *
  */
 
-class  ALOpenOutputFile {
+class ALOpenOutputFile {
 public:
-   ALOpenOutputFile(ALStorage  &file);
-   ~ALOpenOutputFile();
-#if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void  * operator new(size_t size);
-#endif
+  ALOpenOutputFile(ALStorage &file);
+  ~ALOpenOutputFile();
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-   ALOpenOutputFile(ALOpenOutputFile  &);
-  ALOpenOutputFile  &operator=(ALOpenOutputFile  &);
+  ALOpenOutputFile(ALOpenOutputFile &);
+  ALOpenOutputFile &operator=(ALOpenOutputFile &);
 
 protected:
   int miFileWasOpen;
-  ALStorage  *mpFile;
+  ALStorage *mpFile;
 };
 
 /*
@@ -133,24 +129,21 @@ protected:
  *
  */
 
-class  ALOpenFiles {
+class ALOpenFiles {
 public:
-   ALOpenFiles(ALStorage  &input,
-                       ALStorage  &output);
-   ~ALOpenFiles();
-#if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void  * operator new(size_t size);
-#endif
+  ALOpenFiles(ALStorage &input, ALStorage &output);
+  ~ALOpenFiles();
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-   ALOpenFiles(ALOpenFiles  &);
-  ALOpenFiles  &operator=(ALOpenFiles  &);
+  ALOpenFiles(ALOpenFiles &);
+  ALOpenFiles &operator=(ALOpenFiles &);
 
 protected:
   ALOpenInputFile mInputFile;
   ALOpenOutputFile mOutputFile;
 };
 
-#endif /* #ifndef __OPENF_H */
+#endif
+#endif

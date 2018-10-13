@@ -5,6 +5,10 @@
 #define AL_UNIX
 #endif
 
+#ifndef MEMORY_BLOCK_BYTES
+#define MEMORY_BLOCK_BYTES 1024
+#endif
+
 /*
  * Global enumerated error codes
  */

@@ -5,20 +5,13 @@
 
 #if defined(__cplusplus)
 
-#ifndef MEMORY_BLOCK_BYTES
-#define MEMORY_BLOCK_BYTES 1024
-#endif
-
 /*
  * class ALMemory : public ALStorage
  *
  * DESCRIPTION
  *
  *  Class ALMemory is an ALStorage class that stores its data in memory
- *  buffers. Under real mode MS-DOS, buffers are limited to 64Kbytes.
- *  Under Windows, they can get a lot bigger.  There are slight
- *  differences in operations between the the Windows and MS-DOS
- *  versions, so you will see some #ifdefs here and there.
+ *  buffers.
  *
  *  You can use ALMemory to work with a buffer of your own, or you
  *  can ask the class to allocate the memory for you.  You can
@@ -80,29 +73,22 @@
  *
  */
 
-class  ALMemory : public ALStorage {
+class ALMemory : public ALStorage {
   /*
    * Constructors, destructors, assignment operator, friends, declarations
    */
 
 public:
-#ifdef AL_WINDOWS_MEMORY
-   ALMemory(uint8_t AL_HUGE *user_buffer = 0, DWORD user_buffer_size = 0);
-#else
-   ALMemory(uint8_t  *user_buffer = 0, int user_buffer_size = 0);
-#endif
-  virtual  ~ALMemory();
-#if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void  * operator new(size_t size);
-#endif
+  ALMemory(uint8_t *user_buffer = 0, int user_buffer_size = 0);
+  virtual ~ALMemory();
   /*
    * As usual, I don't want the compiler to generate a default copy constructor,
    * or an assignment operator here.  I force it to back off by declaring them
    * here.  They do not exist!
    */
 protected:
-   ALMemory(ALMemory  &);
-  ALMemory  & operator=(const ALMemory  &);
+  ALMemory(ALMemory &);
+  ALMemory &operator=(const ALMemory &);
 
   /*
    * Member functions, grouped by category.
@@ -115,41 +101,34 @@ protected:
    * The file I/O access public interface
    */
 public:
-  virtual int  Open();
-  virtual int  Create();
-  virtual int  Close();
-  virtual int  LoadBuffer(long address);
-  virtual int  FlushBuffer();
-  virtual int  Seek(long address);
+  virtual int Open();
+  virtual int Create();
+  virtual int Close();
+  virtual int LoadBuffer(long address);
+  virtual int FlushBuffer();
+  virtual int Seek(long address);
 
   /*
    * File name and underlying object manipulation public interface
    */
 public:
-  virtual int  Delete();
+  virtual int Delete();
 
   /*
    * Unique to this class
    */
 protected:
-  int  GrowUserBuffer(long minimum_new_size);
+  int GrowUserBuffer(long minimum_new_size);
   /*
    * Data members
    */
 protected:
 public: /* Should some of these might be better off private */
   int mfUserOwnsBuffer;
-#ifdef AL_WINDOWS_MEMORY
-  HGLOBAL mhUserMemoryHandle;
-  long muUserBufferSize;
-  uint8_t AL_HUGE *mpcUserBuffer;
-#else
   size_t muUserBufferSize;
-  uint8_t  *mpcUserBuffer;
-#endif
+  uint8_t *mpcUserBuffer;
   AL_CLASS_TAG(_ALMemoryTag);
 };
 
-#endif /* #if defined( __cplusplus ) */
-
-#endif /* #ifndef _MEMSTORE_H        */
+#endif
+#endif

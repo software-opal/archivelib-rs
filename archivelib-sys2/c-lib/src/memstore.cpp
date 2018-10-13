@@ -2,48 +2,8 @@
 
 #include "memstore.h"
 
-#include <stdlib.h> // might be using malloc()!
-
-//
-// void * ALMemory::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  :  The amount of storage that needs to be allocated for
-//           this object.
-//
-// RETURNS
-//
-//  A pointer to the storage.
-//
-// DESCRIPTION
-//
-//  When using the DLL version of ArchiveLib, it is a good idea to
-//  allocate the storage for objects from inside the DLL, since they
-//  will be freed inside the DLL.  If we don't have the new operator
-//  for a class, its storage will be allocated from the EXE before
-//  the constructor code is called.  Then, when it is time to free
-//  the storage, the delete operator will be called inside the DLL.
-//  Not good, right?
-//
-//
-//  Very important:  this new operator is called to allocate the
-//  storage for the ALMemory object itself.  This has nothing to do
-//  with the storage buffer that the memory object will be using
-//  later on.  In other words, this new operator is responsible for
-//  no more than a couple of dozen bytes, not potentially hundreds
-//  of Kbytes.
-//
-// REVISION HISTORY
-//
-//   May 24, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALMemory::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
+#include <stdlib.h>
+#include <cstring>
 
 //
 // ALMemory::ALMemory( const char *buffer_name = "",
@@ -82,8 +42,8 @@ void  * ALMemory::operator new(size_t size) {
 //
 //   May 22, 1994  1.0A  : First release
 //
- ALMemory::ALMemory(uint8_t  *user_buffer /* = 0 */,
-                            int user_buffer_size /* = 0 */)
+ALMemory::ALMemory(uint8_t *user_buffer /* = 0 */,
+                   int user_buffer_size /* = 0 */)
     : ALStorage(4096) {
   if (user_buffer != 0) {
     mpcUserBuffer = user_buffer;
@@ -124,17 +84,11 @@ void  * ALMemory::operator new(size_t size) {
 //   May 22, 1994  1.0A  : First release
 //
 
- ALMemory::~ALMemory() {
+ALMemory::~ALMemory() {
   AL_ASSERT(GoodTag(), "~ALMemory: attempting to delete invalid object");
   if (!mfUserOwnsBuffer) {
     if (mpcUserBuffer) {
-#if defined(AL_WINDOWS_MEMORY)
-      GlobalUnlock((HGLOBAL)mhUserMemoryHandle);
-      GlobalFree((HGLOBAL)mhUserMemoryHandle);
-      mhUserMemoryHandle = 0;
-#else
       free(mpcUserBuffer);
-#endif
       mpcUserBuffer = 0;
     }
   }
@@ -179,7 +133,7 @@ void  * ALMemory::operator new(size_t size) {
 //                          would then cause a GPF under Windows, because
 //                          muValidData was 0 and muReadIndex was > 0.
 
-int  ALMemory::LoadBuffer(long address) {
+int ALMemory::LoadBuffer(long address) {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (mlFilePointer != address) {
@@ -196,22 +150,7 @@ int  ALMemory::LoadBuffer(long address) {
     muReadIndex = 0;
     return AL_END_OF_FILE;
   }
-#if defined(AL_WINDOWS_MEMORY)
-  //
-  // Some problems passing huge arrays to memcpy, got to do it inline instead
-  // I think Microsoft says memcpy() will work with huge pointers as long
-  // as you don't try to use the inline optimizations, but I say why take
-  // chances...
-  //
-  // Another note: AL_HUGE is _huge for win16, but blank for win32.
-  //
-  uint8_t AL_HUGE *temp = mpcUserBuffer + address;
-  for (unsigned i = 0; i < muBufferValidData; i++)
-    mpcBuffer[i] = *temp++;
-//    memcpy( mpcBuffer, mpcUserBuffer +          address, muBufferValidData );
-#else
   memcpy(mpcBuffer, mpcUserBuffer + (size_t)address, muBufferValidData);
-#endif
   muReadIndex = 0; // Reading can resume at this location
   mlFilePointer += muBufferValidData;
   return muBufferValidData;
@@ -241,15 +180,9 @@ int  ALMemory::LoadBuffer(long address) {
 //   May 22, 1994  1.0A  : First release
 //
 
-int  ALMemory::Delete() {
+int ALMemory::Delete() {
   if (!mfUserOwnsBuffer) {
-#if defined(AL_WINDOWS_MEMORY)
-    GlobalUnlock((HGLOBAL)mhUserMemoryHandle);
-    GlobalFree((HGLOBAL)mhUserMemoryHandle);
-    mhUserMemoryHandle = 0;
-#else
     free(mpcUserBuffer);
-#endif
     mpcUserBuffer = 0;
   }
   return AL_SUCCESS;
@@ -282,7 +215,7 @@ int  ALMemory::Delete() {
 //   May 22, 1994  1.0A  : First release
 //
 
-int  ALMemory::Seek(long address) {
+int ALMemory::Seek(long address) {
   FlushBuffer();
   if (mStatus < 0)
     return mStatus;
@@ -324,49 +257,14 @@ int  ALMemory::Seek(long address) {
 //
 //  The strategy for asking for more memory is pretty simple.  Normally,
 //  we ask for another 16K.  If that fails, we fall back to asking for
-//  just enough memory to cover our current I/O request.  Asking for
-//  this memory is sufficiently different under real mode dos and protected
-//  mode windows that we have two completely different routines, separated
-//  only by #ifdefs.
+//  just enough memory to cover our current I/O request.
 //
 // REVISION HISTORY
 //
 //   May 22, 1994  1.0A  : First release
 //
 
-#if defined(AL_WINDOWS_MEMORY)
-int  ALMemory::GrowUserBuffer(long minimum_new_size) {
-  if (mStatus < AL_SUCCESS)
-    return mStatus;
-  if (mfUserOwnsBuffer)
-    return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
-                            "Attempt to write past the end of a "
-                            "user owned buffer for ALMemory");
-  long trial_size = muUserBufferSize + MEMORY_BLOCK_BYTES;
-  GlobalUnlock((HGLOBAL)mhUserMemoryHandle);
-  HGLOBAL new_handle =
-      GlobalReAlloc((HGLOBAL)mhUserMemoryHandle, trial_size, GMEM_MOVEABLE);
-  if (new_handle == 0) {
-    trial_size = minimum_new_size;
-    new_handle =
-        GlobalReAlloc((HGLOBAL)mhUserMemoryHandle, trial_size, GMEM_MOVEABLE);
-  }
-  if (new_handle == 0) {
-    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
-    return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
-                            "Allocation failure when attempting to "
-                            "allocate a buffer "
-                            "of %ld bytes for ALMemory",
-                            minimum_new_size);
-  }
-  mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock(new_handle);
-  mhUserMemoryHandle = new_handle;
-  muUserBufferSize = trial_size;
-  return AL_SUCCESS;
-}
-#else // #ifdef AL_WINDOWS_MEMORY
-
-int  ALMemory::GrowUserBuffer(long minimum_new_size) {
+int ALMemory::GrowUserBuffer(long minimum_new_size) {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (mfUserOwnsBuffer)
@@ -402,7 +300,6 @@ int  ALMemory::GrowUserBuffer(long minimum_new_size) {
                           "of %ld bytes for ALMemory",
                           minimum_new_size);
 }
-#endif
 
 //
 // int ALMemory::FlushBuffer()
@@ -435,7 +332,7 @@ int  ALMemory::GrowUserBuffer(long minimum_new_size) {
 //   August 10, 1994 1.0B : Slight mod to make a compiler happy, syntactic
 //                          change only.
 //
-int  ALMemory::FlushBuffer() {
+int ALMemory::FlushBuffer() {
   if (mStatus < 0)
     return mStatus;
   //
@@ -446,19 +343,7 @@ int  ALMemory::FlushBuffer() {
     if ((long)(muWriteIndex + mlFilePointer) > (long)muUserBufferSize)
       if (GrowUserBuffer(muWriteIndex + mlFilePointer) < 0)
         return mStatus;
-#if defined(AL_WINDOWS_MEMORY)
-    //
-    // Can't use memcpy with huge pointers, at least not with the optimized
-    // versions.
-    //
-    uint8_t AL_HUGE *temp = mpcUserBuffer + mlFilePointer;
-    for (unsigned int i = 0; i < muWriteIndex; i++)
-      *temp++ = mpcBuffer[i];
-//        memcpy( mpcUserBuffer +          mlFilePointer, mpcBuffer,
-//        muWriteIndex );
-#else
     memcpy(mpcUserBuffer + (size_t)mlFilePointer, mpcBuffer, muWriteIndex);
-#endif
     mlFilePointer += muWriteIndex;
     muWriteIndex = 0;
     if (mlSize < mlFilePointer)
@@ -501,7 +386,7 @@ int  ALMemory::FlushBuffer() {
 //                         not.  This could be very bad.
 //
 
-int  ALMemory::Close() {
+int ALMemory::Close() {
   if (mpcBuffer == 0)
     return mStatus;
   FlushBuffer();
@@ -510,20 +395,10 @@ int  ALMemory::Close() {
   // If we aren't using all our space, give back the extra.
   //
   if (!mfUserOwnsBuffer && mlSize < (long)muUserBufferSize) {
-#if defined(AL_WINDOWS_MEMORY)
-    GlobalUnlock((HGLOBAL)mhUserMemoryHandle);
-    HGLOBAL new_handle =
-        GlobalReAlloc((HGLOBAL)mhUserMemoryHandle, mlSize, GMEM_MOVEABLE);
-    if (new_handle != 0)
-      mhUserMemoryHandle = new_handle;
-    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
-    muUserBufferSize = mlSize;
-#else
     uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)mlSize);
     if (new_buf)
       mpcUserBuffer = new_buf;
     muUserBufferSize = (size_t)mlSize;
-#endif
   }
   return mStatus;
 }
@@ -554,7 +429,7 @@ int  ALMemory::Close() {
 //                         calling Create() for a memory object that had
 //                         already allocated some space.
 
-int  ALMemory::Create() {
+int ALMemory::Create() {
   ALStorage::Create();
   if (mStatus < AL_SUCCESS)
     return mStatus;
@@ -564,21 +439,6 @@ int  ALMemory::Create() {
   if (mpcUserBuffer)
     return AL_SUCCESS; // If a buffer was already created somewhere down the
                        // line, we won't do it again.
-#if defined(AL_WINDOWS_MEMORY)
-  mhUserMemoryHandle = GlobalAlloc(GMEM_MOVEABLE, MEMORY_BLOCK_BYTES);
-  if (mhUserMemoryHandle) {
-    mpcUserBuffer = (uint8_t AL_HUGE *)GlobalLock((HGLOBAL)mhUserMemoryHandle);
-    muUserBufferSize = MEMORY_BLOCK_BYTES;
-  } else {
-    mpcUserBuffer = 0;
-    return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
-                            "Allocation failure when attempting to "
-                            "create a buffer "
-                            "of %ld bytes for ALMemory "
-                            "%s in Create()",
-                            MEMORY_BLOCK_BYTES, mName.GetSafeName());
-  }
-#else
   mpcUserBuffer = (uint8_t *)calloc(MEMORY_BLOCK_BYTES, sizeof(uint8_t));
   muUserBufferSize = MEMORY_BLOCK_BYTES;
   if (mpcUserBuffer == 0)
@@ -588,7 +448,6 @@ int  ALMemory::Create() {
                             "of %ld bytes for ALMemory "
                             "in Create()",
                             MEMORY_BLOCK_BYTES);
-#endif
   return AL_SUCCESS;
 }
 
@@ -614,7 +473,7 @@ int  ALMemory::Create() {
 //   May 22, 1994  1.0A  : First release
 //
 
-int  ALMemory::Open() {
+int ALMemory::Open() {
   ALStorage::Open();
   if (mStatus < AL_SUCCESS)
     return mStatus;

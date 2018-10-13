@@ -2,48 +2,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-
-//
-// void * ALStatus::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  :  The number of bytes needed to create a new ALStatus object.
-//
-// RETURNS
-//
-//  A pointer to the newly allocated storage area, or 0 if no storage
-//  was available.
-//
-// DESCRIPTION
-//
-//  When using a DLL, it is easy to get into a dangerous situation when
-//  creating objects whose ctor and dtor are both in the DLL.  The problem
-//  arises because when you create an object using new, the memory for
-//  the object will be allocated from the EXE.  However, when you destroy
-//  the object using delete, the memory is freed inside the DLL.  Since
-//  the DLL doesn't really own that memory, bad things can happen.
-//
-//  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
-//  a subsegment allocation scheme, it might do some sort of local free
-//  before returning the space to the windows heap.  That is the point where
-//  you could conceivably cook your heap.
-//
-//  By providing our own version of operator new inside this class, we
-//  ensure that all memory allocation for the class will be done from
-//  inside the DLL, not the EXE calling the DLL.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALStatus::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
+#include <cstring>
 
 //
 //  ALStatus::ALStatus()
@@ -68,7 +27,7 @@ void  * ALStatus::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
- ALStatus::ALStatus() : miStatusDetailLength(129) {
+ALStatus::ALStatus() : miStatusDetailLength(129) {
   miStatus = AL_SUCCESS;
   mszStatusDetail = 0;
 }
@@ -94,7 +53,7 @@ void  * ALStatus::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
- ALStatus::~ALStatus() {
+ALStatus::~ALStatus() {
   if (mszStatusDetail)
     delete[] mszStatusDetail;
 }
@@ -137,7 +96,7 @@ void  * ALStatus::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
-int  ALStatus::SetError(int error, const char  *fmt, ...) {
+int ALStatus::SetError(int error, const char *fmt, ...) {
   char detail[256];
   va_list argptr;
 
@@ -185,7 +144,7 @@ int  ALStatus::SetError(int error, const char  *fmt, ...) {
 //   May 26, 1994  1.0A  : First release
 //
 
-const char  * ALStatus::GetStatusString() {
+const char *ALStatus::GetStatusString() {
   switch (miStatus) {
   case AL_SUCCESS:
     return "Success";
@@ -273,7 +232,7 @@ const char  * ALStatus::GetStatusString() {
 //   May 26, 1994  1.0A  : First release
 //
 
-const char  * ALStatus::GetStatusDetail() const {
+const char *ALStatus::GetStatusDetail() const {
   if (mszStatusDetail)
     return mszStatusDetail;
   else if (miStatus == AL_SUCCESS)
@@ -305,7 +264,7 @@ const char  * ALStatus::GetStatusDetail() const {
 //   May 26, 1994  1.0A  : First release
 //
 
-ALStatus  & ALStatus::operator=(ALStatus  &rhs) {
+ALStatus &ALStatus::operator=(ALStatus &rhs) {
   if (rhs.mszStatusDetail == 0) {
     if (mszStatusDetail) {
       delete[] mszStatusDetail;

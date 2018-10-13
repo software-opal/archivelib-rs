@@ -4,9 +4,8 @@
  * _ALAssertFailure is the function called by AL_ASSERT() and
  * AL_ASSERT_OBJECT() when their assertion fails.
  */
-void  _ALAssertFailure(const char  *condition,
-                                   const char  *filename, int line,
-                                   const char  *message, ...);
+void _ALAssertFailure(const char *condition, const char *filename, int line,
+                      const char *message, ...);
 #ifdef NDEBUG
 /*
  * In the non-debug versions, both of these macros basically go away.
@@ -94,24 +93,7 @@ enum _ALClassTags {
  *
  *#define AL_CLASS_TAG( x ) int GoodTag(){ return 1; }
  */
-
-#if defined(NDEBUG) && !defined(AL_CLASS_TAG)
 #define AL_CLASS_TAG(x)                                                        \
-  class  _ALTag##x {                                              \
-  public:                                                                      \
-    unsigned char mucTagVal;                                                   \
-  } mMyTag;                                                                    \
-  int  GoodTag() { return 1; }
-#endif /* #if defined( NDEBUG ) && !defined( AL_CLASS_TAG ) */
+  int GoodTag() { return 1; }
 
-#if !defined(NDEBUG) && !defined(AL_CLASS_TAG)
-#define AL_CLASS_TAG(x)                                                        \
-  class  _ALTag##x {                                              \
-  public:                                                                      \
-     _ALTag##x() { mucTagVal = x; }                                    \
-     ~_ALTag##x() { mucTagVal = _ALDeletedObjectTag; }                 \
-    unsigned char mucTagVal;                                                   \
-  } mMyTag;                                                                    \
-  int  GoodTag() { return mMyTag.mucTagVal == x; }
-#endif /* #if !defined( NDEBUG ) && !defined( AL_CLASS_TAG ) */
-#endif /* #ifndef __DEBUG_H      */
+#endif

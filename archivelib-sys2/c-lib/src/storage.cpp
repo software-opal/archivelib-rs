@@ -3,48 +3,6 @@
 #include <string.h>
 
 //
-// void * ALStorage::operator new( size_t size )
-//
-// ARGUMENTS:
-//
-//  size  :  The number of bytes needed to create a new ALStorage object.
-//
-// RETURNS
-//
-//  A pointer to the newly allocated storage area, or 0 if no storage
-//  was available.
-//
-// DESCRIPTION
-//
-//  When using a DLL, it is easy to get into a dangerous situation when
-//  creating objects whose ctor and dtor are both in the DLL.  The problem
-//  arises because when you create an object using new, the memory for
-//  the object will be allocated from the EXE.  However, when you destroy
-//  the object using delete, the memory is freed inside the DLL.  Since
-//  the DLL doesn't really own that memory, bad things can happen.
-//
-//  But, you say, won't the space just go back to the Windows heap regardless
-//  of who tries to free it?  Maybe, but maybe not.  If the DLL is using
-//  a subsegment allocation scheme, it might do some sort of local free
-//  before returning the space to the windows heap.  That is the point where
-//  you could conceivably cook your heap.
-//
-//  By providing our own version of operator new inside this class, we
-//  ensure that all memory allocation for the class will be done from
-//  inside the DLL, not the EXE calling the DLL.
-//
-// REVISION HISTORY
-//
-//   May 26, 1994  1.0A  : First release
-//
-
-#if defined(AL_BUILDING_DLL)
-void  * ALStorage::operator new(size_t size) {
-  return ::new char[size];
-}
-#endif
-
-//
 // ALStorage::ALStorage( const char *file_name,
 //                       size_t size,
 //                       const enum ALStorageType object_type,
@@ -88,7 +46,7 @@ void  * ALStorage::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
- ALStorage::ALStorage(size_t size) : muBufferSize(size) {
+ALStorage::ALStorage(size_t size) : muBufferSize(size) {
   mpcBuffer = 0;
   muBufferValidData = 0;
   muWriteIndex = 0;
@@ -127,7 +85,7 @@ void  * ALStorage::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
- ALStorage::~ALStorage() {
+ALStorage::~ALStorage() {
   AL_ASSERT(GoodTag(), "~ALStorage: attempting to delete invalid object");
   if (mpcBuffer)
     Close();
@@ -164,7 +122,7 @@ void  * ALStorage::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
-int  ALStorage::Open() {
+int ALStorage::Open() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (muBufferSize != 0)
@@ -219,7 +177,7 @@ int  ALStorage::Open() {
 //                         non-zero.  Doesn't make sense for newly created
 //                         file.
 //
-int  ALStorage::Create() {
+int ALStorage::Create() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   mpcBuffer = new uint8_t[muBufferSize];
@@ -257,7 +215,7 @@ int  ALStorage::Create() {
 //   May 26, 1994  1.0A  : First release
 //
 
-int  ALStorage::Close() {
+int ALStorage::Close() {
   if (mpcBuffer) {
     delete[] mpcBuffer;
     mpcBuffer = 0;
@@ -296,7 +254,7 @@ int  ALStorage::Close() {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t  ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
+size_t ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
   size_t bytes_left_to_read = length;
   size_t buffer_bytes_available;
 
@@ -355,8 +313,7 @@ size_t  ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t  ALStorage::WriteBuffer(uint8_t *buf,
-                                       size_t length) {
+size_t ALStorage::WriteBuffer(uint8_t *buf, size_t length) {
   size_t buffer_bytes_free;
   size_t write_bytes_left = length;
 
@@ -411,7 +368,7 @@ size_t  ALStorage::WriteBuffer(uint8_t *buf,
 //   May 26, 1994  1.0A  : First release
 //
 
-long  ALStorage::Tell() {
+long ALStorage::Tell() {
   if (muWriteIndex)
     return mlFilePointer + muWriteIndex;
   else

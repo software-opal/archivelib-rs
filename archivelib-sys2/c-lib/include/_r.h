@@ -1,5 +1,5 @@
-#ifndef _60
-#define _60
+#ifndef _R_H
+#define _R_H
 #include <limits.h>
 #include <stdint.h>
 #include "aldefs.h"
@@ -25,17 +25,20 @@ typedef uint32_t uint32_t;
 #define _147 5
 #define _148 4096
 #define _149 256
+
 #if (1U << _540) <= _142
 #error pbit too small
 #endif
 #if (1U << _147) <= _145
 #error tbit too small
 #endif
+
 #if _145 > _142
 #define _152 _145
 #else
 #define _152 _142
 #endif
+
 #define _153 4096
 #define _154 4
 #define _155 8192

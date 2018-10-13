@@ -1,6 +1,7 @@
 #include "arclib.h"
 
 #include "_re.hpp"
+#include <cstring>
 
 #define _519                                                                   \
   "Incorrect compression level parameter passed to compressor.  Compression "  \
@@ -272,9 +273,6 @@ void RExpand::_257() {
   _246 = 0;
   _256(2 * CHAR_BIT);
 }
-#if defined(AL_BORLAND) && defined(AL_FLAT_MODEL)
-#pragma option -Od
-#endif
 void RExpand::_258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
                    uint16_t _263) {
   uint16_t _277[17], _287[17], _288[18], *_204;

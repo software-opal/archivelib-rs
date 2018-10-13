@@ -2,6 +2,7 @@
 
 #include "_rc.hpp"
 #include <stdlib.h>
+#include <cstring>
 
 #define _519                                                                   \
   "Incorrect compression level parameter passed to compressor.  Compression "  \
@@ -39,17 +40,11 @@ RCompress::RCompress(ALStorage &_266, ALStorage &_267, int32_t _269,
   _176 = (int16_t)(_175 - 1);
   if ((_166 = new uint8_t[_175 + _140 + 2]) != 0)
     memset(_166, 0, (_175 + _140 + 2) * sizeof(uint8_t));
-#if defined(AL_LARGE_DATA) || defined(AL_FLAT_MODEL) || defined(AL_UNIX)
   if ((_163 = new int16_t[_175 + _153]) != 0)
     memset(_163, 0, (_175 + _153) * sizeof(int16_t));
   if ((_164 = new int16_t[_175]) != 0)
     memset(_164, 0, _175 * sizeof(int16_t));
   _165 = new uint8_t[_155];
-#else
-  _163 = (int16_t _far *)_fcalloc(_175 + _153, sizeof(int16_t));
-  _164 = (int16_t _far *)_fcalloc(_175, sizeof(int16_t));
-  _165 = (uint8_t _far *)_fcalloc(_155, sizeof(uint8_t));
-#endif
   _179 = new uint8_t[_156];
   if ((_189 = new uint16_t[2 * _141 - 1]) != 0)
     memset(_189, 0, (2 * _141 - 1) * sizeof(uint16_t));
@@ -77,18 +72,12 @@ RCompress::RCompress(ALStorage &_266, ALStorage &_267, int32_t _269,
 RCompress::~RCompress() {
   if (_166)
     delete[] _166;
-#if defined(AL_LARGE_DATA) || defined(AL_FLAT_MODEL) || defined(AL_UNIX)
   if (_163)
     delete[] _163;
   if (_164)
     delete[] _164;
   if (_165)
     delete[] _165;
-#else
-  _ffree(_163);
-  _ffree(_164);
-  _ffree(_165);
-#endif
   if (_179)
     delete[] _179;
   if (_189)
@@ -224,11 +213,7 @@ void RCompress::_197() {
   _184 = 0;
 }
 void RCompress::_198() {
-#if defined(AL_FLAT_MODEL) || defined(AL_UNIX)
   register int16_t *_450;
-#else
-  register int16_t _far *_450;
-#endif
   register int16_t _226;
   _450 = &_163[_175];
   for (_226 = _153; _226 > 0; _226--)
