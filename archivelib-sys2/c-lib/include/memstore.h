@@ -127,7 +127,6 @@ public: /* Should some of these might be better off private */
   int mfUserOwnsBuffer;
   size_t muUserBufferSize;
   uint8_t *mpcUserBuffer;
-  AL_CLASS_TAG(_ALMemoryTag);
 };
 
 #endif

@@ -199,7 +199,6 @@ protected:
 public:
   const size_t muBufferSize;
   ALStatus mStatus;
-  AL_CLASS_TAG(_ALStorageTag);
 };
 
 /*

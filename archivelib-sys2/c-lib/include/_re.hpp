@@ -2,6 +2,8 @@
 #define __RE_H
 
 #include "_r.h"
+#include "stor.h"
+#include "status.h"
 
 #if defined(__cplusplus)
 
