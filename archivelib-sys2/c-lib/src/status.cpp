@@ -40,7 +40,7 @@
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALStatus::operator new(size_t size) {
+void  * ALStatus::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
@@ -68,7 +68,7 @@ void AL_DLL_FAR *AL_PROTO ALStatus::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
-AL_PROTO ALStatus::ALStatus() : miStatusDetailLength(129) {
+ ALStatus::ALStatus() : miStatusDetailLength(129) {
   miStatus = AL_SUCCESS;
   mszStatusDetail = 0;
 }
@@ -94,13 +94,13 @@ AL_PROTO ALStatus::ALStatus() : miStatusDetailLength(129) {
 //   May 26, 1994  1.0A  : First release
 //
 
-AL_PROTO ALStatus::~ALStatus() {
+ ALStatus::~ALStatus() {
   if (mszStatusDetail)
     delete[] mszStatusDetail;
 }
 
 //
-// int ALStatus::SetError( int error, const char AL_DLL_FAR *fmt, ... )
+// int ALStatus::SetError( int error, const char  *fmt, ... )
 //
 // ARGUMENTS:
 //
@@ -137,7 +137,7 @@ AL_PROTO ALStatus::~ALStatus() {
 //   May 26, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALStatus::SetError(int error, const char AL_DLL_FAR *fmt, ...) {
+int  ALStatus::SetError(int error, const char  *fmt, ...) {
   char detail[256];
   va_list argptr;
 
@@ -185,7 +185,7 @@ int AL_PROTO ALStatus::SetError(int error, const char AL_DLL_FAR *fmt, ...) {
 //   May 26, 1994  1.0A  : First release
 //
 
-const char AL_DLL_FAR *AL_PROTO ALStatus::GetStatusString() {
+const char  * ALStatus::GetStatusString() {
   switch (miStatus) {
   case AL_SUCCESS:
     return "Success";
@@ -273,7 +273,7 @@ const char AL_DLL_FAR *AL_PROTO ALStatus::GetStatusString() {
 //   May 26, 1994  1.0A  : First release
 //
 
-const char AL_DLL_FAR *AL_PROTO ALStatus::GetStatusDetail() const {
+const char  * ALStatus::GetStatusDetail() const {
   if (mszStatusDetail)
     return mszStatusDetail;
   else if (miStatus == AL_SUCCESS)
@@ -305,7 +305,7 @@ const char AL_DLL_FAR *AL_PROTO ALStatus::GetStatusDetail() const {
 //   May 26, 1994  1.0A  : First release
 //
 
-ALStatus AL_DLL_FAR &AL_PROTO ALStatus::operator=(ALStatus AL_DLL_FAR &rhs) {
+ALStatus  & ALStatus::operator=(ALStatus  &rhs) {
   if (rhs.mszStatusDetail == 0) {
     if (mszStatusDetail) {
       delete[] mszStatusDetail;

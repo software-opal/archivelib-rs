@@ -15,8 +15,8 @@ private:
   uint8_t _far *_165;
 #endif
   uint8_t *_166;
-  unsigned long _533;
-  unsigned long _534;
+  uint64_t _533;
+  uint64_t _534;
   uint16_t _167[17];
   int16_t _168;
   int16_t _169;
@@ -47,7 +47,7 @@ private:
   uint16_t *_194;
   int32_t _531;
 
-private:
+public:
   void _196();
   void _197();
   void _198();

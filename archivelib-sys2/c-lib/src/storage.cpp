@@ -39,7 +39,7 @@
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALStorage::operator new(size_t size) {
+void  * ALStorage::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
@@ -88,7 +88,7 @@ void AL_DLL_FAR *AL_PROTO ALStorage::operator new(size_t size) {
 //   May 26, 1994  1.0A  : First release
 //
 
-AL_PROTO ALStorage::ALStorage(size_t size) : muBufferSize(size) {
+ ALStorage::ALStorage(size_t size) : muBufferSize(size) {
   mpcBuffer = 0;
   muBufferValidData = 0;
   muWriteIndex = 0;
@@ -127,7 +127,7 @@ AL_PROTO ALStorage::ALStorage(size_t size) : muBufferSize(size) {
 //   May 26, 1994  1.0A  : First release
 //
 
-AL_PROTO ALStorage::~ALStorage() {
+ ALStorage::~ALStorage() {
   AL_ASSERT(GoodTag(), "~ALStorage: attempting to delete invalid object");
   if (mpcBuffer)
     Close();
@@ -164,7 +164,7 @@ AL_PROTO ALStorage::~ALStorage() {
 //   May 26, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALStorage::Open() {
+int  ALStorage::Open() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (muBufferSize != 0)
@@ -219,7 +219,7 @@ int AL_PROTO ALStorage::Open() {
 //                         non-zero.  Doesn't make sense for newly created
 //                         file.
 //
-int AL_PROTO ALStorage::Create() {
+int  ALStorage::Create() {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   mpcBuffer = new uint8_t[muBufferSize];
@@ -257,7 +257,7 @@ int AL_PROTO ALStorage::Create() {
 //   May 26, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALStorage::Close() {
+int  ALStorage::Close() {
   if (mpcBuffer) {
     delete[] mpcBuffer;
     mpcBuffer = 0;
@@ -296,7 +296,7 @@ int AL_PROTO ALStorage::Close() {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t AL_PROTO ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
+size_t  ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
   size_t bytes_left_to_read = length;
   size_t buffer_bytes_available;
 
@@ -355,7 +355,7 @@ size_t AL_PROTO ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
 //   May 26, 1994  1.0A  : First release
 //
 
-size_t AL_PROTO ALStorage::WriteBuffer(uint8_t *buf,
+size_t  ALStorage::WriteBuffer(uint8_t *buf,
                                        size_t length) {
   size_t buffer_bytes_free;
   size_t write_bytes_left = length;
@@ -411,7 +411,7 @@ size_t AL_PROTO ALStorage::WriteBuffer(uint8_t *buf,
 //   May 26, 1994  1.0A  : First release
 //
 
-long AL_PROTO ALStorage::Tell() {
+long  ALStorage::Tell() {
   if (muWriteIndex)
     return mlFilePointer + muWriteIndex;
   else

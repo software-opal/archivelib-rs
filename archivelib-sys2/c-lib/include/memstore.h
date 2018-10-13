@@ -80,20 +80,20 @@
  *
  */
 
-class AL_CLASS_TYPE ALMemory : public ALStorage {
+class  ALMemory : public ALStorage {
   /*
    * Constructors, destructors, assignment operator, friends, declarations
    */
 
 public:
 #ifdef AL_WINDOWS_MEMORY
-  AL_PROTO ALMemory(uint8_t AL_HUGE *user_buffer = 0, DWORD user_buffer_size = 0);
+   ALMemory(uint8_t AL_HUGE *user_buffer = 0, DWORD user_buffer_size = 0);
 #else
-  AL_PROTO ALMemory(uint8_t AL_DLL_FAR *user_buffer = 0, int user_buffer_size = 0);
+   ALMemory(uint8_t  *user_buffer = 0, int user_buffer_size = 0);
 #endif
-  virtual AL_PROTO ~ALMemory();
+  virtual  ~ALMemory();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
   /*
    * As usual, I don't want the compiler to generate a default copy constructor,
@@ -101,8 +101,8 @@ public:
    * here.  They do not exist!
    */
 protected:
-  AL_PROTO ALMemory(ALMemory AL_DLL_FAR &);
-  ALMemory AL_DLL_FAR &AL_PROTO operator=(const ALMemory AL_DLL_FAR &);
+   ALMemory(ALMemory  &);
+  ALMemory  & operator=(const ALMemory  &);
 
   /*
    * Member functions, grouped by category.
@@ -115,24 +115,24 @@ protected:
    * The file I/O access public interface
    */
 public:
-  virtual int AL_PROTO Open();
-  virtual int AL_PROTO Create();
-  virtual int AL_PROTO Close();
-  virtual int AL_PROTO LoadBuffer(long address);
-  virtual int AL_PROTO FlushBuffer();
-  virtual int AL_PROTO Seek(long address);
+  virtual int  Open();
+  virtual int  Create();
+  virtual int  Close();
+  virtual int  LoadBuffer(long address);
+  virtual int  FlushBuffer();
+  virtual int  Seek(long address);
 
   /*
    * File name and underlying object manipulation public interface
    */
 public:
-  virtual int AL_PROTO Delete();
+  virtual int  Delete();
 
   /*
    * Unique to this class
    */
 protected:
-  int AL_PROTO GrowUserBuffer(long minimum_new_size);
+  int  GrowUserBuffer(long minimum_new_size);
   /*
    * Data members
    */
@@ -145,7 +145,7 @@ public: /* Should some of these might be better off private */
   uint8_t AL_HUGE *mpcUserBuffer;
 #else
   size_t muUserBufferSize;
-  uint8_t AL_DLL_FAR *mpcUserBuffer;
+  uint8_t  *mpcUserBuffer;
 #endif
   AL_CLASS_TAG(_ALMemoryTag);
 };

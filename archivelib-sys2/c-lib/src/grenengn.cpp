@@ -50,8 +50,8 @@
 //                          option.
 
 SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
-                         ALStorage AL_DLL_FAR &input,
-                         ALStorage AL_DLL_FAR &output) {
+                         ALStorage  &input,
+                         ALStorage  &output) {
   bool fail_uncompressible = false;
 
   ALOpenFiles files(input, output);
@@ -119,8 +119,8 @@ SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
 //
 
 SimpleStatus al_decompress(ALGreenleafCompressionLevels compression_level,
-                           ALStorage AL_DLL_FAR &input,
-                           ALStorage AL_DLL_FAR &output,
+                           ALStorage  &input,
+                           ALStorage  &output,
                            long compressed_length) {
   ALOpenFiles files(input, output);
 

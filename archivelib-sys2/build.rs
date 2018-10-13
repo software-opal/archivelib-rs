@@ -46,6 +46,7 @@ fn main() {
     .define("AL_CUSTOM", None)
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)
+    .define("AL_DISABLE_NEW", None)
     .include("c-lib/")
     .include("c-lib/include")
     .file("c-lib/api.cpp")

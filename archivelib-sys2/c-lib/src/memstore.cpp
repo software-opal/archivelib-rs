@@ -40,19 +40,11 @@
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
+void  * ALMemory::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
 
-// WINDOWS version:
-//
-// ALMemory::ALMemory( const char *buffer_name = "",
-//                     char AL_HUGE *user_buffer = 0,
-//                     DWORD user_buffer_size = 0,
-//                     ALCase name_case = AL_MIXED )
-//
-// MS-DOS real mode version :
 //
 // ALMemory::ALMemory( const char *buffer_name = "",
 //                     char *user_buffer = 0,
@@ -60,13 +52,6 @@ void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
 //                     ALCase name_case = AL_MIXED )
 //
 // ARGUMENTS:
-//
-//  buffer_name  : An arbitrary name assigned to the buffer.  Buffer
-//                 names don't have to be unique, because buffers aren't
-//                 named at the operating system level.  But if you are
-//                 going to insert the storage object into an archive, the
-//                 name needs to be unique so that you will be able to
-//                 extract it properly.
 //
 //  user_buffer  : If you want the ALMemory class to automatically allocate
 //                 a buffer for you, and grow it as necessary, just leave
@@ -80,12 +65,6 @@ void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
 //                     you need to indicate how large it is here.  Under
 //                     Windows this is a DWORD instead of a size_t.
 //
-//  name_case    : This decides whether you want the file name to be
-//                 case sensitive when making comparisons.  MS-DOS
-//                 file names are case-insensitive.  You can make memory
-//                 buffers either mixed case, forced upper, or forced
-//                 lower.  The default of mixed case means that comparisons
-//                 will be case sensitive, which is fine.
 // RETURNS
 //
 //  Nothing, it is a constructor.
@@ -103,28 +82,7 @@ void AL_DLL_FAR *AL_PROTO ALMemory::operator new(size_t size) {
 //
 //   May 22, 1994  1.0A  : First release
 //
-#if defined(AL_WINDOWS_MEMORY)
-//
-// The Windows and MS-DOS constructors are nearly identical.
-//
-AL_PROTO ALMemory::ALMemory(uint8_t AL_HUGE *user_buffer /* = 0 */,
-                            DWORD user_buffer_size /* = 0 */)
-    : ALStorage(4096) {
-  if (user_buffer != 0) {
-    mpcUserBuffer = user_buffer;
-    mfUserOwnsBuffer = 1;
-    muUserBufferSize = user_buffer_size;
-  } else {
-    mfUserOwnsBuffer = 0;
-    mpcUserBuffer = 0;
-    muUserBufferSize = 0;
-  }
-  mhUserMemoryHandle = 0;
-}
-
-#else // #if defined( AL_WINDOWS_MEMORY )
-
-AL_PROTO ALMemory::ALMemory(uint8_t AL_DLL_FAR *user_buffer /* = 0 */,
+ ALMemory::ALMemory(uint8_t  *user_buffer /* = 0 */,
                             int user_buffer_size /* = 0 */)
     : ALStorage(4096) {
   if (user_buffer != 0) {
@@ -137,7 +95,6 @@ AL_PROTO ALMemory::ALMemory(uint8_t AL_DLL_FAR *user_buffer /* = 0 */,
     muUserBufferSize = 0;
   }
 }
-#endif
 
 //
 // ALMemory::~ALMemory()
@@ -167,7 +124,7 @@ AL_PROTO ALMemory::ALMemory(uint8_t AL_DLL_FAR *user_buffer /* = 0 */,
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALMemory::~ALMemory() {
+ ALMemory::~ALMemory() {
   AL_ASSERT(GoodTag(), "~ALMemory: attempting to delete invalid object");
   if (!mfUserOwnsBuffer) {
     if (mpcUserBuffer) {
@@ -222,7 +179,7 @@ AL_PROTO ALMemory::~ALMemory() {
 //                          would then cause a GPF under Windows, because
 //                          muValidData was 0 and muReadIndex was > 0.
 
-int AL_PROTO ALMemory::LoadBuffer(long address) {
+int  ALMemory::LoadBuffer(long address) {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (mlFilePointer != address) {
@@ -284,7 +241,7 @@ int AL_PROTO ALMemory::LoadBuffer(long address) {
 //   May 22, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALMemory::Delete() {
+int  ALMemory::Delete() {
   if (!mfUserOwnsBuffer) {
 #if defined(AL_WINDOWS_MEMORY)
     GlobalUnlock((HGLOBAL)mhUserMemoryHandle);
@@ -325,7 +282,7 @@ int AL_PROTO ALMemory::Delete() {
 //   May 22, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALMemory::Seek(long address) {
+int  ALMemory::Seek(long address) {
   FlushBuffer();
   if (mStatus < 0)
     return mStatus;
@@ -378,7 +335,7 @@ int AL_PROTO ALMemory::Seek(long address) {
 //
 
 #if defined(AL_WINDOWS_MEMORY)
-int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
+int  ALMemory::GrowUserBuffer(long minimum_new_size) {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (mfUserOwnsBuffer)
@@ -409,7 +366,7 @@ int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
 }
 #else // #ifdef AL_WINDOWS_MEMORY
 
-int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
+int  ALMemory::GrowUserBuffer(long minimum_new_size) {
   if (mStatus < AL_SUCCESS)
     return mStatus;
   if (mfUserOwnsBuffer)
@@ -432,7 +389,8 @@ int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
       return AL_SUCCESS;
     }
   }
-  uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)minimum_new_size);
+  uint8_t *new_buf =
+      (uint8_t *)realloc(mpcUserBuffer, (size_t)minimum_new_size);
   if (new_buf) {
     mpcUserBuffer = new_buf;
     muUserBufferSize = (size_t)trial_size;
@@ -477,7 +435,7 @@ int AL_PROTO ALMemory::GrowUserBuffer(long minimum_new_size) {
 //   August 10, 1994 1.0B : Slight mod to make a compiler happy, syntactic
 //                          change only.
 //
-int AL_PROTO ALMemory::FlushBuffer() {
+int  ALMemory::FlushBuffer() {
   if (mStatus < 0)
     return mStatus;
   //
@@ -543,7 +501,7 @@ int AL_PROTO ALMemory::FlushBuffer() {
 //                         not.  This could be very bad.
 //
 
-int AL_PROTO ALMemory::Close() {
+int  ALMemory::Close() {
   if (mpcBuffer == 0)
     return mStatus;
   FlushBuffer();
@@ -596,7 +554,7 @@ int AL_PROTO ALMemory::Close() {
 //                         calling Create() for a memory object that had
 //                         already allocated some space.
 
-int AL_PROTO ALMemory::Create() {
+int  ALMemory::Create() {
   ALStorage::Create();
   if (mStatus < AL_SUCCESS)
     return mStatus;
@@ -656,7 +614,7 @@ int AL_PROTO ALMemory::Create() {
 //   May 22, 1994  1.0A  : First release
 //
 
-int AL_PROTO ALMemory::Open() {
+int  ALMemory::Open() {
   ALStorage::Open();
   if (mStatus < AL_SUCCESS)
     return mStatus;

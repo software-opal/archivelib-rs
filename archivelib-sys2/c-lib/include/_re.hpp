@@ -2,7 +2,7 @@
 #include "_r.h"
 
 class RExpand {
-private:
+public:
   ALStorage *_161;
   ALStorage *_162;
   int16_t _175;
@@ -22,7 +22,7 @@ private:
   uint8_t _245;
   int16_t _246;
   uint8_t *_247;
-  long _248;
+  int64_t _248;
   uint16_t _249();
   uint16_t _250();
   void _251();
@@ -35,7 +35,7 @@ private:
             uint16_t _263);
 
 public:
-  RExpand(ALStorage &_233, ALStorage &_202, long _264, int32_t _234);
+  RExpand(ALStorage &_233, ALStorage &_202, int64_t _264, int32_t _234);
   ~RExpand();
   int32_t Expand();
   ALStatus mStatus;

@@ -139,23 +139,23 @@
  *
  */
 
-class AL_CLASS_TYPE ALStorage {
+class  ALStorage {
   /*
    * Constructors, destructors, assignment operator
    */
 protected:
-  AL_PROTO ALStorage(size_t buffer_size);
-  ALStorage AL_DLL_FAR &AL_PROTO operator=(const ALStorage AL_DLL_FAR &);
+   ALStorage(size_t buffer_size);
+  ALStorage  & operator=(const ALStorage  &);
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
 public:
-  virtual AL_PROTO ~ALStorage();
+  virtual  ~ALStorage();
   /*
    * I don't want to allow the copy constructor to exist.
    */
 protected:
-  AL_PROTO ALStorage(const ALStorage AL_DLL_FAR &);
+   ALStorage(const ALStorage  &);
 
   /*
    * Member functions, grouped somewhat
@@ -163,33 +163,33 @@ protected:
    * The file I/O access public interface
    */
 public:
-  int16_t AL_PROTO ReadChar();
-  int AL_PROTO WriteChar(uint8_t c);
-  size_t AL_PROTO ReadBuffer(uint8_t AL_DLL_FAR *buffer, size_t length);
-  size_t AL_PROTO WriteBuffer(uint8_t AL_DLL_FAR *buffer, size_t length);
-  virtual int AL_PROTO Open();
-  virtual int AL_PROTO Create();
-  virtual int AL_PROTO Close();
-  virtual int AL_PROTO LoadBuffer(long address) = 0;
-  virtual int AL_PROTO FlushBuffer() = 0;
-  virtual int AL_PROTO Seek(long address) = 0;
+  int16_t  ReadChar();
+  int  WriteChar(uint8_t c);
+  size_t  ReadBuffer(uint8_t  *buffer, size_t length);
+  size_t  WriteBuffer(uint8_t  *buffer, size_t length);
+  virtual int  Open();
+  virtual int  Create();
+  virtual int  Close();
+  virtual int  LoadBuffer(long address) = 0;
+  virtual int  FlushBuffer() = 0;
+  virtual int  Seek(long address) = 0;
   /*
    * File manipulation public interface
    */
 public:
-  virtual int AL_PROTO Delete() = 0;
+  virtual int  Delete() = 0;
   /*
    * Access functions
    */
 public:
-  long AL_PROTO GetSize() const { return mlSize; }
-  int AL_PROTO IsOpen() { return mpcBuffer != 0; }
-  long AL_PROTO Tell();
+  long  GetSize() const { return mlSize; }
+  int  IsOpen() { return mpcBuffer != 0; }
+  long  Tell();
   /*
    * Data members
    */
 protected:
-  uint8_t AL_DLL_FAR *mpcBuffer;
+  uint8_t  *mpcBuffer;
   size_t muBufferValidData;
   size_t muWriteIndex;
   size_t muReadIndex;
@@ -237,7 +237,7 @@ public:
  *
  */
 
-inline int16_t AL_PROTO ALStorage::ReadChar() {
+inline int16_t  ALStorage::ReadChar() {
   int result;
 
   AL_ASSERT(
@@ -284,7 +284,7 @@ inline int16_t AL_PROTO ALStorage::ReadChar() {
  *
  */
 
-inline int AL_PROTO ALStorage::WriteChar(uint8_t c) {
+inline int  ALStorage::WriteChar(uint8_t c) {
   int result;
 
   /*    assert( muReadIndex == 0 ); */ /* Can't write if I've done a read */

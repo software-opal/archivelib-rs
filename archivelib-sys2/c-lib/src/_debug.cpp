@@ -54,56 +54,24 @@
 //   May 22, 1994  1.0A  : First release
 //
 
-void AL_CFUNCTION _ALAssertFailure(const char AL_DLL_FAR *condition,
-                                   const char AL_DLL_FAR *filename, int line,
-                                   const char AL_DLL_FAR *message, ...) {
+void  _ALAssertFailure(const char  *condition,
+                                   const char  *filename, int line,
+                                   const char  *message, ...) {
   char buf1[256];
   char buf2[128];
   va_list argptr;
 
   va_start(argptr, message);
-#if defined(AL_BUILDING_DLL) && defined(AL_WINDOWS_GUI)
-  //
-  // Watcom is kind of annoying in that they format their variable arguments
-  // just a little differently than everyone else.
-  //
-#if defined(AL_WATCOM)
-  wvsprintf(buf2, message, *argptr);
-#else
-  wvsprintf(buf2, message, argptr);
-#endif
-#else
   vsprintf(buf2, message, argptr);
-#endif
   va_end(argptr);
 
-#if defined(AL_BUILDING_DLL) && defined(AL_WINDOWS_GUI)
-  wsprintf
-#else
-  sprintf
-#endif
-      (buf1,
+  sprintf(buf1,
        "Assertion error, ArchiveLib is aborting the application.\n"
        "Condition = %s\n"
        "File = %s, line = %d\n"
        "%s",
        condition, filename, line, buf2);
-#if defined(AL_WINDOWS_GUI)
-#ifdef AL_BUILDING_DLL
-  MessageBox(0, buf1,
-             "                      ArchiveLib (DLL) assertion error           "
-             "           ",
-             MB_ICONSTOP);
-#else
-  MessageBox(0, buf1,
-             "                      "
-             "ArchiveLib (static) assertion error"
-             "                      ",
-             MB_ICONSTOP);
-#endif
-  FatalAppExit(0, "Application terminated");
-#else
+
   std::cerr << buf1 << "\n" << std::flush;
   abort();
-#endif
 }

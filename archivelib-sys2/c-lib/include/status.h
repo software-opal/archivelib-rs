@@ -5,42 +5,42 @@
 
 #include "simple_status.h"
 
-class AL_CLASS_TYPE ALStatus {
+class  ALStatus {
   /*
    * Constructors, destructors, assignment operators, and declarations
    */
 public:
-  AL_PROTO ALStatus();
-  AL_PROTO ~ALStatus();
+   ALStatus();
+   ~ALStatus();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
 
 protected:
-  AL_PROTO ALStatus(ALStatus AL_DLL_FAR &);
+   ALStatus(ALStatus  &);
   /*
    * Member functions
    */
 public:
-  int AL_PROTO SetError(int error, const char AL_DLL_FAR *fmt, ...);
-  int AL_PROTO GetStatusCode() { return miStatus; }
-  const char AL_DLL_FAR *AL_PROTO GetStatusString();
-  const char AL_DLL_FAR *AL_PROTO GetStatusDetail() const;
+  int  SetError(int error, const char  *fmt, ...);
+  int  GetStatusCode() { return miStatus; }
+  const char  * GetStatusString();
+  const char  * GetStatusDetail() const;
   SimpleStatus copyToSimple();
-  AL_PROTO operator int() { return miStatus; }
-  ALStatus AL_DLL_FAR &AL_PROTO operator=(ALStatus AL_DLL_FAR &);
+   operator int() { return miStatus; }
+  ALStatus  & operator=(ALStatus  &);
   /*
    * Data members
    */
 protected:
   int miStatus;
   const int miStatusDetailLength;
-  char AL_DLL_FAR *mszStatusDetail;
+  char  *mszStatusDetail;
 };
 
 #ifndef BINDGEN
 inline std::ostream &operator<<(std::ostream &stream,
-                                const ALStatus AL_DLL_FAR &status) {
+                                const ALStatus  &status) {
 #if defined(AL_USING_DLL) && !defined(AL_LARGE_MODEL) && !defined(AL_FLAT_MODEL)
   const char _far *p = status.GetStatusDetail();
   char *near_string = new char[_fstrlen(p) + 1];

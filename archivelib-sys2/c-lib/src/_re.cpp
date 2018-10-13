@@ -9,7 +9,7 @@
 #define _521 "Internal 1 error in Greenleaf Decompression routine"
 #define _522 "Internal 2 error in Greenleaf Decompression routine"
 
-RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int32_t _269) {
+RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _161 = &_266;
   _162 = &_267;
   _248 = _268;

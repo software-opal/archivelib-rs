@@ -36,7 +36,7 @@
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALOpenInputFile::operator new(size_t size) {
+void  * ALOpenInputFile::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
@@ -62,7 +62,7 @@ void AL_DLL_FAR *AL_PROTO ALOpenInputFile::operator new(size_t size) {
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALOpenOutputFile::operator new(size_t size) {
+void  * ALOpenOutputFile::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
@@ -88,7 +88,7 @@ void AL_DLL_FAR *AL_PROTO ALOpenOutputFile::operator new(size_t size) {
 //
 
 #if defined(AL_BUILDING_DLL)
-void AL_DLL_FAR *AL_PROTO ALOpenFiles::operator new(size_t size) {
+void  * ALOpenFiles::operator new(size_t size) {
   return ::new char[size];
 }
 #endif
@@ -117,7 +117,7 @@ void AL_DLL_FAR *AL_PROTO ALOpenFiles::operator new(size_t size) {
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenInputFile::ALOpenInputFile(ALStorage AL_DLL_FAR &file) {
+ ALOpenInputFile::ALOpenInputFile(ALStorage  &file) {
   mpFile = &file;
   miFileWasOpen = file.IsOpen();
   if (!miFileWasOpen)
@@ -145,7 +145,7 @@ AL_PROTO ALOpenInputFile::ALOpenInputFile(ALStorage AL_DLL_FAR &file) {
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenInputFile::~ALOpenInputFile() {
+ ALOpenInputFile::~ALOpenInputFile() {
   if (!miFileWasOpen)
     mpFile->Close();
 }
@@ -173,7 +173,7 @@ AL_PROTO ALOpenInputFile::~ALOpenInputFile() {
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenOutputFile::ALOpenOutputFile(ALStorage AL_DLL_FAR &file) {
+ ALOpenOutputFile::ALOpenOutputFile(ALStorage  &file) {
   mpFile = &file;
   miFileWasOpen = file.IsOpen();
   if (!miFileWasOpen)
@@ -201,7 +201,7 @@ AL_PROTO ALOpenOutputFile::ALOpenOutputFile(ALStorage AL_DLL_FAR &file) {
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenOutputFile::~ALOpenOutputFile() {
+ ALOpenOutputFile::~ALOpenOutputFile() {
   if (!miFileWasOpen)
     mpFile->Close();
 }
@@ -238,8 +238,8 @@ AL_PROTO ALOpenOutputFile::~ALOpenOutputFile() {
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenFiles::ALOpenFiles(ALStorage AL_DLL_FAR &input,
-                                  ALStorage AL_DLL_FAR &output)
+ ALOpenFiles::ALOpenFiles(ALStorage  &input,
+                                  ALStorage  &output)
     : mInputFile(input), mOutputFile(output) {}
 
 //
@@ -264,4 +264,4 @@ AL_PROTO ALOpenFiles::ALOpenFiles(ALStorage AL_DLL_FAR &input,
 //   May 22, 1994  1.0A  : First release
 //
 
-AL_PROTO ALOpenFiles::~ALOpenFiles() {}
+ ALOpenFiles::~ALOpenFiles() {}

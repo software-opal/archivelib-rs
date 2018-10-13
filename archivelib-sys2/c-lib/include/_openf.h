@@ -33,23 +33,23 @@
  *
  */
 
-class AL_CLASS_TYPE ALOpenInputFile {
+class  ALOpenInputFile {
 public:
-  AL_PROTO ALOpenInputFile(ALStorage AL_DLL_FAR &file);
-  AL_PROTO ~ALOpenInputFile();
+   ALOpenInputFile(ALStorage  &file);
+   ~ALOpenInputFile();
 #if defined(AL_BUILDING_DLL) || defined(AL_USING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-  AL_PROTO ALOpenInputFile(ALOpenInputFile AL_DLL_FAR &);
-  ALOpenInputFile AL_DLL_FAR &operator=(ALOpenInputFile AL_DLL_FAR &);
+   ALOpenInputFile(ALOpenInputFile  &);
+  ALOpenInputFile  &operator=(ALOpenInputFile  &);
 
 protected:
   int miFileWasOpen;
-  ALStorage AL_DLL_FAR *mpFile;
+  ALStorage  *mpFile;
 };
 
 /*
@@ -82,23 +82,23 @@ protected:
  *
  */
 
-class AL_CLASS_TYPE ALOpenOutputFile {
+class  ALOpenOutputFile {
 public:
-  AL_PROTO ALOpenOutputFile(ALStorage AL_DLL_FAR &file);
-  AL_PROTO ~ALOpenOutputFile();
+   ALOpenOutputFile(ALStorage  &file);
+   ~ALOpenOutputFile();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-  AL_PROTO ALOpenOutputFile(ALOpenOutputFile AL_DLL_FAR &);
-  ALOpenOutputFile AL_DLL_FAR &operator=(ALOpenOutputFile AL_DLL_FAR &);
+   ALOpenOutputFile(ALOpenOutputFile  &);
+  ALOpenOutputFile  &operator=(ALOpenOutputFile  &);
 
 protected:
   int miFileWasOpen;
-  ALStorage AL_DLL_FAR *mpFile;
+  ALStorage  *mpFile;
 };
 
 /*
@@ -133,20 +133,20 @@ protected:
  *
  */
 
-class AL_CLASS_TYPE ALOpenFiles {
+class  ALOpenFiles {
 public:
-  AL_PROTO ALOpenFiles(ALStorage AL_DLL_FAR &input,
-                       ALStorage AL_DLL_FAR &output);
-  AL_PROTO ~ALOpenFiles();
+   ALOpenFiles(ALStorage  &input,
+                       ALStorage  &output);
+   ~ALOpenFiles();
 #if defined(AL_USING_DLL) || defined(AL_BUILDING_DLL)
-  void AL_DLL_FAR *AL_PROTO operator new(size_t size);
+  void  * operator new(size_t size);
 #endif
   /*
    * Prevent the compiler from generating these members.
    */
 protected:
-  AL_PROTO ALOpenFiles(ALOpenFiles AL_DLL_FAR &);
-  ALOpenFiles AL_DLL_FAR &operator=(ALOpenFiles AL_DLL_FAR &);
+   ALOpenFiles(ALOpenFiles  &);
+  ALOpenFiles  &operator=(ALOpenFiles  &);
 
 protected:
   ALOpenInputFile mInputFile;
