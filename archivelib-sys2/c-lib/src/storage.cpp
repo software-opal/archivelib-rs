@@ -86,7 +86,6 @@ ALStorage::ALStorage(size_t size) : muBufferSize(size) {
 //
 
 ALStorage::~ALStorage() {
-  AL_ASSERT(GoodTag(), "~ALStorage: attempting to delete invalid object");
   if (mpcBuffer)
     Close();
 }

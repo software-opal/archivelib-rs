@@ -1,6 +1,7 @@
 #include "arclib.h"
 
 #include "grenengn.h"
+#include "_openf.h"
 #include "_rc.hpp"
 #include "_re.hpp"
 
@@ -50,8 +51,7 @@
 //                          option.
 
 SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
-                         ALStorage  &input,
-                         ALStorage  &output) {
+                         ALStorage &input, ALStorage &output) {
   bool fail_uncompressible = false;
 
   ALOpenFiles files(input, output);
@@ -119,8 +119,7 @@ SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
 //
 
 SimpleStatus al_decompress(ALGreenleafCompressionLevels compression_level,
-                           ALStorage  &input,
-                           ALStorage  &output,
+                           ALStorage &input, ALStorage &output,
                            long compressed_length) {
   ALOpenFiles files(input, output);
 

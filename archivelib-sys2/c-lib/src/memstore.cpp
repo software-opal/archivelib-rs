@@ -85,14 +85,12 @@ ALMemory::ALMemory(uint8_t *user_buffer /* = 0 */,
 //
 
 ALMemory::~ALMemory() {
-  AL_ASSERT(GoodTag(), "~ALMemory: attempting to delete invalid object");
   if (!mfUserOwnsBuffer) {
     if (mpcUserBuffer) {
       free(mpcUserBuffer);
       mpcUserBuffer = 0;
     }
   }
-  AL_ASSERT(GoodTag(), "~ALMemory: attempting to delete invalid object");
 }
 
 //

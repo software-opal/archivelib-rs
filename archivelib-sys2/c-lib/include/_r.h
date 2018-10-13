@@ -1,12 +1,10 @@
 #ifndef _R_H
 #define _R_H
+
 #include <limits.h>
 #include <stdint.h>
 #include "aldefs.h"
 
-typedef uint16_t uint16_t;
-typedef uint8_t uint8_t;
-typedef uint32_t uint32_t;
 #define _132 (CHAR_BIT * sizeof(uint16_t))
 #define _133 16
 #define _134 '\0'
