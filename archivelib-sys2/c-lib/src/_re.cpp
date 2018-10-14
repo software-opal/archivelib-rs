@@ -8,8 +8,8 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _162 = &_267;
   _248 = _268;
   ;
-  if (_269 > CONST__137 || _269 < CONST__138) {
-    mStatus.SetError(AL_ILLEGAL_PARAMETER, _519, _269 - 10);
+  if (_269 > CONST_N137 || _269 < CONST_N138) {
+    mStatus.SetError(AL_ILLEGAL_PARAMETER, ERROR_MESSAGE_N519, _269 - 10);
     _175 = 2;
   } else
     _175 = (int16_t)(1 << _269);
@@ -17,25 +17,25 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _166 = new uint8_t[_175 + 2];
   if (_166)
     memset(_166, 0, (_175 + 2) * sizeof(uint8_t));
-  _240 = new uint16_t[CONST__148];
+  _240 = new uint16_t[CONST_N148];
   if (_240)
-    memset(_240, 0, CONST__148 * sizeof(uint16_t));
-  _241 = new uint16_t[CONST__149];
+    memset(_240, 0, CONST_N148 * sizeof(uint16_t));
+  _241 = new uint16_t[CONST_N149];
   if (_241)
-    memset(_241, 0, CONST__149 * sizeof(uint16_t));
-  _242 = new uint8_t[CONST__159];
+    memset(_241, 0, CONST_N149 * sizeof(uint16_t));
+  _242 = new uint8_t[BUFFER_SIZE];
   if (_242)
-    memset(_242, 0, CONST__159 * sizeof(uint8_t));
-  _189 = new uint16_t[2 * CONST__141 - 1];
+    memset(_242, 0, BUFFER_SIZE * sizeof(uint8_t));
+  _189 = new uint16_t[2 * CONST_N141 - 1];
   if (_189)
-    memset(_189, 0, (2 * CONST__141 - 1) * sizeof(uint16_t));
-  _190 = new uint16_t[2 * CONST__141 - 1];
+    memset(_189, 0, (2 * CONST_N141 - 1) * sizeof(uint16_t));
+  _190 = new uint16_t[2 * CONST_N141 - 1];
   if (_190)
-    memset(_190, 0, (2 * CONST__141 - 1) * sizeof(uint16_t));
-  _180 = new uint8_t[CONST__141];
-  _181 = new uint8_t[CONST__152];
+    memset(_190, 0, (2 * CONST_N141 - 1) * sizeof(uint16_t));
+  _180 = new uint8_t[CONST_N141];
+  _181 = new uint8_t[CONST_N152];
   if (!_166 || !_240 || !_241 || !_242 || !_189 || !_190 || !_180 || !_181) {
-    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, _520);
+    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, ERROR_MESSAGE_N520);
   }
 }
 RExpand::~RExpand() {
@@ -81,11 +81,11 @@ int32_t RExpand::Expand() {
           goto _282;
       }
     } else {
-      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - CONST__135));
-      if (_276 == CONST__144)
+      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - CONST_N135));
+      if (_276 == CONST_N144)
         break;
       i = (int16_t)((_200 - _250() - 1) & _280);
-      if (i < _279 - CONST__140 - 1 && _200 < _279 - CONST__140 - 1) {
+      if (i < _279 - CONST_N140 - 1 && _200 < _279 - CONST_N140 - 1) {
         while (--_276 >= 0)
           _278[_200++] = _278[i++];
       } else {
@@ -110,15 +110,15 @@ uint16_t RExpand::_249() {
   uint16_t _276, _283;
   if (_244 == 0) {
     _244 = fn252(16);
-    fn253(CONST__145, CONST__147, 3);
+    fn253(CONST_N145, CONST_N147, 3);
     fn255();
-    fn253(CONST__142, CONST__540, -1);
+    fn253(CONST_N142, CONST_N540, -1);
     if (mStatus < 0)
       return 0;
   }
   _244--;
   _276 = _240[_182 >> 4];
-  if (_276 >= CONST__141) {
+  if (_276 >= CONST_N141) {
     _283 = 1U << 3;
     do {
       if (_182 & _283)
@@ -126,7 +126,7 @@ uint16_t RExpand::_249() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= CONST__141);
+    } while (_276 >= CONST_N141);
   }
   fn256(_180[_276]);
   return _276;
@@ -134,7 +134,7 @@ uint16_t RExpand::_249() {
 uint16_t RExpand::_250() {
   uint16_t _276, _283;
   _276 = _241[_182 >> 8];
-  if (_276 >= CONST__142) {
+  if (_276 >= CONST_N142) {
     _283 = 1U << 7;
     do {
       if (_182 & _283)
@@ -142,7 +142,7 @@ uint16_t RExpand::_250() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= CONST__142);
+    } while (_276 >= CONST_N142);
   }
   fn256(_181[_276]);
   if (_276 != 0) {
@@ -192,24 +192,24 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
     }
     while (i < _254)
       _181[i++] = 0;
-    fn258(_254, _181, 8, _241, CONST__149);
+    fn258(_254, _181, 8, _241, CONST_N149);
   }
 }
 void RExpand::fn255() {
   int16_t i, _203, _219;
   uint16_t _283;
-  _219 = fn252(CONST__143);
+  _219 = fn252(CONST_N143);
   if (_219 == 0) {
-    _203 = fn252(CONST__143);
-    for (i = 0; i < CONST__141; i++)
+    _203 = fn252(CONST_N143);
+    for (i = 0; i < CONST_N141; i++)
       _180[i] = 0;
-    for (i = 0; i < CONST__148; i++)
+    for (i = 0; i < CONST_N148; i++)
       _240[i] = _203;
   } else {
     i = 0;
     while (i < _219) {
       _203 = _241[_182 >> 8];
-      if (_203 >= CONST__145) {
+      if (_203 >= CONST_N145) {
         _283 = 1U << 7;
         do {
           if (_182 & _283)
@@ -217,7 +217,7 @@ void RExpand::fn255() {
           else
             _203 = _189[_203];
           _283 >>= 1;
-        } while (_203 >= CONST__145);
+        } while (_203 >= CONST_N145);
       }
       fn256(_181[_203]);
       if (_203 <= 2) {
@@ -226,15 +226,15 @@ void RExpand::fn255() {
         else if (_203 == 1)
           _203 = (int16_t)(fn252(4) + 3);
         else
-          _203 = (int16_t)(fn252(CONST__143) + 20);
+          _203 = (int16_t)(fn252(CONST_N143) + 20);
         while (--_203 >= 0)
           _180[i++] = 0;
       } else
         _180[i++] = (uint8_t)(_203 - 2);
     }
-    while (i < CONST__141)
+    while (i < CONST_N141)
       _180[i++] = 0;
-    fn258(CONST__141, _180, 12, _240, CONST__148);
+    fn258(CONST_N141, _180, 12, _240, CONST_N148);
   }
 }
 void RExpand::fn256(int32_t _219) {
@@ -243,11 +243,11 @@ void RExpand::fn256(int32_t _219) {
     _182 = (uint16_t)((_182 << _172) + (_245 >> (CHAR_BIT - _172)));
     if (_246 <= 0) {
       _247 = _242;
-      if (_248 >= 0 && _248 < CONST__159) {
+      if (_248 >= 0 && _248 < BUFFER_SIZE) {
         _246 = (int16_t)_161->ReadBuffer(_242, (size_t)_248);
         _248 -= _246;
       } else
-        _246 = (int16_t)_161->ReadBuffer(_242, CONST__159);
+        _246 = (int16_t)_161->ReadBuffer(_242, BUFFER_SIZE);
       if (_246 <= 0)
         _243++;
     }
@@ -278,7 +278,7 @@ void RExpand::fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
   for (i = 1; i <= 16; i++)
     _288[i + 1] = (uint16_t)(_288[i] + (_277[i] << (16 - i)));
   if (_288[17] != (uint16_t)(1U << 16)) {
-    mStatus.SetError(AL_INTERNAL_ERROR, _521);
+    mStatus.SetError(AL_INTERNAL_ERROR, ERROR_MESSAGE_N521);
     _243 = 10;
     return;
   }
@@ -305,7 +305,7 @@ void RExpand::fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
     _293 = _288[_209] + _287[_209];
     if ((int32_t)_209 <= _261) {
       if (_293 > _263) {
-        mStatus.SetError(AL_INTERNAL_ERROR, _522);
+        mStatus.SetError(AL_INTERNAL_ERROR, ERROR_MESSAGE_N522);
         _243 = 10;
         return;
       }

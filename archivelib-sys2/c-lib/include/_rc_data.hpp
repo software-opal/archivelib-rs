@@ -8,8 +8,8 @@ typedef struct RCompressData {
   ALStorage *input_store;
   ALStorage *output_store;
 
-  int16_t *dat_arr163;
-  int16_t *dat_arr164;
+  bool *dat_arr163;
+  bool *dat_arr164;
   uint8_t *dat_arr165;
   uint8_t *dat_arr166;
   uint16_t *dat_arr167;
@@ -55,8 +55,8 @@ typedef struct RCompressData {
   int16_t dat172;
   int16_t dat173;
   int16_t dat174;
-  int16_t compression_level_bit;
-  int16_t compression_level_bit_minus_one;
+  int16_t max_input_data_size;
+  int16_t max_input_data_size_minus_one;
   uint16_t dat182;
   uint16_t dat183;
   uint16_t dat184;
@@ -70,6 +70,7 @@ ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
                               bool fail_uncompressible);
 
 void free_compress_data(RCompressData *data);
+void reset_compress_data(RCompressData *data);
 
 #ifdef NDEBUG
 #define DEBUG_COMPRESS_DATA(stream, data) ((void *)0);
@@ -87,12 +88,12 @@ void free_compress_data(RCompressData *data);
   WRITE_BOOL(stream, data, fail_uncompressible);                               \
   WRITE_HEX(stream, data, dat168);                                             \
   WRITE_HEX(stream, data, dat169);                                             \
-  WRITE_HEX(stream, data, buffer_position);                                             \
+  WRITE_HEX(stream, data, buffer_position);                                    \
   WRITE_HEX(stream, data, dat172);                                             \
   WRITE_HEX(stream, data, dat173);                                             \
   WRITE_HEX(stream, data, dat174);                                             \
-  WRITE_HEX(stream, data, compression_level_bit);                              \
-  WRITE_HEX(stream, data, compression_level_bit_minus_one);                    \
+  WRITE_HEX(stream, data, max_input_data_size);                                \
+  WRITE_HEX(stream, data, max_input_data_size_minus_one);                      \
   WRITE_HEX(stream, data, dat182);                                             \
   WRITE_HEX(stream, data, dat183);                                             \
   WRITE_HEX(stream, data, dat184);                                             \
@@ -105,7 +106,7 @@ void free_compress_data(RCompressData *data);
   WRITE_DATA_ARRAY(stream, data, dat_arr166, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr167, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr177, int16_t);                         \
-  WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                         \
+  WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                             \
   WRITE_DATA_ARRAY(stream, data, dat_arr180, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr181, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr189, uint16_t);                        \

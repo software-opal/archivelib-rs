@@ -13,44 +13,44 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->input_store = &in_storage;
   data->output_store = &out_storage;
   data->fail_uncompressible = fail_uncompressible;
-  if (compression_level > CONST__137 || compression_level < CONST__138) {
+  if (compression_level > CONST_N137 || compression_level < CONST_N138) {
     return AL_ILLEGAL_PARAMETER;
   }
-  data->compression_level_bit = (int16_t)(1 << compression_level);
-  data->compression_level_bit_minus_one =
-      (int16_t)(data->compression_level_bit - 1);
+  data->max_input_data_size = (int16_t)(1 << compression_level);
+  data->max_input_data_size_minus_one =
+      (int16_t)(data->max_input_data_size - 1);
   data->chars_written = 0;
   data->input_length = in_storage.GetSize();
 
-  data->dat_arr163_len = data->compression_level_bit + CONST__153;
-  data->dat_arr163 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
-  data->dat_arr164_len = data->compression_level_bit;
-  data->dat_arr164 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
-  data->dat_arr165_len = CONST__155;
+  data->dat_arr163_len = data->max_input_data_size + CONST_N153;
+  data->dat_arr163 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
+  data->dat_arr164_len = data->max_input_data_size;
+  data->dat_arr164 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
+  data->dat_arr165_len = CONST_N155;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
-  data->dat_arr166_len = data->compression_level_bit + CONST__140 + 2;
+  data->dat_arr166_len = data->max_input_data_size + CONST_N140 + 2;
   data->dat_arr166 = (uint8_t *)calloc(data->dat_arr166_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
-  data->dat_arr177_len = CONST__141 + 1;
+  data->dat_arr177_len = CONST_N141 + 1;
   data->dat_arr177 = (int16_t *)calloc(data->dat_arr177_len, sizeof(int16_t));
   data->buffer_len = BUFFER_SIZE;
   data->buffer = (uint8_t *)calloc(data->buffer_len, sizeof(uint8_t));
-  data->dat_arr180_len = CONST__141;
+  data->dat_arr180_len = CONST_N141;
   data->dat_arr180 = (uint8_t *)calloc(data->dat_arr180_len, sizeof(uint8_t));
-  data->dat_arr181_len = CONST__152;
+  data->dat_arr181_len = CONST_N152;
   data->dat_arr181 = (uint8_t *)calloc(data->dat_arr181_len, sizeof(uint8_t));
-  data->dat_arr189_len = 2 * CONST__141 - 1;
+  data->dat_arr189_len = 2 * CONST_N141 - 1;
   data->dat_arr189 = (uint16_t *)calloc(data->dat_arr189_len, sizeof(uint16_t));
-  data->dat_arr190_len = 2 * CONST__141 - 1;
+  data->dat_arr190_len = 2 * CONST_N141 - 1;
   data->dat_arr190 = (uint16_t *)calloc(data->dat_arr190_len, sizeof(uint16_t));
-  data->dat_arr191_len = 2 * CONST__141 - 1;
+  data->dat_arr191_len = 2 * CONST_N141 - 1;
   data->dat_arr191 = (uint16_t *)calloc(data->dat_arr191_len, sizeof(uint16_t));
-  data->dat_arr192_len = CONST__141;
+  data->dat_arr192_len = CONST_N141;
   data->dat_arr192 = (uint16_t *)calloc(data->dat_arr192_len, sizeof(uint16_t));
-  data->dat_arr193_len = 2 * CONST__142 - 1;
+  data->dat_arr193_len = 2 * CONST_N142 - 1;
   data->dat_arr193 = (uint16_t *)calloc(data->dat_arr193_len, sizeof(uint16_t));
-  data->dat_arr194_len = CONST__152;
+  data->dat_arr194_len = CONST_N152;
   data->dat_arr194 = (uint16_t *)calloc(data->dat_arr194_len, sizeof(uint16_t));
 
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
@@ -123,5 +123,34 @@ void free_compress_data(RCompressData *data) {
   if (data->dat_arr194) {
     free(data->dat_arr194);
     data->dat_arr194 = NULL;
+  }
+}
+
+void reset_compress_data(RCompressData *data) {
+  ssize_t i;
+  data->dat173 = 0;
+  data->dat172 = 0;
+  data->dat182 = 0;
+  data->buffer_position = 0;
+  data->uncompressible = 0;
+  data->dat185 = 1;
+  data->dat184 = 0;
+  data->dat186 = 0;
+  data->dat_arr165[0] = 0;
+  data->dat169 = 0;
+  data->dat168 = 0;
+  data->dat183 = CONST_N155 - (uint16_t)((3 * CHAR_BIT) + 6);
+
+  for (i = 0; i < CONST_N141; i++) {
+    data->dat_arr191[i] = 0;
+  }
+  for (i = 0; i < CONST_N142; i++) {
+    data->dat_arr193[i] = 0;
+  }
+  for (i = 0; i < CONST_N153; i++) {
+    data->dat_arr163[data->max_input_data_size + i] = true;
+  }
+  for (i = 0; i < data->max_input_data_size; i++) {
+    data->dat_arr164[i] = true;
   }
 }

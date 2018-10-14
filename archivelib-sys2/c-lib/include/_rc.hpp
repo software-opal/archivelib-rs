@@ -15,26 +15,27 @@ public:
   void fn196();
   void fn197();
   void fn198();
-  void fn199(int16_t _200, int16_t _201);
-  void fn202(uint16_t _203, uint16_t _204);
+  void fn199(int16_t arg200, int16_t arg201);
+  void fn202(uint16_t arg203, uint16_t arg204);
   void fn206();
   void fn207();
-  void fn208(int32_t _209, uint16_t _203);
+  void fn208(int32_t arg209, uint16_t arg203);
   void flush_to_output();
-  int32_t fn211(int32_t _212, uint16_t *_213, uint8_t *_214, uint16_t *_215);
-  void fn216(uint16_t *_217);
-  void fn218(int16_t _219, int16_t _220, int16_t _221);
+  int32_t fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
+                uint16_t *arg215);
+  void fn216(uint16_t *arg217);
+  void fn218(int16_t arg219, int16_t arg220, int16_t arg221);
   void fn222();
-  void fn223(int16_t _203);
-  void fn224(uint16_t _204);
-  void fn225(int32_t i, uint16_t *arg187, int16_t *arg177, int16_t _227);
-  void fn228(int32_t _229);
-  void fn230(int32_t _219, uint8_t *_209, uint16_t *_231);
+  void fn223(int16_t arg203);
+  void fn224(uint16_t arg204);
+  void fn225(int32_t i, uint16_t *arg187, int16_t *arg177, int16_t arg227);
+  void fn228(int32_t arg229);
+  void fn230(int32_t arg219, uint8_t *arg209, uint16_t *arg231);
   void fn232(int32_t i);
 
 public:
-  RCompress(ALStorage &_233, ALStorage &_202, ALGreenleafCompressionLevels _234,
-            bool _235);
+  RCompress(ALStorage &arg233, ALStorage &arg202,
+            ALGreenleafCompressionLevels arg234, bool arg235);
   ~RCompress();
   int32_t Compress();
   ALStatus mStatus;
