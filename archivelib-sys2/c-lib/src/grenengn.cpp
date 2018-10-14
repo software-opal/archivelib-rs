@@ -56,7 +56,7 @@ SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
 
   ALOpenFiles files(input, output);
 
-  RCompress rc(input, output, compression_level + 10, fail_uncompressible);
+  RCompress rc(input, output, compression_level, fail_uncompressible);
 
   if (rc.mStatus < 0)
     return rc.mStatus.copyToSimple();

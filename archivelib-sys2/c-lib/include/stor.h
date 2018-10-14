@@ -3,7 +3,7 @@
 
 #if defined(__cplusplus)
 
-#include <stddef.h> /* need for size_t */
+#include <stdint.h>
 #include "status.h"
 #include "_debug.h"
 
