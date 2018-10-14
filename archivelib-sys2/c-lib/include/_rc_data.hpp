@@ -40,9 +40,9 @@ typedef struct RCompressData {
   size_t dat_arr193_len;
   size_t dat_arr194_len;
 
-  uint8_t *dat_arr178;
-  uint16_t *dat_arr187;
-  uint16_t *dat_arr188;
+  uint8_t *dat_arr_cursor178;
+  uint16_t *dat_arr_cursor187;
+  uint16_t *dat_arr_cursor188;
 
   size_t chars_written;
   size_t input_length;
@@ -116,9 +116,9 @@ void reset_compress_data(RCompressData *data);
   WRITE_DATA_ARRAY(stream, data, dat_arr193, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr194, uint16_t);                        \
                                                                                \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr178, uint8_t);                     \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr187, uint16_t);                    \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr188, uint16_t);                    \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor178, uint8_t);                     \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor187, uint16_t);                    \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor188, uint16_t);                    \
   stream << "},\n";
 #endif
 
