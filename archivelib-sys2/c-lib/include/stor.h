@@ -4,6 +4,8 @@
 #if defined(__cplusplus)
 
 #include <stddef.h> /* need for size_t */
+#include "status.h"
+#include "_debug.h"
 
 /*
  * class ALStorage

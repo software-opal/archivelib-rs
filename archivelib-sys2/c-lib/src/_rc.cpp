@@ -1,26 +1,24 @@
-#include "arclib.h"
-
 #include "_rc.hpp"
 #include <stdlib.h>
 #include <cstring>
 
-#define MACRO_FN445(arg200, _446)                                                       \
-  ((int16_t)((_446 << CONST__154) ^ (_278[arg200 + 2])) & (CONST__153 - 1))
-#define MACRO_FN447(arg200, arg201)                                                       \
+#define MACRO_FN445(arg278, arg200, arg446)                                    \
+  ((int16_t)((arg446 << CONST__154) ^ (arg278[arg200 + 2])) & (CONST__153 - 1))
+#define MACRO_FN447(arg163, arg164, arg200, arg201)                                \
   {                                                                            \
-    int16_t _204;                                                              \
-    if ((_204 = _163[arg201]) != CONST__157)                                     \
-      _164[_204] = arg200;                                                       \
-    _164[arg200] = arg201;                                                         \
-    _163[arg200] = _204;                                                         \
-    _163[arg201] = arg200;                                                         \
+    int16_t macro_local204;                                                              \
+    if ((macro_local204 = arg163[arg201]) != CONST__157)                                   \
+      arg164[macro_local204] = arg200;                                                     \
+    arg164[arg200] = arg201;                                                     \
+    arg163[arg200] = macro_local204;                                                       \
+    arg163[arg201] = arg200;                                                     \
   }
-#define MACRO_FN448(s)                                                                \
+#define MACRO_FN448(arg163, arg164, s)                                                         \
   {                                                                            \
-    int16_t _204;                                                              \
-    if ((_204 = _164[s]) != CONST__157) {                                      \
-      _164[s] = CONST__157;                                                    \
-      _163[_204] = CONST__157;                                                 \
+    int16_t macro_local204;                                                              \
+    if ((macro_local204 = arg164[s]) != CONST__157) {                                      \
+      arg164[s] = CONST__157;                                                    \
+      arg163[macro_local204] = CONST__157;                                                 \
     }                                                                          \
   }
 RCompress::RCompress(ALStorage &_266, ALStorage &_267, int32_t _269,
@@ -95,65 +93,68 @@ RCompress::~RCompress() {
   if (_194)
     delete[] _194;
 }
-inline void RCompress::fn223(int16_t _203) { fn208(_180[_203], _192[_203]); }
+void RCompress::fn223(int16_t _203) { fn208(_180[_203], _192[_203]); }
 int32_t RCompress::Compress() {
-  int16_t _209;
-  int16_t _201;
-  int16_t _200;
+  int16_t local209;
+  int16_t local201;
+  int16_t local200;
   int16_t s;
-  int32_t _231;
-  uint8_t *_278;
-  int16_t _280;
-  int16_t _279;
-  _278 = _166;
-  _280 = _176;
-  _279 = _175;
-  _231 = 0;
+  int32_t local231;
+  uint8_t *local278;
+  int16_t local280;
+  int16_t local279;
+  local278 = _166;
+  local280 = _176;
+  local279 = _175;
+  local231 = 0;
   fn196();
   fn198();
-  _200 = 0;
-  _209 = (int16_t)_161->ReadBuffer(_278, _279);
-  s = (int16_t)(_209 & _280);
+  local200 = 0;
+  local209 = (int16_t)_161->ReadBuffer(local278, local279);
+  s = (int16_t)(local209 & local280);
   _169 = 0;
   _168 = 0;
-  _201 = (int16_t)(((_278[_200] << CONST__154) ^ (_278[_200 + 1])) &
-                   (CONST__153 - 1));
-  _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
-  while (_209 > CONST__140 + 4 && !_170) {
-    fn199(_200, _201);
+  local201 = (int16_t)(
+      ((local278[local200] << CONST__154) ^ (local278[local200 + 1])) &
+      (CONST__153 - 1));
+  local201 = (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+  while (local209 > CONST__140 + 4 && !_170) {
+    fn199(local200, local201);
     if (_168 < CONST__135) {
-      fn202(_278[_200], 0);
-      MACRO_FN447(_200, _201);
-      _200++;
-      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
-      _209--;
+      fn202(local278[local200], 0);
+      MACRO_FN447(_163, _164, local200, local201);
+      local200++;
+      local201 =
+          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+      local209--;
     } else {
-      _209 -= _168;
+      local209 -= _168;
       fn202((uint16_t)(_168 + (UCHAR_MAX + 1 - CONST__135)), _169);
       while (--_168 >= 0) {
-        MACRO_FN447(_200, _201);
-        _200++;
-        _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
+        MACRO_FN447(_163, _164, local200, local201);
+        local200++;
+        local201 =
+            (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
       }
     }
   }
-  for (; _209 < CONST__140; _209++) {
+  for (; local209 < CONST__140; local209++) {
     int32_t _203 = _161->ReadChar();
     if (_203 < 0)
       break;
-    _278[s] = (unsigned char)_203;
+    local278[s] = (unsigned char)_203;
     if (s < CONST__140 - 1)
-      _278[s + _279] = _278[s];
-    MACRO_FN448(s);
-    s = (int16_t)((s + 1) & (_280));
+      local278[s + local279] = local278[s];
+    MACRO_FN448(_163, _164, s);
+    s = (int16_t)((s + 1) & (local280));
   }
-  while (_209 > 0 && !_170) {
-    fn199(_200, _201);
-    if (_168 > _209)
-      _168 = _209;
+  while (local209 > 0 && !_170) {
+    fn199(local200, local201);
+    if (_168 > local209)
+      _168 = local209;
     if (_168 < CONST__135) {
       _168 = 1;
-      fn202(_278[_200], 0);
+      fn202(local278[local200], 0);
     } else
       fn202((uint16_t)(_168 + (UCHAR_MAX + 1 - CONST__135)), _169);
     while (--_168 >= 0) {
@@ -161,20 +162,22 @@ int32_t RCompress::Compress() {
       if (_203 < 0)
         break;
       else
-        _278[s] = (unsigned char)_203;
+        local278[s] = (unsigned char)_203;
       if (s < CONST__140 - 1)
-        _278[s + _279] = _278[s];
-      MACRO_FN448(s);
-      s = (int16_t)((s + 1) & (_280));
-      MACRO_FN447(_200, _201);
-      _200 = (int16_t)((_200 + 1) & (_280));
-      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
+        local278[s + local279] = local278[s];
+      MACRO_FN448(_163, _164, s);
+      s = (int16_t)((s + 1) & (local280));
+      MACRO_FN447(_163, _164, local200, local201);
+      local200 = (int16_t)((local200 + 1) & (local280));
+      local201 =
+          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
     }
     while (_168-- >= 0) {
-      MACRO_FN447(_200, _201);
-      _200 = (int16_t)((_200 + 1) & _280);
-      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
-      _209--;
+      MACRO_FN447(_163, _164, local200, local201);
+      local200 = (int16_t)((local200 + 1) & local280);
+      local201 =
+          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+      local209--;
     }
     if (_162->mStatus < 0)
       return 1;
@@ -183,8 +186,8 @@ int32_t RCompress::Compress() {
     fn202(CONST__144 + (UCHAR_MAX + 1 - CONST__135), 0);
   fn197();
   if (_170)
-    _231 = 1;
-  return _231;
+    local231 = 1;
+  return local231;
 }
 void RCompress::fn196() {
   int32_t i;
@@ -210,46 +213,46 @@ void RCompress::fn197() {
   _184 = 0;
 }
 void RCompress::fn198() {
-  int16_t *_450;
+  int16_t *local450;
   int16_t i;
-  _450 = &_163[_175];
+  local450 = &_163[_175];
   for (i = CONST__153; i > 0; i--)
-    *_450++ = CONST__157;
-  _450 = _164;
+    *local450++ = CONST__157;
+  local450 = _164;
   for (i = _175; i > 0; i--)
-    *_450++ = CONST__157;
+    *local450++ = CONST__157;
 }
 void RCompress::fn199(int16_t arg200, int16_t arg201) {
   uint8_t *local451;
-  uint8_t *_278;
-  int16_t i, _452, _204, _453;
-  _452 = CONST__158;
+  uint8_t *local278;
+  int16_t i, local452, local204, local453;
+  local452 = CONST__158;
   _168 = 0;
   local451 = &_166[arg200];
-  _204 = arg201;
-  while ((_204 = _163[_204]) != CONST__157) {
-    if (--_452 < 0)
+  local204 = arg201;
+  while ((local204 = _163[local204]) != CONST__157) {
+    if (--local452 < 0)
       break;
-    _278 = &_166[_204];
-    if (local451[_168] != _278[_168])
+    local278 = &_166[local204];
+    if (local451[_168] != local278[_168])
       continue;
-    if (local451[0] != _278[0])
+    if (local451[0] != local278[0])
       continue;
-    if (local451[1] != _278[1])
+    if (local451[1] != local278[1])
       continue;
-    if (local451[2] != _278[2])
+    if (local451[2] != local278[2])
       continue;
     for (i = 3; i < CONST__140; i++)
-      if (local451[i] != _278[i])
+      if (local451[i] != local278[i])
         break;
     if (i > _168) {
-      _453 = (int16_t)(arg200 - _204 - 1);
-      if (_453 < 0)
-        _453 += _175;
-      if (_453 >= _175) {
+      local453 = (int16_t)(arg200 - local204 - 1);
+      if (local453 < 0)
+        local453 += _175;
+      if (local453 >= _175) {
         break;
       }
-      _169 = _453;
+      _169 = local453;
       if ((_168 = i) >= CONST__140)
         break;
     }

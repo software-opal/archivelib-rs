@@ -8,7 +8,7 @@
 #if defined(__cplusplus)
 
 class RCompress {
-private:
+public:
   ALStorage *_161;
   ALStorage *_162;
   int16_t *_163;
@@ -50,7 +50,6 @@ private:
   uint16_t _186;
   int32_t _531;
 
-public:
   void fn196();
   void fn197();
   void fn198();
