@@ -31,13 +31,15 @@ public:
   int64_t _248;
   uint16_t _249();
   uint16_t _250();
-  void _251();
-  uint16_t _252(int32_t _219);
-  void _253(int16_t _254, int16_t _220, int16_t _221);
-  void _255();
-  void _256(int32_t _219);
-  void _257();
-  void _258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
+
+
+  void fn251();
+  uint16_t fn252(int32_t _219);
+  void fn253(int16_t _254, int16_t _220, int16_t _221);
+  void fn255();
+  void fn256(int32_t _219);
+  void fn257();
+  void fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
             uint16_t _263);
 
 public:
