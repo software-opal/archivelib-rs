@@ -17,7 +17,6 @@ public:
   void fn198();
   void fn199(int16_t _200, int16_t _201);
   void fn202(uint16_t _203, uint16_t _204);
-  void fn205();
   void fn206();
   void fn207();
   void fn208(int32_t _209, uint16_t _203);

@@ -154,7 +154,9 @@ void RCompress::fn196() {
   for (i = 0; i < CONST__142; i++)
     data->dat_arr193[i] = 0;
   data->dat173 = 0;
-  fn205();
+  data->dat172 = 0;
+  data->dat182 = 0;
+  data->buffer_position = 0;
   data->uncompressible = 0;
   data->dat185 = 1;
   data->dat184 = 0;
@@ -242,18 +244,13 @@ void RCompress::fn202(uint16_t arg203, uint16_t arg204) {
     data->dat_arr193[arg203]++;
   }
 }
-void RCompress::fn205() {
-  data->dat172 = 0;
-  data->dat182 = 0;
-  data->dat171 = 0;
-}
 void RCompress::fn206() {
   if (!data->uncompressible) {
     fn208(CHAR_BIT - 1, 0);
-    if (data->dat171)
+    if (data->buffer_position)
       flush_to_output();
   }
-  data->dat171 = 0;
+  data->buffer_position = 0;
 }
 void RCompress::fn207() {
   uint32_t i, local289, local229, local454, local455;
@@ -312,29 +309,29 @@ void RCompress::fn208(int32_t arg209, uint16_t arg203) {
   arg203 <<= CONST__133 - arg209;
   data->dat182 |= (uint16_t)(arg203 >> data->dat172);
   if ((data->dat172 += (int16_t)arg209) >= 8) {
-    if (data->dat171 >= CONST__156)
+    if (data->buffer_position >= BUFFER_SIZE)
       flush_to_output();
-    data->dat_arr179[data->dat171++] = (uint8_t)(data->dat182 >> CHAR_BIT);
+    data->buffer[data->buffer_position++] = (uint8_t)(data->dat182 >> CHAR_BIT);
     if ((data->dat172 = (uint16_t)(data->dat172 - CHAR_BIT)) < CHAR_BIT)
       data->dat182 <<= CHAR_BIT;
     else {
-      if (data->dat171 >= CONST__156)
+      if (data->buffer_position >= BUFFER_SIZE)
         flush_to_output();
-      data->dat_arr179[data->dat171++] = (uint8_t)data->dat182;
+      data->buffer[data->buffer_position++] = (uint8_t)data->dat182;
       data->dat172 = (uint16_t)(data->dat172 - CHAR_BIT);
       data->dat182 = (uint16_t)(arg203 << (arg209 - data->dat172));
     }
   }
 }
 void RCompress::flush_to_output() {
-  if (data->dat171 <= 0)
+  if (data->buffer_position <= 0)
     return;
   if (data->fail_uncompressible &&
-      (data->chars_written += data->dat171) >= data->input_length)
+      (data->chars_written += data->buffer_position) >= data->input_length)
     data->uncompressible = 1;
   else
-    data->output_store->WriteBuffer(data->dat_arr179, data->dat171);
-  data->dat171 = 0;
+    data->output_store->WriteBuffer(data->buffer, data->buffer_position);
+  data->buffer_position = 0;
 }
 int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
                          uint16_t *arg215) {

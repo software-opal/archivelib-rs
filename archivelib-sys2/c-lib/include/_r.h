@@ -27,7 +27,7 @@
 #define CONST__153 4096
 #define CONST__154 4
 #define CONST__155 8192
-#define CONST__156 512
+#define BUFFER_SIZE 512
 #define CONST__157 (-1)
 #define CONST__158 128
 #define CONST__159 512
