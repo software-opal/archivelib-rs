@@ -4,18 +4,18 @@
 #include <stdlib.h>
 #include <cstring>
 
-#define _445(_200, _446)                                                       \
-  ((int16_t)((_446 << CONST__154) ^ (_278[_200 + 2])) & (CONST__153 - 1))
-#define _447(_200, _201)                                                       \
+#define MACRO_FN445(arg200, _446)                                                       \
+  ((int16_t)((_446 << CONST__154) ^ (_278[arg200 + 2])) & (CONST__153 - 1))
+#define MACRO_FN447(arg200, arg201)                                                       \
   {                                                                            \
     int16_t _204;                                                              \
-    if ((_204 = _163[_201]) != CONST__157)                                     \
-      _164[_204] = _200;                                                       \
-    _164[_200] = _201;                                                         \
-    _163[_200] = _204;                                                         \
-    _163[_201] = _200;                                                         \
+    if ((_204 = _163[arg201]) != CONST__157)                                     \
+      _164[_204] = arg200;                                                       \
+    _164[arg200] = arg201;                                                         \
+    _163[arg200] = _204;                                                         \
+    _163[arg201] = arg200;                                                         \
   }
-#define _448(s)                                                                \
+#define MACRO_FN448(s)                                                                \
   {                                                                            \
     int16_t _204;                                                              \
     if ((_204 = _164[s]) != CONST__157) {                                      \
@@ -118,22 +118,22 @@ int32_t RCompress::Compress() {
   _168 = 0;
   _201 = (int16_t)(((_278[_200] << CONST__154) ^ (_278[_200 + 1])) &
                    (CONST__153 - 1));
-  _201 = (int16_t)(_445(_200, _201) + _279);
+  _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
   while (_209 > CONST__140 + 4 && !_170) {
     fn199(_200, _201);
     if (_168 < CONST__135) {
       fn202(_278[_200], 0);
-      _447(_200, _201);
+      MACRO_FN447(_200, _201);
       _200++;
-      _201 = (int16_t)(_445(_200, _201) + _279);
+      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
       _209--;
     } else {
       _209 -= _168;
       fn202((uint16_t)(_168 + (UCHAR_MAX + 1 - CONST__135)), _169);
       while (--_168 >= 0) {
-        _447(_200, _201);
+        MACRO_FN447(_200, _201);
         _200++;
-        _201 = (int16_t)(_445(_200, _201) + _279);
+        _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
       }
     }
   }
@@ -144,7 +144,7 @@ int32_t RCompress::Compress() {
     _278[s] = (unsigned char)_203;
     if (s < CONST__140 - 1)
       _278[s + _279] = _278[s];
-    _448(s);
+    MACRO_FN448(s);
     s = (int16_t)((s + 1) & (_280));
   }
   while (_209 > 0 && !_170) {
@@ -164,16 +164,16 @@ int32_t RCompress::Compress() {
         _278[s] = (unsigned char)_203;
       if (s < CONST__140 - 1)
         _278[s + _279] = _278[s];
-      _448(s);
+      MACRO_FN448(s);
       s = (int16_t)((s + 1) & (_280));
-      _447(_200, _201);
+      MACRO_FN447(_200, _201);
       _200 = (int16_t)((_200 + 1) & (_280));
-      _201 = (int16_t)(_445(_200, _201) + _279);
+      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
     }
     while (_168-- >= 0) {
-      _447(_200, _201);
+      MACRO_FN447(_200, _201);
       _200 = (int16_t)((_200 + 1) & _280);
-      _201 = (int16_t)(_445(_200, _201) + _279);
+      _201 = (int16_t)(MACRO_FN445(_200, _201) + _279);
       _209--;
     }
     if (_162->mStatus < 0)
@@ -210,8 +210,8 @@ void RCompress::fn197() {
   _184 = 0;
 }
 void RCompress::fn198() {
-  register int16_t *_450;
-  register int16_t i;
+  int16_t *_450;
+  int16_t i;
   _450 = &_163[_175];
   for (i = CONST__153; i > 0; i--)
     *_450++ = CONST__157;
@@ -219,31 +219,31 @@ void RCompress::fn198() {
   for (i = _175; i > 0; i--)
     *_450++ = CONST__157;
 }
-void RCompress::fn199(int16_t _200, int16_t _201) {
-  register uint8_t *_451;
-  register uint8_t *_278;
+void RCompress::fn199(int16_t arg200, int16_t arg201) {
+  uint8_t *local451;
+  uint8_t *_278;
   int16_t i, _452, _204, _453;
   _452 = CONST__158;
   _168 = 0;
-  _451 = &_166[_200];
-  _204 = _201;
+  local451 = &_166[arg200];
+  _204 = arg201;
   while ((_204 = _163[_204]) != CONST__157) {
     if (--_452 < 0)
       break;
     _278 = &_166[_204];
-    if (_451[_168] != _278[_168])
+    if (local451[_168] != _278[_168])
       continue;
-    if (_451[0] != _278[0])
+    if (local451[0] != _278[0])
       continue;
-    if (_451[1] != _278[1])
+    if (local451[1] != _278[1])
       continue;
-    if (_451[2] != _278[2])
+    if (local451[2] != _278[2])
       continue;
     for (i = 3; i < CONST__140; i++)
-      if (_451[i] != _278[i])
+      if (local451[i] != _278[i])
         break;
     if (i > _168) {
-      _453 = (int16_t)(_200 - _204 - 1);
+      _453 = (int16_t)(arg200 - _204 - 1);
       if (_453 < 0)
         _453 += _175;
       if (_453 >= _175) {
@@ -255,7 +255,7 @@ void RCompress::fn199(int16_t _200, int16_t _201) {
     }
   }
 }
-void RCompress::fn202(uint16_t _203, uint16_t _204) {
+void RCompress::fn202(uint16_t arg203, uint16_t arg204) {
   if ((_185 >>= 1) == 0) {
     _185 = 1U << (CHAR_BIT - 1);
     if (_184 >= _183) {
@@ -267,18 +267,18 @@ void RCompress::fn202(uint16_t _203, uint16_t _204) {
     _186 = _184++;
     _165[_186] = 0;
   }
-  _165[_184++] = (uint8_t)_203;
-  _191[_203]++;
-  if (_203 >= (1U << CHAR_BIT)) {
+  _165[_184++] = (uint8_t)arg203;
+  _191[arg203]++;
+  if (arg203 >= (1U << CHAR_BIT)) {
     _165[_186] |= (uint8_t)_185;
-    _165[_184++] = (uint8_t)_204;
-    _165[_184++] = (uint8_t)(_204 >> CHAR_BIT);
-    _203 = 0;
-    while (_204) {
-      _203++;
-      _204 >>= 1;
+    _165[_184++] = (uint8_t)arg204;
+    _165[_184++] = (uint8_t)(arg204 >> CHAR_BIT);
+    arg203 = 0;
+    while (arg204) {
+      arg203++;
+      arg204 >>= 1;
     }
-    _193[_203]++;
+    _193[arg203]++;
   }
 }
 void RCompress::fn205() {
@@ -295,48 +295,48 @@ void RCompress::fn206() {
   _171 = 0;
 }
 void RCompress::fn207() {
-  uint32_t i, _289, _229, _454, _455;
-  uint32_t _456 = 0;
-  uint16_t _217[2 * CONST__145 - 1];
-  _229 = fn211(CONST__141, _191, _180, _192);
-  _455 = _191[_229];
-  fn208(16, (uint16_t)_455);
-  if (_229 >= CONST__141) {
-    fn216(_217);
-    _229 = fn211(CONST__145, _217, _181, _194);
-    if (_229 >= CONST__145) {
+  uint32_t i, local289, local229, local454, local455;
+  uint32_t local456 = 0;
+  uint16_t local217[2 * CONST__145 - 1];
+  local229 = fn211(CONST__141, _191, _180, _192);
+  local455 = _191[local229];
+  fn208(16, (uint16_t)local455);
+  if (local229 >= CONST__141) {
+    fn216(local217);
+    local229 = fn211(CONST__145, local217, _181, _194);
+    if (local229 >= CONST__145) {
       fn218(CONST__145, CONST__147, 3);
     } else {
       fn208(CONST__147, 0);
-      fn208(CONST__147, (uint16_t)_229);
+      fn208(CONST__147, (uint16_t)local229);
     }
     fn222();
   } else {
     fn208(CONST__147, 0);
     fn208(CONST__147, 0);
     fn208(CONST__143, 0);
-    fn208(CONST__143, (uint16_t)_229);
+    fn208(CONST__143, (uint16_t)local229);
   }
-  _229 = fn211(CONST__142, _193, _181, _194);
-  if (_229 >= CONST__142) {
+  local229 = fn211(CONST__142, _193, _181, _194);
+  if (local229 >= CONST__142) {
     fn218(CONST__142, CONST__540, -1);
   } else {
     fn208(CONST__540, 0);
-    fn208(CONST__540, (uint16_t)_229);
+    fn208(CONST__540, (uint16_t)local229);
   }
-  _454 = 0;
-  for (i = 0; i < _455; i++) {
+  local454 = 0;
+  for (i = 0; i < local455; i++) {
     if (i % CHAR_BIT == 0)
-      _456 = _165[_454++];
+      local456 = _165[local454++];
     else
-      _456 <<= 1;
-    if (_456 & (1U << (CHAR_BIT - 1))) {
-      fn223((int16_t)(_165[_454++] + (1U << CHAR_BIT)));
-      _289 = _165[_454++];
-      _289 += _165[_454++] << CHAR_BIT;
-      fn224((int16_t)_289);
+      local456 <<= 1;
+    if (local456 & (1U << (CHAR_BIT - 1))) {
+      fn223((int16_t)(_165[local454++] + (1U << CHAR_BIT)));
+      local289 = _165[local454++];
+      local289 += _165[local454++] << CHAR_BIT;
+      fn224((int16_t)local289);
     } else
-      fn223(_165[_454++]);
+      fn223(_165[local454++]);
     if (_170)
       return;
   }
@@ -345,10 +345,10 @@ void RCompress::fn207() {
   for (i = 0; i < CONST__142; i++)
     _193[i] = 0;
 }
-void RCompress::fn208(int32_t _209, uint16_t _203) {
-  _203 <<= CONST__133 - _209;
-  _182 |= (uint16_t)(_203 >> _172);
-  if ((_172 += (int16_t)_209) >= 8) {
+void RCompress::fn208(int32_t arg209, uint16_t arg203) {
+  arg203 <<= CONST__133 - arg209;
+  _182 |= (uint16_t)(arg203 >> _172);
+  if ((_172 += (int16_t)arg209) >= 8) {
     if (_171 >= CONST__156)
       fn210();
     _179[_171++] = (uint8_t)(_182 >> CHAR_BIT);
@@ -359,7 +359,7 @@ void RCompress::fn208(int32_t _209, uint16_t _203) {
         fn210();
       _179[_171++] = (uint8_t)_182;
       _172 = (uint16_t)(_172 - CHAR_BIT);
-      _182 = (uint16_t)(_203 << (_209 - _172));
+      _182 = (uint16_t)(arg203 << (arg209 - _172));
     }
   }
 }
@@ -372,91 +372,91 @@ void RCompress::fn210() {
     _162->WriteBuffer(_179, _171);
   _171 = 0;
 }
-int32_t RCompress::fn211(int32_t _212, uint16_t *_213, uint8_t *_214,
-                         uint16_t *_215) {
-  int32_t i, _276, _289, _292;
-  int16_t _227;
-  _174 = (int16_t)_212;
-  _187 = _213;
-  _178 = _214;
-  _292 = _174;
-  _227 = 0;
+int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
+                         uint16_t *arg215) {
+  int32_t i, local276, local289, local292;
+  int16_t local227;
+  _174 = (int16_t)arg212;
+  _187 = arg213;
+  _178 = arg214;
+  local292 = _174;
+  local227 = 0;
   _177[1] = 0;
   for (i = 0; i < _174; i++) {
     _178[i] = 0;
     if (_187[i])
-      _177[++_227] = (int16_t)i;
+      _177[++local227] = (int16_t)i;
   }
-  if (_227 < 2) {
-    _215[_177[1]] = 0;
+  if (local227 < 2) {
+    arg215[_177[1]] = 0;
     return _177[1];
   }
-  for (i = _227 / 2; i >= 1; i--)
-    fn225(i, _187, _177, _227);
-  _188 = _215;
+  for (i = local227 / 2; i >= 1; i--)
+    fn225(i, _187, _177, local227);
+  _188 = arg215;
   do {
     i = _177[1];
     if (i < _174)
       *_188++ = (uint16_t)i;
-    _177[1] = _177[_227--];
-    fn225(1, _187, _177, _227);
-    _276 = _177[1];
-    if (_276 < _174)
-      *_188++ = (uint16_t)_276;
-    _289 = _292++;
-    _187[_289] = (uint16_t)(_187[i] + _187[_276]);
-    _177[1] = (int16_t)_289;
-    fn225(1, _187, _177, _227);
-    _189[_289] = (uint16_t)i;
-    _190[_289] = (uint16_t)_276;
-  } while (_227 > 1);
-  _188 = _215;
-  fn228(_289);
-  fn230(_212, _214, _215);
-  return _289;
+    _177[1] = _177[local227--];
+    fn225(1, _187, _177, local227);
+    local276 = _177[1];
+    if (local276 < _174)
+      *_188++ = (uint16_t)local276;
+    local289 = local292++;
+    _187[local289] = (uint16_t)(_187[i] + _187[local276]);
+    _177[1] = (int16_t)local289;
+    fn225(1, _187, _177, local227);
+    _189[local289] = (uint16_t)i;
+    _190[local289] = (uint16_t)local276;
+  } while (local227 > 1);
+  _188 = arg215;
+  fn228(local289);
+  fn230(arg212, arg214, arg215);
+  return local289;
 }
-void RCompress::fn216(uint16_t *_217) {
-  int16_t i, _289, _219, _277;
+void RCompress::fn216(uint16_t *arg217) {
+  int16_t i, local289, local219, local277;
   for (i = 0; i < CONST__145; i++)
-    _217[i] = 0;
-  _219 = CONST__141;
-  while (_219 > 0 && _180[_219 - 1] == 0)
-    _219--;
+    arg217[i] = 0;
+  local219 = CONST__141;
+  while (local219 > 0 && _180[local219 - 1] == 0)
+    local219--;
   i = 0;
-  while (i < _219) {
-    _289 = _180[i++];
-    if (_289 == 0) {
-      _277 = 1;
-      while (i < _219 && _180[i] == 0) {
+  while (i < local219) {
+    local289 = _180[i++];
+    if (local289 == 0) {
+      local277 = 1;
+      while (i < local219 && _180[i] == 0) {
         i++;
-        _277++;
+        local277++;
       }
-      if (_277 <= 2)
-        _217[0] += _277;
-      else if (_277 <= 18)
-        _217[1]++;
-      else if (_277 == 19) {
-        _217[0]++;
-        _217[1]++;
+      if (local277 <= 2)
+        arg217[0] += local277;
+      else if (local277 <= 18)
+        arg217[1]++;
+      else if (local277 == 19) {
+        arg217[0]++;
+        arg217[1]++;
       } else
-        _217[2]++;
+        arg217[2]++;
     } else
-      _217[_289 + 2]++;
+      arg217[local289 + 2]++;
   }
 }
-void RCompress::fn218(int16_t _219, int16_t _220, int16_t _221) {
-  int16_t i, _289;
-  while (_219 > 0 && _181[_219 - 1] == 0)
-    _219--;
-  fn208(_220, _219);
+void RCompress::fn218(int16_t arg219, int16_t arg220, int16_t arg221) {
+  int16_t i, local289;
+  while (arg219 > 0 && _181[arg219 - 1] == 0)
+    arg219--;
+  fn208(arg220, arg219);
   i = 0;
-  while (i < _219) {
-    _289 = _181[i++];
-    if (_289 <= 6) {
-      fn208(3, _289);
+  while (i < arg219) {
+    local289 = _181[i++];
+    if (local289 <= 6) {
+      fn208(3, local289);
     } else
-      fn208(_289 - 3, (uint16_t)(USHRT_MAX << 1));
-    if (i == _221) {
+      fn208(local289 - 3, (uint16_t)(USHRT_MAX << 1));
+    if (i == arg221) {
       while (i < 6 && _181[i] == 0)
         i++;
       fn208(2, (uint16_t)(i - 3));
@@ -464,73 +464,75 @@ void RCompress::fn218(int16_t _219, int16_t _220, int16_t _221) {
   }
 }
 void RCompress::fn222() {
-  int16_t i, _289, _219, _277;
-  _219 = CONST__141;
-  while (_219 > 0 && _180[_219 - 1] == 0)
-    _219--;
-  fn208(CONST__143, _219);
+  int16_t i, local289, local219, local277;
+  local219 = CONST__141;
+  while (local219 > 0 && _180[local219 - 1] == 0)
+    local219--;
+  fn208(CONST__143, local219);
   i = 0;
-  while (i < _219) {
-    _289 = _180[i++];
-    if (_289 == 0) {
-      _277 = 1;
-      while (i < _219 && _180[i] == 0) {
+  while (i < local219) {
+    local289 = _180[i++];
+    if (local289 == 0) {
+      local277 = 1;
+      while (i < local219 && _180[i] == 0) {
         i++;
-        _277++;
+        local277++;
       }
-      if (_277 <= 2) {
-        for (_289 = 0; _289 < _277; _289++)
+      if (local277 <= 2) {
+        for (local289 = 0; local289 < local277; local289++)
           fn208(_181[0], _194[0]);
-      } else if (_277 <= 18) {
+      } else if (local277 <= 18) {
         fn208(_181[1], _194[1]);
-        fn208(4, (uint16_t)(_277 - 3));
-      } else if (_277 == 19) {
+        fn208(4, (uint16_t)(local277 - 3));
+      } else if (local277 == 19) {
         fn208(_181[0], _194[0]);
         fn208(_181[1], _194[1]);
         fn208(4, 15);
       } else {
         fn208(_181[2], _194[2]);
-        fn208(CONST__143, (uint16_t)(_277 - 20));
+        fn208(CONST__143, (uint16_t)(local277 - 20));
       }
     } else
-      fn208(_181[_289 + 2], _194[_289 + 2]);
+      fn208(_181[local289 + 2], _194[local289 + 2]);
   }
 }
-void RCompress::fn224(uint16_t _204) {
-  uint16_t _203, _457;
-  _203 = 0;
-  _457 = _204;
-  while (_457) {
-    _203++;
-    _457 >>= 1;
+void RCompress::fn224(uint16_t arg204) {
+  uint16_t local203, local457;
+  local203 = 0;
+  local457 = arg204;
+  while (local457) {
+    local203++;
+    local457 >>= 1;
   }
-  fn208(_181[_203], _194[_203]);
-  if (_203 > 1)
-    fn208(_203 - 1, _204);
+  fn208(_181[local203], _194[local203]);
+  if (local203 > 1)
+    fn208(local203 - 1, arg204);
 }
-void RCompress::fn225(int32_t i, uint16_t *_187, int16_t *_177, int16_t _227) {
-  int32_t _276, _289;
-  _289 = _177[i];
-  while ((_276 = 2 * i) <= _227) {
-    if (_276 < _227 && _187[_177[_276]] > _187[_177[_276 + 1]])
-      _276++;
-    if (_187[_289] <= _187[_177[_276]])
+void RCompress::fn225(int32_t i, uint16_t *arg187, int16_t *arg177,
+                      int16_t arg227) {
+  int32_t local276, local289;
+  local289 = arg177[i];
+  while ((local276 = 2 * i) <= arg227) {
+    if (local276 < arg227 &&
+        arg187[arg177[local276]] > arg187[arg177[local276 + 1]])
+      local276++;
+    if (arg187[local289] <= arg187[arg177[local276]])
       break;
-    _177[i] = _177[_276];
-    i = _276;
+    arg177[i] = arg177[local276];
+    i = local276;
   }
-  _177[i] = (uint16_t)_289;
+  arg177[i] = (uint16_t)local289;
 }
 void RCompress::fn228(int32_t arg229) {
-  int32_t i, _289;
-  uint32_t _458;
+  int32_t i, local289;
+  uint32_t local458;
   for (i = 0; i <= 16; i++)
     _167[i] = 0;
   fn232(arg229);
-  _458 = 0;
+  local458 = 0;
   for (i = 16; i > 0; i--)
-    _458 += _167[i] << (16 - i);
-  while (_458 != (1U << 16)) {
+    local458 += _167[i] << (16 - i);
+  while (local458 != (1U << 16)) {
     _167[16]--;
     for (i = 15; i > 0; i--) {
       if (_167[i] != 0) {
@@ -539,11 +541,11 @@ void RCompress::fn228(int32_t arg229) {
         break;
       }
     }
-    _458--;
+    local458--;
   }
   for (i = 16; i > 0; i--) {
-    _289 = _167[i];
-    while (--_289 >= 0)
+    local289 = _167[i];
+    while (--local289 >= 0)
       _178[*_188++] = (uint8_t)i;
   }
 }
