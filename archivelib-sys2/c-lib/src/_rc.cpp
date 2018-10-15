@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <cstring>
 
+#include "_r_debug.hpp"
+#include <string>
+#include <iostream>
+#include <sstream>
+
 #define MACRO_FN445(arg278, arg200, arg446)                                    \
   ((int16_t)((arg446 << CONST_N154) ^ (arg278[arg200 + 2])) & (CONST_N153 - 1))
 #define MACRO_FN447(arg163, arg164, arg200, arg201)                            \
@@ -57,31 +62,32 @@ int32_t RCompress::Compress() {
   int16_t local200;
   int16_t s;
   int32_t local231;
-  uint8_t *local278;
+  uint8_t *l278_in_buffer;
   int16_t local280;
   int16_t local279;
   local200 = 0;
   local231 = 0;
-  local278 = data->dat_arr166;
+  l278_in_buffer = data->input_buffer;
   local279 = data->max_input_data_size;
   local280 = data->max_input_data_size_minus_one;
-  local209 = (int16_t)data->input_store->ReadBuffer(local278, local279);
+  local209 = (int16_t)data->input_store->ReadBuffer(l278_in_buffer, local279);
 
   reset_compress_data(data);
 
   s = (int16_t)(local209 & local280);
-  local201 = (int16_t)(
-      ((local278[local200] << CONST_N154) ^ (local278[local200 + 1])) &
-      (CONST_N153 - 1));
-  local201 = (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+  local201 = (int16_t)(((l278_in_buffer[local200] << CONST_N154) ^
+                        (l278_in_buffer[local200 + 1])) &
+                       (CONST_N153 - 1));
+  local201 =
+      (int16_t)(MACRO_FN445(l278_in_buffer, local200, local201) + local279);
   while (local209 > CONST_N140 + 4 && !data->uncompressible) {
     fn199(local200, local201);
     if (data->dat168 < CONST_N135) {
-      fn202(local278[local200], 0);
+      fn202(l278_in_buffer[local200], 0);
       MACRO_FN447(data->dat_arr163, data->dat_arr164, local200, local201);
       local200++;
       local201 =
-          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+          (int16_t)(MACRO_FN445(l278_in_buffer, local200, local201) + local279);
       local209--;
     } else {
       local209 -= data->dat168;
@@ -90,8 +96,8 @@ int32_t RCompress::Compress() {
       while (--data->dat168 >= 0) {
         MACRO_FN447(data->dat_arr163, data->dat_arr164, local200, local201);
         local200++;
-        local201 =
-            (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+        local201 = (int16_t)(MACRO_FN445(l278_in_buffer, local200, local201) +
+                             local279);
       }
     }
   }
@@ -99,9 +105,9 @@ int32_t RCompress::Compress() {
     int32_t local203 = data->input_store->ReadChar();
     if (local203 < 0)
       break;
-    local278[s] = (unsigned char)local203;
+    l278_in_buffer[s] = (unsigned char)local203;
     if (s < CONST_N140 - 1)
-      local278[s + local279] = local278[s];
+      l278_in_buffer[s + local279] = l278_in_buffer[s];
     MACRO_FN448(data->dat_arr163, data->dat_arr164, s);
     s = (int16_t)((s + 1) & (local280));
   }
@@ -111,7 +117,7 @@ int32_t RCompress::Compress() {
       data->dat168 = local209;
     if (data->dat168 < CONST_N135) {
       data->dat168 = 1;
-      fn202(local278[local200], 0);
+      fn202(l278_in_buffer[local200], 0);
     } else
       fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135)),
             data->dat169);
@@ -120,21 +126,21 @@ int32_t RCompress::Compress() {
       if (local203 < 0)
         break;
       else
-        local278[s] = (unsigned char)local203;
+        l278_in_buffer[s] = (unsigned char)local203;
       if (s < CONST_N140 - 1)
-        local278[s + local279] = local278[s];
+        l278_in_buffer[s + local279] = l278_in_buffer[s];
       MACRO_FN448(data->dat_arr163, data->dat_arr164, s);
       s = (int16_t)((s + 1) & (local280));
       MACRO_FN447(data->dat_arr163, data->dat_arr164, local200, local201);
       local200 = (int16_t)((local200 + 1) & (local280));
       local201 =
-          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+          (int16_t)(MACRO_FN445(l278_in_buffer, local200, local201) + local279);
     }
     while (data->dat168-- >= 0) {
       MACRO_FN447(data->dat_arr163, data->dat_arr164, local200, local201);
       local200 = (int16_t)((local200 + 1) & local280);
       local201 =
-          (int16_t)(MACRO_FN445(local278, local200, local201) + local279);
+          (int16_t)(MACRO_FN445(l278_in_buffer, local200, local201) + local279);
       local209--;
     }
     if (data->output_store->mStatus < 0)
@@ -156,26 +162,26 @@ void RCompress::fn197() {
 }
 void RCompress::fn199(int16_t arg200, int16_t arg201) {
   uint8_t *local451;
-  uint8_t *local278;
+  uint8_t *l278_in_buffer;
   int16_t i, local452, local204, local453;
   local452 = MAX_COMPRESSION_CYCLES;
   data->dat168 = 0;
-  local451 = &data->dat_arr166[arg200];
+  local451 = &data->input_buffer[arg200];
   local204 = arg201;
   while ((local204 = data->dat_arr163[local204]) != true) {
     if (--local452 < 0)
       break;
-    local278 = &data->dat_arr166[local204];
-    if (local451[data->dat168] != local278[data->dat168])
+    l278_in_buffer = &data->input_buffer[local204];
+    if (local451[data->dat168] != l278_in_buffer[data->dat168])
       continue;
-    if (local451[0] != local278[0])
+    if (local451[0] != l278_in_buffer[0])
       continue;
-    if (local451[1] != local278[1])
+    if (local451[1] != l278_in_buffer[1])
       continue;
-    if (local451[2] != local278[2])
+    if (local451[2] != l278_in_buffer[2])
       continue;
     for (i = 3; i < CONST_N140; i++)
-      if (local451[i] != local278[i])
+      if (local451[i] != l278_in_buffer[i])
         break;
     if (i > data->dat168) {
       local453 = (int16_t)(arg200 - local204 - 1);
@@ -460,12 +466,19 @@ void RCompress::fn225(int32_t i, uint16_t *arg187, int16_t *arg177,
 void RCompress::fn228(int32_t arg229) {
   int32_t i, local289;
   uint32_t local458;
-  for (i = 0; i <= 16; i++)
-    data->dat_arr167[i] = 0;
+  memset(data->dat_arr167, 0, 17 * sizeof(uint16_t));
   fn232(arg229);
   local458 = 0;
-  for (i = 16; i > 0; i--)
+  for (i = 1; i < 17; i++) {
     local458 += data->dat_arr167[i] << (16 - i);
+  }
+  if (local458 != 0x10000) {
+    // This appears to be an incredibly rare event.
+    std::cout << "IS THIS A CASE?";
+    WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
+    std::cout << "\n";
+    abort();
+  }
   while (local458 != (1U << 16)) {
     data->dat_arr167[16]--;
     for (i = 15; i > 0; i--) {
@@ -485,10 +498,7 @@ void RCompress::fn228(int32_t arg229) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-#include "_r_debug.hpp"
-#include <string>
-#include <iostream>
-#include <sstream>
+
 void RCompress::fn230(int32_t length219, uint8_t *arg209, uint16_t *arg231) {
   // Called twice; once with arg209=data->dat_arr180, arg231=data->dat_arr192
   // the other with arg209=data->dat_arr181, arg231=data->dat_arr231
@@ -519,17 +529,18 @@ void RCompress::fn230(int32_t length219, uint8_t *arg209, uint16_t *arg231) {
   // std::cout << "}\n";
 }
 
-void calculate_pointer_depths(uint16_t *left_array_ptr, uint16_t *right_array_ptr, uint16_t *depth_store_ptr,
-                              uint16_t depth, int16_t series_start,
-                              uint16_t curr_idx) {
-  std::cout << "calculate_pointer_depths " << depth << " | " << curr_idx << "\n";
+void calculate_pointer_depths(uint16_t *left_array_ptr,
+                              uint16_t *right_array_ptr,
+                              uint16_t *depth_store_ptr, uint16_t depth,
+                              int16_t series_start, uint16_t curr_idx) {
   if (curr_idx < series_start) {
     depth_store_ptr[MIN(depth, 16)]++;
   } else {
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr, depth + 1,
-                             series_start, left_array_ptr[curr_idx]);
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr, depth + 1,
-                             series_start, right_array_ptr[curr_idx]);
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
+                             depth + 1, series_start, left_array_ptr[curr_idx]);
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
+                             depth + 1, series_start,
+                             right_array_ptr[curr_idx]);
   }
 }
 
@@ -537,19 +548,18 @@ void RCompress::fn232(int32_t arg226) {
   /*
    * Pointer depth calculation?
 
-   * `dat_arr189` & `dat_arr190` contain a series(from `dat174` to `arg226`) of integers that are `< arg226`. If they are between `dat174` and `arg226`, then it's a pointer to another array index. Otherwise it's not. This function calculates the number of non-pointer values at each depth by following the pointers until a non-pointer, then incrementing the count of depth by 1.
+   * `dat_arr189` & `dat_arr190` contain a series(from `dat174` to `arg226`) of
+   integers that are `< arg226`. If they are between `dat174` and `arg226`, then
+   it's a pointer to another array index. Otherwise it's not. This function
+   calculates the number of non-pointer values at each depth by following the
+   pointers until a non-pointer, then incrementing the count of depth by 1.
 
-   * Note that the pointers will link to the index of both arrays, and need to be explored in both arrays. Each value is unique and there are no loops.
+   * Note that the pointers will link to the index of both arrays, and need to
+   be explored in both arrays. Each value is unique and there are no loops.
 
    * Does `dat_arr189` and `dat_arr190` represent a binary tree?
    */
 
-  calculate_pointer_depths(
-    data->dat_arr189,
-    data->dat_arr190,
-    data->dat_arr167,
-    0,
-    data->dat174,
-    arg226
-  );
+  calculate_pointer_depths(data->dat_arr189, data->dat_arr190, data->dat_arr167,
+                           0, data->dat174, arg226);
 }

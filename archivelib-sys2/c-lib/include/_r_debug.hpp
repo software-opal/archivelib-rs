@@ -62,11 +62,11 @@
 
 #define WRITE_HEX(stream, name, value) \
   SET_HEX(stream);                                                             \
-  stream << ", \"" << (name) << "\": " << (long long)value;                               \
+  stream << ", \"" << (name) << "\": " << (intmax_t)(value);                               \
   UNSET_HEX(stream);
 
 #define WRITE_DEC(stream, name, value)          \
-  stream << ", \"" << (name) << "\": " << (intmax_t)value;
+  stream << ", \"" << (name) << "\": " << (intmax_t)(value);
 
 #define WRITE_BOOL(stream, name, value) \
   stream << ", \"" << (name) << "\": " << ((value) ? "true" : "false");
@@ -116,7 +116,7 @@
 
 #define _ARRAY_PTR_COND_uint8_t(stream, data, arr)                             \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr165)                               \
-  _ARRAY_PTR_COND(stream, arr, data, dat_arr166)                               \
+  _ARRAY_PTR_COND(stream, arr, data, input_buffer)                               \
   _ARRAY_PTR_COND(stream, arr, data, buffer)                                   \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr180)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr181)

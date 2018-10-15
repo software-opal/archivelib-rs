@@ -28,8 +28,8 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr164 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
   data->dat_arr165_len = CONST_N155;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
-  data->dat_arr166_len = data->max_input_data_size + CONST_N140 + 2;
-  data->dat_arr166 = (uint8_t *)calloc(data->dat_arr166_len, sizeof(uint8_t));
+  data->input_buffer_len = data->max_input_data_size + CONST_N140 + 2;
+  data->input_buffer = (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
   data->dat_arr177_len = CONST_N141 + 1;
@@ -54,7 +54,7 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr194 = (uint16_t *)calloc(data->dat_arr194_len, sizeof(uint16_t));
 
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
-      !data->dat_arr166 || !data->dat_arr167 || !data->dat_arr177 ||
+      !data->input_buffer || !data->dat_arr167 || !data->dat_arr177 ||
       !data->buffer || !data->dat_arr180 || !data->dat_arr181 ||
       !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr191 ||
       !data->dat_arr192 || !data->dat_arr193 || !data->dat_arr194) {
@@ -76,9 +76,9 @@ void free_compress_data(RCompressData *data) {
     free(data->dat_arr165);
     data->dat_arr165 = NULL;
   }
-  if (data->dat_arr166) {
-    free(data->dat_arr166);
-    data->dat_arr166 = NULL;
+  if (data->input_buffer) {
+    free(data->input_buffer);
+    data->input_buffer = NULL;
   }
   if (data->dat_arr167) {
     free(data->dat_arr167);

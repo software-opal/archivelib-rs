@@ -8,7 +8,7 @@ extern crate rand;
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl AllocatedMemory {
-  pub fn to_err(mut self: Self) -> Result<Vec<u8>, Option<Vec<u8>>> {
+  pub fn to_err(mut self: Self) -> Result<Vec<u8>, Option<String>> {
     let raw = if self.data.is_null() {
       None
     } else {
@@ -21,7 +21,8 @@ impl AllocatedMemory {
 
     match (self.status >= 0, raw) {
       (true, Some(d)) => Ok(d),
-      (_, other) => Err(other),
+      (_, Some(other)) => Err(Some(other.into_iter().map(|b| b as char).collect())),
+      (_, None) => Err(None),
     }
   }
 }
@@ -39,7 +40,6 @@ mod tests {
     let mut rand = thread_rng();
     let run_len_dist = Poisson::new(average_run_len as f64);
     let mut data = Vec::with_capacity(max_len);
-    print!("Data: [");
     loop {
       let run_len: usize = rand.sample(run_len_dist) as usize;
       if run_len + data.len() >= max_len {
@@ -48,20 +48,68 @@ mod tests {
         continue;
       }
       let val: u8 = rand.gen();
-      print!(
-        "{{\"start\": {:#02X}, \"end\": {:#02X}, \"len\": {}, \"val\": {:#02X}}}",
-        data.len(),
-        data.len() + run_len,
-        run_len,
-        val
-      );
-      if data.len() != 0 {
-        print!(", ");
-      }
       data.extend(iter::repeat(val).take(run_len));
     }
     println!("]");
     data.into_boxed_slice()
+  }
+
+  fn to_series_info(data: &[u8]) -> Vec<(u8, usize)> {
+    let mut series_info = vec![];
+    if data.len() == 0 {
+      return series_info;
+    }
+    let mut last_val = data[0];
+    let mut count = 0;
+    for &val in data {
+      if val != last_val {
+        series_info.push((last_val, count));
+        last_val = val;
+        count = 0;
+      }
+      count += 1;
+    }
+    series_info.push((last_val, count));
+    series_info
+  }
+
+  fn assert_series_arrays_equal(left: &[u8], right: &[u8]) {
+    let mut errors = vec![];
+    if left.len() != right.len() {
+      errors.push(format!("Lengths differ: {} != {}", left.len(), right.len()));
+    }
+    let left_series_info = to_series_info(left);
+    let right_series_info = to_series_info(right);
+    if left_series_info.len() != right_series_info.len() {
+      errors.push(format!(
+        "Series counts differ: {} != {}",
+        left_series_info.len(),
+        right_series_info.len()
+      ));
+    }
+    let mut left_idx = 0;
+    let mut right_idx = 0;
+    for (i, (&(lval, lcount), (rval, rcount))) in
+      left_series_info.iter().zip(right_series_info).enumerate()
+    {
+      if lval != rval {
+        errors.push(format!(
+          "Series #{} has wrong values: {} != {}",
+          i, lval, rval
+        ));
+      }
+      if lcount != rcount {
+        errors.push(format!(
+          "Series #{} has wrong counts: {} != {}",
+          i, lcount, rcount
+        ));
+      }
+      if errors.len() > 5 {
+        break;
+      }
+    }
+    let empty: Vec<String> = Vec::new();
+    assert_eq!(empty, errors);
   }
 
   fn do_compress(input: &[u8]) -> Box<[u8]> {
@@ -88,18 +136,47 @@ mod tests {
   }
 
   #[test]
-  fn test_samples() {
+  fn test_small_samples() {
     let mut rand = thread_rng();
-    let max_data = 512;
-    let length_distribution = Binomial::new(max_data, 256.0 / max_data as f64);
-    for i in 0..2 {
-      println!("Starting run {}: [", i);
+    let max_data = 128;
+    let length_distribution = Binomial::new(max_data, 16.0 / max_data as f64);
+    for i in 0..200 {
       let len: usize = rand.sample(length_distribution) as usize;
       let input = get_data(len, rand.gen_range(5, 50));
       let compressed_data = do_compress(&input);
       let decompressed_data = do_decompress(&compressed_data);
+      assert_series_arrays_equal(&input, &decompressed_data);
       assert_eq!(input[..], decompressed_data[..]);
-      println!("]\nFinished run {}\n", i);
+    }
+  }
+
+  #[test]
+  fn test_medium_samples() {
+    let mut rand = thread_rng();
+    let max_data = (1 << 14) - 1;
+    let length_distribution = Binomial::new(max_data, 4096.0 / max_data as f64);
+    for i in 0..40 {
+      let len: usize = rand.sample(length_distribution) as usize;
+      let input = get_data(len, rand.gen_range(5, 50));
+      let compressed_data = do_compress(&input);
+      let decompressed_data = do_decompress(&compressed_data);
+      assert_series_arrays_equal(&input, &decompressed_data);
+      assert_eq!(input[..], decompressed_data[..]);
+    }
+  }
+
+  #[test]
+  fn test_large_samples() {
+    let mut rand = thread_rng();
+    let max_data = (1 << 14) - 1;
+    let length_distribution = Binomial::new(max_data, (1 << 13) as f64 / max_data as f64);
+    for i in 0..10 {
+      let len: usize = rand.sample(length_distribution) as usize;
+      let input = get_data(len, rand.gen_range(5, 50));
+      let compressed_data = do_compress(&input);
+      let decompressed_data = do_decompress(&compressed_data);
+      assert_series_arrays_equal(&input, &decompressed_data);
+      assert_eq!(input[..], decompressed_data[..]);
     }
   }
 
