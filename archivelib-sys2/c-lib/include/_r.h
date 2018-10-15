@@ -35,4 +35,6 @@
 #define ERROR_MESSAGE_N521 "Internal 1 error in Greenleaf Decompression routine"
 #define ERROR_MESSAGE_N522 "Internal 2 error in Greenleaf Decompression routine"
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 #endif

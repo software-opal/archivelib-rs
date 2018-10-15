@@ -1,7 +1,7 @@
 #ifndef _R_DATA_HPP
 #define _R_DATA_HPP
 
-#ifdef ARRAY_CONTENT_DEBUG
+#ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \
   do {                                                                         \
     (stream) << "[";                                                           \
@@ -25,11 +25,53 @@
   (stream).unsetf(std::ios::showbase);
 
 #define WRITE_DATA_ARRAY(stream, data, arr, type)                              \
-  (stream) << ", \"" #arr "\": ";                                              \
-  _WRITE_ARRAY(stream, (data)->arr, type, (data)->arr##_len)
+  WRITE_ARRAY(stream, #arr, (data)->arr, type, (data)->arr##_len)
 
-#define WRITE_ARRAY(stream, arr, len)                                          \
-  _WRITE_ARRAY(stream, arr, typeof(arr), len)
+#define WRITE_ARRAY(stream, name, arr, arr_type, len)                          \
+  (stream) << ", \"" << (name) << "\": ";                                      \
+  _WRITE_ARRAY(stream, arr, arr_type, len)
+
+#define WRITE_ARRAY_PTR(stream, data, name, ptr, arr_type)                     \
+  (stream) << ", \"" << (name) << "\": ";                                      \
+  (stream) << "{\"type\": \"" << #arr_type << "\"";                            \
+  if ((ptr) == NULL) {                                                         \
+  }                                                                            \
+  _ARRAY_PTR_COND_##arr_type(stream, data, ptr);                               \
+  SET_HEX(stream);                                                             \
+  (stream) << ", \"startPtr\": " << (intptr_t)(ptr);                           \
+  UNSET_HEX(stream);                                                           \
+  stream << "}";
+
+#define WRITE_DATA_ARRAY_PTR(stream, data, arr, arr_type)                      \
+  WRITE_ARRAY_PTR(stream, data, #arr, arr, arr_type)
+
+#define WRITE_STORAGE(stream, data, name)                                      \
+  stream << ", \"" #name "\": ";                                               \
+  stream << "{\"position\": " << (data)->name->Tell();                         \
+  stream << ", \"size\": " << (data)->name->GetSize();                         \
+  stream << "}";
+
+#define WRITE_DATA_HEX(stream, data, name)                                          \
+  WRITE_HEX(stream, #name, (data)->name)
+
+#define WRITE_DATA_DEC(stream, data, name)          \
+  WRITE_DEC(stream, #name, (data)->name)
+
+#define WRITE_DATA_BOOL(stream, data, name)    \
+  WRITE_BOOL(stream, #name, (data)->name)
+
+#define WRITE_HEX(stream, name, value) \
+  SET_HEX(stream);                                                             \
+  stream << ", \"" << (name) << "\": " << (long long)value;                               \
+  UNSET_HEX(stream);
+
+#define WRITE_DEC(stream, name, value)          \
+  stream << ", \"" << (name) << "\": " << (intmax_t)value;
+
+#define WRITE_BOOL(stream, name, value) \
+  stream << ", \"" << (name) << "\": " << ((value) ? "true" : "false");
+
+/************** INTERNAL MACROS **********************************************/
 
 #define _WRITE_ARRAY(stream, arr, arr_type, len)                               \
   (stream) << "{\"type\": \"" << #arr_type << "\"";                            \
@@ -42,60 +84,40 @@
   WRITE_ARRAY_CONTENT(stream, arr, len)                                        \
   stream << "}";
 
+#define _ARRAY_PTR_COND_EXTRA(stream, ptr, arr, start, len)                    \
+  (stream) << ", \"len\": \"" << (len) - (start) << "\"";                      \
+  (stream) << ", \"content\": ";                                               \
+  WRITE_ARRAY_CONTENT(stream, arr, (len) - (start))
+
 #define _ARRAY_PTR_COND(stream, ptr, data, arr)                                \
   else if ((data)->arr <= (ptr) &&                                             \
            (ptr) <= &((data)->arr)[(data)->arr##_len - 1]) {                   \
     (stream) << ", \"in\": \"" #arr "\"";                                      \
     (stream) << ", \"start\": ";                                               \
     (stream) << (ptr - (data)->arr) / sizeof(*(data)->arr);                    \
+    _ARRAY_PTR_COND_EXTRA(stream, ptr, data->arr,                              \
+                          (ptr - (data)->arr) / sizeof(*(data)->arr),          \
+                          (data)->arr##_len)                                   \
   }
 
-#define ARRAY_PTR_COND_int16_t(stream, data, arr, arr_type)                    \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr163)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr164)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr177)
+#define _ARRAY_PTR_COND_int16_t(stream, data, arr)                             \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr163)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr164)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr177)
 
-#define ARRAY_PTR_COND_uint16_t(stream, data, arr, arr_type)                   \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr167)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr189)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr190)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr191)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr192)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr193)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr194)
+#define _ARRAY_PTR_COND_uint16_t(stream, data, arr)                            \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr167)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr189)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr190)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr191)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr192)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr193)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr194)
 
-#define ARRAY_PTR_COND_uint8_t(stream, data, arr, arr_type)                    \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr165)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr166)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, buffer)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr180)                       \
-  _ARRAY_PTR_COND(stream, (data)->arr, data, dat_arr181)
-
-#define WRITE_DATA_ARRAY_PTR(stream, data, arr, arr_type)                      \
-  (stream) << ", \"" #arr "\": ";                                              \
-  (stream) << "{\"type\": \"" << #arr_type << "\"";                            \
-  if ((data)->arr == NULL) {                                                   \
-  }                                                                            \
-  ARRAY_PTR_COND_##arr_type(stream, data, arr, arr_type);                      \
-  SET_HEX(stream);                                                             \
-  (stream) << ", \"startPtr\": " << (intptr_t)((data)->arr);                   \
-  UNSET_HEX(stream);                                                           \
-  stream << "}";
-
-#define WRITE_STORAGE(stream, data, name)                                      \
-  stream << ", \"" #name "\": ";                                               \
-  stream << "{\"position\": " << (data)->name->Tell();                         \
-  stream << ", \"size\": " << (data)->name->GetSize();                         \
-  stream << "}";
-
-#define WRITE_HEX(stream, data, name)                                          \
-  SET_HEX(stream);                                                             \
-  stream << ", \"" #name "\": " << (data)->name;                               \
-  UNSET_HEX(stream);
-
-#define WRITE_DEC(stream, data, name)                                          \
-  stream << ", \"" #name "\": " << (data)->name;
-
-#define WRITE_BOOL(stream, data, name)                                         \
-  stream << ", \"" #name "\": " << ((data)->name ? "true" : "false");
+#define _ARRAY_PTR_COND_uint8_t(stream, data, arr)                             \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr165)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr166)                               \
+  _ARRAY_PTR_COND(stream, arr, data, buffer)                                   \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr180)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr181)
 #endif

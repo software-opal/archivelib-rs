@@ -2,6 +2,9 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+#[cfg(test)]
+extern crate rand;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl AllocatedMemory {
@@ -25,22 +28,85 @@ impl AllocatedMemory {
 
 #[cfg(test)]
 mod tests {
+
   use super::*;
+
+  use rand::distributions::{Binomial, Poisson};
+  use rand::{thread_rng, Rng};
+  use std::iter;
+
+  fn get_data(max_len: usize, average_run_len: usize) -> Box<[u8]> {
+    let mut rand = thread_rng();
+    let run_len_dist = Poisson::new(average_run_len as f64);
+    let mut data = Vec::with_capacity(max_len);
+    print!("Data: [");
+    loop {
+      let run_len: usize = rand.sample(run_len_dist) as usize;
+      if run_len + data.len() >= max_len {
+        break;
+      } else if run_len == 0 {
+        continue;
+      }
+      let val: u8 = rand.gen();
+      print!(
+        "{{\"start\": {:#02X}, \"end\": {:#02X}, \"len\": {}, \"val\": {:#02X}}}",
+        data.len(),
+        data.len() + run_len,
+        run_len,
+        val
+      );
+      if data.len() != 0 {
+        print!(", ");
+      }
+      data.extend(iter::repeat(val).take(run_len));
+    }
+    println!("]");
+    data.into_boxed_slice()
+  }
+
+  fn do_compress(input: &[u8]) -> Box<[u8]> {
+    let mut data = {
+      let mut v = vec![];
+      v.extend(input.iter());
+      v.into_boxed_slice()
+    };
+    let length = data.len();
+    let ptr = data.as_mut_ptr();
+    let re = unsafe { compress(ptr, length) }.to_err();
+    re.unwrap().into_boxed_slice()
+  }
+  fn do_decompress(input: &[u8]) -> Box<[u8]> {
+    let mut data = {
+      let mut v = vec![];
+      v.extend(input.iter());
+      v.into_boxed_slice()
+    };
+    let length = data.len();
+    let ptr = data.as_mut_ptr();
+    let re = unsafe { decompress(ptr, length) }.to_err();
+    re.unwrap().into_boxed_slice()
+  }
+
+  #[test]
+  fn test_samples() {
+    let mut rand = thread_rng();
+    let max_data = 512;
+    let length_distribution = Binomial::new(max_data, 256.0 / max_data as f64);
+    for i in 0..2 {
+      println!("Starting run {}: [", i);
+      let len: usize = rand.sample(length_distribution) as usize;
+      let input = get_data(len, rand.gen_range(5, 50));
+      let compressed_data = do_compress(&input);
+      let decompressed_data = do_decompress(&compressed_data);
+      assert_eq!(input[..], decompressed_data[..]);
+      println!("]\nFinished run {}\n", i);
+    }
+  }
 
   #[test]
   fn test_round_trip() {
     let input: &[u8] = b"what if this gets compressed well good!";
-    let compressed_data: Box<[u8]> = {
-      let mut data = {
-        let mut v = vec![];
-        v.extend(input.iter());
-        v.into_boxed_slice()
-      };
-      let length = data.len();
-      let ptr = data.as_mut_ptr();
-      let re = unsafe { compress(ptr, length) }.to_err();
-      re.unwrap().into_boxed_slice()
-    };
+    let compressed_data = do_compress(input);
     assert_eq!(
       compressed_data[..],
       vec![
@@ -49,17 +115,7 @@ mod tests {
       ][..]
     );
 
-    let decompressed_data: Box<[u8]> = {
-      let mut data = {
-        let mut v = vec![];
-        v.extend(compressed_data.iter());
-        v.into_boxed_slice()
-      };
-      let length = data.len();
-      let ptr = data.as_mut_ptr();
-      let re = unsafe { decompress(ptr, length) }.to_err();
-      re.unwrap().into_boxed_slice()
-    };
+    let decompressed_data = do_decompress(&compressed_data);
     assert_eq!(input[..], decompressed_data[..])
   }
 }

@@ -337,8 +337,8 @@ int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
     if (local276 < data->dat174)
       *data->dat_arr_cursor188++ = (uint16_t)local276;
     local289 = local292++;
-    data->dat_arr_cursor187[local289] =
-        (uint16_t)(data->dat_arr_cursor187[i] + data->dat_arr_cursor187[local276]);
+    data->dat_arr_cursor187[local289] = (uint16_t)(
+        data->dat_arr_cursor187[i] + data->dat_arr_cursor187[local276]);
     data->dat_arr177[1] = (int16_t)local289;
     fn225(1, data->dat_arr_cursor187, data->dat_arr177, local227);
     data->dat_arr189[local289] = (uint16_t)i;
@@ -378,13 +378,13 @@ void RCompress::fn216(uint16_t *arg217) {
       arg217[local289 + 2]++;
   }
 }
-void RCompress::fn218(int16_t arg219, int16_t arg220, int16_t arg221) {
+void RCompress::fn218(int16_t length219, int16_t arg220, int16_t arg221) {
   int16_t i, local289;
-  while (arg219 > 0 && data->dat_arr181[arg219 - 1] == 0)
-    arg219--;
-  fn208(arg220, arg219);
+  while (length219 > 0 && data->dat_arr181[length219 - 1] == 0)
+    length219--;
+  fn208(arg220, length219);
   i = 0;
-  while (i < arg219) {
+  while (i < length219) {
     local289 = data->dat_arr181[i++];
     if (local289 <= 6) {
       fn208(3, local289);
@@ -484,27 +484,72 @@ void RCompress::fn228(int32_t arg229) {
   }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
-
-
-void RCompress::fn230(int32_t arg219, uint8_t *arg209, uint16_t *arg231) {
+#include "_r_debug.hpp"
+#include <string>
+#include <iostream>
+#include <sstream>
+void RCompress::fn230(int32_t length219, uint8_t *arg209, uint16_t *arg231) {
+  // Called twice; once with arg209=data->dat_arr180, arg231=data->dat_arr192
+  // the other with arg209=data->dat_arr181, arg231=data->dat_arr231
   int32_t i;
   uint16_t local288[18];
-  local288[1] = 0;
-  for (i = 1; i <= 16; i++)
+  memset(local288, 0, 18 * sizeof(uint16_t));
+  // std::cout << "{\"fn\": \"fn230\"";
+  // WRITE_DEC(std::cout, "length219", length219);
+  // WRITE_ARRAY_PTR(std::cout, data, "arg209", arg209, uint8_t);
+  // WRITE_ARRAY_PTR(std::cout, data, "arg231", arg231, uint16_t);
+  // std::cout << "}\n";
+  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"pre-init\"";
+  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
+  // WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
+  // std::cout << "}\n";
+
+  for (i = 1; (i + 1) < 18; i++)
     local288[i + 1] = (uint16_t)((local288[i] + data->dat_arr167[i]) << 1);
-  for (i = 0; i < arg219; i++)
+
+  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"post-init\"";
+  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
+  // std::cout << "}\n";
+  for (i = 0; i < length219; i++)
     arg231[i] = local288[arg209[i]]++;
+  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"end\"";
+  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
+  // WRITE_ARRAY_PTR(std::cout, data, "arg231", arg231, uint16_t);
+  // std::cout << "}\n";
+}
+
+void calculate_pointer_depths(uint16_t *left_array_ptr, uint16_t *right_array_ptr, uint16_t *depth_store_ptr,
+                              uint16_t depth, int16_t series_start,
+                              uint16_t curr_idx) {
+  std::cout << "calculate_pointer_depths " << depth << " | " << curr_idx << "\n";
+  if (curr_idx < series_start) {
+    depth_store_ptr[MIN(depth, 16)]++;
+  } else {
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr, depth + 1,
+                             series_start, left_array_ptr[curr_idx]);
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr, depth + 1,
+                             series_start, right_array_ptr[curr_idx]);
+  }
 }
 
 void RCompress::fn232(int32_t arg226) {
-  if (arg226 < data->dat174)
-    data->dat_arr167[(data->dat173 < 16) ? data->dat173 : 16]++;
-  else {
-    data->dat173++;
-    fn232(data->dat_arr189[arg226]);
-    fn232(data->dat_arr190[arg226]);
-    data->dat173--;
-  }
+  /*
+   * Pointer depth calculation?
+
+   * `dat_arr189` & `dat_arr190` contain a series(from `dat174` to `arg226`) of integers that are `< arg226`. If they are between `dat174` and `arg226`, then it's a pointer to another array index. Otherwise it's not. This function calculates the number of non-pointer values at each depth by following the pointers until a non-pointer, then incrementing the count of depth by 1.
+
+   * Note that the pointers will link to the index of both arrays, and need to be explored in both arrays. Each value is unique and there are no loops.
+
+   * Does `dat_arr189` and `dat_arr190` represent a binary tree?
+   */
+
+  calculate_pointer_depths(
+    data->dat_arr189,
+    data->dat_arr190,
+    data->dat_arr167,
+    0,
+    data->dat174,
+    arg226
+  );
 }

@@ -82,23 +82,23 @@ void reset_compress_data(RCompressData *data);
   WRITE_STORAGE(stream, data, input_store);                                    \
   WRITE_STORAGE(stream, data, output_store);                                   \
                                                                                \
-  WRITE_DEC(stream, data, chars_written);                                      \
-  WRITE_DEC(stream, data, input_length);                                       \
-  WRITE_BOOL(stream, data, uncompressible);                                    \
-  WRITE_BOOL(stream, data, fail_uncompressible);                               \
-  WRITE_HEX(stream, data, dat168);                                             \
-  WRITE_HEX(stream, data, dat169);                                             \
-  WRITE_HEX(stream, data, buffer_position);                                    \
-  WRITE_HEX(stream, data, dat172);                                             \
-  WRITE_HEX(stream, data, dat173);                                             \
-  WRITE_HEX(stream, data, dat174);                                             \
-  WRITE_HEX(stream, data, max_input_data_size);                                \
-  WRITE_HEX(stream, data, max_input_data_size_minus_one);                      \
-  WRITE_HEX(stream, data, dat182);                                             \
-  WRITE_HEX(stream, data, dat183);                                             \
-  WRITE_HEX(stream, data, dat184);                                             \
-  WRITE_HEX(stream, data, dat185);                                             \
-  WRITE_HEX(stream, data, dat186);                                             \
+  WRITE_DATA_DEC(stream, data, chars_written);                                 \
+  WRITE_DATA_DEC(stream, data, input_length);                                  \
+  WRITE_DATA_BOOL(stream, data, uncompressible);                               \
+  WRITE_DATA_BOOL(stream, data, fail_uncompressible);                          \
+  WRITE_DATA_HEX(stream, data, dat168);                                        \
+  WRITE_DATA_HEX(stream, data, dat169);                                        \
+  WRITE_DATA_HEX(stream, data, buffer_position);                               \
+  WRITE_DATA_HEX(stream, data, dat172);                                        \
+  WRITE_DATA_HEX(stream, data, dat173);                                        \
+  WRITE_DATA_HEX(stream, data, dat174);                                        \
+  WRITE_DATA_HEX(stream, data, max_input_data_size);                           \
+  WRITE_DATA_HEX(stream, data, max_input_data_size_minus_one);                 \
+  WRITE_DATA_HEX(stream, data, dat182);                                        \
+  WRITE_DATA_HEX(stream, data, dat183);                                        \
+  WRITE_DATA_HEX(stream, data, dat184);                                        \
+  WRITE_DATA_HEX(stream, data, dat185);                                        \
+  WRITE_DATA_HEX(stream, data, dat186);                                        \
                                                                                \
   WRITE_DATA_ARRAY(stream, data, dat_arr163, int16_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr164, int16_t);                         \
@@ -116,9 +116,9 @@ void reset_compress_data(RCompressData *data);
   WRITE_DATA_ARRAY(stream, data, dat_arr193, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr194, uint16_t);                        \
                                                                                \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor178, uint8_t);                     \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor187, uint16_t);                    \
-  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor188, uint16_t);                    \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor178, uint8_t);              \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor187, uint16_t);             \
+  WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor188, uint16_t);             \
   stream << "},\n";
 #endif
 

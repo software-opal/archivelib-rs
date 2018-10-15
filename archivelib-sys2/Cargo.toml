@@ -7,3 +7,6 @@ authors = ["Opal Symes <leesdolphin@gmail.com>"]
 [build-dependencies]
 cc = { version = "1.0", features = ["parallel"] }
 bindgen = "*"
+
+[dev-dependencies]
+rand = "0.5.5"
