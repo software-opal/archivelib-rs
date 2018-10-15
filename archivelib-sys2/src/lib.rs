@@ -36,10 +36,13 @@ mod tests {
   use rand::{thread_rng, Rng};
   use std::iter;
 
-  fn get_data(max_len: usize, average_run_len: usize) -> Box<[u8]> {
+  fn get_data(max_len: usize, average_run_len: usize, show: bool) -> Box<[u8]> {
     let mut rand = thread_rng();
     let run_len_dist = Poisson::new(average_run_len as f64);
     let mut data = Vec::with_capacity(max_len);
+    if show {
+      print!("Data: [");
+    }
     loop {
       let run_len: usize = rand.sample(run_len_dist) as usize;
       if run_len + data.len() >= max_len {
@@ -48,9 +51,23 @@ mod tests {
         continue;
       }
       let val: u8 = rand.gen();
+      if show {
+        if data.len() != 0 {
+          print!(", ");
+        }
+        print!(
+          "{{\"start\": {:#02X}, \"end\": {:#02X}, \"len\": {}, \"val\": {:#02X}}}",
+          data.len(),
+          data.len() + run_len,
+          run_len,
+          val
+        );
+      }
       data.extend(iter::repeat(val).take(run_len));
     }
-    println!("]");
+    if show {
+      println!("]");
+    }
     data.into_boxed_slice()
   }
 
@@ -87,8 +104,6 @@ mod tests {
         right_series_info.len()
       ));
     }
-    let mut left_idx = 0;
-    let mut right_idx = 0;
     for (i, (&(lval, lcount), (rval, rcount))) in
       left_series_info.iter().zip(right_series_info).enumerate()
     {
@@ -136,13 +151,27 @@ mod tests {
   }
 
   #[test]
+  fn test_single_sample() {
+    let mut rand = thread_rng();
+    println!("\nSample: [");
+    let len = 64;
+    let input = get_data(len, rand.gen_range(5, 50), true);
+    let compressed_data = do_compress(&input);
+    let decompressed_data = do_decompress(&compressed_data);
+    assert_series_arrays_equal(&input, &decompressed_data);
+    assert_eq!(input[..], decompressed_data[..]);
+    println!("]\n");
+  }
+
+  #[ignore]
+  #[test]
   fn test_small_samples() {
     let mut rand = thread_rng();
     let max_data = 128;
     let length_distribution = Binomial::new(max_data, 16.0 / max_data as f64);
-    for i in 0..200 {
+    for _ in 0..200 {
       let len: usize = rand.sample(length_distribution) as usize;
-      let input = get_data(len, rand.gen_range(5, 50));
+      let input = get_data(len, rand.gen_range(5, 50), false);
       let compressed_data = do_compress(&input);
       let decompressed_data = do_decompress(&compressed_data);
       assert_series_arrays_equal(&input, &decompressed_data);
@@ -150,14 +179,15 @@ mod tests {
     }
   }
 
+  #[ignore]
   #[test]
   fn test_medium_samples() {
     let mut rand = thread_rng();
     let max_data = (1 << 14) - 1;
     let length_distribution = Binomial::new(max_data, 4096.0 / max_data as f64);
-    for i in 0..40 {
+    for _ in 0..40 {
       let len: usize = rand.sample(length_distribution) as usize;
-      let input = get_data(len, rand.gen_range(5, 50));
+      let input = get_data(len, rand.gen_range(5, 50), false);
       let compressed_data = do_compress(&input);
       let decompressed_data = do_decompress(&compressed_data);
       assert_series_arrays_equal(&input, &decompressed_data);
@@ -165,14 +195,15 @@ mod tests {
     }
   }
 
+  #[ignore]
   #[test]
   fn test_large_samples() {
     let mut rand = thread_rng();
     let max_data = (1 << 14) - 1;
     let length_distribution = Binomial::new(max_data, (1 << 13) as f64 / max_data as f64);
-    for i in 0..10 {
+    for _ in 0..10 {
       let len: usize = rand.sample(length_distribution) as usize;
-      let input = get_data(len, rand.gen_range(5, 50));
+      let input = get_data(len, rand.gen_range(5, 50), false);
       let compressed_data = do_compress(&input);
       let decompressed_data = do_decompress(&compressed_data);
       assert_series_arrays_equal(&input, &decompressed_data);

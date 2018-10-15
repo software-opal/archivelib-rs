@@ -43,7 +43,7 @@
   stream << "}";
 
 #define WRITE_DATA_ARRAY_PTR(stream, data, arr, arr_type)                      \
-  WRITE_ARRAY_PTR(stream, data, #arr, arr, arr_type)
+  WRITE_ARRAY_PTR(stream, data, #arr, (data)->arr, arr_type)
 
 #define WRITE_STORAGE(stream, data, name)                                      \
   stream << ", \"" #name "\": ";                                               \
@@ -51,24 +51,24 @@
   stream << ", \"size\": " << (data)->name->GetSize();                         \
   stream << "}";
 
-#define WRITE_DATA_HEX(stream, data, name)                                          \
+#define WRITE_DATA_HEX(stream, data, name)                                     \
   WRITE_HEX(stream, #name, (data)->name)
 
-#define WRITE_DATA_DEC(stream, data, name)          \
+#define WRITE_DATA_DEC(stream, data, name)                                     \
   WRITE_DEC(stream, #name, (data)->name)
 
-#define WRITE_DATA_BOOL(stream, data, name)    \
+#define WRITE_DATA_BOOL(stream, data, name)                                    \
   WRITE_BOOL(stream, #name, (data)->name)
 
-#define WRITE_HEX(stream, name, value) \
+#define WRITE_HEX(stream, name, value)                                         \
   SET_HEX(stream);                                                             \
-  stream << ", \"" << (name) << "\": " << (intmax_t)(value);                               \
+  stream << ", \"" << (name) << "\": " << (intmax_t)(value);                   \
   UNSET_HEX(stream);
 
-#define WRITE_DEC(stream, name, value)          \
+#define WRITE_DEC(stream, name, value)                                         \
   stream << ", \"" << (name) << "\": " << (intmax_t)(value);
 
-#define WRITE_BOOL(stream, name, value) \
+#define WRITE_BOOL(stream, name, value)                                        \
   stream << ", \"" << (name) << "\": " << ((value) ? "true" : "false");
 
 /************** INTERNAL MACROS **********************************************/
@@ -116,7 +116,7 @@
 
 #define _ARRAY_PTR_COND_uint8_t(stream, data, arr)                             \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr165)                               \
-  _ARRAY_PTR_COND(stream, arr, data, input_buffer)                               \
+  _ARRAY_PTR_COND(stream, arr, data, input_buffer)                             \
   _ARRAY_PTR_COND(stream, arr, data, buffer)                                   \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr180)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr181)

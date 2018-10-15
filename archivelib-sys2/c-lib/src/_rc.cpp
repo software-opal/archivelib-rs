@@ -478,23 +478,34 @@ void RCompress::fn228(int32_t arg229) {
     WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
     std::cout << "\n";
     abort();
-  }
-  while (local458 != (1U << 16)) {
-    data->dat_arr167[16]--;
-    for (i = 15; i > 0; i--) {
-      if (data->dat_arr167[i] != 0) {
-        data->dat_arr167[i]--;
-        data->dat_arr167[i + 1] = (uint16_t)(data->dat_arr167[i + 1] + 2);
-        break;
+    while (local458 != (1U << 16)) {
+      data->dat_arr167[16]--;
+      for (i = 15; i > 0; i--) {
+        if (data->dat_arr167[i] != 0) {
+          data->dat_arr167[i]--;
+          data->dat_arr167[i + 1] = (uint16_t)(data->dat_arr167[i + 1] + 2);
+          break;
+        }
       }
+      local458--;
     }
-    local458--;
   }
+
+  std::cout << "{\"fn\": \"fn228\", \"stage\": \"mid\"";
+  WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
+  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor178, uint8_t);
+  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor188, uint16_t);
+  std::cout << "}\n";
   for (i = 16; i > 0; i--) {
     local289 = data->dat_arr167[i];
     while (--local289 >= 0)
       data->dat_arr_cursor178[*data->dat_arr_cursor188++] = (uint8_t)i;
   }
+
+  std::cout << "{\"fn\": \"fn228\", \"stage\": \"end\"";
+  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor178, uint8_t);
+  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor188, uint16_t);
+  std::cout << "}\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
