@@ -1,8 +1,10 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <string.h>
 
 #include "_rc.hpp"
+#include "_r_diff.hpp"
 
 ALErrors
 create_compress_data(RCompressData *data, ALStorage &in_storage,
@@ -22,13 +24,13 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->chars_written = 0;
   data->input_length = in_storage.GetSize();
 
-  data->dat_arr163_len = data->max_input_data_size + CONST_N153;
+  data->dat_arr163_len = data->max_input_data_size + CONST_N153_IS_4096;
   data->dat_arr163 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
   data->dat_arr164_len = data->max_input_data_size;
-  data->dat_arr164 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
+  data->dat_arr164 = (bool *)calloc(data->dat_arr164_len, sizeof(bool));
   data->dat_arr165_len = CONST_N155;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
-  data->input_buffer_len = data->max_input_data_size + CONST_N140 + 2;
+  data->input_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;
   data->input_buffer =
       (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
@@ -62,6 +64,113 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
     return AL_CANT_ALLOCATE_MEMORY;
   }
   return AL_SUCCESS;
+}
+
+#define DO_CLONE(new_data, old_data, member, type)                             \
+  new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \
+  memcpy(new_data->member, old_data->member,                                   \
+         new_data->member##_len * sizeof(type));
+
+RCompressData *clone_compress_data(RCompressData *old_data) {
+  RCompressData *new_data = (RCompressData *)malloc(sizeof(RCompressData));
+  memcpy(new_data, old_data, sizeof(RCompressData));
+  DO_CLONE(new_data, old_data, dat_arr163, bool);
+  DO_CLONE(new_data, old_data, dat_arr164, bool);
+  DO_CLONE(new_data, old_data, dat_arr165, uint8_t);
+  DO_CLONE(new_data, old_data, input_buffer, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr167, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr177, int16_t);
+  DO_CLONE(new_data, old_data, buffer, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr180, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr181, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr189, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr190, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr191, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr192, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr193, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr194, uint16_t);
+
+  new_data->dat_arr_cursor178 = NULL;
+  new_data->dat_arr_cursor187 = NULL;
+  new_data->dat_arr_cursor188 = NULL;
+
+  return new_data;
+}
+
+#define INLINE_DIFF_ARR(stream, has_changes, old_data, new_data, arr_name)     \
+  {                                                                            \
+    bool has_changes_this_time = false;                                        \
+    DIFF_ARRAY(stream, has_changes_this_time, #arr_name, old_data->arr_name,   \
+               new_data->arr_name, old_data->arr_name##_len);                  \
+    if (!has_changes_this_time) {                                              \
+      char b[1000];                                                            \
+      sprintf(b, "    | %20s | %10s | %2s | %10s |\n", #arr_name, "",          \
+              "==", "");                                                       \
+      stream << b;                                                             \
+    } else {                                                                   \
+      has_changes = true;                                                      \
+    }                                                                          \
+  }
+#define INLINE_DIFF_VAL(stream, has_changes, _spec, old_data, new_data,        \
+                        val_name)                                              \
+  {                                                                            \
+    if (old_data->val_name != new_data->val_name) {                            \
+      has_changes = true;                                                      \
+      char b[1000];                                                            \
+      sprintf(b, "    | %20s | %10" _spec " | %2s | %10" _spec " |\n",         \
+              #val_name, old_data->val_name, "<>", new_data->val_name);        \
+      stream << b;                                                             \
+    } else {                                                                   \
+    }                                                                          \
+  }
+
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
+  bool has_changes = false;
+  std::stringstream ss;
+  char buff[1000];
+  sprintf(buff, "    | %20s | %10s | %2s | %10s |\n", "name", "Old", "", "New");
+  ss << buff;
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr163);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr164);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr165);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, input_buffer);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr167);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr177);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, buffer);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr180);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr181);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr189);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr190);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr191);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr192);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr193);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr194);
+
+  INLINE_DIFF_VAL(ss, has_changes, "zu", old_data, new_data, chars_written);
+  INLINE_DIFF_VAL(ss, has_changes, "zu", old_data, new_data, input_length);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, uncompressible);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data,
+                  fail_uncompressible);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat168);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat169);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, buffer_position);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data,
+                  bits_buffer_used172);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat173);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat174);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, bits_buffer182);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat183);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat184);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat185);
+  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat186);
+
+  if (!has_changes) {
+    ss << "No Changes\n";
+  }
+  printf("\n%s\n", ss.str().c_str());
+  free_compress_data(old_data);
+  free(old_data);
+  return has_changes;
 }
 
 void free_compress_data(RCompressData *data) {
@@ -148,7 +257,7 @@ void reset_compress_data(RCompressData *data) {
   for (i = 0; i < CONST_N142; i++) {
     data->dat_arr193[i] = 0;
   }
-  for (i = 0; i < CONST_N153; i++) {
+  for (i = 0; i < CONST_N153_IS_4096; i++) {
     data->dat_arr163[data->max_input_data_size + i] = true;
   }
   for (i = 0; i < data->max_input_data_size; i++) {
@@ -157,13 +266,16 @@ void reset_compress_data(RCompressData *data) {
 }
 
 void flush_to_output(RCompressData *data) {
-  if (data->buffer_position <= 0)
+  if (data->buffer_position <= 0) {
     return;
-  if (data->fail_uncompressible &&
-      (data->chars_written += data->buffer_position) >= data->input_length)
+  }
+  data->chars_written += data->buffer_position;
+  if (data->fail_uncompressible && data->chars_written >= data->input_length) {
     data->uncompressible = 1;
-  else
+  } else {
     data->output_store->WriteBuffer(data->buffer, data->buffer_position);
+    memset(data->buffer, 0, data->buffer_position);
+  }
   data->buffer_position = 0;
 }
 

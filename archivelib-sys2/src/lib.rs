@@ -154,7 +154,7 @@ mod tests {
   fn test_single_sample() {
     let mut rand = thread_rng();
     println!("\nSample: [");
-    let len = 128;
+    let len = 128 * 8;
     let input = get_data(len, rand.gen_range(2, 20), true);
     let compressed_data = do_compress(&input);
     let decompressed_data = do_decompress(&compressed_data);

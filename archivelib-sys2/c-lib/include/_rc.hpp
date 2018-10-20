@@ -13,7 +13,7 @@ public:
   RCompressData *data;
 
   void fn196();
-  void fn197();
+  void finalise_compresson197();
   void fn198();
   void fn199(int16_t arg200, int16_t arg201);
   void fn202(uint16_t bits203, uint16_t arg204);
@@ -35,7 +35,7 @@ public:
   RCompress(ALStorage &arg233, ALStorage &arg202,
             ALGreenleafCompressionLevels arg234, bool arg235);
   ~RCompress();
-  int32_t Compress();
+  bool Compress();
   ALStatus mStatus;
 
 protected:

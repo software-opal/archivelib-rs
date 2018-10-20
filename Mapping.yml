@@ -16,7 +16,7 @@ mapping:
   '_137': 'CONST_N137'
   '_138': 'CONST_N138'
   '_139': 'CONST_N139'
-  '_140': 'CONST_N140'
+  '_140': 'CONST_N140_IS_256'
   '_141': 'CONST_N141'
   '_142': 'CONST_N142'
   '_143': 'CONST_N143'
@@ -29,8 +29,8 @@ mapping:
   '_150': '*ABSENT*'
   '_151': '*ABSENT*'
   '_152': 'CONST_N152'
-  '_153': 'CONST_N153'
-  '_154': 'CONST_N154'
+  '_153': 'CONST_N153_IS_4096'
+  '_154': 'CONST_N154_IS_4'
   '_155': 'CONST_N155'
   '_156': 'BUFFER_SIZE'
   '_157': 'true'
@@ -73,19 +73,19 @@ mapping:
   '_194': 'dat_arr194'
   '_195': '*ABSENT*'
   '_196': 'fn196'
-  '_197': 'fn197'
+  '_197': 'finalise_compresson197'
   '_198': 'fn198'
   '_199': 'fn199'
   '_200': ['arg200', 'local200']
   '_201': ['arg201', 'local201']
   '_202': ['fn202', 'out_storage']
   '_203': ['arg203', 'bits203', 'local203']
-  '_204': ['arg204', 'local204', 'macro_local204']
+  '_204': ['arg204', 'local204', 'local204']
   '_205': '*REMOVED* -- A reset/clean method now in `reset_compress_data`'
   '_206': 'finalize_buffer206'
   '_207': 'fn207'
   '_208': 'write_bits_to_buffer'
-  '_209': ['arg209', 'local209', 'bit_count209']
+  '_209': ['arg209', 'bytes_read209', 'bit_count209']
   '_210': 'flush_to_output'
   '_211': 'fn211'
   '_212': 'arg212'
@@ -107,7 +107,7 @@ mapping:
   '_228': 'fn228'
   '_229': ['arg229', 'local229']
   '_230': 'fn230'
-  '_231': ['arg231', 'local231']
+  '_231': ['arg231', 'l_uncompressible231']
   '_232': '*REMOVED* -- now `calculate_pointer_depths`'
   '_233': 'in_storage'
   '_234': 'compression_level'

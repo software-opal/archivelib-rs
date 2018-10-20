@@ -220,7 +220,7 @@ int ALMemory::Seek(long address) {
     return mStatus;
 
   if (mlFilePointer != address) {
-    if (address > muUserBufferSize)
+    if (address > (long) muUserBufferSize)
       return mStatus.SetError(AL_SEEK_ERROR, "Attempt to seek past end of the "
                                              "buffer in ALMemory");
   }

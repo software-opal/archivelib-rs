@@ -69,6 +69,8 @@ ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
                               ALGreenleafCompressionLevels compression_level,
                               bool fail_uncompressible);
 
+RCompressData *clone_compress_data(RCompressData *data);
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) ;
 void free_compress_data(RCompressData *data);
 void reset_compress_data(RCompressData *data);
 
@@ -99,12 +101,12 @@ void calculate_pointer_depths(uint16_t *left_array_ptr,
   WRITE_DATA_HEX(stream, data, dat168);                                        \
   WRITE_DATA_HEX(stream, data, dat169);                                        \
   WRITE_DATA_HEX(stream, data, buffer_position);                               \
-  WRITE_DATA_HEX(stream, data, bits_buffer_used172);                                        \
+  WRITE_DATA_HEX(stream, data, bits_buffer_used172);                           \
   WRITE_DATA_HEX(stream, data, dat173);                                        \
   WRITE_DATA_HEX(stream, data, dat174);                                        \
   WRITE_DATA_HEX(stream, data, max_input_data_size);                           \
   WRITE_DATA_HEX(stream, data, max_input_data_size_minus_one);                 \
-  WRITE_DATA_HEX(stream, data, bits_buffer182);                                        \
+  WRITE_DATA_HEX(stream, data, bits_buffer182);                                \
   WRITE_DATA_HEX(stream, data, dat183);                                        \
   WRITE_DATA_HEX(stream, data, dat184);                                        \
   WRITE_DATA_HEX(stream, data, dat185);                                        \
