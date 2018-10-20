@@ -53,9 +53,6 @@ RCompress::~RCompress() {
     data = NULL;
   }
 }
-void RCompress::fn223(int16_t arg203) {
-  fn208(data->dat_arr180[arg203], data->dat_arr192[arg203]);
-}
 int32_t RCompress::Compress() {
   int16_t local209;
   int16_t local201;
@@ -153,10 +150,11 @@ int32_t RCompress::Compress() {
     local231 = 1;
   return local231;
 }
+
 void RCompress::fn197() {
   if (!data->uncompressible)
     fn207();
-  fn206();
+  finalize_buffer206();
   data->dat183 = 0;
   data->dat184 = 0;
 }
@@ -196,7 +194,7 @@ void RCompress::fn199(int16_t arg200, int16_t arg201) {
     }
   }
 }
-void RCompress::fn202(uint16_t arg203, uint16_t arg204) {
+void RCompress::fn202(uint16_t bits203, uint16_t arg204) {
   if ((data->dat185 >>= 1) == 0) {
     data->dat185 = 1U << (CHAR_BIT - 1);
     if (data->dat184 >= data->dat183) {
@@ -208,59 +206,55 @@ void RCompress::fn202(uint16_t arg203, uint16_t arg204) {
     data->dat186 = data->dat184++;
     data->dat_arr165[data->dat186] = 0;
   }
-  data->dat_arr165[data->dat184++] = (uint8_t)arg203;
-  data->dat_arr191[arg203]++;
-  if (arg203 >= (1U << CHAR_BIT)) {
+  data->dat_arr165[data->dat184++] = (uint8_t)bits203;
+  data->dat_arr191[bits203]++;
+  if (bits203 >= (1U << CHAR_BIT)) {
     data->dat_arr165[data->dat186] |= (uint8_t)data->dat185;
     data->dat_arr165[data->dat184++] = (uint8_t)arg204;
     data->dat_arr165[data->dat184++] = (uint8_t)(arg204 >> CHAR_BIT);
-    arg203 = 0;
+    bits203 = 0;
     while (arg204) {
-      arg203++;
+      bits203++;
       arg204 >>= 1;
     }
-    data->dat_arr193[arg203]++;
+    data->dat_arr193[bits203]++;
   }
-}
-void RCompress::fn206() {
-  if (!data->uncompressible) {
-    fn208(CHAR_BIT - 1, 0);
-    if (data->buffer_position)
-      flush_to_output();
-  }
-  data->buffer_position = 0;
 }
 void RCompress::fn207() {
   uint32_t i, local289, local229, local454, local455;
   uint32_t local456 = 0;
   uint16_t local217[2 * CONST_N145 - 1];
+  memset(local217, 0xff, (2 * CONST_N145 - 1) * sizeof(uint16_t));
+  std::cout << "Calling fn211 with data->dat_arr191\n";
   local229 =
       fn211(CONST_N141, data->dat_arr191, data->dat_arr180, data->dat_arr192);
   local455 = data->dat_arr191[local229];
-  fn208(16, (uint16_t)local455);
+  write_bits_to_buffer(16, (uint16_t)local455);
   if (local229 >= CONST_N141) {
     fn216(local217);
+    std::cout << "Calling fn211 with local217\n";
     local229 = fn211(CONST_N145, local217, data->dat_arr181, data->dat_arr194);
     if (local229 >= CONST_N145) {
       fn218(CONST_N145, CONST_N147, 3);
     } else {
-      fn208(CONST_N147, 0);
-      fn208(CONST_N147, (uint16_t)local229);
+      write_bits_to_buffer(CONST_N147, 0);
+      write_bits_to_buffer(CONST_N147, (uint16_t)local229);
     }
     fn222();
   } else {
-    fn208(CONST_N147, 0);
-    fn208(CONST_N147, 0);
-    fn208(CONST_N143, 0);
-    fn208(CONST_N143, (uint16_t)local229);
+    write_bits_to_buffer(CONST_N147, 0);
+    write_bits_to_buffer(CONST_N147, 0);
+    write_bits_to_buffer(CONST_N143, 0);
+    write_bits_to_buffer(CONST_N143, (uint16_t)local229);
   }
+  std::cout << "Calling fn211 with data->dat_arr193\n";
   local229 =
       fn211(CONST_N142, data->dat_arr193, data->dat_arr181, data->dat_arr194);
   if (local229 >= CONST_N142) {
     fn218(CONST_N142, CONST_N540, -1);
   } else {
-    fn208(CONST_N540, 0);
-    fn208(CONST_N540, (uint16_t)local229);
+    write_bits_to_buffer(CONST_N540, 0);
+    write_bits_to_buffer(CONST_N540, (uint16_t)local229);
   }
   local454 = 0;
   for (i = 0; i < local455; i++) {
@@ -278,38 +272,8 @@ void RCompress::fn207() {
     if (data->uncompressible)
       return;
   }
-  for (i = 0; i < CONST_N141; i++)
-    data->dat_arr191[i] = 0;
-  for (i = 0; i < CONST_N142; i++)
-    data->dat_arr193[i] = 0;
-}
-void RCompress::fn208(int32_t arg209, uint16_t arg203) {
-  arg203 <<= CONST_N133 - arg209;
-  data->dat182 |= (uint16_t)(arg203 >> data->dat172);
-  if ((data->dat172 += (int16_t)arg209) >= 8) {
-    if (data->buffer_position >= BUFFER_SIZE)
-      flush_to_output();
-    data->buffer[data->buffer_position++] = (uint8_t)(data->dat182 >> CHAR_BIT);
-    if ((data->dat172 = (uint16_t)(data->dat172 - CHAR_BIT)) < CHAR_BIT)
-      data->dat182 <<= CHAR_BIT;
-    else {
-      if (data->buffer_position >= BUFFER_SIZE)
-        flush_to_output();
-      data->buffer[data->buffer_position++] = (uint8_t)data->dat182;
-      data->dat172 = (uint16_t)(data->dat172 - CHAR_BIT);
-      data->dat182 = (uint16_t)(arg203 << (arg209 - data->dat172));
-    }
-  }
-}
-void RCompress::flush_to_output() {
-  if (data->buffer_position <= 0)
-    return;
-  if (data->fail_uncompressible &&
-      (data->chars_written += data->buffer_position) >= data->input_length)
-    data->uncompressible = 1;
-  else
-    data->output_store->WriteBuffer(data->buffer, data->buffer_position);
-  data->buffer_position = 0;
+  memset(data->dat_arr191, 0, CONST_N141 * sizeof(uint16_t));
+  memset(data->dat_arr193, 0, CONST_N142 * sizeof(uint16_t));
 }
 int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
                          uint16_t *arg215) {
@@ -357,49 +321,64 @@ int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
 }
 void RCompress::fn216(uint16_t *arg217) {
   int16_t i, local289, local219, local277;
-  for (i = 0; i < CONST_N145; i++)
-    arg217[i] = 0;
+  memset(arg217, 0, CONST_N145 * sizeof(uint16_t));
+
+  std::cout << "\nfn216:\n";
+  WRITE_DATA_ARRAY(std::cout, data, dat_arr180, uint8_t);
+  std::cout << "\n";
+
   local219 = CONST_N141;
   while (local219 > 0 && data->dat_arr180[local219 - 1] == 0)
     local219--;
+  std::cout << "  local219=" << local219 << "\n";
+
   i = 0;
   while (i < local219) {
-    local289 = data->dat_arr180[i++];
+    local289 = data->dat_arr180[i];
+    std::cout << "  i=" << i << "; local289=" << local289 << "\n";
+    i++;
     if (local289 == 0) {
       local277 = 1;
       while (i < local219 && data->dat_arr180[i] == 0) {
+        // Calculates the length of the zero runs in `data->dat_arr180`.
         i++;
         local277++;
       }
-      if (local277 <= 2)
+      std::cout << "  i=" << i << "; local277=" << local277 << "\n";
+      if (local277 <= 2) {
         arg217[0] += local277;
-      else if (local277 <= 18)
+      } else if (local277 <= 18) {
         arg217[1]++;
-      else if (local277 == 19) {
+      } else if (local277 == 19) {
         arg217[0]++;
         arg217[1]++;
-      } else
+      } else {
         arg217[2]++;
-    } else
+      }
+    } else {
       arg217[local289 + 2]++;
+    }
+    std::cout << "   ";
+    WRITE_ARRAY(std::cout, "arg217", arg217, uint16_t, CONST_N145);
+    std::cout << "\n";
   }
 }
 void RCompress::fn218(int16_t length219, int16_t arg220, int16_t arg221) {
   int16_t i, local289;
   while (length219 > 0 && data->dat_arr181[length219 - 1] == 0)
     length219--;
-  fn208(arg220, length219);
+  write_bits_to_buffer(arg220, length219);
   i = 0;
   while (i < length219) {
     local289 = data->dat_arr181[i++];
     if (local289 <= 6) {
-      fn208(3, local289);
+      write_bits_to_buffer(3, local289);
     } else
-      fn208(local289 - 3, (uint16_t)(USHRT_MAX << 1));
+      write_bits_to_buffer(local289 - 3, (uint16_t)(USHRT_MAX << 1));
     if (i == arg221) {
       while (i < 6 && data->dat_arr181[i] == 0)
         i++;
-      fn208(2, (uint16_t)(i - 3));
+      write_bits_to_buffer(2, (uint16_t)(i - 3));
     }
   }
 }
@@ -408,7 +387,7 @@ void RCompress::fn222() {
   local219 = CONST_N141;
   while (local219 > 0 && data->dat_arr180[local219 - 1] == 0)
     local219--;
-  fn208(CONST_N143, local219);
+  write_bits_to_buffer(CONST_N143, local219);
   i = 0;
   while (i < local219) {
     local289 = data->dat_arr180[i++];
@@ -420,54 +399,96 @@ void RCompress::fn222() {
       }
       if (local277 <= 2) {
         for (local289 = 0; local289 < local277; local289++)
-          fn208(data->dat_arr181[0], data->dat_arr194[0]);
+          write_bits_to_buffer(data->dat_arr181[0], data->dat_arr194[0]);
       } else if (local277 <= 18) {
-        fn208(data->dat_arr181[1], data->dat_arr194[1]);
-        fn208(4, (uint16_t)(local277 - 3));
+        write_bits_to_buffer(data->dat_arr181[1], data->dat_arr194[1]);
+        write_bits_to_buffer(4, (uint16_t)(local277 - 3));
       } else if (local277 == 19) {
-        fn208(data->dat_arr181[0], data->dat_arr194[0]);
-        fn208(data->dat_arr181[1], data->dat_arr194[1]);
-        fn208(4, 15);
+        write_bits_to_buffer(data->dat_arr181[0], data->dat_arr194[0]);
+        write_bits_to_buffer(data->dat_arr181[1], data->dat_arr194[1]);
+        write_bits_to_buffer(4, 15);
       } else {
-        fn208(data->dat_arr181[2], data->dat_arr194[2]);
-        fn208(CONST_N143, (uint16_t)(local277 - 20));
+        write_bits_to_buffer(data->dat_arr181[2], data->dat_arr194[2]);
+        write_bits_to_buffer(CONST_N143, (uint16_t)(local277 - 20));
       }
     } else
-      fn208(data->dat_arr181[local289 + 2], data->dat_arr194[local289 + 2]);
+      write_bits_to_buffer(data->dat_arr181[local289 + 2],
+                           data->dat_arr194[local289 + 2]);
   }
 }
 void RCompress::fn224(uint16_t arg204) {
   uint16_t local203, local457;
   local203 = 0;
   local457 = arg204;
-  while (local457) {
+  while (local457 != 0) {
     local203++;
-    local457 >>= 1;
+    local457 = local457 >> 1;
+    // Who knows what goes through here.
+    ABORT(data);
   }
-  fn208(data->dat_arr181[local203], data->dat_arr194[local203]);
+  write_bits_to_buffer(data->dat_arr181[local203], data->dat_arr194[local203]);
   if (local203 > 1)
-    fn208(local203 - 1, arg204);
+    write_bits_to_buffer(local203 - 1, arg204);
 }
+
 void RCompress::fn225(int32_t i, uint16_t *arg187, int16_t *arg177,
                       int16_t arg227) {
+  /*
+    arg187 == data->dat_arr_cursor187, arg177 == data->dat_arr177
+
+    arg187 can be `dat_arr191` or a local variable
+    arg177 is a array of index pointers to arg187.
+
+    This is some sort of rotation function in arg177.
+  */
+  // std::cout << "\n";
+  // std::cout << "fn225: i=" << i << "; arg227=" << arg227 << "\n";
+  // WRITE_ARRAY_PTR(std::cout, data, "arg177", arg177, int16_t);
+  // std::cout << "\n";
+
   int32_t local276, local289;
   local289 = arg177[i];
   while ((local276 = 2 * i) <= arg227) {
-    if (local276 < arg227 &&
-        arg187[arg177[local276]] > arg187[arg177[local276 + 1]])
-      local276++;
-    if (arg187[local289] <= arg187[arg177[local276]])
+    // std::cout << "  Considering " << local276 << "\n";
+    if (local276 < arg227) {
+      // std::cout << "   Inside bounds of " << arg227 << "\n";
+      // std::cout << "   Lookup arg187[arg177[local276]] = arg187[" <<
+      // arg177[local276] << "] = " << arg187[arg177[local276]] << "\n";
+      // std::cout << "   Lookup arg187[arg177[local276+1]] = arg187[" <<
+      // arg177[local276+1] << "] = " << arg187[arg177[local276+1]] << "\n";
+      if (arg187[arg177[local276]] > arg187[arg177[local276 + 1]]) {
+        // std::cout << "    Left greater than right; increment local276" <<
+        // "\n";
+        local276++;
+      }
+    }
+
+    // std::cout << "  Lookup arg187[local289] = arg187[" << local289 << "] = "
+    // << arg187[local289] << "\n"; std::cout << "  Lookup
+    // arg187[arg177[local276]] = arg187[" << arg177[local276] << "] = " <<
+    // arg187[arg177[local276]] << "\n";
+
+    if (arg187[local289] <= arg187[arg177[local276]]) {
+      // std::cout << "  Fin\n";
       break;
+    }
+    // std::cout << "  Moved " << local276 << " to " << i << "\n";
     arg177[i] = arg177[local276];
     i = local276;
   }
   arg177[i] = (uint16_t)local289;
+  // WRITE_ARRAY_PTR(std::cout, data, "arg177", arg177, int16_t);
+  // std::cout << "\n";
 }
+
 void RCompress::fn228(int32_t arg229) {
-  int32_t i, local289;
+  size_t i, j, cursor_idx = 0;
   uint32_t local458;
   memset(data->dat_arr167, 0, 17 * sizeof(uint16_t));
-  fn232(arg229);
+
+  calculate_pointer_depths(data->dat_arr189, data->dat_arr190, data->dat_arr167,
+                           0, data->dat174, arg229);
+
   local458 = 0;
   for (i = 1; i < 17; i++) {
     local458 += data->dat_arr167[i] << (16 - i);
@@ -477,7 +498,7 @@ void RCompress::fn228(int32_t arg229) {
     std::cout << "IS THIS A CASE?";
     WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
     std::cout << "\n";
-    abort();
+    ABORT(data);
     while (local458 != (1U << 16)) {
       data->dat_arr167[16]--;
       for (i = 15; i > 0; i--) {
@@ -491,86 +512,102 @@ void RCompress::fn228(int32_t arg229) {
     }
   }
 
-  std::cout << "{\"fn\": \"fn228\", \"stage\": \"mid\"";
-  WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
-  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor178, uint8_t);
-  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor188, uint16_t);
-  std::cout << "}\n";
-  for (i = 16; i > 0; i--) {
-    local289 = data->dat_arr167[i];
-    while (--local289 >= 0)
-      data->dat_arr_cursor178[*data->dat_arr_cursor188++] = (uint8_t)i;
-  }
+  /*
+    Called twice per compression.
+    1) dat_arr_cursor178 == dat_arr180 && dat_arr_cursor188 == dat_arr192
+    2) dat_arr_cursor178 == dat_arr181 && dat_arr_cursor188 == dat_arr194
 
-  std::cout << "{\"fn\": \"fn228\", \"stage\": \"end\"";
-  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor178, uint8_t);
-  WRITE_DATA_ARRAY_PTR(std::cout, data, dat_arr_cursor188, uint16_t);
-  std::cout << "}\n";
+    The cursor appears to be unused beyond this method so refactored to use
+    array indexing instead of pointer math.
+
+    This outer loop needs to go backwards so elements of 188 are accessed in the
+    correct order.
+  */
+  for (i = 16; i > 0; i--) {
+    for (j = 0; j < data->dat_arr167[i]; j++, cursor_idx++) {
+      data->dat_arr_cursor178[data->dat_arr_cursor188[cursor_idx]] = (uint8_t)i;
+    }
+  }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 void RCompress::fn230(int32_t length219, uint8_t *arg209, uint16_t *arg231) {
-  // Called twice; once with arg209=data->dat_arr180, arg231=data->dat_arr192
-  // the other with arg209=data->dat_arr181, arg231=data->dat_arr231
+  /*
+  Called twice:
+  1) arg209 == data->dat_arr180 && arg231 == data->dat_arr192
+  2) arg209 == data->dat_arr181 && arg231 == data->dat_arr194
+
+  converts the depth counts stored in `dat_arr167` into start values.
+  then goes loops over arg231 to store the start value.
+  */
   int32_t i;
   uint16_t local288[18];
   memset(local288, 0, 18 * sizeof(uint16_t));
-  // std::cout << "{\"fn\": \"fn230\"";
-  // WRITE_DEC(std::cout, "length219", length219);
-  // WRITE_ARRAY_PTR(std::cout, data, "arg209", arg209, uint8_t);
-  // WRITE_ARRAY_PTR(std::cout, data, "arg231", arg231, uint16_t);
-  // std::cout << "}\n";
-  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"pre-init\"";
-  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
-  // WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
-  // std::cout << "}\n";
+  memset(arg231, 0, length219 * sizeof(uint16_t));
 
   for (i = 1; (i + 1) < 18; i++)
     local288[i + 1] = (uint16_t)((local288[i] + data->dat_arr167[i]) << 1);
 
-  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"post-init\"";
-  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
-  // std::cout << "}\n";
-  for (i = 0; i < length219; i++)
-    arg231[i] = local288[arg209[i]]++;
-  // std::cout << "{\"fn\": \"fn230\", \"stage\": \"end\"";
-  // WRITE_ARRAY(std::cout, "local288", local288, uint16_t, 18);
-  // WRITE_ARRAY_PTR(std::cout, data, "arg231", arg231, uint16_t);
-  // std::cout << "}\n";
-}
-
-void calculate_pointer_depths(uint16_t *left_array_ptr,
-                              uint16_t *right_array_ptr,
-                              uint16_t *depth_store_ptr, uint16_t depth,
-                              int16_t series_start, uint16_t curr_idx) {
-  if (curr_idx < series_start) {
-    depth_store_ptr[MIN(depth, 16)]++;
-  } else {
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
-                             depth + 1, series_start, left_array_ptr[curr_idx]);
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
-                             depth + 1, series_start,
-                             right_array_ptr[curr_idx]);
+  for (i = 0; i < length219; i++) {
+    uint16_t value = local288[arg209[i]];
+    arg231[i] = value;
+    local288[arg209[i]]++;
   }
 }
 
-void RCompress::fn232(int32_t arg226) {
+void RCompress::finalize_buffer206() {
+  if (!data->uncompressible) {
+    write_bits_to_buffer(CHAR_BIT - 1, 0);
+    if (data->buffer_position)
+      flush_to_output(data);
+  }
+  data->buffer_position = 0;
+}
+void RCompress::fn223(int16_t arg203) {
   /*
-   * Pointer depth calculation?
-
-   * `dat_arr189` & `dat_arr190` contain a series(from `dat174` to `arg226`) of
-   integers that are `< arg226`. If they are between `dat174` and `arg226`, then
-   it's a pointer to another array index. Otherwise it's not. This function
-   calculates the number of non-pointer values at each depth by following the
-   pointers until a non-pointer, then incrementing the count of depth by 1.
-
-   * Note that the pointers will link to the index of both arrays, and need to
-   be explored in both arrays. Each value is unique and there are no loops.
-
-   * Does `dat_arr189` and `dat_arr190` represent a binary tree?
+   `arg203` appears to be the bits in the file most of the time
    */
+  printf("fn223: arg203=%#x; data->dat_arr180[arg203]=%#04x, "
+         "data->dat_arr192[arg203]=%#06x\n",
+         arg203, data->dat_arr180[arg203], data->dat_arr192[arg203]);
+  write_bits_to_buffer(data->dat_arr180[arg203], data->dat_arr192[arg203]);
+}
+void RCompress::write_bits_to_buffer(int32_t bit_count209, uint16_t bits203) {
+  /*
 
-  calculate_pointer_depths(data->dat_arr189, data->dat_arr190, data->dat_arr167,
-                           0, data->dat174, arg226);
+  `bit_count209`: Number of bits to use from `bits203`
+
+  `data->bits_buffer_used172` Number of bits in use in `data->bits_buffer182`.
+  */
+  // Move the assigned bits into the highest bits of `bits203`
+  bits203 = bits203 << (UINT16_BIT - bit_count209);
+  // Combine the existing bits with these new bits without overlap
+  data->bits_buffer182 |= (uint16_t)(bits203 >> data->bits_buffer_used172);
+  data->bits_buffer_used172 += bit_count209;
+  if (data->bits_buffer_used172 >= 8) {
+    // Highest 8 bits are assigned(at least); save them to the buffer.
+    if (data->buffer_position >= BUFFER_SIZE) {
+      flush_to_output(data);
+    }
+    // Take the high bits of bits_buffer182
+    data->buffer[data->buffer_position] =
+        (uint8_t)(data->bits_buffer182 >> CHAR_BIT);
+    data->buffer_position++;
+    data->bits_buffer_used172 = data->bits_buffer_used172 - CHAR_BIT;
+    if (data->bits_buffer_used172 < CHAR_BIT) {
+      // Missing enough bits to do the same thing again.
+      // Move the low bits of `data->bits_buffer182` into the high bits.
+      data->bits_buffer182 <<= CHAR_BIT;
+    } else {
+      if (data->buffer_position >= BUFFER_SIZE) {
+        flush_to_output(data);
+      }
+      // Take the low bits of bits_buffer182
+      data->buffer[data->buffer_position] = (uint8_t)data->bits_buffer182;
+      data->buffer_position++;
+      data->bits_buffer_used172 = data->bits_buffer_used172 - CHAR_BIT;
+      // Handle any bits that didn't fit the first time we tried.
+      data->bits_buffer182 = bits203
+                             << (bit_count209 - data->bits_buffer_used172);
+    }
+  }
 }

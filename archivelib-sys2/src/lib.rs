@@ -154,8 +154,8 @@ mod tests {
   fn test_single_sample() {
     let mut rand = thread_rng();
     println!("\nSample: [");
-    let len = 64;
-    let input = get_data(len, rand.gen_range(5, 50), true);
+    let len = 128;
+    let input = get_data(len, rand.gen_range(2, 20), true);
     let compressed_data = do_compress(&input);
     let decompressed_data = do_decompress(&compressed_data);
     assert_series_arrays_equal(&input, &decompressed_data);
@@ -211,6 +211,7 @@ mod tests {
     }
   }
 
+  #[ignore]
   #[test]
   fn test_round_trip() {
     let input: &[u8] = b"what if this gets compressed well good!";

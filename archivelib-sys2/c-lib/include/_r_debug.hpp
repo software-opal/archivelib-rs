@@ -85,24 +85,25 @@
   stream << "}";
 
 #define _ARRAY_PTR_COND_EXTRA(stream, ptr, arr, start, len)                    \
-  (stream) << ", \"len\": \"" << (len) - (start) << "\"";                      \
+  (stream) << ", \"in_len\": \"" << (len) << "\"";                             \
   (stream) << ", \"content\": ";                                               \
-  WRITE_ARRAY_CONTENT(stream, arr, (len) - (start))
+  WRITE_ARRAY_CONTENT(stream, arr, len)
 
 #define _ARRAY_PTR_COND(stream, ptr, data, arr)                                \
   else if ((data)->arr <= (ptr) &&                                             \
            (ptr) <= &((data)->arr)[(data)->arr##_len - 1]) {                   \
     (stream) << ", \"in\": \"" #arr "\"";                                      \
     (stream) << ", \"start\": ";                                               \
-    (stream) << (ptr - (data)->arr) / sizeof(*(data)->arr);                    \
-    _ARRAY_PTR_COND_EXTRA(stream, ptr, data->arr,                              \
-                          (ptr - (data)->arr) / sizeof(*(data)->arr),          \
+    (stream) << (ptr - (data)->arr);                                           \
+    _ARRAY_PTR_COND_EXTRA(stream, ptr, data->arr, (ptr - (data)->arr),         \
                           (data)->arr##_len)                                   \
   }
 
-#define _ARRAY_PTR_COND_int16_t(stream, data, arr)                             \
+#define _ARRAY_PTR_COND_bool(stream, data, arr)                                \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr163)                               \
-  _ARRAY_PTR_COND(stream, arr, data, dat_arr164)                               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr164)
+
+#define _ARRAY_PTR_COND_int16_t(stream, data, arr)                             \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr177)
 
 #define _ARRAY_PTR_COND_uint16_t(stream, data, arr)                            \

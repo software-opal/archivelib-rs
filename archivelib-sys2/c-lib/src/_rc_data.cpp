@@ -29,7 +29,8 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr165_len = CONST_N155;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->input_buffer_len = data->max_input_data_size + CONST_N140 + 2;
-  data->input_buffer = (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
+  data->input_buffer =
+      (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
   data->dat_arr177_len = CONST_N141 + 1;
@@ -129,8 +130,8 @@ void free_compress_data(RCompressData *data) {
 void reset_compress_data(RCompressData *data) {
   ssize_t i;
   data->dat173 = 0;
-  data->dat172 = 0;
-  data->dat182 = 0;
+  data->bits_buffer_used172 = 0;
+  data->bits_buffer182 = 0;
   data->buffer_position = 0;
   data->uncompressible = 0;
   data->dat185 = 1;
@@ -152,5 +153,46 @@ void reset_compress_data(RCompressData *data) {
   }
   for (i = 0; i < data->max_input_data_size; i++) {
     data->dat_arr164[i] = true;
+  }
+}
+
+void flush_to_output(RCompressData *data) {
+  if (data->buffer_position <= 0)
+    return;
+  if (data->fail_uncompressible &&
+      (data->chars_written += data->buffer_position) >= data->input_length)
+    data->uncompressible = 1;
+  else
+    data->output_store->WriteBuffer(data->buffer, data->buffer_position);
+  data->buffer_position = 0;
+}
+
+void calculate_pointer_depths(uint16_t *left_array_ptr,
+                              uint16_t *right_array_ptr,
+                              uint16_t *depth_store_ptr, uint16_t depth,
+                              int16_t series_start, uint16_t curr_idx) {
+  /*
+   * Pointer depth calculation?
+
+   * `left_array_ptr` & `right_array_ptr` contain a series(from `series_start`
+   to `curr_idx`) of integers that are `< curr_idx`. If they are between
+   `series_start` and `curr_idx`, then it's a pointer to another array index.
+   Otherwise it's not. This function calculates the number of non-pointer values
+   at each depth by following the pointers until a non-pointer, then
+   incrementing the count of depth by 1.
+
+   * Note that the pointers will link to the index of both arrays, and need to
+   be explored in both arrays. Each value is unique and there are no loops.
+
+   * Does `left_array_ptr` and `right_array_ptr` represent a binary tree?
+   */
+  if (curr_idx < series_start) {
+    depth_store_ptr[MIN(depth, 16)]++;
+  } else {
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
+                             depth + 1, series_start, left_array_ptr[curr_idx]);
+    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
+                             depth + 1, series_start,
+                             right_array_ptr[curr_idx]);
   }
 }
