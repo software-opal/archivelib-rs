@@ -5,6 +5,9 @@
 #[cfg(test)]
 extern crate rand;
 
+#[cfg(test)]
+mod test;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl AllocatedMemory {
@@ -53,6 +56,3 @@ pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
     .map(|v| v.into_boxed_slice())
     .map_err(|o| o.unwrap_or("".to_string()))
 }
-
-#[cfg(test)]
-mod test;

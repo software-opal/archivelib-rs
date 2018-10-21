@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <cstring>
+#include <iostream>
 
 //
 // ALMemory::ALMemory( const char *buffer_name = "",
@@ -44,7 +45,7 @@
 //
 ALMemory::ALMemory(uint8_t *user_buffer /* = 0 */,
                    int user_buffer_size /* = 0 */)
-    : ALStorage(4096) {
+    : ALStorage(MEMORY_BLOCK_BYTES / 2) {
   if (user_buffer != 0) {
     mpcUserBuffer = user_buffer;
     mfUserOwnsBuffer = 1;
@@ -219,8 +220,8 @@ int ALMemory::Seek(long address) {
     return mStatus;
 
   if (mlFilePointer != address) {
-    if (mlFilePointer > (long)muUserBufferSize)
-      return mStatus.SetError(AL_SEEK_ERROR, "Attempt to read past end of the "
+    if (address > (long) muUserBufferSize)
+      return mStatus.SetError(AL_SEEK_ERROR, "Attempt to seek past end of the "
                                              "buffer in ALMemory");
   }
   mlFilePointer = address;
@@ -393,10 +394,16 @@ int ALMemory::Close() {
   // If we aren't using all our space, give back the extra.
   //
   if (!mfUserOwnsBuffer && mlSize < (long)muUserBufferSize) {
-    uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)mlSize);
-    if (new_buf)
-      mpcUserBuffer = new_buf;
-    muUserBufferSize = (size_t)mlSize;
+    if (mlSize == 0) {
+      free(mpcUserBuffer);
+      mpcUserBuffer = NULL;
+      muUserBufferSize = 0;
+    } else {
+      uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)mlSize);
+      if (new_buf)
+        mpcUserBuffer = new_buf;
+      muUserBufferSize = (size_t)mlSize;
+    }
   }
   return mStatus;
 }

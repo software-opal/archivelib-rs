@@ -11,7 +11,7 @@ mapping:
   '_132': '*UNUSED*'
   '_133': 'UINT16_BIT'
   '_134': '*UNUSED*'
-  '_135': 'CONST_N135'
+  '_135': 'CONST_N135_IS_3'
   '_136': 'CONST_N136'
   '_137': 'CONST_N137'
   '_138': 'CONST_N138'
@@ -76,11 +76,11 @@ mapping:
   '_197': 'finalise_compresson197'
   '_198': 'fn198'
   '_199': 'fn199'
-  '_200': ['arg200', 'local200']
-  '_201': ['arg201', 'local201']
+  '_200': ['input_buffer_index200', 'input_buffer_index200']
+  '_201': ['bit_bashing201', 'local201']
   '_202': ['fn202', 'out_storage']
   '_203': ['arg203', 'bits203', 'local203']
-  '_204': ['arg204', 'local204', 'local204']
+  '_204': ['arg204', 'index204', 'index204']
   '_205': '*REMOVED* -- A reset/clean method now in `reset_compress_data`'
   '_206': 'finalize_buffer206'
   '_207': 'fn207'
@@ -163,7 +163,7 @@ mapping:
   '_448': 'MACRO_FN_448'
   '_450': 'local450'
   '_451': 'local451'
-  '_452': 'local452'
+  '_452': 'cycles452'
   '_453': 'local453'
   '_454': 'local454'
   '_455': 'local455'
