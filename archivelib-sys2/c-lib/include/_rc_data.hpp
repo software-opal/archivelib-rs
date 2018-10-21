@@ -11,7 +11,7 @@ typedef struct RCompressData {
   bool *dat_arr163;
   bool *dat_arr164;
   uint8_t *dat_arr165;
-  uint8_t *input_buffer;
+  uint8_t *dat_arr166;
   uint16_t *dat_arr167;
   int16_t *dat_arr177;
   uint8_t *buffer;
@@ -27,7 +27,7 @@ typedef struct RCompressData {
   size_t dat_arr163_len;
   size_t dat_arr164_len;
   size_t dat_arr165_len;
-  size_t input_buffer_len;
+  size_t dat_arr166_len;
   size_t dat_arr167_len;
   size_t dat_arr177_len;
   size_t buffer_len;
@@ -52,12 +52,12 @@ typedef struct RCompressData {
   int16_t dat168;
   int16_t dat169;
   int16_t buffer_position;
-  uint16_t bits_buffer_used172;
+  int16_t dat172;
   int16_t dat173;
   int16_t dat174;
   int16_t max_input_data_size;
   int16_t max_input_data_size_minus_one;
-  uint16_t bits_buffer182;
+  uint16_t dat182;
   uint16_t dat183;
   uint16_t dat184;
   uint16_t dat185;
@@ -69,20 +69,8 @@ ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
                               ALGreenleafCompressionLevels compression_level,
                               bool fail_uncompressible);
 
-RCompressData *clone_compress_data(RCompressData *data);
-bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) ;
 void free_compress_data(RCompressData *data);
 void reset_compress_data(RCompressData *data);
-
-void flush_to_output(RCompressData *data);
-void calculate_pointer_depths(uint16_t *left_array_ptr,
-                              uint16_t *right_array_ptr,
-                              uint16_t *depth_store_ptr, uint16_t depth,
-                              int16_t series_start, uint16_t curr_idx);
-
-#define ABORT(data)                                                            \
-  DEBUG_COMPRESS_DATA(std::cerr, data);                                        \
-  abort();
 
 #ifdef NDEBUG
 #define DEBUG_COMPRESS_DATA(stream, data) ((void *)0);
@@ -101,21 +89,21 @@ void calculate_pointer_depths(uint16_t *left_array_ptr,
   WRITE_DATA_HEX(stream, data, dat168);                                        \
   WRITE_DATA_HEX(stream, data, dat169);                                        \
   WRITE_DATA_HEX(stream, data, buffer_position);                               \
-  WRITE_DATA_HEX(stream, data, bits_buffer_used172);                           \
+  WRITE_DATA_HEX(stream, data, dat172);                                        \
   WRITE_DATA_HEX(stream, data, dat173);                                        \
   WRITE_DATA_HEX(stream, data, dat174);                                        \
   WRITE_DATA_HEX(stream, data, max_input_data_size);                           \
   WRITE_DATA_HEX(stream, data, max_input_data_size_minus_one);                 \
-  WRITE_DATA_HEX(stream, data, bits_buffer182);                                \
+  WRITE_DATA_HEX(stream, data, dat182);                                        \
   WRITE_DATA_HEX(stream, data, dat183);                                        \
   WRITE_DATA_HEX(stream, data, dat184);                                        \
   WRITE_DATA_HEX(stream, data, dat185);                                        \
   WRITE_DATA_HEX(stream, data, dat186);                                        \
                                                                                \
-  WRITE_DATA_ARRAY(stream, data, dat_arr163, bool);                            \
-  WRITE_DATA_ARRAY(stream, data, dat_arr164, bool);                            \
+  WRITE_DATA_ARRAY(stream, data, dat_arr163, int16_t);                         \
+  WRITE_DATA_ARRAY(stream, data, dat_arr164, int16_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr165, uint8_t);                         \
-  WRITE_DATA_ARRAY(stream, data, input_buffer, uint8_t);                       \
+  WRITE_DATA_ARRAY(stream, data, dat_arr166, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr167, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr177, int16_t);                         \
   WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                             \

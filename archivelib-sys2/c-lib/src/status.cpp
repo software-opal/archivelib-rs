@@ -116,13 +116,6 @@ int ALStatus::SetError(int error, const char *fmt, ...) {
       mszStatusDetail[miStatusDetailLength - 1] = '\0';
     }
   }
-  if (error) {
-    fprintf(stderr, "ERROR CODE: %s\n", GetStatusString());
-    if (mszStatusDetail) fprintf(stderr, " | %s\n", mszStatusDetail);
-    fprintf(stderr, "ABORTING NOW\n");
-    abort();
-  }
-  
   return error;
 }
 

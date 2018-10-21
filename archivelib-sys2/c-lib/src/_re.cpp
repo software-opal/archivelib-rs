@@ -85,7 +85,7 @@ int32_t RExpand::Expand() {
       if (_276 == CONST_N144)
         break;
       i = (int16_t)((_200 - _250() - 1) & _280);
-      if (i < _279 - CONST_N140_IS_256 - 1 && _200 < _279 - CONST_N140_IS_256 - 1) {
+      if (i < _279 - CONST_N140 - 1 && _200 < _279 - CONST_N140 - 1) {
         while (--_276 >= 0)
           _278[_200++] = _278[i++];
       } else {
