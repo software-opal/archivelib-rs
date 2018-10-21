@@ -74,12 +74,8 @@ void RCompress::fn202(uint16_t bits203, uint16_t arg204) {
 void RCompress::fn207() {
   uint32_t i, local289, local229, local454, local455;
   uint32_t local456 = 0;
-  std::cout << "Calling fn211 with data->dat_arr191\n";
-  RCompressData *old_data = clone_compress_data(data);
   local229 =
       fn211(CONST_N141, data->dat_arr191, data->dat_arr180, data->dat_arr192);
-  diff_compress_data(old_data, data);
-  abort();
   local455 = data->dat_arr191[local229];
   write_bits_to_buffer(16, (uint16_t)local455);
   if (local229 >= CONST_N141) {
