@@ -70,7 +70,7 @@ ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
                               bool fail_uncompressible);
 
 RCompressData *clone_compress_data(RCompressData *data);
-bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) ;
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
 void free_compress_data(RCompressData *data);
 void reset_compress_data(RCompressData *data);
 
@@ -81,6 +81,7 @@ void calculate_pointer_depths(uint16_t *left_array_ptr,
                               int16_t series_start, uint16_t curr_idx);
 
 #define ABORT(data)                                                            \
+  std::cerr << __FILE__ << ":" << __LINE__ << "\n";                            \
   DEBUG_COMPRESS_DATA(std::cerr, data);                                        \
   abort();
 
