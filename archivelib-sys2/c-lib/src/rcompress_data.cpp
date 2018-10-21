@@ -15,7 +15,7 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->input_store = &in_storage;
   data->output_store = &out_storage;
   data->fail_uncompressible = fail_uncompressible;
-  if (compression_level > CONST_N137 || compression_level < CONST_N138) {
+  if (compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR) {
     return AL_ILLEGAL_PARAMETER;
   }
   data->max_input_data_size = (int16_t)(1 << compression_level);
@@ -28,32 +28,32 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr163 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
   data->dat_arr164_len = data->max_input_data_size;
   data->dat_arr164 = (bool *)calloc(data->dat_arr164_len, sizeof(bool));
-  data->dat_arr165_len = CONST_N155;
+  data->dat_arr165_len = CONST_N155_IS_8192;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->input_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;
   data->input_buffer =
       (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
-  data->dat_arr177_len = CONST_N141 + 1;
+  data->dat_arr177_len = CONST_N141_IS_511 + 1;
   data->dat_arr177 = (int16_t *)calloc(data->dat_arr177_len, sizeof(int16_t));
   data->buffer_len = BUFFER_SIZE;
   data->buffer = (uint8_t *)calloc(data->buffer_len, sizeof(uint8_t));
-  data->dat_arr180_len = CONST_N141;
+  data->dat_arr180_len = CONST_N141_IS_511;
   data->dat_arr180 = (uint8_t *)calloc(data->dat_arr180_len, sizeof(uint8_t));
-  data->dat_arr181_len = CONST_N152;
+  data->dat_arr181_len = CONST_N152_IS_19;
   data->dat_arr181 = (uint8_t *)calloc(data->dat_arr181_len, sizeof(uint8_t));
-  data->dat_arr189_len = 2 * CONST_N141 - 1;
+  data->dat_arr189_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr189 = (uint16_t *)calloc(data->dat_arr189_len, sizeof(uint16_t));
-  data->dat_arr190_len = 2 * CONST_N141 - 1;
+  data->dat_arr190_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr190 = (uint16_t *)calloc(data->dat_arr190_len, sizeof(uint16_t));
-  data->dat_arr191_len = 2 * CONST_N141 - 1;
+  data->dat_arr191_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr191 = (uint16_t *)calloc(data->dat_arr191_len, sizeof(uint16_t));
-  data->dat_arr192_len = CONST_N141;
+  data->dat_arr192_len = CONST_N141_IS_511;
   data->dat_arr192 = (uint16_t *)calloc(data->dat_arr192_len, sizeof(uint16_t));
-  data->dat_arr193_len = 2 * CONST_N142 - 1;
+  data->dat_arr193_len = 2 * CONST_N142_IS_15 - 1;
   data->dat_arr193 = (uint16_t *)calloc(data->dat_arr193_len, sizeof(uint16_t));
-  data->dat_arr194_len = CONST_N152;
+  data->dat_arr194_len = CONST_N152_IS_19;
   data->dat_arr194 = (uint16_t *)calloc(data->dat_arr194_len, sizeof(uint16_t));
 
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
@@ -249,12 +249,12 @@ void reset_compress_data(RCompressData *data) {
   data->dat_arr165[0] = 0;
   data->dat169 = 0;
   data->dat168 = 0;
-  data->dat183 = CONST_N155 - (uint16_t)((3 * CHAR_BIT) + 6);
+  data->dat183 = CONST_N155_IS_8192 - (uint16_t)((3 * CHAR_BIT) + 6);
 
-  for (i = 0; i < CONST_N141; i++) {
+  for (i = 0; i < CONST_N141_IS_511; i++) {
     data->dat_arr191[i] = 0;
   }
-  for (i = 0; i < CONST_N142; i++) {
+  for (i = 0; i < CONST_N142_IS_15; i++) {
     data->dat_arr193[i] = 0;
   }
   for (i = 0; i < CONST_N153_IS_4096; i++) {

@@ -56,7 +56,7 @@ bool RCompress::Compress() {
 
   while (bytes_read209 > CONST_N140_IS_256 + 4 && !data->uncompressible) {
     fn199(local200, local201);
-    if (data->dat168 < CONST_N135) {
+    if (data->dat168 < CONST_N135_IS_3) {
       fn202(l278_in_buffer[local200], 0);
       fn447(data->dat_arr163, data->dat_arr164, local200, local201);
       local200++;
@@ -65,7 +65,7 @@ bool RCompress::Compress() {
       bytes_read209--;
     } else {
       bytes_read209 -= data->dat168;
-      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135)),
+      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135_IS_3)),
             data->dat169);
       while (--data->dat168 >= 0) {
         fn447(data->dat_arr163, data->dat_arr164, local200, local201);
@@ -94,11 +94,11 @@ bool RCompress::Compress() {
     fn199(local200, local201);
     if (data->dat168 > bytes_read209)
       data->dat168 = bytes_read209;
-    if (data->dat168 < CONST_N135) {
+    if (data->dat168 < CONST_N135_IS_3) {
       data->dat168 = 1;
       fn202(l278_in_buffer[local200], 0);
     } else
-      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135)),
+      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135_IS_3)),
             data->dat169);
     while (--data->dat168 >= 0) {
       int32_t local203 = data->input_store->ReadChar();
@@ -126,7 +126,7 @@ bool RCompress::Compress() {
       return 1;
   }
   if (!data->uncompressible)
-    fn202(CONST_N144 + (UCHAR_MAX + 1 - CONST_N135), 0);
+    fn202(CONST_N144_IS_257 + (UCHAR_MAX + 1 - CONST_N135_IS_3), 0);
   finalise_compresson197();
 
   if (data->uncompressible) {
