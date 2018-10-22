@@ -7,46 +7,44 @@
 #include <climits>
 #include "stor.h"
 
-typedef uint16_t ushort;
-typedef uint8_t uchar;
-
 #ifdef __cplusplus
 
 class RExpand {
-private:
-  ALStorage *_161;
-  ALStorage *_162;
-  short _175;
-  short _176;
-  uchar *_166;
-  ushort *_240;
-  ushort *_241;
-  uchar *_242;
-  ushort *_189;
-  ushort *_190;
-  uchar *_180;
-  uchar *_181;
-  short _243;
-  ushort _244;
-  ushort _182;
-  short _172;
-  uchar _245;
-  short _246;
-  uchar *_247;
-  long _248;
+  RExpandData *data;
 
-  ushort fn249();
-  ushort fn250();
+  // ALStorage *data->dat161;
+  // ALStorage *data->dat162;
+  // int16_t data->dat175;
+  // int16_t data->dat176;
+  // uint8_t *data->dat166;
+  // uint16_t *data->dat240;
+  // uint16_t *data->dat241;
+  // uint8_t *data->dat242;
+  // uint16_t *data->dat189;
+  // uint16_t *data->dat190;
+  // uint8_t *data->dat180;
+  // uint8_t *data->dat181;
+  // int16_t data->dat243;
+  // uint16_t data->dat244;
+  // uint16_t data->dat182;
+  // int16_t data->dat172;
+  // uint8_t data->dat245;
+  // int16_t data->dat246;
+  // uint8_t *data->dat247;
+  // ssize_t data->dat248;
+
+  uint16_t fn249();
+  uint16_t fn250();
   void fn251();
-  ushort fn252(int _219);
-  void fn253(short _254, short _220, short _221);
+  uint16_t fn252(int _219);
+  void fn253(int16_t _254, int16_t _220, int16_t _221);
   void fn255();
   void fn256(int _219);
   void fn257();
-  void fn258(int _259, uchar *_260, int _261, ushort *_262, ushort _263);
+  void fn258(int _259, uint8_t *_260, int _261, uint16_t *_262, uint16_t _263);
 
 public:
-  RExpand(ALStorage &_233, ALStorage &_202, long _264, int _234);
+  RExpand(ALStorage &_233, ALStorage &_202, ssize_t _264, int _234);
   ~RExpand();
   int Expand();
   ALStatus mStatus;

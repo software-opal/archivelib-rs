@@ -1,7 +1,5 @@
-#include <string>
+#include <cstring>
 #include <iostream>
-#include <sstream>
-#include <string.h>
 
 #include "new/compress.hpp"
 
