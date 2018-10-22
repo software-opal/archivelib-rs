@@ -4,6 +4,7 @@
 #include "new/const.hpp"
 #include "new/compress_struct.hpp"
 #include "support/compress.hpp"
+#include "aldefs.h"
 
 ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
                               ALStorage &out_storage,

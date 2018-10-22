@@ -1,28 +1,54 @@
 #ifndef R_EXPAND_HPP
 #define R_EXPAND_HPP
 
-#include "new/expand.hpp"
+// #include "new/expand.hpp"
+
+#include "aldefs.h"
+#include <climits>
+#include "stor.h"
+
+typedef uint16_t ushort;
+typedef uint8_t uchar;
 
 #ifdef __cplusplus
 
 class RExpand {
-public:
-  RExpandData *data;
+private:
+  ALStorage *_161;
+  ALStorage *_162;
+  short _175;
+  short _176;
+  uchar *_166;
+  ushort *_240;
+  ushort *_241;
+  uchar *_242;
+  ushort *_189;
+  ushort *_190;
+  uchar *_180;
+  uchar *_181;
+  short _243;
+  ushort _244;
+  ushort _182;
+  short _172;
+  uchar _245;
+  short _246;
+  uchar *_247;
+  long _248;
 
-  uint16_t fn249();
-  uint16_t fn250();
+  ushort fn249();
+  ushort fn250();
   void fn251();
-  uint16_t fn252(int32_t _219);
-  void fn253(int16_t _254, int16_t _220, int16_t _221);
+  ushort fn252(int _219);
+  void fn253(short _254, short _220, short _221);
   void fn255();
-  void fn256(int32_t _219);
+  void fn256(int _219);
   void fn257();
-  void fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
-             uint16_t _263);
+  void fn258(int _259, uchar *_260, int _261, ushort *_262, ushort _263);
 
-  RExpand(ALStorage &_233, ALStorage &_202, size_t _264, int32_t _234);
+public:
+  RExpand(ALStorage &_233, ALStorage &_202, long _264, int _234);
   ~RExpand();
-  int32_t Expand();
+  int Expand();
   ALStatus mStatus;
 
 protected:

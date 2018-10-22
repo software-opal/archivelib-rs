@@ -1,7 +1,7 @@
 #ifndef NEW__COMPRESS_DATA_HPP
 #define NEW__COMPRESS_DATA_HPP
 
-#include "_r.h"
+#include <climits>
 #include "stor.h"
 
 typedef struct RCompressData {

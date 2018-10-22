@@ -3,6 +3,7 @@
 
 #include "new/const.hpp"
 #include "new/expand_struct.hpp"
+#include "aldefs.h"
 // #include "support/expand.hpp"
 
 ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
