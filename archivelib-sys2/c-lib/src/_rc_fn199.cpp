@@ -16,35 +16,29 @@ void RCompress::fn199(int16_t arg200, int16_t arg201) {
   int16_t i, local452, local204, local453;
   local452 = MAX_COMPRESSION_CYCLES;
   data->dat168 = 0;
+  local451 = &data->input_buffer[arg200];
   local204 = arg201;
-  // WRITE_ARRAY(std::cout, "dat_arr163[arg201...",
-  // (&data->dat_arr163[local204]),
-  //             bool, 20);
-  while (!data->dat_arr163[local204]) {
-    local204 = data->dat_arr163[local204] ? 1 : 0;
+  while (data->dat_arr163[local204] != true) {
+    local204 = data->dat_arr163[local204];
     --local452;
     if (local452 < 0) {
       break;
     }
-    // WRITE_ARRAY(std::cout, "input_buffer[arg200...",
-    //             (&data->input_buffer[arg200]), bool, 20);
-    // WRITE_ARRAY(std::cout, "input_buffer[local204...",
-    //             (&data->input_buffer[local204]), bool, 20);
-    if (data->input_buffer[arg200 + data->dat168] !=
-        data->input_buffer[local204 + data->dat168]) {
+    l278_in_buffer = &data->input_buffer[local204];
+    if (local451[data->dat168] != l278_in_buffer[data->dat168]) {
       continue;
     }
-    if (data->input_buffer[arg200] != data->input_buffer[local204]) {
+    if (local451[0] != l278_in_buffer[0]) {
       continue;
     }
-    if (data->input_buffer[arg200 + 1] != data->input_buffer[local204 + 1]) {
+    if (local451[1] != l278_in_buffer[1]) {
       continue;
     }
-    if (data->input_buffer[arg200 + 2] != data->input_buffer[local204 + 2]) {
+    if (local451[2] != l278_in_buffer[2]) {
       continue;
     }
     for (i = 3; i < CONST_N140_IS_256; i++) {
-      if (data->input_buffer[arg200 + i] != data->input_buffer[local204 + i]) {
+      if (local451[i] != l278_in_buffer[i]) {
         break;
       }
     }
@@ -57,10 +51,8 @@ void RCompress::fn199(int16_t arg200, int16_t arg201) {
         break;
       }
       data->dat169 = local453;
-      data->dat168 = i;
-      if (i >= CONST_N140_IS_256) {
+      if ((data->dat168 = i) >= CONST_N140_IS_256)
         break;
-      }
     }
   }
 }

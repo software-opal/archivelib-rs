@@ -8,7 +8,6 @@
 #include <sstream>
 
 void RCompress::fn218(int16_t length219, int16_t arg220, int16_t arg221) {
-  printf("fn218\n");
   int16_t i, local289;
   while (length219 > 0 && data->dat_arr181[length219 - 1] == 0)
     length219--;

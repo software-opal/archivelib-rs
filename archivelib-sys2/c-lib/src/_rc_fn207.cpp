@@ -11,10 +11,8 @@ void RCompress::fn207() {
   uint32_t i, local289, local229, local454, local455;
   uint32_t local456 = 0;
 
-  // RCompressData *old_data = clone_compress_data(data);
   local229 = fn211(CONST_N141_IS_511, data->bit_pattern_occurrences191, data->dat_arr180,
                    data->dat_arr192);
-  // diff_compress_data(old_data, data);
 
   local455 = data->bit_pattern_occurrences191[local229];
   write_bits_to_buffer(16, (uint16_t)local455);
