@@ -25,9 +25,9 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->input_length = in_storage.GetSize();
 
   data->dat_arr163_len = data->max_input_data_size + CONST_N153_IS_4096;
-  data->dat_arr163 = (bool *)calloc(data->dat_arr163_len, sizeof(bool));
+  data->dat_arr163 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
   data->dat_arr164_len = data->max_input_data_size;
-  data->dat_arr164 = (bool *)calloc(data->dat_arr164_len, sizeof(bool));
+  data->dat_arr164 = (int16_t *)calloc(data->dat_arr164_len, sizeof(int16_t));
   data->dat_arr165_len = CONST_N155_IS_8192;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->input_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;

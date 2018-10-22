@@ -60,6 +60,7 @@ void RCompress::finalise_compresson197() {
   data->dat183_IS_CONST_8162 = 0;
   data->array165_counter = 0;
 }
+
 void RCompress::finalize_buffer206() {
   if (!data->uncompressible) {
     // Write enough bits to clear out any that have been set, without writing a

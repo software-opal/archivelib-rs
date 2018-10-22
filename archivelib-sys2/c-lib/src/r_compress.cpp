@@ -5,13 +5,6 @@ inline void RCompress::write_stored_bits_to_buffer(int16_t _203) {
   write_bits_to_buffer(data->dat_arr180[_203], data->dat_arr192[_203]);
 }
 
-void RCompress::finalise_compresson197() {
-  if (!data->uncompressible)
-    fn207();
-  finalize_buffer206();
-  data->dat183_IS_CONST_8162 = 0;
-  data->array165_counter = 0;
-}
 void RCompress::fn198() {
   int16_t *_450;
   int16_t _226;
@@ -90,7 +83,7 @@ void RCompress::fn207() {
   uint32_t _456 = 0;
   uint16_t _217[2 * CONST_N145_IS_19 - 1];
   _229 = fn211(CONST_N141_IS_511, data->dat_arr191, data->dat_arr180,
-              data->dat_arr192);
+               data->dat_arr192);
   _455 = data->dat_arr191[_229];
   write_bits_to_buffer(16, (uint16_t)_455);
   if (_229 >= CONST_N141_IS_511) {
@@ -110,7 +103,7 @@ void RCompress::fn207() {
     write_bits_to_buffer(CONST_N143_IS_9, (uint16_t)_229);
   }
   _229 = fn211(CONST_N142_IS_15, data->dat_arr193, data->dat_arr181,
-              data->dat_arr194);
+               data->dat_arr194);
   if (_229 >= CONST_N142_IS_15) {
     fn218(CONST_N142_IS_15, CONST_N540_IS_5, -1);
   } else {
@@ -139,33 +132,7 @@ void RCompress::fn207() {
   for (_226 = 0; _226 < CONST_N142_IS_15; _226++)
     data->dat_arr193[_226] = 0;
 }
-void RCompress::write_bits_to_buffer(int _209, uint16_t _203) {
-  _203 <<= UINT16_BIT - _209;
-  data->bits_buffer182 |= (uint16_t)(_203 >> data->bits_buffer182);
-  if ((data->bits_buffer182 += (int16_t)_209) >= 8) {
-    if (data->buffer_position >= BUFFER_SIZE)
-      flush_to_output();
-    data->buffer[data->buffer_position++] = (uint8_t)(data->bits_buffer182 >> CHAR_BIT);
-    if ((data->bits_buffer182 = (uint16_t)(data->bits_buffer182 - CHAR_BIT)) < CHAR_BIT)
-      data->bits_buffer182 <<= CHAR_BIT;
-    else {
-      if (data->buffer_position >= BUFFER_SIZE)
-        flush_to_output();
-      data->buffer[data->buffer_position++] = (uint8_t)data->bits_buffer182;
-      data->bits_buffer182 = (uint16_t)(data->bits_buffer182 - CHAR_BIT);
-      data->bits_buffer182 = (uint16_t)(_203 << (_209 - data->bits_buffer182));
-    }
-  }
-}
-void RCompress::flush_to_output() {
-  if (data->buffer_position <= 0)
-    return;
-  if (_531 && (_533 += data->buffer_position) >= _534)
-    data->uncompressible = 1;
-  else
-    data->output_store->WriteBuffer(data->buffer, data->buffer_position);
-  data->buffer_position = 0;
-}
+
 int RCompress::fn211(int _212, uint16_t *_213, uint8_t *_214, uint16_t *_215) {
   int _226, _276, _289, _292;
   int16_t _227;
@@ -303,28 +270,27 @@ void RCompress::fn224(uint16_t _204) {
   if (_203 > 1)
     write_bits_to_buffer(_203 - 1, _204);
 }
-void RCompress::fn225(int _226, uint16_t * data->dat_arr_cursor187,
-                     int16_t * data->dat_arr177, int16_t _227) {
+void RCompress::fn225(int _226, ushort *_187, short *_177, short _227) {
   int _276, _289;
-  _289 = data->dat_arr177[_226];
+  _289 = _177[_226];
   while ((_276 = 2 * _226) <= _227) {
-    if (_276 < _227 && data->dat_arr_cursor187[data->dat_arr177[_276]] >
-                           data->dat_arr_cursor187[data->dat_arr177[_276 + 1]])
+    if (_276 < _227 && _187[_177[_276]] > _187[_177[_276 + 1]])
       _276++;
-    if (data->dat_arr_cursor187[_289] <=
-        data->dat_arr_cursor187[data->dat_arr177[_276]])
+    if (_187[_289] <= _187[_177[_276]])
       break;
-    data->dat_arr177[_226] = data->dat_arr177[_276];
+    _177[_226] = _177[_276];
     _226 = _276;
   }
-  data->dat_arr177[_226] = (uint16_t)_289;
+  _177[_226] = (ushort)_289;
 }
+
 void RCompress::fn228(int _229) {
   int _226, _289;
   uint32_t _458;
   for (_226 = 0; _226 <= 16; _226++)
     data->dat_arr167[_226] = 0;
-  fn232(_229);
+  calculate_pointer_depths(data->dat_arr189, data->dat_arr190, data->dat_arr167,
+                           0, data->dat174, _229);
   _458 = 0;
   for (_226 = 16; _226 > 0; _226--)
     _458 += data->dat_arr167[_226] << (16 - _226);
@@ -353,14 +319,4 @@ void RCompress::fn230(int _219, uint8_t *_209, uint16_t *_231) {
     _288[_226 + 1] = (uint16_t)((_288[_226] + data->dat_arr167[_226]) << 1);
   for (_226 = 0; _226 < _219; _226++)
     _231[_226] = _288[_209[_226]]++;
-}
-void RCompress::fn232(int _226) {
-  if (_226 < data->dat174)
-    data->dat_arr167[(data->dat173 < 16) ? data->dat173 : 16]++;
-  else {
-    data->dat173++;
-    fn232(data->dat_arr189[_226]);
-    fn232(data->dat_arr190[_226]);
-    data->dat173--;
-  }
 }

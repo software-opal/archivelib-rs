@@ -3,7 +3,8 @@
 #include <sstream>
 #include <string.h>
 
-#include "_rc.hpp"
+#include "support/compress.hpp"
+#include "new/compress.hpp"
 
 #define DIFF_ARRAY(stream, has_changes, name, old_array, new_array, length)    \
   {                                                                            \
@@ -49,8 +50,8 @@
 RCompressData *clone_compress_data(RCompressData *old_data) {
   RCompressData *new_data = (RCompressData *)malloc(sizeof(RCompressData));
   memcpy(new_data, old_data, sizeof(RCompressData));
-  DO_CLONE(new_data, old_data, dat_arr163, bool);
-  DO_CLONE(new_data, old_data, dat_arr164, bool);
+  DO_CLONE(new_data, old_data, dat_arr163, int16_t);
+  DO_CLONE(new_data, old_data, dat_arr164, int16_t);
   DO_CLONE(new_data, old_data, dat_arr165, uint8_t);
   DO_CLONE(new_data, old_data, input_buffer, uint8_t);
   DO_CLONE(new_data, old_data, dat_arr167, uint16_t);
@@ -89,8 +90,7 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr181);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr189);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr190);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data,
-                  dat_arr191);
+  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr191);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr192);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr193);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr194);
