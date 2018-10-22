@@ -1,7 +1,12 @@
+extern crate archivelib;
 
 use std::fs::File;
 use std::io;
 use std::io::Write;
+
+fn to_u32(d: &[u8]) -> u32 {
+  return d[0] as u32 | ((d[1] as u32 | ((d[2] as u32 | ((d[3] as u32) << 8)) << 8)) << 8);
+}
 
 fn as_readable(data: &[u8]) -> String {
   data
@@ -24,7 +29,7 @@ fn write_block(name: String, compressed_data: &[u8]) -> io::Result<()> {
   data.extend(compressed_data);
   File::create(format!("{}.compressed.txt", name))?.write_all(as_readable(&data).as_bytes())?;
   File::create(format!("{}.decompressed.txt", name))?
-    .write_all(as_readable(&decompress(&mut data).unwrap()).as_bytes())?;
+    .write_all(as_readable(&archivelib::decompress(&mut data).unwrap()).as_bytes())?;
   Ok(())
 }
 
@@ -39,8 +44,7 @@ fn debug_hus(name: &str, data: &[u8]) {
   write_block(format!("{}{}", name, 3), &data[block3_start..end]).unwrap();
 }
 
-#[test]
-fn something_else() {
+fn main() {
   debug_hus(
     "small_heart",
     include_bytes!("../test_data/small_heart.hus"),

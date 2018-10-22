@@ -79,7 +79,7 @@ extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_compress(AL_GREENLEAF_LEVEL_4, *in, *out);
+  SimpleStatus status = al_compress(AL_GREENLEAF_LEVEL_0, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }
@@ -93,7 +93,7 @@ extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_decompress(AL_GREENLEAF_LEVEL_4, *in, *out);
+  SimpleStatus status = al_decompress(AL_GREENLEAF_LEVEL_0, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }

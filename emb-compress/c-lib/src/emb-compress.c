@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 #include "emb-compress.h"
-#include "emb-thread.h"
+// #include "emb-thread.h"
 
-void husExpand(unsigned char *input, unsigned char *output, int compressedSize,
-               int _269) {
+int husExpand(unsigned char *input, unsigned char *output, int compressedSize,
+              int _269) {
   currentPosition = 0;
   outputPosition = 0;
   currentIndex = 0;
@@ -60,6 +60,7 @@ void husExpand(unsigned char *input, unsigned char *output, int compressedSize,
 
   husExpand_expand();
   husExpand_cleanup();
+  return outputPosition;
 }
 
 void husExpand_cleanup(void) {

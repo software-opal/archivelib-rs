@@ -31,7 +31,7 @@ fn main() {
     .filter(|path| path.is_file())
     .filter(|path| {
       if let Some(ext) = path.extension() {
-        if "cpp" == ext {
+        if "cpp" == ext || "c" == ext {
           return true;
         }
       }

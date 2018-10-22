@@ -3,19 +3,11 @@
 #define EMB_COMPRESS_H
 
 #include "emb-pattern.h"
+#include "emb-compress-ext.h"
 
-#include "api-start.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern EMB_PRIVATE void EMB_CALL husExpand(unsigned char *input,
-                                           unsigned char *output,
-                                           int compressedSize, int _269);
-extern EMB_PRIVATE int EMB_CALL husCompress(unsigned char *_266,
-                                            unsigned long _inputSize,
-                                            unsigned char *_267, int _269,
-                                            int _235);
 
 /*****************************************
  * HUS Expand/Compress Constants
@@ -123,9 +115,6 @@ extern EMB_PRIVATE void EMB_CALL husExpand_251(void);
 extern EMB_PRIVATE unsigned short EMB_CALL husExpand_250(void);
 extern EMB_PRIVATE unsigned short EMB_CALL husExpand_249(void);
 
-extern EMB_PRIVATE void EMB_CALL husExpand(unsigned char *input,
-                                           unsigned char *output,
-                                           int compressedSize, int _269);
 extern EMB_PRIVATE int EMB_CALL husExpand_expand(void);
 extern EMB_PRIVATE void EMB_CALL husExpand_cleanup(void);
 
@@ -159,10 +148,6 @@ extern EMB_PRIVATE void EMB_CALL husCompress_230(int _219, unsigned char *_209,
                                                  unsigned short *_231);
 extern EMB_PRIVATE void EMB_CALL husCompress_232(int _226);
 
-/* extern EMB_PRIVATE int EMB_CALL husCompress(unsigned char* _266, unsigned
-long _inputSize, unsigned char* _267, int _269, int _235); extern EMB_PRIVATE
-int EMB_CALL husCompress(unsigned char* _233, unsigned long _inputSize, unsigned
-char* _202, int _234, int _235);*/
 extern EMB_PRIVATE void EMB_CALL husCompress_cleanup(void);
 extern EMB_PRIVATE int EMB_CALL husCompress_compress(void);
 
@@ -190,7 +175,6 @@ extern EMB_PRIVATE int EMB_CALL husCompress_compress(void);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#include "api-stop.h"
 
 #endif /* EMB_COMPRESS_H */
 

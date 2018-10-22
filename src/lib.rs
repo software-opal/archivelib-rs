@@ -23,9 +23,6 @@ pub fn decompress(data: &mut [u8]) -> Result<Box<[u8]>, String> {
 }
 
 #[cfg(test)]
-mod test2;
-
-#[cfg(test)]
 mod tests {
   use super::*;
 
