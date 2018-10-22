@@ -12,7 +12,7 @@ void RCompress::fn225(int32_t i, uint16_t *arg187, int16_t *arg177,
   /*
     arg187 == data->dat_arr_cursor187, arg177 == data->dat_arr177
 
-    arg187 can be `dat_arr191` or a local variable
+    arg187 can be `bit_pattern_occurrences191` or a local variable
     arg177 is a array of index pointers to arg187.
 
     This is some sort of rotation function in arg177.

@@ -140,6 +140,7 @@ macro_rules! test_data {
   };
 }
 
+mod exercise_compress_loops;
 mod real_world;
 mod simple;
 mod work_fn224;

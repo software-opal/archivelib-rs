@@ -9,6 +9,10 @@
 
 int32_t RCompress::fn211(int32_t arg212, uint16_t *arg213, uint8_t *arg214,
                          uint16_t *arg215) {
+  // 511, data->bit_pattern_occurrences191, data->dat_arr180, data->dat_arr192
+  // arg212 is the length of arg214 and arg215.
+  // arg213 is at least `arg212` long
+
   int32_t i, local276, local289, local292;
   int16_t local227;
   data->dat174 = (int16_t)arg212;

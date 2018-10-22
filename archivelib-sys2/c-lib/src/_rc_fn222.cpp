@@ -9,18 +9,17 @@
 
 void RCompress::fn222() {
   // IDENTICAL IN COMPOSITION TO fn216
-  int16_t i, local289, local219, local277;
-  local219 = CONST_N141_IS_511;
-  RCompressData *old_data = clone_compress_data(data);
-  while (local219 > 0 && data->dat_arr180[local219 - 1] == 0)
-    local219--;
-  write_bits_to_buffer(CONST_N143_IS_9, local219);
+  int16_t i, local289, length219, local277;
+  length219 = CONST_N141_IS_511;
+  while (length219 > 0 && data->dat_arr180[length219 - 1] == 0)
+    length219--;
+  write_bits_to_buffer(CONST_N143_IS_9, length219);
   i = 0;
-  while (i < local219) {
+  while (i < length219) {
     local289 = data->dat_arr180[i++];
     if (local289 == 0) {
       local277 = 1;
-      while (i < local219 && data->dat_arr180[i] == 0) {
+      while (i < length219 && data->dat_arr180[i] == 0) {
         i++;
         local277++;
       }
@@ -42,5 +41,4 @@ void RCompress::fn222() {
       write_bits_to_buffer(data->dat_arr181[local289 + 2],
                            data->dat_arr194[local289 + 2]);
   }
-  // diff_compress_data(old_data, data);
 }

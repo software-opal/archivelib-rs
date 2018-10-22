@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "_rc.hpp"
-#include "_r_diff.hpp"
+
 
 ALErrors
 create_compress_data(RCompressData *data, ALStorage &in_storage,
@@ -15,7 +15,8 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->input_store = &in_storage;
   data->output_store = &out_storage;
   data->fail_uncompressible = fail_uncompressible;
-  if (compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR) {
+  if (compression_level > MAX_COMPRESSION_FACTOR ||
+      compression_level < MIN_COMPRESSION_FACTOR) {
     return AL_ILLEGAL_PARAMETER;
   }
   data->max_input_data_size = (int16_t)(1 << compression_level);
@@ -47,8 +48,9 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr189 = (uint16_t *)calloc(data->dat_arr189_len, sizeof(uint16_t));
   data->dat_arr190_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr190 = (uint16_t *)calloc(data->dat_arr190_len, sizeof(uint16_t));
-  data->dat_arr191_len = 2 * CONST_N141_IS_511 - 1;
-  data->dat_arr191 = (uint16_t *)calloc(data->dat_arr191_len, sizeof(uint16_t));
+  data->bit_pattern_occurrences191_len = 2 * CONST_N141_IS_511 - 1;
+  data->bit_pattern_occurrences191 = (uint16_t *)calloc(
+      data->bit_pattern_occurrences191_len, sizeof(uint16_t));
   data->dat_arr192_len = CONST_N141_IS_511;
   data->dat_arr192 = (uint16_t *)calloc(data->dat_arr192_len, sizeof(uint16_t));
   data->dat_arr193_len = 2 * CONST_N142_IS_15 - 1;
@@ -59,8 +61,9 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
       !data->input_buffer || !data->dat_arr167 || !data->dat_arr177 ||
       !data->buffer || !data->dat_arr180 || !data->dat_arr181 ||
-      !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr191 ||
-      !data->dat_arr192 || !data->dat_arr193 || !data->dat_arr194) {
+      !data->dat_arr189 || !data->dat_arr190 ||
+      !data->bit_pattern_occurrences191 || !data->dat_arr192 ||
+      !data->dat_arr193 || !data->dat_arr194) {
     return AL_CANT_ALLOCATE_MEMORY;
   }
   return AL_SUCCESS;
@@ -85,7 +88,7 @@ RCompressData *clone_compress_data(RCompressData *old_data) {
   DO_CLONE(new_data, old_data, dat_arr181, uint8_t);
   DO_CLONE(new_data, old_data, dat_arr189, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr190, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr191, uint16_t);
+  DO_CLONE(new_data, old_data, bit_pattern_occurrences191, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr192, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr193, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr194, uint16_t);
@@ -95,82 +98,6 @@ RCompressData *clone_compress_data(RCompressData *old_data) {
   new_data->dat_arr_cursor188 = NULL;
 
   return new_data;
-}
-
-#define INLINE_DIFF_ARR(stream, has_changes, old_data, new_data, arr_name)     \
-  {                                                                            \
-    bool has_changes_this_time = false;                                        \
-    DIFF_ARRAY(stream, has_changes_this_time, #arr_name, old_data->arr_name,   \
-               new_data->arr_name, old_data->arr_name##_len);                  \
-    if (!has_changes_this_time) {                                              \
-      char b[1000];                                                            \
-      sprintf(b, "    | %20s | %10s | %2s | %10s |\n", #arr_name, "",          \
-              "==", "");                                                       \
-      stream << b;                                                             \
-    } else {                                                                   \
-      has_changes = true;                                                      \
-    }                                                                          \
-  }
-#define INLINE_DIFF_VAL(stream, has_changes, _spec, old_data, new_data,        \
-                        val_name)                                              \
-  {                                                                            \
-    if (old_data->val_name != new_data->val_name) {                            \
-      has_changes = true;                                                      \
-      char b[1000];                                                            \
-      sprintf(b, "    | %20s | %10" _spec " | %2s | %10" _spec " |\n",         \
-              #val_name, old_data->val_name, "<>", new_data->val_name);        \
-      stream << b;                                                             \
-    } else {                                                                   \
-    }                                                                          \
-  }
-
-bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
-  bool has_changes = false;
-  std::stringstream ss;
-  char buff[1000];
-  sprintf(buff, "    | %20s | %10s | %2s | %10s |\n", "name", "Old", "", "New");
-  ss << buff;
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr163);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr164);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr165);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, input_buffer);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr167);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr177);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, buffer);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr180);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr181);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr189);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr190);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr191);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr192);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr193);
-  INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr194);
-
-  INLINE_DIFF_VAL(ss, has_changes, "zu", old_data, new_data, chars_written);
-  INLINE_DIFF_VAL(ss, has_changes, "zu", old_data, new_data, input_length);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, uncompressible);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data,
-                  fail_uncompressible);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat168);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat169);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, buffer_position);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data,
-                  bits_buffer_used172);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat173);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat174);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, bits_buffer182);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat183);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat184);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat185);
-  INLINE_DIFF_VAL(ss, has_changes, "d", old_data, new_data, dat186);
-
-  if (!has_changes) {
-    ss << "No Changes\n";
-  }
-  printf("\n%s\n", ss.str().c_str());
-  free_compress_data(old_data);
-  free(old_data);
-  return has_changes;
 }
 
 void free_compress_data(RCompressData *data) {
@@ -218,9 +145,9 @@ void free_compress_data(RCompressData *data) {
     free(data->dat_arr190);
     data->dat_arr190 = NULL;
   }
-  if (data->dat_arr191) {
-    free(data->dat_arr191);
-    data->dat_arr191 = NULL;
+  if (data->bit_pattern_occurrences191) {
+    free(data->bit_pattern_occurrences191);
+    data->bit_pattern_occurrences191 = NULL;
   }
   if (data->dat_arr192) {
     free(data->dat_arr192);
@@ -243,16 +170,23 @@ void reset_compress_data(RCompressData *data) {
   data->bits_buffer182 = 0;
   data->buffer_position = 0;
   data->uncompressible = 0;
-  data->dat185 = 1;
-  data->dat184 = 0;
-  data->dat186 = 0;
+  data->bitwise_counter185 = 1;
+  data->array165_counter = 0;
+  data->array165_tmp_counter186 = 0;
   data->dat_arr165[0] = 0;
   data->dat169 = 0;
   data->dat168 = 0;
-  data->dat183 = CONST_N155_IS_8192 - (uint16_t)((3 * CHAR_BIT) + 6);
+  data->dat183_IS_CONST_8162 =
+      CONST_N155_IS_8192 - (uint16_t)((3 * CHAR_BIT) + 6);
 
+  WRITE_HEX(std::cout, "data->dat183_IS_CONST_8162",
+            data->dat183_IS_CONST_8162);
+
+  for (size_t i = 0; i < data->dat_arr192_len; i++) {
+    data->dat_arr192[i] = i;
+  }
   for (i = 0; i < CONST_N141_IS_511; i++) {
-    data->dat_arr191[i] = 0;
+    data->bit_pattern_occurrences191[i] = 0;
   }
   for (i = 0; i < CONST_N142_IS_15; i++) {
     data->dat_arr193[i] = 0;

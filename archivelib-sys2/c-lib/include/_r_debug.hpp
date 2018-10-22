@@ -12,6 +12,21 @@
     (stream) << "]";                                                           \
     UNSET_HEX(stream);                                                         \
   } while (0);
+
+#define WRITE_SPARSE_ARRAY_CONTENT(stream, arr, len)                           \
+  do {                                                                         \
+    (stream) << "{";                                                           \
+    for (size_t i = 0; i < len; i++) {                                         \
+      if (i == 0 || arr[i]) {                                                  \
+        (stream) << (i == 0 ? "" : ", ") << i << ": ";                         \
+        SET_HEX(stream);                                                       \
+        stream << ((int64_t)arr[i]);                                           \
+        UNSET_HEX(stream);                                                     \
+      }                                                                        \
+    }                                                                          \
+    (stream) << "}";                                                           \
+  } while (0);
+
 #else
 #define WRITE_ARRAY_CONTENT(stream, arr, len) (stream) << "\"...\"";
 #endif
@@ -30,6 +45,13 @@
 #define WRITE_ARRAY(stream, name, arr, arr_type, len)                          \
   (stream) << ", \"" << (name) << "\": ";                                      \
   _WRITE_ARRAY(stream, arr, arr_type, len)
+
+#define WRITE_DATA_SPARSE_ARRAY(stream, data, arr, type)                       \
+  WRITE_SPARSE_ARRAY(stream, #arr, (data)->arr, type, (data)->arr##_len)
+
+#define WRITE_SPARSE_ARRAY(stream, name, arr, arr_type, len)                   \
+  (stream) << ", \"" << (name) << "\": ";                                      \
+  _WRITE_SPARSE_ARRAY(stream, arr, arr_type, len)
 
 #define WRITE_ARRAY_PTR(stream, data, name, ptr, arr_type)                     \
   (stream) << ", \"" << (name) << "\": ";                                      \
@@ -84,6 +106,17 @@
   WRITE_ARRAY_CONTENT(stream, arr, len)                                        \
   stream << "}";
 
+#define _WRITE_SPARSE_ARRAY(stream, arr, arr_type, len)                        \
+  (stream) << "{\"type\": \"" << #arr_type << "\"";                            \
+  (stream) << ", \"length\": " << len;                                         \
+  SET_HEX(stream);                                                             \
+  (stream) << ", \"startPtr\": " << (intptr_t)(arr);                           \
+  (stream) << ", \"endPtr\": " << (intptr_t)(&(arr)[len - 1]);                 \
+  UNSET_HEX(stream);                                                           \
+  (stream) << ", \"content\": ";                                               \
+  WRITE_SPARSE_ARRAY_CONTENT(stream, arr, len)                                 \
+  stream << "}";
+
 #define _ARRAY_PTR_COND_EXTRA(stream, ptr, arr, start, len)                    \
   (stream) << ", \"in_len\": \"" << (len) << "\"";                             \
   (stream) << ", \"content\": ";                                               \
@@ -110,7 +143,7 @@
   _ARRAY_PTR_COND(stream, arr, data, dat_arr167)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr189)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr190)                               \
-  _ARRAY_PTR_COND(stream, arr, data, dat_arr191)                               \
+  _ARRAY_PTR_COND(stream, arr, data, bit_pattern_occurrences191)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr192)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr193)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr194)

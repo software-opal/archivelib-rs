@@ -11,10 +11,10 @@ void RCompress::write_stored_bits_to_buffer(int16_t arg203) {
   /*
    `arg203` appears to be the bits in the file most of the time
    */
-  printf("write_stored_bits_to_buffer: arg203=%#x; "
-         "data->dat_arr180[arg203]=%#04x, "
-         "data->dat_arr192[arg203]=%#06x\n",
-         arg203, data->dat_arr180[arg203], data->dat_arr192[arg203]);
+  // printf("write_stored_bits_to_buffer: arg203=%#x; "
+  //        "data->dat_arr180[arg203]=%#04x, "
+  //        "data->dat_arr192[arg203]=%#06x\n",
+  //        arg203, data->dat_arr180[arg203], data->dat_arr192[arg203]);
   write_bits_to_buffer(data->dat_arr180[arg203], data->dat_arr192[arg203]);
 }
 
@@ -63,8 +63,8 @@ void RCompress::finalise_compresson197() {
   if (!data->uncompressible)
     fn207();
   finalize_buffer206();
-  data->dat183 = 0;
-  data->dat184 = 0;
+  data->dat183_IS_CONST_8162 = 0;
+  data->array165_counter = 0;
 }
 void RCompress::finalize_buffer206() {
   if (!data->uncompressible) {

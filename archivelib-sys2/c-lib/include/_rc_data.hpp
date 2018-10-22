@@ -19,7 +19,7 @@ typedef struct RCompressData {
   uint8_t *dat_arr181;
   uint16_t *dat_arr189;
   uint16_t *dat_arr190;
-  uint16_t *dat_arr191;
+  uint16_t *bit_pattern_occurrences191;
   uint16_t *dat_arr192;
   uint16_t *dat_arr193;
   uint16_t *dat_arr194;
@@ -35,7 +35,7 @@ typedef struct RCompressData {
   size_t dat_arr181_len;
   size_t dat_arr189_len;
   size_t dat_arr190_len;
-  size_t dat_arr191_len;
+  size_t bit_pattern_occurrences191_len;
   size_t dat_arr192_len;
   size_t dat_arr193_len;
   size_t dat_arr194_len;
@@ -58,10 +58,10 @@ typedef struct RCompressData {
   int16_t max_input_data_size;
   int16_t max_input_data_size_minus_one;
   uint16_t bits_buffer182;
-  uint16_t dat183;
-  uint16_t dat184;
-  uint16_t dat185;
-  uint16_t dat186;
+  uint16_t dat183_IS_CONST_8162;
+  uint16_t array165_counter;
+  uint16_t bitwise_counter185;
+  uint16_t array165_tmp_counter186;
 } RCompressData;
 
 ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,
@@ -108,23 +108,23 @@ void calculate_pointer_depths(uint16_t *left_array_ptr,
   WRITE_DATA_HEX(stream, data, max_input_data_size);                           \
   WRITE_DATA_HEX(stream, data, max_input_data_size_minus_one);                 \
   WRITE_DATA_HEX(stream, data, bits_buffer182);                                \
-  WRITE_DATA_HEX(stream, data, dat183);                                        \
-  WRITE_DATA_HEX(stream, data, dat184);                                        \
-  WRITE_DATA_HEX(stream, data, dat185);                                        \
-  WRITE_DATA_HEX(stream, data, dat186);                                        \
+  WRITE_DATA_HEX(stream, data, dat183_IS_CONST_8162);                                        \
+  WRITE_DATA_HEX(stream, data, array165_counter);                                        \
+  WRITE_DATA_HEX(stream, data, bitwise_counter185);                                        \
+  WRITE_DATA_HEX(stream, data, array165_tmp_counter186);                                        \
                                                                                \
   WRITE_DATA_ARRAY(stream, data, dat_arr163, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr164, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr165, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, input_buffer, uint8_t);                       \
-  WRITE_DATA_ARRAY(stream, data, dat_arr167, uint16_t);                        \
-  WRITE_DATA_ARRAY(stream, data, dat_arr177, int16_t);                         \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr167, uint16_t);                 \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr177, int16_t);                  \
   WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                             \
-  WRITE_DATA_ARRAY(stream, data, dat_arr180, uint8_t);                         \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr180, uint8_t);                  \
   WRITE_DATA_ARRAY(stream, data, dat_arr181, uint8_t);                         \
-  WRITE_DATA_ARRAY(stream, data, dat_arr189, uint16_t);                        \
-  WRITE_DATA_ARRAY(stream, data, dat_arr190, uint16_t);                        \
-  WRITE_DATA_ARRAY(stream, data, dat_arr191, uint16_t);                        \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr189, uint16_t);                 \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr190, uint16_t);                 \
+  WRITE_DATA_SPARSE_ARRAY(stream, data, bit_pattern_occurrences191, uint16_t);                 \
   WRITE_DATA_ARRAY(stream, data, dat_arr192, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr193, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr194, uint16_t);                        \

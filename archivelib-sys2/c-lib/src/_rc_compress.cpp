@@ -7,7 +7,6 @@
 #include <iostream>
 #include <sstream>
 
-
 int16_t fn445(uint8_t *arg278, int16_t arg200, int16_t arg446) {
   return ((int16_t)((arg446 << CONST_N154_IS_4) ^ (arg278[arg200 + 2])) &
           (CONST_N153_IS_4096 - 1));
@@ -47,12 +46,18 @@ bool RCompress::Compress() {
 
   s = (int16_t)(bytes_read209 & local280);
 
-  printf("A: %#04x, B: %#04d, C: %#04d\n", l278_in_buffer[local200] << CONST_N154_IS_4, l278_in_buffer[local200 + 1], (l278_in_buffer[local200] << CONST_N154_IS_4)^ l278_in_buffer[local200 + 1] );
+  printf("A: %#04x, B: %04d, C: %04d\n",
+         l278_in_buffer[local200] << CONST_N154_IS_4,
+         l278_in_buffer[local200 + 1],
+         (l278_in_buffer[local200] << CONST_N154_IS_4) ^
+             l278_in_buffer[local200 + 1]);
 
   local201 = (int16_t)(((l278_in_buffer[local200] << CONST_N154_IS_4) ^
                         (l278_in_buffer[local200 + 1])) &
                        (CONST_N153_IS_4096 - 1));
   local201 = (int16_t)(fn445(l278_in_buffer, local200, local201) + local279);
+
+  // This function loops backwards through the buffer, pausing at 260 to ???.
 
   while (bytes_read209 > CONST_N140_IS_256 + 4 && !data->uncompressible) {
     fn199(local200, local201);
@@ -64,6 +69,7 @@ bool RCompress::Compress() {
           (int16_t)(fn445(l278_in_buffer, local200, local201) + local279);
       bytes_read209--;
     } else {
+      // ABORT(data);
       bytes_read209 -= data->dat168;
       fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135_IS_3)),
             data->dat169);
@@ -75,7 +81,10 @@ bool RCompress::Compress() {
       }
     }
   }
+  // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
   for (; bytes_read209 < CONST_N140_IS_256; bytes_read209++) {
+    // printf("%d -- AAAAAAAAAAAAAAAAAA\n", bytes_read209);
+    // return 1;
     int32_t local203 = data->input_store->ReadChar();
     if (local203 < 0)
       break;
@@ -90,6 +99,7 @@ bool RCompress::Compress() {
     }
     s = (int16_t)((s + 1) & (local280));
   }
+  // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
   while (bytes_read209 > 0 && !data->uncompressible) {
     fn199(local200, local201);
     if (data->dat168 > bytes_read209)
@@ -125,8 +135,9 @@ bool RCompress::Compress() {
     if (data->output_store->mStatus < 0)
       return 1;
   }
-  if (!data->uncompressible)
+  if (!data->uncompressible) {
     fn202(CONST_N144_IS_257 + (UCHAR_MAX + 1 - CONST_N135_IS_3), 0);
+  }
   finalise_compresson197();
 
   if (data->uncompressible) {
