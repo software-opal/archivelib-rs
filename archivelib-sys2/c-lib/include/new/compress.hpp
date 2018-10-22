@@ -1,6 +1,7 @@
 #ifndef NEW__COMPRESS_HPP
 #define NEW__COMPRESS_HPP
 
+#include "new/const.hpp"
 #include "new/compress_struct.hpp"
 #include "support/compress.hpp"
 

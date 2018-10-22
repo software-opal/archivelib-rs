@@ -1,11 +1,4 @@
-#include "_rc.hpp"
-#include <stdlib.h>
-#include <cstring>
-
-#include "support/debug.hpp"
-#include <string>
-#include <iostream>
-#include <sstream>
+#include "r_compress.hpp"
 
 RCompress::RCompress(ALStorage &in_storage, ALStorage &out_storage,
                      ALGreenleafCompressionLevels compression_level,

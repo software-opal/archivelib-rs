@@ -8,8 +8,8 @@ typedef struct RCompressData {
   ALStorage *input_store;
   ALStorage *output_store;
 
-  bool *dat_arr163;
-  bool *dat_arr164;
+  int16_t *dat_arr163;
+  int16_t *dat_arr164;
   uint8_t *dat_arr165;
   uint8_t *input_buffer;
   uint16_t *dat_arr167;
@@ -19,7 +19,7 @@ typedef struct RCompressData {
   uint8_t *dat_arr181;
   uint16_t *dat_arr189;
   uint16_t *dat_arr190;
-  uint16_t *bit_pattern_occurrences191;
+  uint16_t *dat_arr191;
   uint16_t *dat_arr192;
   uint16_t *dat_arr193;
   uint16_t *dat_arr194;
@@ -35,7 +35,7 @@ typedef struct RCompressData {
   size_t dat_arr181_len;
   size_t dat_arr189_len;
   size_t dat_arr190_len;
-  size_t bit_pattern_occurrences191_len;
+  size_t dat_arr191_len;
   size_t dat_arr192_len;
   size_t dat_arr193_len;
   size_t dat_arr194_len;

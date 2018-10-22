@@ -2,8 +2,8 @@
 
 #include "grenengn.h"
 #include "_openf.h"
-#include "_rc.hpp"
-#include "_re.hpp"
+#include "r_compress.hpp"
+#include "r_expand.hpp"
 
 //
 // int ALGreenleafEngine::Compress( ALStorage &input,

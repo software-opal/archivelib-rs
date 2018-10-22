@@ -223,7 +223,7 @@ int ALStorage::Close() {
 }
 
 //
-// size_t ALStorage::ReadBuffer( unsigned char *buf, size_t length )
+// size_t ALStorage::ReadBuffer( uint8_t *buf, size_t length )
 //
 // ARGUMENTS:
 //
@@ -281,7 +281,7 @@ size_t ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
 }
 
 //
-// size_t ALStorage::WriteBuffer( const unsigned char *buf,
+// size_t ALStorage::WriteBuffer( const uint8_t *buf,
 //                                size_t length )
 //
 // ARGUMENTS:

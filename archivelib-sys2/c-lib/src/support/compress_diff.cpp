@@ -60,7 +60,7 @@ RCompressData *clone_compress_data(RCompressData *old_data) {
   DO_CLONE(new_data, old_data, dat_arr181, uint8_t);
   DO_CLONE(new_data, old_data, dat_arr189, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr190, uint16_t);
-  DO_CLONE(new_data, old_data, bit_pattern_occurrences191, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr191, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr192, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr193, uint16_t);
   DO_CLONE(new_data, old_data, dat_arr194, uint16_t);
@@ -90,7 +90,7 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr189);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr190);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data,
-                  bit_pattern_occurrences191);
+                  dat_arr191);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr192);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr193);
   INLINE_DIFF_ARR(ss, has_changes, old_data, new_data, dat_arr194);

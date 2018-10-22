@@ -1,10 +1,7 @@
-#ifndef __RC_H
-#define __RC_H
+#ifndef R_COMPRESS_HPP
+#define R_COMPRESS_HPP
 
-#include "_r.h"
 #include "new/compress.hpp"
-#include "stor.h"
-#include "status.h"
 
 #if defined(__cplusplus)
 
@@ -12,7 +9,6 @@ class RCompress {
 public:
   RCompressData *data;
 
-  void fn196();
   void finalise_compresson197();
   void fn198();
   void fn199(int16_t arg200, int16_t arg201);
@@ -31,7 +27,6 @@ public:
   void fn228(int32_t arg229);
   void fn230(int32_t length219, uint8_t *arg209, uint16_t *arg231);
 
-public:
   RCompress(ALStorage &arg233, ALStorage &arg202,
             ALGreenleafCompressionLevels arg234, bool arg235);
   ~RCompress();

@@ -51,7 +51,7 @@ AllocatedMemory build_output(ALStorage *out) {
 
   size_t data_len = out->GetSize();
   u_int8_t *data = (u_int8_t *)calloc(data_len, sizeof(char));
-  size_t actual_len = out->ReadBuffer((unsigned char *)data, data_len);
+  size_t actual_len = out->ReadBuffer((uint8_t *)data, data_len);
   out->Close();
   if (out->mStatus.GetStatusCode() != AL_SUCCESS) {
     AllocatedMemory status = build_error_from_status_obj(&out->mStatus);

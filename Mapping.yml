@@ -6,6 +6,14 @@ regexes:
     replace: 'fn$1('
   - find: '_(16[123456789]|17[0123456789]|18[0123456789]|19[01234]|53[134])'
 
+types:
+  'short': 'int16_t'
+  'ushort': 'uint16_t'
+  'uchar': 'uint8_t'
+  'uint': 'uint32_t'
+  'unsigned char': 'uint8_t'
+  'long': 'int64_t'
+
 
 mapping:
   '_132': '*UNUSED*'
@@ -72,7 +80,7 @@ mapping:
   '_193': 'dat_arr193'
   '_194': 'dat_arr194'
   '_195': '*ABSENT*'
-  '_196': 'fn196'
+  '_196': '*REMOVED* -- A reset/clean method now in `reset_compress_data`'
   '_197': 'finalise_compresson197'
   '_198': 'fn198'
   '_199': 'fn199'

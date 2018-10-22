@@ -1,11 +1,5 @@
-#include "_rc.hpp"
-#include <stdlib.h>
-#include <cstring>
 
-#include "support/debug.hpp"
-#include <string>
-#include <iostream>
-#include <sstream>
+#include "r_compress.hpp"
 
 void RCompress::write_stored_bits_to_buffer(int16_t arg203) {
   /*

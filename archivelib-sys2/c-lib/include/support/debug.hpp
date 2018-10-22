@@ -143,7 +143,7 @@
   _ARRAY_PTR_COND(stream, arr, data, dat_arr167)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr189)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr190)                               \
-  _ARRAY_PTR_COND(stream, arr, data, bit_pattern_occurrences191)               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr191)               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr192)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr193)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr194)

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string.h>
 
-#include "_rc.hpp"
+#include "new/compress.hpp"
 
 ALErrors
 create_compress_data(RCompressData *data, ALStorage &in_storage,
@@ -47,9 +47,8 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr189 = (uint16_t *)calloc(data->dat_arr189_len, sizeof(uint16_t));
   data->dat_arr190_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr190 = (uint16_t *)calloc(data->dat_arr190_len, sizeof(uint16_t));
-  data->bit_pattern_occurrences191_len = 2 * CONST_N141_IS_511 - 1;
-  data->bit_pattern_occurrences191 = (uint16_t *)calloc(
-      data->bit_pattern_occurrences191_len, sizeof(uint16_t));
+  data->dat_arr191_len = 2 * CONST_N141_IS_511 - 1;
+  data->dat_arr191 = (uint16_t *)calloc(data->dat_arr191_len, sizeof(uint16_t));
   data->dat_arr192_len = CONST_N141_IS_511;
   data->dat_arr192 = (uint16_t *)calloc(data->dat_arr192_len, sizeof(uint16_t));
   data->dat_arr193_len = 2 * CONST_N142_IS_15 - 1;
@@ -60,9 +59,8 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
       !data->input_buffer || !data->dat_arr167 || !data->dat_arr177 ||
       !data->buffer || !data->dat_arr180 || !data->dat_arr181 ||
-      !data->dat_arr189 || !data->dat_arr190 ||
-      !data->bit_pattern_occurrences191 || !data->dat_arr192 ||
-      !data->dat_arr193 || !data->dat_arr194) {
+      !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr191 ||
+      !data->dat_arr192 || !data->dat_arr193 || !data->dat_arr194) {
     return AL_CANT_ALLOCATE_MEMORY;
   }
   return AL_SUCCESS;
@@ -113,9 +111,9 @@ void free_compress_data(RCompressData *data) {
     free(data->dat_arr190);
     data->dat_arr190 = NULL;
   }
-  if (data->bit_pattern_occurrences191) {
-    free(data->bit_pattern_occurrences191);
-    data->bit_pattern_occurrences191 = NULL;
+  if (data->dat_arr191) {
+    free(data->dat_arr191);
+    data->dat_arr191 = NULL;
   }
   if (data->dat_arr192) {
     free(data->dat_arr192);
@@ -154,7 +152,7 @@ void reset_compress_data(RCompressData *data) {
     data->dat_arr192[i] = i;
   }
   for (i = 0; i < CONST_N141_IS_511; i++) {
-    data->bit_pattern_occurrences191[i] = 0;
+    data->dat_arr191[i] = 0;
   }
   for (i = 0; i < CONST_N142_IS_15; i++) {
     data->dat_arr193[i] = 0;
