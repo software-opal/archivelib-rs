@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "_r_debug.hpp"
+#include "support/debug.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -17,11 +17,11 @@ RCompress::RCompress(ALStorage &in_storage, ALStorage &out_storage,
   case AL_SUCCESS:
     break;
   case AL_ILLEGAL_PARAMETER:
-    mStatus.SetError(AL_ILLEGAL_PARAMETER, ERROR_MESSAGE_N519,
+    mStatus.SetError(AL_ILLEGAL_PARAMETER, INVALID_COMPRESSION_LEVEL_MSG,
                      compression_level);
     break;
   case AL_CANT_ALLOCATE_MEMORY:
-    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, ERROR_MESSAGE_N520);
+    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, MEMORY_ALLOCATION_FAILURE_MSG);
     break;
   default:
     mStatus.SetError(res, "Other Error");

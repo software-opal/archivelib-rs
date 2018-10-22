@@ -41,6 +41,37 @@
     }                                                                          \
   }
 
+#define DO_CLONE(new_data, old_data, member, type)                             \
+  new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \
+  memcpy(new_data->member, old_data->member,                                   \
+         new_data->member##_len * sizeof(type));
+
+RCompressData *clone_compress_data(RCompressData *old_data) {
+  RCompressData *new_data = (RCompressData *)malloc(sizeof(RCompressData));
+  memcpy(new_data, old_data, sizeof(RCompressData));
+  DO_CLONE(new_data, old_data, dat_arr163, bool);
+  DO_CLONE(new_data, old_data, dat_arr164, bool);
+  DO_CLONE(new_data, old_data, dat_arr165, uint8_t);
+  DO_CLONE(new_data, old_data, input_buffer, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr167, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr177, int16_t);
+  DO_CLONE(new_data, old_data, buffer, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr180, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr181, uint8_t);
+  DO_CLONE(new_data, old_data, dat_arr189, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr190, uint16_t);
+  DO_CLONE(new_data, old_data, bit_pattern_occurrences191, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr192, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr193, uint16_t);
+  DO_CLONE(new_data, old_data, dat_arr194, uint16_t);
+
+  new_data->dat_arr_cursor178 = NULL;
+  new_data->dat_arr_cursor187 = NULL;
+  new_data->dat_arr_cursor188 = NULL;
+
+  return new_data;
+}
+
 bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
   bool has_changes = false;
   std::stringstream ss;

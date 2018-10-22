@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "_r_debug.hpp"
+#include "support/debug.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -69,7 +69,7 @@ bool RCompress::Compress() {
           (int16_t)(fn445(l278_in_buffer, local200, local201) + local279);
       bytes_read209--;
     } else {
-      // ABORT(data);
+      // COMPRESS_ABORT(data);
       bytes_read209 -= data->dat168;
       fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - CONST_N135_IS_3)),
             data->dat169);

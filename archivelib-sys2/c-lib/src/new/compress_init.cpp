@@ -5,7 +5,6 @@
 
 #include "_rc.hpp"
 
-
 ALErrors
 create_compress_data(RCompressData *data, ALStorage &in_storage,
                      ALStorage &out_storage,
@@ -67,37 +66,6 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
     return AL_CANT_ALLOCATE_MEMORY;
   }
   return AL_SUCCESS;
-}
-
-#define DO_CLONE(new_data, old_data, member, type)                             \
-  new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \
-  memcpy(new_data->member, old_data->member,                                   \
-         new_data->member##_len * sizeof(type));
-
-RCompressData *clone_compress_data(RCompressData *old_data) {
-  RCompressData *new_data = (RCompressData *)malloc(sizeof(RCompressData));
-  memcpy(new_data, old_data, sizeof(RCompressData));
-  DO_CLONE(new_data, old_data, dat_arr163, bool);
-  DO_CLONE(new_data, old_data, dat_arr164, bool);
-  DO_CLONE(new_data, old_data, dat_arr165, uint8_t);
-  DO_CLONE(new_data, old_data, input_buffer, uint8_t);
-  DO_CLONE(new_data, old_data, dat_arr167, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr177, int16_t);
-  DO_CLONE(new_data, old_data, buffer, uint8_t);
-  DO_CLONE(new_data, old_data, dat_arr180, uint8_t);
-  DO_CLONE(new_data, old_data, dat_arr181, uint8_t);
-  DO_CLONE(new_data, old_data, dat_arr189, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr190, uint16_t);
-  DO_CLONE(new_data, old_data, bit_pattern_occurrences191, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr192, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr193, uint16_t);
-  DO_CLONE(new_data, old_data, dat_arr194, uint16_t);
-
-  new_data->dat_arr_cursor178 = NULL;
-  new_data->dat_arr_cursor187 = NULL;
-  new_data->dat_arr_cursor188 = NULL;
-
-  return new_data;
 }
 
 void free_compress_data(RCompressData *data) {
@@ -196,49 +164,5 @@ void reset_compress_data(RCompressData *data) {
   }
   for (i = 0; i < data->max_input_data_size; i++) {
     data->dat_arr164[i] = true;
-  }
-}
-
-void flush_to_output(RCompressData *data) {
-  if (data->buffer_position <= 0) {
-    return;
-  }
-  data->chars_written += data->buffer_position;
-  if (data->fail_uncompressible && data->chars_written >= data->input_length) {
-    data->uncompressible = 1;
-  } else {
-    data->output_store->WriteBuffer(data->buffer, data->buffer_position);
-    memset(data->buffer, 0, data->buffer_position);
-  }
-  data->buffer_position = 0;
-}
-
-void calculate_pointer_depths(uint16_t *left_array_ptr,
-                              uint16_t *right_array_ptr,
-                              uint16_t *depth_store_ptr, uint16_t depth,
-                              int16_t series_start, uint16_t curr_idx) {
-  /*
-   * Pointer depth calculation?
-
-   * `left_array_ptr` & `right_array_ptr` contain a series(from `series_start`
-   to `curr_idx`) of integers that are `< curr_idx`. If they are between
-   `series_start` and `curr_idx`, then it's a pointer to another array index.
-   Otherwise it's not. This function calculates the number of non-pointer values
-   at each depth by following the pointers until a non-pointer, then
-   incrementing the count of depth by 1.
-
-   * Note that the pointers will link to the index of both arrays, and need to
-   be explored in both arrays. Each value is unique and there are no loops.
-
-   * Does `left_array_ptr` and `right_array_ptr` represent a binary tree?
-   */
-  if (curr_idx < series_start) {
-    depth_store_ptr[MIN(depth, 16)]++;
-  } else {
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
-                             depth + 1, series_start, left_array_ptr[curr_idx]);
-    calculate_pointer_depths(left_array_ptr, right_array_ptr, depth_store_ptr,
-                             depth + 1, series_start,
-                             right_array_ptr[curr_idx]);
   }
 }

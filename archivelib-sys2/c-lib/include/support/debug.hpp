@@ -1,5 +1,5 @@
-#ifndef _R_DATA_HPP
-#define _R_DATA_HPP
+#ifndef SUPPORT__DEBUG_HPP
+#define SUPPORT__DEBUG_HPP
 
 #ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \
@@ -143,7 +143,7 @@
   _ARRAY_PTR_COND(stream, arr, data, dat_arr167)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr189)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr190)                               \
-  _ARRAY_PTR_COND(stream, arr, data, bit_pattern_occurrences191)                               \
+  _ARRAY_PTR_COND(stream, arr, data, bit_pattern_occurrences191)               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr192)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr193)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr194)

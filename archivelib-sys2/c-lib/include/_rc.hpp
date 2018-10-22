@@ -2,7 +2,7 @@
 #define __RC_H
 
 #include "_r.h"
-#include "_rc_data.hpp"
+#include "new/compress.hpp"
 #include "stor.h"
 #include "status.h"
 

@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include "aldefs.h"
+#include "new/const.hpp"
 
 #define UINT16_BIT 16
 #define CONST_N135_IS_3 3
@@ -24,16 +25,6 @@
 #define CONST_N153_IS_4096 4096
 #define CONST_N154_IS_4 4
 #define CONST_N155_IS_8192 8192
-#define BUFFER_SIZE 512
 #define MAX_COMPRESSION_CYCLES 128
-
-#define ERROR_MESSAGE_N519                                                     \
-  "Incorrect compression level parameter passed to compressor.  Compression "  \
-  "level = %d"
-#define ERROR_MESSAGE_N520 "Memory allocation failure in compression startup"
-#define ERROR_MESSAGE_N521 "Internal 1 error in Greenleaf Decompression routine"
-#define ERROR_MESSAGE_N522 "Internal 2 error in Greenleaf Decompression routine"
-
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #endif

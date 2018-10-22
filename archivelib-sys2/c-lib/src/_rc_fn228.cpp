@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "_r_debug.hpp"
+#include "support/debug.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -24,7 +24,7 @@ void RCompress::fn228(int32_t arg229) {
     std::cout << "IS THIS A CASE?";
     WRITE_DATA_ARRAY(std::cout, data, dat_arr167, uint16_t);
     std::cout << "\n";
-    ABORT(data);
+    COMPRESS_ABORT(data);
     while (local458 != (1U << 16)) {
       data->dat_arr167[16]--;
       for (i = 15; i > 0; i--) {

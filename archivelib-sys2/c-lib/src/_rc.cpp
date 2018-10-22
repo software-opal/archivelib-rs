@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include "_r_debug.hpp"
+#include "support/debug.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>

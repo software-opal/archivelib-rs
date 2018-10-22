@@ -9,7 +9,7 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _248 = _268;
   ;
   if (_269 > MAX_COMPRESSION_FACTOR || _269 < MIN_COMPRESSION_FACTOR) {
-    mStatus.SetError(AL_ILLEGAL_PARAMETER, ERROR_MESSAGE_N519, _269 - 10);
+    mStatus.SetError(AL_ILLEGAL_PARAMETER, INVALID_COMPRESSION_LEVEL_MSG, _269 - 10);
     _175 = 2;
   } else
     _175 = (int16_t)(1 << _269);
@@ -35,7 +35,7 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, int64_t _268, int32_t _269) {
   _180 = new uint8_t[CONST_N141_IS_511];
   _181 = new uint8_t[CONST_N152_IS_19];
   if (!_166 || !_240 || !_241 || !_242 || !_189 || !_190 || !_180 || !_181) {
-    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, ERROR_MESSAGE_N520);
+    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, MEMORY_ALLOCATION_FAILURE_MSG);
   }
 }
 RExpand::~RExpand() {
@@ -278,7 +278,7 @@ void RExpand::fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
   for (i = 1; i <= 16; i++)
     _288[i + 1] = (uint16_t)(_288[i] + (_277[i] << (16 - i)));
   if (_288[17] != (uint16_t)(1U << 16)) {
-    mStatus.SetError(AL_INTERNAL_ERROR, ERROR_MESSAGE_N521);
+    mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
     _243 = 10;
     return;
   }
@@ -305,7 +305,7 @@ void RExpand::fn258(int32_t _259, uint8_t *_260, int32_t _261, uint16_t *_262,
     _293 = _288[_209] + _287[_209];
     if ((int32_t)_209 <= _261) {
       if (_293 > _263) {
-        mStatus.SetError(AL_INTERNAL_ERROR, ERROR_MESSAGE_N522);
+        mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_2_MSG);
         _243 = 10;
         return;
       }

@@ -4,6 +4,33 @@ extern crate cc;
 use std::env;
 use std::path::PathBuf;
 
+fn find_sources(path: PathBuf) -> Vec<PathBuf> {
+  let items: Vec<PathBuf> = path
+    .read_dir()
+    .unwrap()
+    .map(|v| v.unwrap().path())
+    .collect();
+  let mut sources: Vec<PathBuf> = items
+    .clone()
+    .into_iter()
+    .filter(|path| path.is_file())
+    .filter(|path| {
+      if let Some(ext) = path.extension() {
+        "cpp" == ext || "c" == ext
+      } else {
+        false
+      }
+    })
+    .collect();
+  sources.extend(
+    items
+      .iter()
+      .filter(|path| path.is_dir())
+      .flat_map(|folder| find_sources(folder.to_path_buf())),
+  );
+  sources
+}
+
 fn main() {
   // The bindgen::Builder is the main entry point
   // to bindgen, and lets you build up options for
@@ -24,20 +51,7 @@ fn main() {
     .write_to_file(out_path.join("bindings.rs"))
     .expect("Couldn't write bindings!");
 
-  let mut files = PathBuf::from("c-lib/src/")
-    .read_dir()
-    .unwrap()
-    .map(|v| v.unwrap().path())
-    .filter(|path| path.is_file())
-    .filter(|path| {
-      if let Some(ext) = path.extension() {
-        if "cpp" == ext {
-          return true;
-        }
-      }
-      return false;
-    })
-    .collect::<Vec<_>>();
+  let mut files = find_sources(PathBuf::from("c-lib/src/"));
   files.sort();
 
   cc::Build::new()
