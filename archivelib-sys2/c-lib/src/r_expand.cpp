@@ -2,49 +2,14 @@
 
 #include "r_expand.hpp"
 
-#define _132 (CHAR_BIT * sizeof(ushort))
-#define _133 16
-#define _134 '\0'
-#define _135 3
-#define _136 16384
-#define _137 14
-#define _138 10
-#define _139 8
-#define _140 256
-#define _141 (UCHAR_MAX + 1 + _140 - _135 + 1 + 1)
-#define _142 (_137 + 1)
-#define _143 9
-#define _144 (_140 + 1)
-#define _145 (_133 + 3)
-#define _540 5
-#define _147 5
-#define _148 4096
-#define _149 256
-
-#define _152 _145
-
-#define _153 4096
-#define _154 4
-#define _155 8192
-#define _156 512
-#define _157 (-1)
-#define _158 128
-#define _159 512
-
-#define _519                                                                   \
-  "Incorrect compression level parameter passed to compressor.  Compression "  \
-  "level = %d"
-#define _520 "Memory allocation failure in expansion startup"
-#define _521 "Internal 1 error in Greenleaf Decompression routine"
-#define _522 "Internal 2 error in Greenleaf Decompression routine"
-
 RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int _269) {
   _161 = &_266;
   _162 = &_267;
   _248 = _268;
   ;
-  if (_269 > _137 || _269 < _138) {
-    mStatus.SetError(AL_ILLEGAL_PARAMETER, _519, _269 - 10);
+  if (_269 > MAX_COMPRESSION_FACTOR || _269 < MIN_COMPRESSION_FACTOR) {
+    mStatus.SetError(AL_ILLEGAL_PARAMETER, INVALID_COMPRESSION_LEVEL_MSG,
+                     _269 - 10);
     _175 = 2;
   } else
     _175 = (short)(1 << _269);
@@ -52,25 +17,25 @@ RExpand::RExpand(ALStorage &_266, ALStorage &_267, long _268, int _269) {
   _166 = new uchar[_175 + 2];
   if (_166)
     memset(_166, 0, (_175 + 2) * sizeof(uchar));
-  _240 = new ushort[_148];
+  _240 = new ushort[CONST_N148_IS_4096];
   if (_240)
-    memset(_240, 0, _148 * sizeof(ushort));
-  _241 = new ushort[_149];
+    memset(_240, 0, CONST_N148_IS_4096 * sizeof(ushort));
+  _241 = new ushort[CONST_N149_IS_256];
   if (_241)
-    memset(_241, 0, _149 * sizeof(ushort));
-  _242 = new uchar[_159];
+    memset(_241, 0, CONST_N149_IS_256 * sizeof(ushort));
+  _242 = new uchar[BUFFER_SIZE];
   if (_242)
-    memset(_242, 0, _159 * sizeof(uchar));
-  _189 = new ushort[2 * _141 - 1];
+    memset(_242, 0, BUFFER_SIZE * sizeof(uchar));
+  _189 = new ushort[2 * CONST_N141_IS_511 - 1];
   if (_189)
-    memset(_189, 0, (2 * _141 - 1) * sizeof(ushort));
-  _190 = new ushort[2 * _141 - 1];
+    memset(_189, 0, (2 * CONST_N141_IS_511 - 1) * sizeof(ushort));
+  _190 = new ushort[2 * CONST_N141_IS_511 - 1];
   if (_190)
-    memset(_190, 0, (2 * _141 - 1) * sizeof(ushort));
-  _180 = new uchar[_141];
-  _181 = new uchar[_152];
+    memset(_190, 0, (2 * CONST_N141_IS_511 - 1) * sizeof(ushort));
+  _180 = new uchar[CONST_N141_IS_511];
+  _181 = new uchar[CONST_N152_IS_19];
   if (!_166 || !_240 || !_241 || !_242 || !_189 || !_190 || !_180 || !_181) {
-    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, _520);
+    mStatus.SetError(AL_CANT_ALLOCATE_MEMORY, MEMORY_ALLOCATION_FAILURE_MSG);
   }
 }
 RExpand::~RExpand() {
@@ -116,11 +81,12 @@ int RExpand::Expand() {
           goto _282;
       }
     } else {
-      _276 = (short)(_203 - (UCHAR_MAX + 1 - _135));
-      if (_276 == _144)
+      _276 = (short)(_203 - (UCHAR_MAX + 1 - CONST_N135_IS_3));
+      if (_276 == CONST_N144_IS_257)
         break;
       _226 = (short)((_200 - fn250() - 1) & _280);
-      if (_226 < _279 - _140 - 1 && _200 < _279 - _140 - 1) {
+      if (_226 < _279 - CONST_N140_IS_256 - 1 &&
+          _200 < _279 - CONST_N140_IS_256 - 1) {
         while (--_276 >= 0)
           _278[_200++] = _278[_226++];
       } else {
@@ -145,15 +111,15 @@ ushort RExpand::fn249() {
   ushort _276, _283;
   if (_244 == 0) {
     _244 = fn252(16);
-    fn253(_145, _147, 3);
+    fn253(CONST_N145_IS_19, CONST_N147_IS_5, 3);
     fn255();
-    fn253(_142, _540, -1);
+    fn253(CONST_N142_IS_15, CONST_N540_IS_5, -1);
     if (mStatus < 0)
       return 0;
   }
   _244--;
   _276 = _240[_182 >> 4];
-  if (_276 >= _141) {
+  if (_276 >= CONST_N141_IS_511) {
     _283 = 1U << 3;
     do {
       if (_182 & _283)
@@ -161,7 +127,7 @@ ushort RExpand::fn249() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= _141);
+    } while (_276 >= CONST_N141_IS_511);
   }
   fn256(_180[_276]);
   return _276;
@@ -169,7 +135,7 @@ ushort RExpand::fn249() {
 ushort RExpand::fn250() {
   ushort _276, _283;
   _276 = _241[_182 >> 8];
-  if (_276 >= _142) {
+  if (_276 >= CONST_N142_IS_15) {
     _283 = 1U << 7;
     do {
       if (_182 & _283)
@@ -177,7 +143,7 @@ ushort RExpand::fn250() {
       else
         _276 = _189[_276];
       _283 >>= 1;
-    } while (_276 >= _142);
+    } while (_276 >= CONST_N142_IS_15);
   }
   fn256(_181[_276]);
   if (_276 != 0) {
@@ -227,24 +193,24 @@ void RExpand::fn253(short _254, short _220, short _221) {
     }
     while (_226 < _254)
       _181[_226++] = 0;
-    fn258(_254, _181, 8, _241, _149);
+    fn258(_254, _181, 8, _241, CONST_N149_IS_256);
   }
 }
 void RExpand::fn255() {
   short _226, _203, _219;
   ushort _283;
-  _219 = fn252(_143);
+  _219 = fn252(CONST_N143_IS_9);
   if (_219 == 0) {
-    _203 = fn252(_143);
-    for (_226 = 0; _226 < _141; _226++)
+    _203 = fn252(CONST_N143_IS_9);
+    for (_226 = 0; _226 < CONST_N141_IS_511; _226++)
       _180[_226] = 0;
-    for (_226 = 0; _226 < _148; _226++)
+    for (_226 = 0; _226 < CONST_N148_IS_4096; _226++)
       _240[_226] = _203;
   } else {
     _226 = 0;
     while (_226 < _219) {
       _203 = _241[_182 >> 8];
-      if (_203 >= _145) {
+      if (_203 >= CONST_N145_IS_19) {
         _283 = 1U << 7;
         do {
           if (_182 & _283)
@@ -252,7 +218,7 @@ void RExpand::fn255() {
           else
             _203 = _189[_203];
           _283 >>= 1;
-        } while (_203 >= _145);
+        } while (_203 >= CONST_N145_IS_19);
       }
       fn256(_181[_203]);
       if (_203 <= 2) {
@@ -261,15 +227,15 @@ void RExpand::fn255() {
         else if (_203 == 1)
           _203 = (short)(fn252(4) + 3);
         else
-          _203 = (short)(fn252(_143) + 20);
+          _203 = (short)(fn252(CONST_N143_IS_9) + 20);
         while (--_203 >= 0)
           _180[_226++] = 0;
       } else
         _180[_226++] = (uchar)(_203 - 2);
     }
-    while (_226 < _141)
+    while (_226 < CONST_N141_IS_511)
       _180[_226++] = 0;
-    fn258(_141, _180, 12, _240, _148);
+    fn258(CONST_N141_IS_511, _180, 12, _240, CONST_N148_IS_4096);
   }
 }
 void RExpand::fn256(int _219) {
@@ -278,11 +244,11 @@ void RExpand::fn256(int _219) {
     _182 = (ushort)((_182 << _172) + (_245 >> (CHAR_BIT - _172)));
     if (_246 <= 0) {
       _247 = _242;
-      if (_248 >= 0 && _248 < _159) {
+      if (_248 >= 0 && _248 < BUFFER_SIZE) {
         _246 = (short)_161->ReadBuffer(_242, (size_t)_248);
         _248 -= _246;
       } else
-        _246 = (short)_161->ReadBuffer(_242, _159);
+        _246 = (short)_161->ReadBuffer(_242, BUFFER_SIZE);
       if (_246 <= 0)
         _243++;
     }
@@ -316,7 +282,7 @@ void RExpand::fn258(int _259, uchar *_260, int _261, ushort *_262,
   for (_226 = 1; _226 <= 16; _226++)
     _288[_226 + 1] = (ushort)(_288[_226] + (_277[_226] << (16 - _226)));
   if (_288[17] != (ushort)(1U << 16)) {
-    mStatus.SetError(AL_INTERNAL_ERROR, _521);
+    mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
     _243 = 10;
     return;
   }
@@ -343,7 +309,7 @@ void RExpand::fn258(int _259, uchar *_260, int _261, ushort *_262,
     _293 = _288[_209] + _287[_209];
     if ((int)_209 <= _261) {
       if (_293 > _263) {
-        mStatus.SetError(AL_INTERNAL_ERROR, _522);
+        mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_2_MSG);
         _243 = 10;
         return;
       }
