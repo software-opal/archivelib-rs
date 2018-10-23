@@ -2,36 +2,36 @@
 #include "r_expand.hpp"
 
 void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
-  int16_t _226, _203, bits_to_load219;
+  int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
   bits_to_load219 = fn252(_220);
   if (bits_to_load219 == 0) {
-    _203 = fn252(_220);
-    for (_226 = 0; _226 < _254; _226++)
-      data->dat_arr181[_226] = 0;
-    for (_226 = 0; _226 < 256; _226++)
-      data->dat_arr241[_226] = _203;
+    byte_or_run_length203 = fn252(_220);
+    for (run_start226 = 0; run_start226 < _254; run_start226++)
+      data->dat_arr181[run_start226] = 0;
+    for (run_start226 = 0; run_start226 < 256; run_start226++)
+      data->dat_arr241[run_start226] = byte_or_run_length203;
   } else {
-    _226 = 0;
-    while (_226 < bits_to_load219) {
-      _203 = (int16_t)(data->bits182 >> 13);
-      if (_203 == 7) {
+    run_start226 = 0;
+    while (run_start226 < bits_to_load219) {
+      byte_or_run_length203 = (int16_t)(data->bits182 >> 13);
+      if (byte_or_run_length203 == 7) {
         _283 = 1U << 12;
         while (_283 & data->bits182) {
           _283 >>= 1;
-          _203++;
+          byte_or_run_length203++;
         }
       }
-      read_bits((_203 < 7) ? 3 : _203 - 3);
-      data->dat_arr181[_226++] = (uint8_t)_203;
-      if (_226 == _221) {
-        _203 = fn252(2);
-        while (--_203 >= 0)
-          data->dat_arr181[_226++] = 0;
+      read_bits((byte_or_run_length203 < 7) ? 3 : byte_or_run_length203 - 3);
+      data->dat_arr181[run_start226++] = (uint8_t)byte_or_run_length203;
+      if (run_start226 == _221) {
+        byte_or_run_length203 = fn252(2);
+        while (--byte_or_run_length203 >= 0)
+          data->dat_arr181[run_start226++] = 0;
       }
     }
-    while (_226 < _254)
-      data->dat_arr181[_226++] = 0;
+    while (run_start226 < _254)
+      data->dat_arr181[run_start226++] = 0;
     fn258(_254, data->dat_arr181, 8, data->dat_arr241, CONST_N149_IS_256);
   }
 }

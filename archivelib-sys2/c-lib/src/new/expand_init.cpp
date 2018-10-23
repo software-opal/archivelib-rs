@@ -12,10 +12,11 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
       compression_level < MIN_COMPRESSION_FACTOR) {
     return AL_ILLEGAL_PARAMETER;
   }
-  data->dat175 = (int16_t)(1 << compression_level);
-  data->dat176 = (int16_t)(data->dat175 - 1);
+  data->max_uncompressed_data_size = 1 << compression_level;
+  data->max_uncompressed_data_size_bitmask =
+      data->max_uncompressed_data_size - 1;
 
-  data->uncompressed_buffer_len = data->dat175 + 2;
+  data->uncompressed_buffer_len = data->max_uncompressed_data_size + 2;
   data->uncompressed_buffer =
       (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(int8_t));
   data->dat_arr180_len = CONST_N141_IS_511;
@@ -31,7 +32,8 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
   data->dat_arr241_len = CONST_N149_IS_256;
   data->dat_arr241 = (uint16_t *)calloc(data->dat_arr241_len, sizeof(uint16_t));
   data->dat_arr242_len = BUFFER_SIZE;
-  data->compressed_data_buffer242 = (uint8_t *)calloc(data->dat_arr242_len, sizeof(uint8_t));
+  data->compressed_data_buffer242 =
+      (uint8_t *)calloc(data->dat_arr242_len, sizeof(uint8_t));
 
   if (!data->uncompressed_buffer || !data->dat_arr180 || !data->dat_arr181 ||
       !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr240 ||

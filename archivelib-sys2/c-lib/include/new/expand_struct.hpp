@@ -30,10 +30,10 @@ typedef struct RExpandData {
 
   size_t compressed_data_index;
   int16_t bits_in_buffer172;
-  int16_t dat175;
-  int16_t dat176;
+  int16_t max_uncompressed_data_size;
+  int16_t max_uncompressed_data_size_bitmask;
   uint16_t bits182;
-  int16_t dat243;
+  int16_t error_counter243;
   uint16_t dat244;
   uint8_t tmp_bit_buffer245;
   int16_t loaded_compressed_data_length246;

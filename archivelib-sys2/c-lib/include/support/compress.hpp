@@ -27,8 +27,8 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
   WRITE_DATA_HEX(stream, data, bits_buffer_used172);                           \
   WRITE_DATA_HEX(stream, data, dat173);                                        \
   WRITE_DATA_HEX(stream, data, dat174);                                        \
-  WRITE_DATA_HEX(stream, data, max_input_data_size);                           \
-  WRITE_DATA_HEX(stream, data, max_input_data_size_minus_one);                 \
+  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size);                           \
+  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size_bitmask);                 \
   WRITE_DATA_HEX(stream, data, bits_buffer182);                                \
   WRITE_DATA_HEX(stream, data, dat183_IS_CONST_8162);                          \
   WRITE_DATA_HEX(stream, data, array165_counter);                              \

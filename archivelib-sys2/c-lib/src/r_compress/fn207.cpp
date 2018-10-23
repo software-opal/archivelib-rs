@@ -2,7 +2,7 @@
 #include "r_compress.hpp"
 
 void RCompress::fn207() {
-  uint32_t _226, _289, _229, _454, _455;
+  uint32_t run_start226, _289, _229, _454, _455;
   uint32_t _456 = 0;
   uint16_t _217[2 * CONST_N145_IS_19 - 1];
   _229 = fn211(CONST_N141_IS_511, data->dat_arr191, data->dat_arr180,
@@ -34,8 +34,8 @@ void RCompress::fn207() {
     write_bits_to_buffer(CONST_N540_IS_5, (uint16_t)_229);
   }
   _454 = 0;
-  for (_226 = 0; _226 < _455; _226++) {
-    if (_226 % CHAR_BIT == 0)
+  for (run_start226 = 0; run_start226 < _455; run_start226++) {
+    if (run_start226 % CHAR_BIT == 0)
       _456 = data->dat_arr165[_454++];
     else
       _456 <<= 1;
@@ -50,8 +50,8 @@ void RCompress::fn207() {
     if (data->uncompressible)
       return;
   }
-  for (_226 = 0; _226 < CONST_N141_IS_511; _226++)
-    data->dat_arr191[_226] = 0;
-  for (_226 = 0; _226 < CONST_N142_IS_15; _226++)
-    data->dat_arr193[_226] = 0;
+  for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++)
+    data->dat_arr191[run_start226] = 0;
+  for (run_start226 = 0; run_start226 < CONST_N142_IS_15; run_start226++)
+    data->dat_arr193[run_start226] = 0;
 }

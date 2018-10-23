@@ -1,17 +1,19 @@
 
+#include <cassert>
+#include <cstdio>
+
 #include "r_expand.hpp"
 
 int32_t RExpand::Expand() {
-  int32_t _231;
-  int16_t _226;
-  int16_t _276;
-  int16_t _203;
-  int16_t _200;
+  int16_t run_start226;
+  int16_t run_length276;
+  int16_t byte_or_run_length203;
+  int16_t buffer_pos;
   uint8_t *l_uncompressed_buffer278;
-  int16_t _279;
-  int16_t _280;
+  size_t max_size279;
+  int16_t size_bitmask280;
 
-  data->dat243 = 0;
+  data->error_counter243 = 0;
   data->dat244 = 0;
   data->bits182 = 0;
   data->tmp_bit_buffer245 = 0;
@@ -19,44 +21,62 @@ int32_t RExpand::Expand() {
   data->loaded_compressed_data_length246 = 0;
 
   l_uncompressed_buffer278 = data->uncompressed_buffer;
-  _279 = data->dat175;
-  _280 = data->dat176;
-  _231 = 0;
-  _200 = 0;
+  max_size279 = data->max_uncompressed_data_size;
+  size_bitmask280 = data->max_uncompressed_data_size_bitmask;
+  buffer_pos = 0;
 
+  // Seed bits182 with the first 2 bits
   read_bits(2 * CHAR_BIT);
-  while (data->dat243 < 5) {
-    if ((_203 = fn249()) <= UCHAR_MAX) {
-      l_uncompressed_buffer278[_200] = (uint8_t)_203;
-      if (++_200 >= _279) {
-        _200 = 0;
-        if ((int16_t)data->output_store->WriteBuffer(l_uncompressed_buffer278, _279) != _279)
-          goto _282;
+
+  while (data->error_counter243 < 5) {
+    byte_or_run_length203 = fn249();
+    assert(byte_or_run_length203 <= 0x1FE);
+    if (byte_or_run_length203 <= UCHAR_MAX) {
+      // byte_or_run_length203 is the decompressed byte
+      l_uncompressed_buffer278[buffer_pos] = (uint8_t)byte_or_run_length203;
+      if (++buffer_pos >= max_size279) {
+        buffer_pos = 0;
+        if (data->output_store->WriteBuffer(l_uncompressed_buffer278,
+                                            max_size279) != max_size279)
+          return false;
       }
     } else {
-      _276 = (int16_t)(_203 - (UCHAR_MAX + 1 - CONST_N135_IS_3));
-      if (_276 == CONST_N144_IS_257)
+      // Copy the run of `run_length276` bytes from earlier in the output.
+      // byte_or_run_length203 >= 0x100 indicates a flag
+      // run_length276 = byte_or_run_length203 - 0x100 + 3; which is the length
+      // of the run. Flag value of byte_or_run_length203 ==
+      run_length276 =
+          (byte_or_run_length203 - (UCHAR_MAX + 1) + MIN_RUN_LENGTH135_IS_3);
+      if (run_length276 == END_OF_FILE_FLAG) {
+        // byte_or_run_length203 == 0x1FE. End of file.
         break;
-      _226 = (int16_t)((_200 - fn250() - 1) & _280);
-      if (_226 < _279 - CONST_N140_IS_256 - 1 &&
-          _200 < _279 - CONST_N140_IS_256 - 1) {
-        while (--_276 >= 0)
-          l_uncompressed_buffer278[_200++] = l_uncompressed_buffer278[_226++];
+      }
+      run_start226 =
+          (buffer_pos - calculate_run_offset() - 1) & size_bitmask280;
+      printf(" run_start226: %#x\n", run_start226);
+      if (run_start226 < max_size279 - CONST_N140_IS_256 - 1 &&
+          buffer_pos < max_size279 - CONST_N140_IS_256 - 1) {
+        while (--run_length276 >= 0) {
+          l_uncompressed_buffer278[buffer_pos++] =
+              l_uncompressed_buffer278[run_start226++];
+        }
       } else {
-        while (--_276 >= 0) {
-          l_uncompressed_buffer278[_200] = l_uncompressed_buffer278[_226];
-          if (++_200 >= _279) {
-            _200 = 0;
-            if ((int16_t)data->output_store->WriteBuffer(l_uncompressed_buffer278, _279) != _279)
-              goto _282;
+        while (--run_length276 >= 0) {
+          l_uncompressed_buffer278[buffer_pos] =
+              l_uncompressed_buffer278[run_start226];
+          if (++buffer_pos >= max_size279) {
+            buffer_pos = 0;
+            if (data->output_store->WriteBuffer(l_uncompressed_buffer278,
+                                                max_size279) != max_size279)
+              return false;
           }
-          _226 = (int16_t)((_226 + 1) & _280);
+          run_start226 = (int16_t)((run_start226 + 1) & size_bitmask280);
         }
       }
     }
   }
-  if (_200 != 0)
-    data->output_store->WriteBuffer(l_uncompressed_buffer278, _200);
-_282:
-  return _231;
+  if (buffer_pos != 0)
+    data->output_store->WriteBuffer(l_uncompressed_buffer278, buffer_pos);
+
+  return true;
 }

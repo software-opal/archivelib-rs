@@ -55,8 +55,8 @@ typedef struct RCompressData {
   uint16_t bits_buffer_used172;
   int16_t dat173;
   int16_t dat174;
-  int16_t max_input_data_size;
-  int16_t max_input_data_size_minus_one;
+  int16_t max_uncompressed_data_size;
+  int16_t max_uncompressed_data_size_bitmask;
   uint16_t bits_buffer182;
   uint16_t dat183_IS_CONST_8162;
   uint16_t array165_counter;

@@ -16,19 +16,19 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
       compression_level < MIN_COMPRESSION_FACTOR) {
     return AL_ILLEGAL_PARAMETER;
   }
-  data->max_input_data_size = (int16_t)(1 << compression_level);
-  data->max_input_data_size_minus_one =
-      (int16_t)(data->max_input_data_size - 1);
+  data->max_uncompressed_data_size = (int16_t)(1 << compression_level);
+  data->max_uncompressed_data_size_bitmask =
+      (int16_t)(data->max_uncompressed_data_size - 1);
   data->chars_written = 0;
   data->input_length = in_storage.GetSize();
 
-  data->dat_arr163_len = data->max_input_data_size + CONST_N153_IS_4096;
+  data->dat_arr163_len = data->max_uncompressed_data_size + CONST_N153_IS_4096;
   data->dat_arr163 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
-  data->dat_arr164_len = data->max_input_data_size;
+  data->dat_arr164_len = data->max_uncompressed_data_size;
   data->dat_arr164 = (int16_t *)calloc(data->dat_arr164_len, sizeof(int16_t));
   data->dat_arr165_len = CONST_N155_IS_8192;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
-  data->uncompressed_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;
+  data->uncompressed_buffer_len = data->max_uncompressed_data_size + CONST_N140_IS_256 + 2;
   data->uncompressed_buffer =
       (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
@@ -153,9 +153,9 @@ void reset_compress_data(RCompressData *data) {
     data->dat_arr193[i] = 0;
   }
   for (i = 0; i < CONST_N153_IS_4096; i++) {
-    data->dat_arr163[data->max_input_data_size + i] = TRUE157;
+    data->dat_arr163[data->max_uncompressed_data_size + i] = TRUE157;
   }
-  for (i = 0; i < data->max_input_data_size; i++) {
+  for (i = 0; i < data->max_uncompressed_data_size; i++) {
     data->dat_arr164[i] = TRUE157;
   }
 }

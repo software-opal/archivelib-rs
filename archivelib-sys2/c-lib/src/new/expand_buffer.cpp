@@ -32,7 +32,7 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
             data->compressed_data_buffer242, BUFFER_SIZE);
       }
       if (data->loaded_compressed_data_length246 <= 0)
-        data->dat243++;
+        data->error_counter243++;
     }
     data->tmp_bit_buffer245 =
         data->compressed_data_buffer242[data->compressed_data_index];
