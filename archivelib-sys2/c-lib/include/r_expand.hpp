@@ -12,25 +12,25 @@
 class RExpand {
   RExpandData *data;
 
-  // ALStorage *data->dat161;
-  // ALStorage *data->dat162;
+  // ALStorage *data->input_store;
+  // ALStorage *data->output_store;
   // int16_t data->dat175;
   // int16_t data->dat176;
-  // uint8_t *data->dat166;
-  // uint16_t *data->dat240;
-  // uint16_t *data->dat241;
-  // uint8_t *data->dat242;
-  // uint16_t *data->dat189;
-  // uint16_t *data->dat190;
-  // uint8_t *data->dat180;
-  // uint8_t *data->dat181;
+  // uint8_t *data->input_buffer;
+  // uint16_t *data->dat_arr240;
+  // uint16_t *data->dat_arr241;
+  // uint8_t *data->dat_arr242;
+  // uint16_t *data->dat_arr189;
+  // uint16_t *data->dat_arr190;
+  // uint8_t *data->dat_arr180;
+  // uint8_t *data->dat_arr181;
   // int16_t data->dat243;
   // uint16_t data->dat244;
   // uint16_t data->dat182;
   // int16_t data->dat172;
   // uint8_t data->dat245;
   // int16_t data->dat246;
-  // uint8_t *data->dat247;
+  // uint8_t *data->dat_arr_cursor247;
   // ssize_t data->dat248;
 
   uint16_t fn249();

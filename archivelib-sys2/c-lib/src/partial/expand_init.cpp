@@ -1,8 +1,8 @@
 
 #include "r_expand.hpp"
 
-RExpand::RExpand(ALStorage &in_storage, ALStorage &out_storage, ssize_t in_length,
-                 int compression_level) {
+RExpand::RExpand(ALStorage &in_storage, ALStorage &out_storage,
+                 ssize_t in_length, int compression_level) {
 
   data = (RExpandData *)calloc(1, sizeof(RExpandData));
   ALErrors res = create_expand_data(data, in_storage, out_storage, in_length,
@@ -19,5 +19,13 @@ RExpand::RExpand(ALStorage &in_storage, ALStorage &out_storage, ssize_t in_lengt
     break;
   default:
     mStatus.SetError(res, "Other Error");
+  }
+}
+
+RExpand::~RExpand() {
+  if (data) {
+    free_expand_data(data);
+    free(data);
+    data = NULL;
   }
 }

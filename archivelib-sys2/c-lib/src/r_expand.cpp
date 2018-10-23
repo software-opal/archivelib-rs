@@ -2,24 +2,6 @@
 
 #include "r_expand.hpp"
 
-RExpand::~RExpand() {
-  if (data->dat166)
-    delete[] data->dat166;
-  if (data->dat240)
-    delete[] data->dat240;
-  if (data->dat241)
-    delete[] data->dat241;
-  if (data->dat242)
-    delete[] data->dat242;
-  if (data->dat189)
-    delete[] data->dat189;
-  if (data->dat190)
-    delete[] data->dat190;
-  if (data->dat180)
-    delete[] data->dat180;
-  if (data->dat181)
-    delete[] data->dat181;
-}
 int RExpand::Expand() {
   int _231;
   int16_t _226;
@@ -29,7 +11,7 @@ int RExpand::Expand() {
   uint8_t *_278;
   int16_t _279;
   int16_t _280;
-  _278 = data->dat166;
+  _278 = data->input_buffer;
   _279 = data->dat175;
   _280 = data->dat176;
   _231 = 0;
@@ -41,7 +23,7 @@ int RExpand::Expand() {
       _278[_200] = (uint8_t)_203;
       if (++_200 >= _279) {
         _200 = 0;
-        if ((int16_t)data->dat162->WriteBuffer(_278, _279) != _279)
+        if ((int16_t)data->output_store->WriteBuffer(_278, _279) != _279)
           goto _282;
       }
     } else {
@@ -58,7 +40,7 @@ int RExpand::Expand() {
           _278[_200] = _278[_226];
           if (++_200 >= _279) {
             _200 = 0;
-            if ((int16_t)data->dat162->WriteBuffer(_278, _279) != _279)
+            if ((int16_t)data->output_store->WriteBuffer(_278, _279) != _279)
               goto _282;
           }
           _226 = (int16_t)((_226 + 1) & _280);
@@ -67,7 +49,7 @@ int RExpand::Expand() {
     }
   }
   if (_200 != 0)
-    data->dat162->WriteBuffer(_278, _200);
+    data->output_store->WriteBuffer(_278, _200);
 _282:
   return _231;
 }
@@ -82,34 +64,34 @@ uint16_t RExpand::fn249() {
       return 0;
   }
   data->dat244--;
-  _276 = data->dat240[data->dat182 >> 4];
+  _276 = data->dat_arr240[data->dat182 >> 4];
   if (_276 >= CONST_N141_IS_511) {
     _283 = 1U << 3;
     do {
       if (data->dat182 & _283)
-        _276 = data->dat190[_276];
+        _276 = data->dat_arr190[_276];
       else
-        _276 = data->dat189[_276];
+        _276 = data->dat_arr189[_276];
       _283 >>= 1;
     } while (_276 >= CONST_N141_IS_511);
   }
-  fn256(data->dat180[_276]);
+  fn256(data->dat_arr180[_276]);
   return _276;
 }
 uint16_t RExpand::fn250() {
   uint16_t _276, _283;
-  _276 = data->dat241[data->dat182 >> 8];
+  _276 = data->dat_arr241[data->dat182 >> 8];
   if (_276 >= CONST_N142_IS_15) {
     _283 = 1U << 7;
     do {
       if (data->dat182 & _283)
-        _276 = data->dat190[_276];
+        _276 = data->dat_arr190[_276];
       else
-        _276 = data->dat189[_276];
+        _276 = data->dat_arr189[_276];
       _283 >>= 1;
     } while (_276 >= CONST_N142_IS_15);
   }
-  fn256(data->dat181[_276]);
+  fn256(data->dat_arr181[_276]);
   if (_276 != 0) {
     _276--;
     _276 = (int16_t)((1U << _276) + fn252(_276));
@@ -133,9 +115,9 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
   if (_219 == 0) {
     _203 = fn252(_220);
     for (_226 = 0; _226 < _254; _226++)
-      data->dat181[_226] = 0;
+      data->dat_arr181[_226] = 0;
     for (_226 = 0; _226 < 256; _226++)
-      data->dat241[_226] = _203;
+      data->dat_arr241[_226] = _203;
   } else {
     _226 = 0;
     while (_226 < _219) {
@@ -148,16 +130,16 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
         }
       }
       fn256((_203 < 7) ? 3 : _203 - 3);
-      data->dat181[_226++] = (uint8_t)_203;
+      data->dat_arr181[_226++] = (uint8_t)_203;
       if (_226 == _221) {
         _203 = fn252(2);
         while (--_203 >= 0)
-          data->dat181[_226++] = 0;
+          data->dat_arr181[_226++] = 0;
       }
     }
     while (_226 < _254)
-      data->dat181[_226++] = 0;
-    fn258(_254, data->dat181, 8, data->dat241, CONST_N149_IS_256);
+      data->dat_arr181[_226++] = 0;
+    fn258(_254, data->dat_arr181, 8, data->dat_arr241, CONST_N149_IS_256);
   }
 }
 void RExpand::fn255() {
@@ -167,24 +149,24 @@ void RExpand::fn255() {
   if (_219 == 0) {
     _203 = fn252(CONST_N143_IS_9);
     for (_226 = 0; _226 < CONST_N141_IS_511; _226++)
-      data->dat180[_226] = 0;
+      data->dat_arr180[_226] = 0;
     for (_226 = 0; _226 < CONST_N148_IS_4096; _226++)
-      data->dat240[_226] = _203;
+      data->dat_arr240[_226] = _203;
   } else {
     _226 = 0;
     while (_226 < _219) {
-      _203 = data->dat241[data->dat182 >> 8];
+      _203 = data->dat_arr241[data->dat182 >> 8];
       if (_203 >= CONST_N145_IS_19) {
         _283 = 1U << 7;
         do {
           if (data->dat182 & _283)
-            _203 = data->dat190[_203];
+            _203 = data->dat_arr190[_203];
           else
-            _203 = data->dat189[_203];
+            _203 = data->dat_arr189[_203];
           _283 >>= 1;
         } while (_203 >= CONST_N145_IS_19);
       }
-      fn256(data->dat181[_203]);
+      fn256(data->dat_arr181[_203]);
       if (_203 <= 2) {
         if (_203 == 0)
           _203 = 1;
@@ -193,13 +175,13 @@ void RExpand::fn255() {
         else
           _203 = (int16_t)(fn252(CONST_N143_IS_9) + 20);
         while (--_203 >= 0)
-          data->dat180[_226++] = 0;
+          data->dat_arr180[_226++] = 0;
       } else
-        data->dat180[_226++] = (uint8_t)(_203 - 2);
+        data->dat_arr180[_226++] = (uint8_t)(_203 - 2);
     }
     while (_226 < CONST_N141_IS_511)
-      data->dat180[_226++] = 0;
-    fn258(CONST_N141_IS_511, data->dat180, 12, data->dat240,
+      data->dat_arr180[_226++] = 0;
+    fn258(CONST_N141_IS_511, data->dat_arr180, 12, data->dat_arr240,
           CONST_N148_IS_4096);
   }
 }
@@ -207,20 +189,20 @@ void RExpand::fn256(int _219) {
   while (_219 > data->dat172) {
     _219 -= data->dat172;
     data->dat182 = (uint16_t)((data->dat182 << data->dat172) +
-                            (data->dat245 >> (CHAR_BIT - data->dat172)));
+                              (data->dat245 >> (CHAR_BIT - data->dat172)));
     if (data->dat246 <= 0) {
-      data->dat247 = data->dat242;
+      data->dat_arr_cursor247 = data->dat_arr242;
       if (data->dat248 >= 0 && data->dat248 < BUFFER_SIZE) {
-        data->dat246 =
-            (int16_t)data->dat161->ReadBuffer(data->dat242, (ssize_t)data->dat248);
+        data->dat246 = (int16_t)data->input_store->ReadBuffer(
+            data->dat_arr242, (ssize_t)data->dat248);
         data->dat248 -= data->dat246;
       } else
-        data->dat246 =
-            (int16_t)data->dat161->ReadBuffer(data->dat242, BUFFER_SIZE);
+        data->dat246 = (int16_t)data->input_store->ReadBuffer(data->dat_arr242,
+                                                              BUFFER_SIZE);
       if (data->dat246 <= 0)
         data->dat243++;
     }
-    data->dat245 = *data->dat247++;
+    data->dat245 = *data->dat_arr_cursor247++;
     data->dat246--;
     data->dat172 = CHAR_BIT;
   }
@@ -290,13 +272,13 @@ void RExpand::fn258(int _259, uint8_t *_260, int _261, uint16_t *_262,
       _226 = _209 - _261;
       while (_226 != 0) {
         if (*_204 == 0) {
-          data->dat190[_292] = data->dat189[_292] = 0;
+          data->dat_arr190[_292] = data->dat_arr189[_292] = 0;
           *_204 = (uint16_t)_292++;
         }
         if (_289 & _283)
-          _204 = &data->dat190[*_204];
+          _204 = &data->dat_arr190[*_204];
         else
-          _204 = &data->dat189[*_204];
+          _204 = &data->dat_arr189[*_204];
         _289 <<= 1;
         _226--;
       }
