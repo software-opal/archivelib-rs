@@ -1,8 +1,8 @@
 
 #include "r_compress.hpp"
 
-int RCompress::fn211(int _212, uint16_t *_213, uint8_t *_214, uint16_t *_215) {
-  int _226, _276, _289, _292;
+int32_t RCompress::fn211(int32_t _212, uint16_t *_213, uint8_t *_214, uint16_t *_215) {
+  int32_t _226, _276, _289, _292;
   int16_t _227;
   data->dat174 = (int16_t)_212;
   data->dat_arr_cursor187 = _213;

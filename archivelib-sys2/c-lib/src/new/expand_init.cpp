@@ -15,9 +15,9 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
   data->dat175 = (int16_t)(1 << compression_level);
   data->dat176 = (int16_t)(data->dat175 - 1);
 
-  data->input_buffer_len = data->dat175 + 2;
-  data->input_buffer =
-      (uint8_t *)calloc(data->input_buffer_len, sizeof(int8_t));
+  data->uncompressed_buffer_len = data->dat175 + 2;
+  data->uncompressed_buffer =
+      (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(int8_t));
   data->dat_arr180_len = CONST_N141_IS_511;
   data->dat_arr180 = (uint8_t *)calloc(data->dat_arr180_len, sizeof(uint8_t));
   data->dat_arr181_len = CONST_N152_IS_19;
@@ -31,20 +31,20 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
   data->dat_arr241_len = CONST_N149_IS_256;
   data->dat_arr241 = (uint16_t *)calloc(data->dat_arr241_len, sizeof(uint16_t));
   data->dat_arr242_len = BUFFER_SIZE;
-  data->dat_arr242 = (uint8_t *)calloc(data->dat_arr242_len, sizeof(uint8_t));
+  data->compressed_data_buffer242 = (uint8_t *)calloc(data->dat_arr242_len, sizeof(uint8_t));
 
-  if (!data->input_buffer || !data->dat_arr180 || !data->dat_arr181 ||
+  if (!data->uncompressed_buffer || !data->dat_arr180 || !data->dat_arr181 ||
       !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr240 ||
-      !data->dat_arr241 || !data->dat_arr242) {
+      !data->dat_arr241 || !data->compressed_data_buffer242) {
     return AL_CANT_ALLOCATE_MEMORY;
   }
   return AL_SUCCESS;
 }
 
 void free_expand_data(RExpandData *data) {
-  if (data->input_buffer) {
-    free(data->input_buffer);
-    data->input_buffer = NULL;
+  if (data->uncompressed_buffer) {
+    free(data->uncompressed_buffer);
+    data->uncompressed_buffer = NULL;
   }
   if (data->dat_arr180) {
     free(data->dat_arr180);
@@ -70,8 +70,8 @@ void free_expand_data(RExpandData *data) {
     free(data->dat_arr241);
     data->dat_arr241 = NULL;
   }
-  if (data->dat_arr242) {
-    free(data->dat_arr242);
-    data->dat_arr242 = NULL;
+  if (data->compressed_data_buffer242) {
+    free(data->compressed_data_buffer242);
+    data->compressed_data_buffer242 = NULL;
   }
 }

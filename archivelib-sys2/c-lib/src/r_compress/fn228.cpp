@@ -1,8 +1,8 @@
 
 #include "r_compress.hpp"
 
-void RCompress::fn228(int _229) {
-  int _226, _289;
+void RCompress::fn228(int32_t _229) {
+  int32_t _226, _289;
   uint32_t _458;
   for (_226 = 0; _226 <= 16; _226++)
     data->dat_arr167[_226] = 0;

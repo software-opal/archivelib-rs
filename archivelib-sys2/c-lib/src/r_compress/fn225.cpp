@@ -1,8 +1,8 @@
 
 #include "r_compress.hpp"
 
-void RCompress::fn225(int _226, ushort *_187, short *_177, short _227) {
-  int _276, _289;
+void RCompress::fn225(int32_t _226, ushort *_187, short *_177, short _227) {
+  int32_t _276, _289;
   _289 = _177[_226];
   while ((_276 = 2 * _226) <= _227) {
     if (_276 < _227 && _187[_177[_276]] > _187[_177[_276 + 1]])

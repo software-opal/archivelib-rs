@@ -11,7 +11,7 @@ typedef struct RCompressData {
   int16_t *dat_arr163;
   int16_t *dat_arr164;
   uint8_t *dat_arr165;
-  uint8_t *input_buffer;
+  uint8_t *uncompressed_buffer;
   uint16_t *dat_arr167;
   int16_t *dat_arr177;
   uint8_t *buffer;
@@ -27,7 +27,7 @@ typedef struct RCompressData {
   size_t dat_arr163_len;
   size_t dat_arr164_len;
   size_t dat_arr165_len;
-  size_t input_buffer_len;
+  size_t uncompressed_buffer_len;
   size_t dat_arr167_len;
   size_t dat_arr177_len;
   size_t buffer_len;

@@ -87,6 +87,17 @@
   stream << ", \"" << (name) << "\": " << (intmax_t)(value);                   \
   UNSET_HEX(stream);
 
+#define WRITE_BITS(stream, name, value)                                        \
+  {                                                                            \
+    size_t bits = sizeof(value) * 8;                                           \
+    char buff[bits + 1];                                                       \
+    buff[bits] = '\0';                                                         \
+    for (size_t i = 0; i < sizeof(value) * 8; i++) {                           \
+      buff[bits - i - 1] = ((value) & (1 << i)) ? '1' : '0';                   \
+    }                                                                          \
+    stream << ", \"" << (name) << "\": " << buff;                              \
+  }
+
 #define WRITE_DEC(stream, name, value)                                         \
   stream << ", \"" << (name) << "\": " << (intmax_t)(value);
 
@@ -143,14 +154,14 @@
   _ARRAY_PTR_COND(stream, arr, data, dat_arr167)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr189)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr190)                               \
-  _ARRAY_PTR_COND(stream, arr, data, dat_arr191)               \
+  _ARRAY_PTR_COND(stream, arr, data, dat_arr191)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr192)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr193)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr194)
 
 #define _ARRAY_PTR_COND_uint8_t(stream, data, arr)                             \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr165)                               \
-  _ARRAY_PTR_COND(stream, arr, data, input_buffer)                             \
+  _ARRAY_PTR_COND(stream, arr, data, uncompressed_buffer)                      \
   _ARRAY_PTR_COND(stream, arr, data, buffer)                                   \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr180)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr181)

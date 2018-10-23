@@ -2,10 +2,10 @@
 #include "r_expand.hpp"
 
 void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
-  int16_t _226, _203, _219;
+  int16_t _226, _203, bits_to_load219;
   uint16_t _283;
-  _219 = fn252(_220);
-  if (_219 == 0) {
+  bits_to_load219 = fn252(_220);
+  if (bits_to_load219 == 0) {
     _203 = fn252(_220);
     for (_226 = 0; _226 < _254; _226++)
       data->dat_arr181[_226] = 0;
@@ -13,11 +13,11 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
       data->dat_arr241[_226] = _203;
   } else {
     _226 = 0;
-    while (_226 < _219) {
-      _203 = (int16_t)(data->dat182 >> 13);
+    while (_226 < bits_to_load219) {
+      _203 = (int16_t)(data->bits182 >> 13);
       if (_203 == 7) {
         _283 = 1U << 12;
-        while (_283 & data->dat182) {
+        while (_283 & data->bits182) {
           _283 >>= 1;
           _203++;
         }

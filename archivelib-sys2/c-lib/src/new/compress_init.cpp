@@ -28,9 +28,9 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr164 = (int16_t *)calloc(data->dat_arr164_len, sizeof(int16_t));
   data->dat_arr165_len = CONST_N155_IS_8192;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
-  data->input_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;
-  data->input_buffer =
-      (uint8_t *)calloc(data->input_buffer_len, sizeof(uint8_t));
+  data->uncompressed_buffer_len = data->max_input_data_size + CONST_N140_IS_256 + 2;
+  data->uncompressed_buffer =
+      (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
   data->dat_arr177_len = CONST_N141_IS_511 + 1;
@@ -55,7 +55,7 @@ create_compress_data(RCompressData *data, ALStorage &in_storage,
   data->dat_arr194 = (uint16_t *)calloc(data->dat_arr194_len, sizeof(uint16_t));
 
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||
-      !data->input_buffer || !data->dat_arr167 || !data->dat_arr177 ||
+      !data->uncompressed_buffer || !data->dat_arr167 || !data->dat_arr177 ||
       !data->buffer || !data->dat_arr180 || !data->dat_arr181 ||
       !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr191 ||
       !data->dat_arr192 || !data->dat_arr193 || !data->dat_arr194) {
@@ -77,9 +77,9 @@ void free_compress_data(RCompressData *data) {
     free(data->dat_arr165);
     data->dat_arr165 = NULL;
   }
-  if (data->input_buffer) {
-    free(data->input_buffer);
-    data->input_buffer = NULL;
+  if (data->uncompressed_buffer) {
+    free(data->uncompressed_buffer);
+    data->uncompressed_buffer = NULL;
   }
   if (data->dat_arr167) {
     free(data->dat_arr167);
@@ -142,9 +142,6 @@ void reset_compress_data(RCompressData *data) {
   data->dat168 = 0;
   data->dat183_IS_CONST_8162 =
       CONST_N155_IS_8192 - (uint16_t)((3 * CHAR_BIT) + 6);
-
-  WRITE_HEX(std::cout, "data->dat183_IS_CONST_8162",
-            data->dat183_IS_CONST_8162);
 
   for (size_t i = 0; i < data->dat_arr192_len; i++) {
     data->dat_arr192[i] = i;

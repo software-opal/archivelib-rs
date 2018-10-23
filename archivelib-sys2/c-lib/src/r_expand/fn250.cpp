@@ -2,11 +2,11 @@
 
 uint16_t RExpand::fn250() {
   uint16_t _276, _283;
-  _276 = data->dat_arr241[data->dat182 >> 8];
+  _276 = data->dat_arr241[data->bits182 >> 8];
   if (_276 >= CONST_N142_IS_15) {
     _283 = 1U << 7;
     do {
-      if (data->dat182 & _283)
+      if (data->bits182 & _283)
         _276 = data->dat_arr190[_276];
       else
         _276 = data->dat_arr189[_276];

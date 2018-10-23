@@ -38,7 +38,7 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
   WRITE_DATA_ARRAY(stream, data, dat_arr163, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr164, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr165, uint8_t);                         \
-  WRITE_DATA_ARRAY(stream, data, input_buffer, uint8_t);                       \
+  WRITE_DATA_ARRAY(stream, data, uncompressed_buffer, uint8_t);                       \
   WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr167, uint16_t);                 \
   WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr177, int16_t);                  \
   WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                             \

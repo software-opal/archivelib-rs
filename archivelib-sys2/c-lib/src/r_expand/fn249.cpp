@@ -11,11 +11,11 @@ uint16_t RExpand::fn249() {
       return 0;
   }
   data->dat244--;
-  _276 = data->dat_arr240[data->dat182 >> 4];
+  _276 = data->dat_arr240[data->bits182 >> 4];
   if (_276 >= CONST_N141_IS_511) {
     _283 = 1U << 3;
     do {
-      if (data->dat182 & _283)
+      if (data->bits182 & _283)
         _276 = data->dat_arr190[_276];
       else
         _276 = data->dat_arr189[_276];
