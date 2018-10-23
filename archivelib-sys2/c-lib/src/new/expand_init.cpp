@@ -42,20 +42,36 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
 }
 
 void free_expand_data(RExpandData *data) {
-  if (data->input_buffer)
-    delete[] data->input_buffer;
-  if (data->dat_arr240)
-    delete[] data->dat_arr240;
-  if (data->dat_arr241)
-    delete[] data->dat_arr241;
-  if (data->dat_arr242)
-    delete[] data->dat_arr242;
-  if (data->dat_arr189)
-    delete[] data->dat_arr189;
-  if (data->dat_arr190)
-    delete[] data->dat_arr190;
-  if (data->dat_arr180)
-    delete[] data->dat_arr180;
-  if (data->dat_arr181)
-    delete[] data->dat_arr181;
+  if (data->input_buffer) {
+    free(data->input_buffer);
+    data->input_buffer = NULL;
+  }
+  if (data->dat_arr180) {
+    free(data->dat_arr180);
+    data->dat_arr180 = NULL;
+  }
+  if (data->dat_arr181) {
+    free(data->dat_arr181);
+    data->dat_arr181 = NULL;
+  }
+  if (data->dat_arr189) {
+    free(data->dat_arr189);
+    data->dat_arr189 = NULL;
+  }
+  if (data->dat_arr190) {
+    free(data->dat_arr190);
+    data->dat_arr190 = NULL;
+  }
+  if (data->dat_arr240) {
+    free(data->dat_arr240);
+    data->dat_arr240 = NULL;
+  }
+  if (data->dat_arr241) {
+    free(data->dat_arr241);
+    data->dat_arr241 = NULL;
+  }
+  if (data->dat_arr242) {
+    free(data->dat_arr242);
+    data->dat_arr242 = NULL;
+  }
 }
