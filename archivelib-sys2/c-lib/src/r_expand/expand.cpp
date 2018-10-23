@@ -13,7 +13,7 @@ int32_t RExpand::Expand() {
   int16_t size_bitmask280;
 
   data->error_counter243 = 0;
-  data->dat244 = 0;
+  data->items_until_next_header = 0;
   data->bits182 = 0;
   data->tmp_bit_buffer245 = 0;
   data->bits_in_buffer172 = 0;
@@ -28,7 +28,7 @@ int32_t RExpand::Expand() {
   read_bits(2 * CHAR_BIT);
 
   while (data->error_counter243 < 5) {
-    byte_or_run_length203 = fn249();
+    byte_or_run_length203 = get_next_item();
     assert(byte_or_run_length203 <= 0x1FE);
     if (byte_or_run_length203 <= UCHAR_MAX) {
       // byte_or_run_length203 is the decompressed byte

@@ -12,7 +12,7 @@
 class RExpand {
   RExpandData *data;
 
-  uint16_t fn249();
+  uint16_t get_next_item();
   uint16_t calculate_run_offset();
   void fn251();
   uint16_t get_bits(uint8_t bits_to_load219);
