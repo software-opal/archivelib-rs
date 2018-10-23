@@ -22,6 +22,6 @@ uint16_t RExpand::fn249() {
       _283 >>= 1;
     } while (_276 >= CONST_N141_IS_511);
   }
-  fn256(data->dat_arr180[_276]);
+  read_bits(data->dat_arr180[_276]);
   return _276;
 }

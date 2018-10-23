@@ -16,7 +16,7 @@ int32_t RExpand::Expand() {
   data->bits182 = 0;
   data->tmp_bit_buffer245 = 0;
   data->bits_in_buffer172 = 0;
-  data->dat246 = 0;
+  data->loaded_compressed_data_length246 = 0;
 
   l_uncompressed_buffer278 = data->uncompressed_buffer;
   _279 = data->dat175;
@@ -24,7 +24,7 @@ int32_t RExpand::Expand() {
   _231 = 0;
   _200 = 0;
 
-  fn256(2 * CHAR_BIT);
+  read_bits(2 * CHAR_BIT);
   while (data->dat243 < 5) {
     if ((_203 = fn249()) <= UCHAR_MAX) {
       l_uncompressed_buffer278[_200] = (uint8_t)_203;

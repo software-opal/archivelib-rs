@@ -13,7 +13,7 @@ uint16_t RExpand::fn250() {
       _283 >>= 1;
     } while (_276 >= CONST_N142_IS_15);
   }
-  fn256(data->dat_arr181[_276]);
+  read_bits(data->dat_arr181[_276]);
   if (_276 != 0) {
     _276--;
     _276 = (int16_t)((1U << _276) + fn252(_276));

@@ -28,8 +28,7 @@ typedef struct RExpandData {
   size_t dat_arr241_len;
   size_t dat_arr242_len;
 
-  uint8_t *dat_arr_cursor247;
-
+  size_t compressed_data_index;
   int16_t bits_in_buffer172;
   int16_t dat175;
   int16_t dat176;
@@ -37,8 +36,8 @@ typedef struct RExpandData {
   int16_t dat243;
   uint16_t dat244;
   uint8_t tmp_bit_buffer245;
-  int16_t dat246;
-  ssize_t dat248;
+  int16_t loaded_compressed_data_length246;
+  ssize_t compressed_data_length248;
 } RExpandData;
 
 #endif

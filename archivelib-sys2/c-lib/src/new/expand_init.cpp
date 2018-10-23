@@ -7,7 +7,7 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
                             int compression_level) {
   data->input_store = &in_storage;
   data->output_store = &out_storage;
-  data->dat248 = in_length;
+  data->compressed_data_length248 = in_length;
   if (compression_level > MAX_COMPRESSION_FACTOR ||
       compression_level < MIN_COMPRESSION_FACTOR) {
     return AL_ILLEGAL_PARAMETER;

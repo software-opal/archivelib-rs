@@ -25,7 +25,7 @@ void RExpand::fn255() {
           _283 >>= 1;
         } while (_203 >= CONST_N145_IS_19);
       }
-      fn256(data->dat_arr181[_203]);
+      read_bits(data->dat_arr181[_203]);
       if (_203 <= 2) {
         if (_203 == 0)
           _203 = 1;
