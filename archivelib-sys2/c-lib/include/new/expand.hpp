@@ -13,6 +13,6 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
 void free_expand_data(RExpandData *data);
 void reset_expand_data(RExpandData *data);
 
-void expand_read_bits(RExpandData *data, int32_t bits_to_load219);
+void expand_read_bits(RExpandData *data, uint8_t bits_to_load219);
 
 #endif
