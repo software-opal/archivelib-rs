@@ -1,6 +1,9 @@
 #ifndef SUPPORT__DEBUG_HPP
 #define SUPPORT__DEBUG_HPP
 
+#include <cstdio>
+#include <iostream>
+
 #ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \
   do {                                                                         \

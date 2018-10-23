@@ -48,3 +48,11 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
                  (data->tmp_bit_buffer245 >> (CHAR_BIT - bits_to_load219)));
   data->tmp_bit_buffer245 <<= bits_to_load219;
 }
+
+uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
+  uint16_t bits;
+  assert(bits_to_load219 <= 16);
+  bits = (uint16_t)(data->bits182 >> (2 * CHAR_BIT - bits_to_load219));
+  expand_read_bits(data, bits_to_load219);
+  return bits;
+}

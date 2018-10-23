@@ -16,7 +16,7 @@ uint16_t RExpand::calculate_run_offset() {
   read_bits(data->dat_arr181[run_length276]);
   if (run_length276 != 0) {
     run_length276--;
-    run_length276 = (int16_t)((1U << run_length276) + fn252(run_length276));
+    run_length276 = (int16_t)((1U << run_length276) + get_bits(run_length276));
   }
   return run_length276;
 }

@@ -15,7 +15,7 @@ class RExpand {
   uint16_t fn249();
   uint16_t calculate_run_offset();
   void fn251();
-  uint16_t fn252(int32_t bits_to_load219);
+  uint16_t get_bits(uint8_t bits_to_load219);
   void fn253(int16_t _254, int16_t _220, int16_t _221);
   void fn255();
   void read_bits(int32_t bits_to_load219);

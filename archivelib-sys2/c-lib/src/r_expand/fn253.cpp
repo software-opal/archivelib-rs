@@ -4,9 +4,9 @@
 void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
   int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
-  bits_to_load219 = fn252(_220);
+  bits_to_load219 = get_bits(_220);
   if (bits_to_load219 == 0) {
-    byte_or_run_length203 = fn252(_220);
+    byte_or_run_length203 = get_bits(_220);
     for (run_start226 = 0; run_start226 < _254; run_start226++)
       data->dat_arr181[run_start226] = 0;
     for (run_start226 = 0; run_start226 < 256; run_start226++)
@@ -25,7 +25,7 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
       read_bits((byte_or_run_length203 < 7) ? 3 : byte_or_run_length203 - 3);
       data->dat_arr181[run_start226++] = (uint8_t)byte_or_run_length203;
       if (run_start226 == _221) {
-        byte_or_run_length203 = fn252(2);
+        byte_or_run_length203 = get_bits(2);
         while (--byte_or_run_length203 >= 0)
           data->dat_arr181[run_start226++] = 0;
       }

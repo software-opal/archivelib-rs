@@ -1,9 +1,15 @@
+
+#include <cassert>
+
+#include "support/debug.hpp"
+
 #include "r_expand.hpp"
 
 uint16_t RExpand::fn249() {
   uint16_t run_length276, _283;
   if (data->dat244 == 0) {
-    data->dat244 = fn252(16);
+    data->dat244 = get_bits(16);
+    printf("data->dat244: %#x\n", data->dat244);
     fn253(CONST_N145_IS_19, CONST_N147_IS_5, 3);
     fn255();
     fn253(CONST_N142_IS_15, CONST_N540_IS_5, -1);

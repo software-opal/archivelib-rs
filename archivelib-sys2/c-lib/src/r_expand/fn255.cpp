@@ -4,9 +4,9 @@
 void RExpand::fn255() {
   int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
-  bits_to_load219 = fn252(CONST_N143_IS_9);
+  bits_to_load219 = get_bits(CONST_N143_IS_9);
   if (bits_to_load219 == 0) {
-    byte_or_run_length203 = fn252(CONST_N143_IS_9);
+    byte_or_run_length203 = get_bits(CONST_N143_IS_9);
     for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++)
       data->dat_arr180[run_start226] = 0;
     for (run_start226 = 0; run_start226 < CONST_N148_IS_4096; run_start226++)
@@ -30,9 +30,9 @@ void RExpand::fn255() {
         if (byte_or_run_length203 == 0)
           byte_or_run_length203 = 1;
         else if (byte_or_run_length203 == 1)
-          byte_or_run_length203 = (int16_t)(fn252(4) + 3);
+          byte_or_run_length203 = (int16_t)(get_bits(4) + 3);
         else
-          byte_or_run_length203 = (int16_t)(fn252(CONST_N143_IS_9) + 20);
+          byte_or_run_length203 = (int16_t)(get_bits(CONST_N143_IS_9) + 20);
         while (--byte_or_run_length203 >= 0)
           data->dat_arr180[run_start226++] = 0;
       } else

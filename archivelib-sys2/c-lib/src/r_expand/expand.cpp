@@ -1,6 +1,5 @@
 
 #include <cassert>
-#include <cstdio>
 
 #include "r_expand.hpp"
 
@@ -53,7 +52,6 @@ int32_t RExpand::Expand() {
       }
       run_start226 =
           (buffer_pos - calculate_run_offset() - 1) & size_bitmask280;
-      printf(" run_start226: %#x\n", run_start226);
       if (run_start226 < max_size279 - CONST_N140_IS_256 - 1 &&
           buffer_pos < max_size279 - CONST_N140_IS_256 - 1) {
         while (--run_length276 >= 0) {
