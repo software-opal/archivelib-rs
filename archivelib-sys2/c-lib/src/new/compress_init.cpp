@@ -156,9 +156,9 @@ void reset_compress_data(RCompressData *data) {
     data->dat_arr193[i] = 0;
   }
   for (i = 0; i < CONST_N153_IS_4096; i++) {
-    data->dat_arr163[data->max_input_data_size + i] = true;
+    data->dat_arr163[data->max_input_data_size + i] = TRUE157;
   }
   for (i = 0; i < data->max_input_data_size; i++) {
-    data->dat_arr164[i] = true;
+    data->dat_arr164[i] = TRUE157;
   }
 }

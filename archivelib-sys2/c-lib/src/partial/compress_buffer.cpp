@@ -5,10 +5,6 @@ void RCompress::write_stored_bits_to_buffer(int16_t arg203) {
   /*
    `arg203` appears to be the bits in the file most of the time
    */
-  // printf("write_stored_bits_to_buffer: arg203=%#x; "
-  //        "data->dat_arr180[arg203]=%#04x, "
-  //        "data->dat_arr192[arg203]=%#06x\n",
-  //        arg203, data->dat_arr180[arg203], data->dat_arr192[arg203]);
   write_bits_to_buffer(data->dat_arr180[arg203], data->dat_arr192[arg203]);
 }
 
