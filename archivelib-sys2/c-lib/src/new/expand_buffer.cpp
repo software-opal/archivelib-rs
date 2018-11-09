@@ -38,7 +38,6 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
     }
     data->tmp_bit_buffer245 =
         data->compressed_data_buffer242[data->compressed_data_index];
-    printf(">%02x<", data->tmp_bit_buffer245);
     data->compressed_data_index++;
     data->loaded_compressed_data_length246--;
     data->bits_in_buffer172 = CHAR_BIT;

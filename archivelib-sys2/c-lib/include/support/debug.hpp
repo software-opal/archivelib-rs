@@ -2,7 +2,11 @@
 #define SUPPORT__DEBUG_HPP
 
 #include <cstdio>
+#include <cstring>
 #include <iostream>
+#include <string>
+
+std::string get_as_binary(uintmax_t value, uint8_t max_bits);
 
 #ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \
@@ -168,4 +172,41 @@
   _ARRAY_PTR_COND(stream, arr, data, buffer)                                   \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr180)                               \
   _ARRAY_PTR_COND(stream, arr, data, dat_arr181)
+
+#define DIFF_ARRAY(stream, has_changes, name, old_array, new_array, length)    \
+  {                                                                            \
+    char __data[1000];                                                         \
+    for (size_t idx = 0; idx < length; idx++) {                                \
+      if (old_array[idx] != new_array[idx]) {                                  \
+        has_changes = true;                                                    \
+        sprintf(__data, "    | %32s[%6zu] | %10d | %2s | %10d |\n", name, idx, \
+                old_array[idx], "<>", new_array[idx]);                         \
+        stream << __data;                                                      \
+      }                                                                        \
+    }                                                                          \
+  }
+
+#define INLINE_DIFF_ARR(stream, has_changes, old_data, new_data, arr_name)     \
+  {                                                                            \
+    bool has_changes_this_time = false;                                        \
+    DIFF_ARRAY(stream, has_changes_this_time, #arr_name, old_data->arr_name,   \
+               new_data->arr_name, old_data->arr_name##_len);                  \
+    if (!has_changes_this_time) {                                              \
+    } else {                                                                   \
+      has_changes = true;                                                      \
+    }                                                                          \
+  }
+#define INLINE_DIFF_VAL(stream, has_changes, _spec, old_data, new_data,        \
+                        val_name)                                              \
+  {                                                                            \
+    if (old_data->val_name != new_data->val_name) {                            \
+      has_changes = true;                                                      \
+      char __data[1000];                                                       \
+      sprintf(__data, "    | %40s | %10" _spec " | %2s | %10" _spec " |\n",    \
+              #val_name, old_data->val_name, "<>", new_data->val_name);        \
+      stream << __data;                                                        \
+    } else {                                                                   \
+    }                                                                          \
+  }
+
 #endif

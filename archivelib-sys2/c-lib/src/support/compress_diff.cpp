@@ -4,43 +4,8 @@
 #include <string.h>
 
 #include "support/compress.hpp"
+#include "support/debug.hpp"
 #include "new/compress.hpp"
-
-#define DIFF_ARRAY(stream, has_changes, name, old_array, new_array, length)    \
-  {                                                                            \
-    char data[1000];                                                           \
-    for (size_t idx = 0; idx < length; idx++) {                                \
-      if (old_array[idx] != new_array[idx]) {                                  \
-        has_changes = true;                                                    \
-        sprintf(data, "    | %32s[%6zu] | %10d | %2s | %10d |\n", name, idx,   \
-                old_array[idx], "<>", new_array[idx]);                         \
-        stream << data;                                                        \
-      }                                                                        \
-    }                                                                          \
-  }
-
-#define INLINE_DIFF_ARR(stream, has_changes, old_data, new_data, arr_name)     \
-  {                                                                            \
-    bool has_changes_this_time = false;                                        \
-    DIFF_ARRAY(stream, has_changes_this_time, #arr_name, old_data->arr_name,   \
-               new_data->arr_name, old_data->arr_name##_len);                  \
-    if (!has_changes_this_time) {                                              \
-    } else {                                                                   \
-      has_changes = true;                                                      \
-    }                                                                          \
-  }
-#define INLINE_DIFF_VAL(stream, has_changes, _spec, old_data, new_data,        \
-                        val_name)                                              \
-  {                                                                            \
-    if (old_data->val_name != new_data->val_name) {                            \
-      has_changes = true;                                                      \
-      char b[1000];                                                            \
-      sprintf(b, "    | %40s | %10" _spec " | %2s | %10" _spec " |\n",         \
-              #val_name, old_data->val_name, "<>", new_data->val_name);        \
-      stream << b;                                                             \
-    } else {                                                                   \
-    }                                                                          \
-  }
 
 #define DO_CLONE(new_data, old_data, member, type)                             \
   new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \
