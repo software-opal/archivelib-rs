@@ -31,9 +31,9 @@ ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
   data->dat_arr240 = (uint16_t *)calloc(data->dat_arr240_len, sizeof(uint16_t));
   data->dat_arr241_len = CONST_N149_IS_256;
   data->dat_arr241 = (uint16_t *)calloc(data->dat_arr241_len, sizeof(uint16_t));
-  data->dat_arr242_len = BUFFER_SIZE;
+  data->compressed_data_buffer242_len = BUFFER_SIZE;
   data->compressed_data_buffer242 =
-      (uint8_t *)calloc(data->dat_arr242_len, sizeof(uint8_t));
+      (uint8_t *)calloc(data->compressed_data_buffer242_len, sizeof(uint8_t));
 
   if (!data->uncompressed_buffer || !data->dat_arr180 || !data->dat_arr181 ||
       !data->dat_arr189 || !data->dat_arr190 || !data->dat_arr240 ||

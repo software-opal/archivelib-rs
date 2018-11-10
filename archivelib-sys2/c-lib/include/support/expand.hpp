@@ -12,7 +12,7 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
   DEBUG_COMPRESS_DATA(std::cerr, data);                                        \
   abort();
 
-#define DEBUG_COMPRESS_DATA(stream, data)                                      \
+#define DEBUG_EXPAND_DATA(stream, data)                                        \
   stream << "{\"ptr\": " << (intptr_t)(data);                                  \
   WRITE_STORAGE(stream, data, input_store);                                    \
   WRITE_STORAGE(stream, data, output_store);                                   \
@@ -38,5 +38,17 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
   WRITE_DATA_ARRAY(stream, data, compressed_data_buffer242, uint8_t);          \
                                                                                \
   stream << "},\n";
+
+#define DE                                                                     \
+  {                                                                            \
+    DEBUG_FILE_HANDLE(fs, data);                                               \
+    fs << "\n---\n{ \"file\": \"" << __FILE__ << "\", \"line\": " << __LINE__; \
+    fs << ", \"func\": \"" << __func__ << "\", \"now\": " << now;              \
+    fs << ", \"data\": ";                                                      \
+    DEBUG_EXPAND_DATA(fs, data);                                               \
+    fs << "}\n";                                                               \
+    std::cerr << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
+    std::cerr << now << ")\n";                                                 \
+  }
 
 #endif

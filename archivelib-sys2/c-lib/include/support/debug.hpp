@@ -3,10 +3,30 @@
 
 #include <cstdio>
 #include <cstring>
+#include <ctime>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <string>
+#include <iomanip>
+
+const time_t PROC_START = time(NULL);
 
 std::string get_as_binary(uintmax_t value, uint8_t max_bits);
+
+#define DEBUG_FILE_HANDLE(fh, uniq)                                            \
+  std::ofstream fh;                                                            \
+  clock_t now = std::clock();                                                  \
+  do {                                                                         \
+    std::stringstream filename;                                                \
+    filename << "target/data-"                                                 \
+             << std::put_time(std::localtime(&PROC_START),                     \
+                              "%Y-%m-%dI%H:%M:%S%z");                          \
+    SET_HEX(filename);                                                         \
+    filename << "-" << (intptr_t)(uniq) << ".json";                            \
+    UNSET_HEX(filename);                                                       \
+    fh.open(filename.str(), std::ofstream::out | std::ofstream::app);          \
+  } while (0);
 
 #ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \

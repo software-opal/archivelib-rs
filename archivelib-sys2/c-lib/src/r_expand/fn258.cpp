@@ -22,7 +22,6 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
     // This wraps around to 0.
     lookup_table288[i + 1] = lookup_table288[i] + (_277[i] << (16 - i));
   }
-  WRITE_ARRAY(std::cout, "lookup_table288", lookup_table288, uint16_t, 17);
   if (lookup_table288[17] != 0) {
     mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
     data->error_counter243 = 10;
@@ -45,19 +44,7 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
   _292 = arg_arr260_len;
   _283 = 1U << (15 - bit_size261);
 
-  WRITE_DEC(std::cout, "arg_arr260_len", arg_arr260_len);
-  WRITE_DEC(std::cout, "bit_size261", bit_size261);
-  WRITE_HEX(std::cout, "max_internal263", max_internal263);
-  WRITE_ARRAY(std::cout, "lookup_table287", lookup_table287, uint16_t, 18);
-  WRITE_HEX(std::cout, "_289", _289);
-  WRITE_HEX(std::cout, "item209", item209);
-  WRITE_HEX(std::cout, "rem_bit_size291", rem_bit_size291);
-  WRITE_HEX(std::cout, "_292", _292);
-  WRITE_HEX(std::cout, "tmp293", tmp293);
-  WRITE_HEX(std::cout, "_283", _283);
-
   printf("\n");
-  RExpandData *old_data = clone_expand_data(data);
   for (j = 0; j < arg_arr260_len; j++) {
     item209 = arg_arr260[j];
     if (item209 == 0) {
@@ -95,5 +82,4 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
     }
     lookup_table288[item209] = (uint16_t)tmp293;
   }
-  diff_expand_data(old_data, data);
 }

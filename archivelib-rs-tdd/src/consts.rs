@@ -1,0 +1,2 @@
+pub const MAX_COMPRESSION_FACTOR: u8 = 14;
+pub const MIN_COMPRESSION_FACTOR: u8 = 10;

@@ -1,0 +1,11 @@
+[package]
+name = "archivelib-rs-tdd"
+version = "0.1.0"
+authors = ["Opal Symes <code@opal.codes>"]
+
+[dependencies]
+failure = "0.1.3"
+failure_derive = "0.1.3"
+
+[dev-dependencies]
+rand = "0.5.5"

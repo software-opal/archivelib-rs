@@ -26,7 +26,7 @@ typedef struct RExpandData {
   size_t dat_arr190_len;
   size_t dat_arr240_len;
   size_t dat_arr241_len;
-  size_t dat_arr242_len;
+  size_t compressed_data_buffer242_len;
 
   size_t compressed_data_index;
   int16_t bits_in_buffer172;
