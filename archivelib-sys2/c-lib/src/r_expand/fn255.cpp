@@ -1,7 +1,10 @@
 
+#include "support/expand.hpp"
+
 #include "r_expand.hpp"
 
 void RExpand::fn255() {
+  DE;
   int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
   bits_to_load219 = get_bits(CONST_N143_IS_9);
@@ -50,4 +53,5 @@ void RExpand::fn255() {
     fn258(CONST_N141_IS_511, data->dat_arr180, 12, data->dat_arr240,
           CONST_N148_IS_4096);
   }
+  DE;
 }

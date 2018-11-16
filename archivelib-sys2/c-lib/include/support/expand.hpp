@@ -37,18 +37,12 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
   WRITE_DATA_ARRAY(stream, data, dat_arr241, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, compressed_data_buffer242, uint8_t);          \
                                                                                \
-  stream << "},\n";
+  stream << "}\n";
 
 #define DE                                                                     \
   {                                                                            \
-    DEBUG_FILE_HANDLE(fs, data);                                               \
-    fs << "\n---\n{ \"file\": \"" << __FILE__ << "\", \"line\": " << __LINE__; \
-    fs << ", \"func\": \"" << __func__ << "\", \"now\": " << now;              \
-    fs << ", \"data\": ";                                                      \
-    DEBUG_EXPAND_DATA(fs, data);                                               \
-    fs << "}\n";                                                               \
-    std::cerr << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
-    std::cerr << now << ")\n";                                                 \
+    /*DEBUG_FILE_HANDLE(fs, data);                                             \
+    DEBUG_EXPAND_DATA(fs, data);*/                                             \
   }
 
 #endif

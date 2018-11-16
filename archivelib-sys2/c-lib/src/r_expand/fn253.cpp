@@ -7,8 +7,8 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
   uint16_t _283;
   DE;
   bits_to_load219 = get_bits(_220);
-  DE;
   if (bits_to_load219 == 0) {
+    abort();
     byte_or_run_length203 = get_bits(_220);
     for (run_start226 = 0; run_start226 < _254; run_start226++) {
       data->dat_arr181[run_start226] = 0;
@@ -16,11 +16,9 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
     for (run_start226 = 0; run_start226 < 256; run_start226++) {
       data->dat_arr241[run_start226] = byte_or_run_length203;
     }
-    DE;
   } else {
     run_start226 = 0;
     while (run_start226 < bits_to_load219) {
-      DE;
       byte_or_run_length203 = (int16_t)(data->bits182 >> 13);
       if (byte_or_run_length203 == 7) {
         size_t bytes_read = 3;
@@ -42,14 +40,11 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
           data->dat_arr181[run_start226++] = 0;
         }
       }
-      DE;
     }
-    DE;
     for (; run_start226 < _254; run_start226++) {
       data->dat_arr181[run_start226] = 0;
     }
-    DE;
     fn258(_254, data->dat_arr181, 8, data->dat_arr241, CONST_N149_IS_256);
-    DE;
   }
+  DE;
 }

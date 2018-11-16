@@ -1,5 +1,5 @@
 mod reader;
 mod writer;
 
-pub use self::reader::{ReadError, Reader};
-pub use self::writer::Writer;
+pub use self::reader::{BitwiseRead, BitwiseReader, ReadError};
+pub use self::writer::{BitwiseWrite, BitwiseWriter};

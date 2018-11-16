@@ -27,8 +27,8 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
   WRITE_DATA_HEX(stream, data, bits_buffer_used172);                           \
   WRITE_DATA_HEX(stream, data, dat173);                                        \
   WRITE_DATA_HEX(stream, data, dat174);                                        \
-  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size);                           \
-  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size_bitmask);                 \
+  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size);                    \
+  WRITE_DATA_HEX(stream, data, max_uncompressed_data_size_bitmask);            \
   WRITE_DATA_HEX(stream, data, bits_buffer182);                                \
   WRITE_DATA_HEX(stream, data, dat183_IS_CONST_8162);                          \
   WRITE_DATA_HEX(stream, data, array165_counter);                              \
@@ -38,15 +38,15 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
   WRITE_DATA_ARRAY(stream, data, dat_arr163, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr164, bool);                            \
   WRITE_DATA_ARRAY(stream, data, dat_arr165, uint8_t);                         \
-  WRITE_DATA_ARRAY(stream, data, uncompressed_buffer, uint8_t);                       \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr167, uint16_t);                 \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr177, int16_t);                  \
+  WRITE_DATA_ARRAY(stream, data, uncompressed_buffer, uint8_t);                \
+  WRITE_DATA_ARRAY(stream, data, dat_arr167, uint16_t);                        \
+  WRITE_DATA_ARRAY(stream, data, dat_arr177, int16_t);                         \
   WRITE_DATA_ARRAY(stream, data, buffer, uint8_t);                             \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr180, uint8_t);                  \
+  WRITE_DATA_ARRAY(stream, data, dat_arr180, uint8_t);                         \
   WRITE_DATA_ARRAY(stream, data, dat_arr181, uint8_t);                         \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr189, uint16_t);                 \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr190, uint16_t);                 \
-  WRITE_DATA_SPARSE_ARRAY(stream, data, dat_arr191, uint16_t); \
+  WRITE_DATA_ARRAY(stream, data, dat_arr189, uint16_t);                        \
+  WRITE_DATA_ARRAY(stream, data, dat_arr190, uint16_t);                        \
+  WRITE_DATA_ARRAY(stream, data, dat_arr191, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr192, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr193, uint16_t);                        \
   WRITE_DATA_ARRAY(stream, data, dat_arr194, uint16_t);                        \
@@ -54,5 +54,12 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
   WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor178, uint8_t);              \
   WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor187, uint16_t);             \
   WRITE_DATA_ARRAY_PTR(stream, data, dat_arr_cursor188, uint16_t);             \
-  stream << "},\n";
+  stream << "}\n";
+
+#define DC                                                                     \
+  {                                                                            \
+    /*DEBUG_FILE_HANDLE(fs, data);                                             \
+    DEBUG_COMPRESS_DATA(fs, data);*/                                           \
+  }
+
 #endif

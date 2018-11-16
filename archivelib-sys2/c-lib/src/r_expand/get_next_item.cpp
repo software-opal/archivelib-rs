@@ -14,9 +14,11 @@ uint16_t RExpand::get_next_item() {
     data->items_until_next_header = get_bits(16);
     DE;
     fn253(CONST_N145_IS_19, CONST_N147_IS_5, 3);
-    DE;
+    // {
+    //   DEBUG_FILE_HANDLE(fs, data);
+    //   DEBUG_EXPAND_DATA(fs, data);
+    // }
     fn255();
-    DE;
     fn253(CONST_N142_IS_15, CONST_N540_IS_5, -1);
     DE;
     if (mStatus < 0)

@@ -1,7 +1,10 @@
 
+#include "support/compress.hpp"
+
 #include "r_compress.hpp"
 
 void RCompress::fn228(int32_t _229) {
+  DC;
   int32_t run_start226, _289;
   uint32_t _458;
   for (run_start226 = 0; run_start226 <= 16; run_start226++)
@@ -16,7 +19,8 @@ void RCompress::fn228(int32_t _229) {
     for (run_start226 = 15; run_start226 > 0; run_start226--) {
       if (data->dat_arr167[run_start226] != 0) {
         data->dat_arr167[run_start226]--;
-        data->dat_arr167[run_start226 + 1] = (uint16_t)(data->dat_arr167[run_start226 + 1] + 2);
+        data->dat_arr167[run_start226 + 1] =
+            (uint16_t)(data->dat_arr167[run_start226 + 1] + 2);
         break;
       }
     }
@@ -25,6 +29,8 @@ void RCompress::fn228(int32_t _229) {
   for (run_start226 = 16; run_start226 > 0; run_start226--) {
     _289 = data->dat_arr167[run_start226];
     while (--_289 >= 0)
-      data->dat_arr_cursor178[*data->dat_arr_cursor188++] = (uint8_t)run_start226;
+      data->dat_arr_cursor178[*data->dat_arr_cursor188++] =
+          (uint8_t)run_start226;
   }
+  DC;
 }

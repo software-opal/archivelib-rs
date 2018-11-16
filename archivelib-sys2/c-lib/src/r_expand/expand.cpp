@@ -1,6 +1,8 @@
 
 #include <cassert>
 
+#include "support/expand.hpp"
+
 #include "r_expand.hpp"
 
 int32_t RExpand::Expand() {
@@ -73,6 +75,7 @@ int32_t RExpand::Expand() {
       }
     }
   }
+  DE;
   if (buffer_pos != 0)
     data->output_store->WriteBuffer(l_uncompressed_buffer278, buffer_pos);
 

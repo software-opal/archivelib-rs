@@ -1,5 +1,3 @@
-#include <cstring>
-
 #include "support/expand.hpp"
 
 #include "r_expand.hpp"
@@ -7,6 +5,7 @@
 void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
                     int32_t bit_size261, uint16_t *output_table262,
                     uint16_t max_internal263) {
+  DE;
   AL_ASSERT(max_internal263 == (1 << bit_size261), "");
   uint16_t _277[17], lookup_table287[17], lookup_table288[18], *_204;
   uint32_t i, _289, item209, j, rem_bit_size291, _292, tmp293, _283;
@@ -44,15 +43,12 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
   _292 = arg_arr260_len;
   _283 = 1U << (15 - bit_size261);
 
-  printf("\n");
   for (j = 0; j < arg_arr260_len; j++) {
     item209 = arg_arr260[j];
     if (item209 == 0) {
       continue;
     }
-    printf("%3d: %17s: %d\n", j, "item209", item209);
     tmp293 = lookup_table288[item209] + lookup_table287[item209];
-    printf("     %17s: %#x\n", "tmp293", tmp293);
     if (item209 <= bit_size261) {
       if (tmp293 > max_internal263) {
         mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_2_MSG);
@@ -82,4 +78,5 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
     }
     lookup_table288[item209] = (uint16_t)tmp293;
   }
+  DE;
 }
