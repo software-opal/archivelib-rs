@@ -61,7 +61,7 @@ SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
   if (rc.mStatus < 0)
     return rc.mStatus.copyToSimple();
 
-  rc.Compress();
+  Compress(rc.data);
   if (rc.mStatus < 0)
     return rc.mStatus.copyToSimple();
   else if (input.mStatus < 0)

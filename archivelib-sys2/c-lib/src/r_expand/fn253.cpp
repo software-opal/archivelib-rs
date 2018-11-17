@@ -8,7 +8,6 @@ void RExpand::fn253(int16_t _254, int16_t _220, int16_t _221) {
   DE;
   bits_to_load219 = get_bits(_220);
   if (bits_to_load219 == 0) {
-    abort();
     byte_or_run_length203 = get_bits(_220);
     for (run_start226 = 0; run_start226 < _254; run_start226++) {
       data->dat_arr181[run_start226] = 0;

@@ -4,24 +4,15 @@
 #include "support/debug.h"
 #include "new/compress_struct.h"
 
+RCompressData *clone_compress_data(RCompressData *data);
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
+
 #ifdef NDEBUG
 
-RCompressData *clone_compress_data(RCompressData *data) {
-  if (data)
-    return NULL;
-  else
-    return data;
-}
-bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
-  return old_data == new_data;
-}
 #define DC                                                                     \
   {}
 
 #else
-
-RCompressData *clone_compress_data(RCompressData *data);
-bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
 
 #define COMPRESS_ABORT(data)                                                   \
   std::cerr << __FILE__ << ":" << __LINE__ << "\n";                            \

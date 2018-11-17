@@ -1,4 +1,18 @@
-#ifndef NDEBUG
+#ifdef NDEBUG
+
+#include "support/compress.h"
+
+RCompressData *clone_compress_data(RCompressData *data) {
+  if (data)
+    return NULL;
+  else
+    return data;
+}
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
+  return old_data == new_data;
+}
+
+#else
 
 #include <string>
 #include <iostream>

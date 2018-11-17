@@ -4,24 +4,15 @@
 #include "support/debug.h"
 #include "new/expand_struct.h"
 
+RExpandData *clone_expand_data(RExpandData *data);
+bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
+
 #ifdef NDEBUG
 
-RExpandData *clone_expand_data(RExpandData *data) {
-  if (data)
-    return NULL;
-  else
-    return data;
-}
-bool diff_expand_data(RExpandData *old_data, RExpandData *new_data) {
-  return old_data == new_data;
-}
 #define DE                                                                     \
   {}
 
 #else
-
-RExpandData *clone_expand_data(RExpandData *data);
-bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
 
 #define EXPAND_ABORT(data)                                                     \
   std::cerr << __FILE__ << ":" << __LINE__ << "\n";                            \

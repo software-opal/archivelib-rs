@@ -75,5 +75,9 @@ fn main() {
     };
   }
   c_build.compile("archivelib_c");
-  cpp_build.cpp(true).compile("archivelib");
+  cpp_build
+    .cpp(true)
+    .file("c-lib/api.cpp")
+    .file("c-lib/enum_rev.cpp")
+    .compile("archivelib");
 }

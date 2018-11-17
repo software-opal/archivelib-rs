@@ -3,6 +3,10 @@
 
 #include "new/compress.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void finalise_compresson197(RCompressData *data);
 void fn198(RCompressData *data);
 void fn199(RCompressData *data, int16_t arg200, int16_t arg201);
@@ -25,6 +29,12 @@ void fn228(RCompressData *data, int32_t arg229);
 void fn230(RCompressData *data, int32_t length219, uint8_t *arg209,
            uint16_t *arg231);
 
+bool Compress(RCompressData *data);
+
+#ifdef __cplusplus
+}
+#endif
+
 #if defined(__cplusplus)
 
 class RCompress {
@@ -34,7 +44,6 @@ public:
   RCompress(ALStorage &arg233, ALStorage &arg202,
             ALGreenleafCompressionLevels arg234, bool arg235);
   ~RCompress();
-  bool Compress();
   ALStatus mStatus;
 
 protected:

@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "support/debug.h"
-
+#include "new/cpp_compat.h"
 #include "new/expand.h"
 
 // TODO: Make this it's own struct so that nothing else can deal with the
