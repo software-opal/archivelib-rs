@@ -14,12 +14,12 @@ const int32_t MIN_RUN_LENGTH135_IS_3 = 3;
 const int32_t MAX_COMPRESSION_FACTOR = 14;
 const int32_t MIN_COMPRESSION_FACTOR = 10;
 const int32_t CONST_N140_IS_256 = 256;
-const int32_t CONST_N141_IS_511 =
+const uint32_t CONST_N141_IS_511 =
     (UCHAR_MAX + 1 + CONST_N140_IS_256 - MIN_RUN_LENGTH135_IS_3 + 1 + 1);
-const int32_t CONST_N142_IS_15 = (MAX_COMPRESSION_FACTOR + 1);
+const uint32_t CONST_N142_IS_15 = (MAX_COMPRESSION_FACTOR + 1);
 const int32_t CONST_N143_IS_9 = 9;
 const int32_t END_OF_FILE_FLAG = (CONST_N140_IS_256 + 1);
-const int32_t CONST_N145_IS_19 = (UINT16_BIT + 3);
+const uint32_t CONST_N145_IS_19 = (UINT16_BIT + 3);
 const int32_t CONST_N540_IS_5 = 5;
 const int32_t CONST_N147_IS_5 = 5;
 const int32_t CONST_N148_IS_4096 = 4096;

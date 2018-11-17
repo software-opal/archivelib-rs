@@ -1,6 +1,9 @@
 #ifndef _NEW_CPP_COMPAT_H
 #define _NEW_CPP_COMPAT_H
+
 #include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 #include "stor.h"
 
 #ifndef __cplusplus

@@ -1,3 +1,5 @@
+#ifndef NDEBUG
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -88,3 +90,5 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
   free(old_data);
   return has_changes;
 }
+
+#endif

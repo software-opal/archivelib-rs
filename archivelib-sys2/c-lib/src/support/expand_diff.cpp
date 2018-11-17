@@ -1,3 +1,5 @@
+#ifndef NDEBUG
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -67,3 +69,5 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data) {
   free(old_data);
   return has_changes;
 }
+
+#endif

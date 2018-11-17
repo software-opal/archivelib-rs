@@ -4,8 +4,9 @@ RCompress::RCompress(ALStorage &in_storage, ALStorage &out_storage,
                      ALGreenleafCompressionLevels compression_level,
                      bool fail_uncompressible) {
   data = (RCompressData *)calloc(1, sizeof(RCompressData));
-  ALErrors res = create_compress_data(data, in_storage, out_storage,
-                                      compression_level, fail_uncompressible);
+  ALErrors res = create_compress_data(data, &in_storage, in_storage.GetSize(),
+                                      &out_storage, compression_level,
+                                      fail_uncompressible);
   switch (res) {
   case AL_SUCCESS:
     break;
