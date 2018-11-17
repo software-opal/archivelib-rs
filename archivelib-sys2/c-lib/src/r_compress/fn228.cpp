@@ -1,9 +1,9 @@
 
-#include "support/compress.hpp"
+#include "support/compress.h"
 
 #include "r_compress.hpp"
 
-void RCompress::fn228(int32_t _229) {
+void fn228 (RCompressData *data, int32_t _229) {
   DC;
   int32_t run_start226, _289;
   uint32_t _458;

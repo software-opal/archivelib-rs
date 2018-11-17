@@ -1,9 +1,9 @@
 
-#include "support/compress.hpp"
+#include "support/compress.h"
 
 #include "r_compress.hpp"
 
-void RCompress::fn230(int32_t bits_to_load219, uint8_t *item209,
+void fn230 (RCompressData *data, int32_t bits_to_load219, uint8_t *item209,
                       uint16_t *_231) {
   // Sibling method is fn258
   // Called with:

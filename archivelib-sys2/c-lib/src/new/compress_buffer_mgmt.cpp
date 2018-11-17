@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "new/compress.hpp"
+#include "new/compress.h"
 
 void flush_to_output(RCompressData *data) {
   if (data->buffer_position <= 0) {

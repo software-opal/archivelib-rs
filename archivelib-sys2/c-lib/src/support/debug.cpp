@@ -1,4 +1,4 @@
-#include "support/debug.hpp"
+#include "support/debug.h"
 
 std::string get_as_binary(uintmax_t value, uint8_t max_bits) {
   std::string str;

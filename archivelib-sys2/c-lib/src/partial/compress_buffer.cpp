@@ -1,14 +1,14 @@
 
 #include "r_compress.hpp"
 
-void RCompress::write_stored_bits_to_buffer(int16_t arg203) {
+void write_stored_bits_to_buffer (RCompressData *data, int16_t arg203) {
   /*
    `arg203` appears to be the bits in the file most of the time
    */
-  write_bits_to_buffer(data->dat_arr180[arg203], data->dat_arr192[arg203]);
+  write_bits_to_buffer(data, data->dat_arr180[arg203], data->dat_arr192[arg203]);
 }
 
-void RCompress::write_bits_to_buffer(int32_t bit_count209, uint16_t bits203) {
+void write_bits_to_buffer (RCompressData *data, int32_t bit_count209, uint16_t bits203) {
   /*
 
   `bit_count209`: Number of bits to use from `bits203`
@@ -49,19 +49,19 @@ void RCompress::write_bits_to_buffer(int32_t bit_count209, uint16_t bits203) {
   }
 }
 
-void RCompress::finalise_compresson197() {
+void finalise_compresson197 (RCompressData *data) {
   if (!data->uncompressible)
-    fn207();
-  finalize_buffer206();
+    fn207(data);
+  finalize_buffer206(data);
   data->dat183_IS_CONST_8162 = 0;
   data->array165_counter = 0;
 }
 
-void RCompress::finalize_buffer206() {
+void finalize_buffer206 (RCompressData *data) {
   if (!data->uncompressible) {
     // Write enough bits to clear out any that have been set, without writing a
     // whole new byte if if no bits need clearing
-    write_bits_to_buffer(CHAR_BIT - 1, 0);
+    write_bits_to_buffer(data, CHAR_BIT - 1, 0);
     if (data->buffer_position) {
       // Flush the data that is waiting
       flush_to_output(data);

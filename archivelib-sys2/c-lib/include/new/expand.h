@@ -1,10 +1,9 @@
 #ifndef NEW__EXPAND_HPP
 #define NEW__EXPAND_HPP
 
-#include "new/const.hpp"
-#include "new/expand_struct.hpp"
+#include "new/const.h"
+#include "new/expand_struct.h"
 #include "aldefs.h"
-// #include "support/expand.hpp"
 
 ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
                             ALStorage &out_storage, ssize_t in_length,

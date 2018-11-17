@@ -1,8 +1,8 @@
 #include <cassert>
 
-#include "support/debug.hpp"
+#include "support/debug.h"
 
-#include "new/expand.hpp"
+#include "new/expand.h"
 
 // TODO: Make this it's own struct so that nothing else can deal with the
 // internals.

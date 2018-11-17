@@ -1,4 +1,4 @@
-#include "new/expand.hpp"
+#include "new/expand.h"
 #include "r_expand.hpp"
 
 void RExpand::read_bits(int32_t bits_to_load219) {

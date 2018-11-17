@@ -1,14 +1,14 @@
 
-#include "support/compress.hpp"
+#include "support/compress.h"
 
 #include "r_compress.hpp"
 
-void RCompress::fn202(uint16_t byte_or_run_length203, uint16_t _204) {
+void fn202 (RCompressData *data, uint16_t byte_or_run_length203, uint16_t _204) {
   DC;
   if ((data->bitwise_counter185 >>= 1) == 0) {
     data->bitwise_counter185 = 1U << (CHAR_BIT - 1);
     if (data->array165_counter >= data->dat183_IS_CONST_8162) {
-      fn207();
+      fn207(data);
       if (data->uncompressible)
         return;
       data->array165_counter = 0;

@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "new/expand.hpp"
+#include "new/expand.h"
 
 ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
                             ALStorage &out_storage, ssize_t in_length,

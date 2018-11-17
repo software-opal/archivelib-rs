@@ -6,6 +6,8 @@ regexes:
     replace: 'fn$1('
   - find: '_(16[123456789]|17[0123456789]|18[0123456789]|19[01234]|53[134])'
 
+  - find: 'RCompress::(finalise_compresson197|fn198|fn199|fn202|finalize_buffer206|fn207|write_bits_to_buffer|fn211|fn216|fn218|fn222|write_stored_bits_to_buffer|fn224|fn225|fn228|fn230)\('
+
 types:
   'short': 'int16_t'
   'ushort': 'uint16_t'

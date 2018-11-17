@@ -1,3 +1,6 @@
 [submodule "corrode"]
 	path = corrode
 	url = https://github.com/jameysharp/corrode.git
+[submodule "c2rust"]
+	path = c2rust
+	url = https://github.com/immunant/c2rust.git

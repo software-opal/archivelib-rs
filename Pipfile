@@ -4,8 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyyaml = "*"
 attrs = "*"
+cbor = "*"
+colorlog = "*"
+plumbum = ">=1.6.3"
+psutil = "*"
+typing = "*"
+PyYAML = "*"
+Mako = "*"
 
 [dev-packages]
 

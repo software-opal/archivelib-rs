@@ -3,9 +3,9 @@
 #include <sstream>
 #include <string.h>
 
-#include "support/compress.hpp"
-#include "support/debug.hpp"
-#include "new/compress.hpp"
+#include "support/compress.h"
+#include "support/debug.h"
+#include "new/compress.h"
 
 #define DO_CLONE(new_data, old_data, member, type)                             \
   new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \

@@ -1,7 +1,7 @@
 #ifndef R_EXPAND_HPP
 #define R_EXPAND_HPP
 
-#include "new/expand.hpp"
+#include "new/expand.h"
 
 #include "aldefs.h"
 #include <climits>

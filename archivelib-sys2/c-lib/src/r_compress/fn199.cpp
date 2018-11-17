@@ -1,7 +1,7 @@
 
 #include "r_compress.hpp"
 
-void RCompress::fn199(int16_t uncompressed_buffer_index200, int16_t _201) {
+void fn199 (RCompressData *data, int16_t uncompressed_buffer_index200, int16_t _201) {
   uint8_t *_451;
   uint8_t *l_uncompressed_buffer278;
   int16_t run_start226, _452, _204, _453;

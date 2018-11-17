@@ -1,9 +1,9 @@
 #ifndef NEW__COMPRESS_HPP
 #define NEW__COMPRESS_HPP
 
-#include "new/const.hpp"
-#include "new/compress_struct.hpp"
-#include "support/compress.hpp"
+#include "new/const.h"
+#include "new/compress_struct.h"
+#include "support/compress.h"
 #include "aldefs.h"
 
 ALErrors create_compress_data(RCompressData *data, ALStorage &in_storage,

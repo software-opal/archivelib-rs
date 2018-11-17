@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "new/compress.hpp"
+#include "new/compress.h"
 
 void calculate_pointer_depths(uint16_t *left_array_ptr,
                               uint16_t *right_array_ptr,

@@ -1,9 +1,9 @@
 
-#include "support/compress.hpp"
+#include "support/compress.h"
 
 #include "r_compress.hpp"
 
-void RCompress::fn216(uint16_t *_217) {
+void fn216 (RCompressData *data, uint16_t *_217) {
   DC;
   int16_t run_start226, _289, bits_to_load219, _277;
   for (run_start226 = 0; run_start226 < CONST_N145_IS_19; run_start226++)

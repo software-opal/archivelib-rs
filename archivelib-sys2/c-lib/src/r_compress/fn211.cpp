@@ -1,9 +1,9 @@
 
-#include "support/compress.hpp"
+#include "support/compress.h"
 
 #include "r_compress.hpp"
 
-int32_t RCompress::fn211(int32_t _212, uint16_t *_213, uint8_t *_214,
+int32_t fn211 (RCompressData *data, int32_t _212, uint16_t *_213, uint8_t *_214,
                          uint16_t *_215) {
   DC;
   int32_t run_start226, run_length276, _289, _292;
@@ -24,14 +24,14 @@ int32_t RCompress::fn211(int32_t _212, uint16_t *_213, uint8_t *_214,
     return data->dat_arr177[1];
   }
   for (run_start226 = _227 / 2; run_start226 >= 1; run_start226--)
-    fn225(run_start226, data->dat_arr_cursor187, data->dat_arr177, _227);
+    fn225(data, run_start226, data->dat_arr_cursor187, data->dat_arr177, _227);
   data->dat_arr_cursor188 = _215;
   do {
     run_start226 = data->dat_arr177[1];
     if (run_start226 < data->dat174)
       *data->dat_arr_cursor188++ = (uint16_t)run_start226;
     data->dat_arr177[1] = data->dat_arr177[_227--];
-    fn225(1, data->dat_arr_cursor187, data->dat_arr177, _227);
+    fn225(data, 1, data->dat_arr_cursor187, data->dat_arr177, _227);
     run_length276 = data->dat_arr177[1];
     if (run_length276 < data->dat174)
       *data->dat_arr_cursor188++ = (uint16_t)run_length276;
@@ -40,13 +40,13 @@ int32_t RCompress::fn211(int32_t _212, uint16_t *_213, uint8_t *_214,
         (uint16_t)(data->dat_arr_cursor187[run_start226] +
                    data->dat_arr_cursor187[run_length276]);
     data->dat_arr177[1] = (int16_t)_289;
-    fn225(1, data->dat_arr_cursor187, data->dat_arr177, _227);
+    fn225(data, 1, data->dat_arr_cursor187, data->dat_arr177, _227);
     data->dat_arr189[_289] = (uint16_t)run_start226;
     data->dat_arr190[_289] = (uint16_t)run_length276;
   } while (_227 > 1);
   data->dat_arr_cursor188 = _215;
-  fn228(_289);
-  fn230(_212, _214, _215);
+  fn228(data, _289);
+  fn230(data, _212, _214, _215);
   return _289;
   DC;
 }

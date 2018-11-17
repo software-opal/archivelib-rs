@@ -1,8 +1,8 @@
 #ifndef SUPPORT__COMPRESS_HPP
 #define SUPPORT__COMPRESS_HPP
 
-#include "support/debug.hpp"
-#include "new/compress_struct.hpp"
+#include "support/debug.h"
+#include "new/compress_struct.h"
 
 RCompressData *clone_compress_data(RCompressData *data);
 bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);

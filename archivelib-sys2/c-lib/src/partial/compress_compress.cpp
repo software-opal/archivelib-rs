@@ -21,7 +21,7 @@ void fn448(int16_t *arg163, int16_t *arg164, int16_t s) {
   }
 }
 
-bool RCompress::Compress() {
+bool Compress(RCompressData *data) {
   int16_t _209;
   int16_t _201;
   int16_t buffer_pos;
@@ -45,16 +45,16 @@ bool RCompress::Compress() {
       (CONST_N153_IS_4096 - 1));
   _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
   while (_209 > CONST_N140_IS_256 + 4 && !data->uncompressible) {
-    fn199(buffer_pos, _201);
+    fn199(data, buffer_pos, _201);
     if (data->dat168 < MIN_RUN_LENGTH135_IS_3) {
-      fn202(l_uncompressed_buffer278[buffer_pos], 0);
+      fn202(data, l_uncompressed_buffer278[buffer_pos], 0);
       fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
       buffer_pos++;
       _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
       _209--;
     } else {
       _209 -= data->dat168;
-      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
+      fn202(data, (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
             data->dat169);
       while (--data->dat168 >= 0) {
         fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
@@ -74,14 +74,14 @@ bool RCompress::Compress() {
     s = (int16_t)((s + 1) & (size_bitmask280));
   }
   while (_209 > 0 && !data->uncompressible) {
-    fn199(buffer_pos, _201);
+    fn199(data, buffer_pos, _201);
     if (data->dat168 > _209)
       data->dat168 = _209;
     if (data->dat168 < MIN_RUN_LENGTH135_IS_3) {
       data->dat168 = 1;
-      fn202(l_uncompressed_buffer278[buffer_pos], 0);
+      fn202(data, l_uncompressed_buffer278[buffer_pos], 0);
     } else
-      fn202((uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
+      fn202(data, (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
             data->dat169);
     while (--data->dat168 >= 0) {
       int byte_or_run_length203 = data->input_store->ReadChar();
@@ -107,8 +107,8 @@ bool RCompress::Compress() {
       return 1;
   }
   if (!data->uncompressible)
-    fn202(END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3), 0);
-  finalise_compresson197();
+    fn202(data, END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3), 0);
+  finalise_compresson197(data);
   if (data->uncompressible)
     _231 = 1;
   return _231;

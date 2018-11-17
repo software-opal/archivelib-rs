@@ -1,7 +1,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "new/compress.hpp"
+#include "new/compress.h"
 
 ALErrors
 create_compress_data(RCompressData *data, ALStorage &in_storage,

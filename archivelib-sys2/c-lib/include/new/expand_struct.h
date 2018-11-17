@@ -4,7 +4,7 @@
 #include <climits>
 #include "stor.h"
 
-typedef uint8_t uint8_t;
+// typedef uint8_t uint8_t;
 
 typedef struct RExpandData {
   ALStorage *input_store;
