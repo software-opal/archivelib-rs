@@ -1,8 +1,11 @@
 #ifndef NEW__COMPRESS_DATA_HPP
 #define NEW__COMPRESS_DATA_HPP
 
-#include <climits>
-#include "stor.h"
+#include "new/cpp_compat.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct RCompressData {
   ALStorage *input_store;
@@ -63,5 +66,9 @@ typedef struct RCompressData {
   uint16_t bitwise_counter185;
   uint16_t array165_tmp_counter186;
 } RCompressData;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,5 +1,5 @@
 
-#include <cassert>
+#include <assert.h>
 
 #include "support/expand.h"
 

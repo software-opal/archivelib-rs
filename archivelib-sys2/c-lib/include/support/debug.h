@@ -1,9 +1,12 @@
 #ifndef SUPPORT__DEBUG_HPP
 #define SUPPORT__DEBUG_HPP
 
-#include <cstdio>
-#include <cstring>
-#include <ctime>
+#ifdef NDEBUG
+
+#else
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -26,11 +29,11 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     filename << "-" << (intptr_t)(uniq) << ".json";                            \
     UNSET_HEX(filename);                                                       \
     fh.open(filename.str(), std::ofstream::out | std::ofstream::app);          \
-    \
-    fs << "\n---\n\"file\": \"" << __FILE__ << "\"\n\"line\": " << __LINE__; \
+                                                                               \
+    fs << "\n---\n\"file\": \"" << __FILE__ << "\"\n\"line\": " << __LINE__;   \
     fs << "\n\"func\": \"" << __func__ << "\"\n\"now\": " << now;              \
     fs << "\n\"data\": ";                                                      \
-    \
+                                                                               \
     std::cerr << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
     std::cerr << now << ")\n";                                                 \
   } while (0);
@@ -236,4 +239,5 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     }                                                                          \
   }
 
+#endif
 #endif

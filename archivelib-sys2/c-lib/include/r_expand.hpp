@@ -4,7 +4,7 @@
 #include "new/expand.h"
 
 #include "aldefs.h"
-#include <climits>
+#include <limits.h>
 #include "stor.h"
 
 #ifdef __cplusplus

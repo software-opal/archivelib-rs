@@ -54,17 +54,26 @@ fn main() {
   let mut files = find_sources(PathBuf::from("c-lib/src/"));
   files.sort();
 
-  cc::Build::new()
-    .cpp(true) // Switch to C++ library compilation.
+  let mut base = cc::Build::new();
+  base
     .warnings(true)
     .define("AL_CUSTOM", None)
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)
     .define("AL_DISABLE_NEW", None)
+    .define("NDEBUG", None)
     .include("c-lib/")
-    .include("c-lib/include")
-    .file("c-lib/api.cpp")
-    .file("c-lib/enum_rev.cpp")
-    .files(files)
-    .compile("libarchivelib.a");
+    .include("c-lib/include");
+  let mut c_build = base.clone();
+  let mut cpp_build = base.clone();
+
+  for file in files {
+    match file.extension().unwrap().to_str().unwrap() {
+      "c" => c_build.file(file),
+      "cpp" => cpp_build.file(file),
+      _ => unreachable!(),
+    };
+  }
+  c_build.compile("archivelib_c");
+  cpp_build.cpp(true).compile("archivelib");
 }

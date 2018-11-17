@@ -1,12 +1,13 @@
-#include <cstring>
+#include <string.h>
+#include <stdlib.h>
 
 #include "new/expand.h"
 
-ALErrors create_expand_data(RExpandData *data, ALStorage &in_storage,
-                            ALStorage &out_storage, ssize_t in_length,
+ALErrors create_expand_data(RExpandData *data, ALStorage *in_storage,
+                            ALStorage *out_storage, ssize_t in_length,
                             int compression_level) {
-  data->input_store = &in_storage;
-  data->output_store = &out_storage;
+  data->input_store = in_storage;
+  data->output_store = out_storage;
   data->compressed_data_length248 = in_length;
   if (compression_level > MAX_COMPRESSION_FACTOR ||
       compression_level < MIN_COMPRESSION_FACTOR) {

@@ -1,7 +1,9 @@
 #ifndef _STOR_H
 #define _STOR_H
 
-#if defined(__cplusplus)
+#ifndef __cplusplus
+typedef void ALStorage;
+#else
 
 #include <stdint.h>
 #include "status.h"

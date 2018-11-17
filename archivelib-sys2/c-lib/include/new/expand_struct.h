@@ -1,10 +1,11 @@
 #ifndef NEW__EXPAND_DATA_HPP
 #define NEW__EXPAND_DATA_HPP
 
-#include <climits>
-#include "stor.h"
+#include "new/cpp_compat.h"
 
-// typedef uint8_t uint8_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct RExpandData {
   ALStorage *input_store;
@@ -39,5 +40,9 @@ typedef struct RExpandData {
   int16_t loaded_compressed_data_length246;
   ssize_t compressed_data_length248;
 } RExpandData;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

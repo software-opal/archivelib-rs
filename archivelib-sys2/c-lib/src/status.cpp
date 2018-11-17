@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <cstring>
+#include <string.h>
 
 //
 //  ALStatus::ALStatus()

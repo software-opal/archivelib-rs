@@ -3,7 +3,7 @@
 #include "memstore.h"
 
 #include <stdlib.h>
-#include <cstring>
+#include <string.h>
 #include <iostream>
 
 //

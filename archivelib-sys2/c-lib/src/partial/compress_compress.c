@@ -36,35 +36,40 @@ bool Compress(RCompressData *data) {
   _231 = 0;
   reset_compress_data(data);
   buffer_pos = 0;
-  _209 = (int16_t)data->input_store->ReadBuffer(l_uncompressed_buffer278, max_size279);
+  _209 = (int16_t)ALStorage_ReadBuffer(data->input_store,
+                                       l_uncompressed_buffer278, max_size279);
   s = (int16_t)(_209 & size_bitmask280);
   data->dat169 = 0;
   data->dat168 = 0;
-  _201 = (int16_t)(
-      ((l_uncompressed_buffer278[buffer_pos] << CONST_N154_IS_4) ^ (l_uncompressed_buffer278[buffer_pos + 1])) &
-      (CONST_N153_IS_4096 - 1));
-  _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
+  _201 = (int16_t)(((l_uncompressed_buffer278[buffer_pos] << CONST_N154_IS_4) ^
+                    (l_uncompressed_buffer278[buffer_pos + 1])) &
+                   (CONST_N153_IS_4096 - 1));
+  _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
+                   max_size279);
   while (_209 > CONST_N140_IS_256 + 4 && !data->uncompressible) {
     fn199(data, buffer_pos, _201);
     if (data->dat168 < MIN_RUN_LENGTH135_IS_3) {
       fn202(data, l_uncompressed_buffer278[buffer_pos], 0);
       fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
       buffer_pos++;
-      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
+      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
+                       max_size279);
       _209--;
     } else {
       _209 -= data->dat168;
-      fn202(data, (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
+      fn202(data,
+            (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
             data->dat169);
       while (--data->dat168 >= 0) {
         fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
         buffer_pos++;
-        _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
+        _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
+                         max_size279);
       }
     }
   }
   for (; _209 < CONST_N140_IS_256; _209++) {
-    int byte_or_run_length203 = data->input_store->ReadChar();
+    int byte_or_run_length203 = ALStorage_ReadChar(data->input_store);
     if (byte_or_run_length203 < 0)
       break;
     l_uncompressed_buffer278[s] = (unsigned char)byte_or_run_length203;
@@ -81,10 +86,11 @@ bool Compress(RCompressData *data) {
       data->dat168 = 1;
       fn202(data, l_uncompressed_buffer278[buffer_pos], 0);
     } else
-      fn202(data, (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
+      fn202(data,
+            (uint16_t)(data->dat168 + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)),
             data->dat169);
     while (--data->dat168 >= 0) {
-      int byte_or_run_length203 = data->input_store->ReadChar();
+      int byte_or_run_length203 = ALStorage_ReadChar(data->input_store);
       if (byte_or_run_length203 < 0)
         break;
       else
@@ -95,15 +101,17 @@ bool Compress(RCompressData *data) {
       s = (int16_t)((s + 1) & (size_bitmask280));
       fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
       buffer_pos = (int16_t)((buffer_pos + 1) & (size_bitmask280));
-      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
+      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
+                       max_size279);
     }
     while (data->dat168-- >= 0) {
       fn447(data->dat_arr163, data->dat_arr164, buffer_pos, _201);
       buffer_pos = (int16_t)((buffer_pos + 1) & size_bitmask280);
-      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) + max_size279);
+      _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
+                       max_size279);
       _209--;
     }
-    if (data->output_store->mStatus < 0)
+    if (ALStorage_mStatus(data->output_store) < 0)
       return 1;
   }
   if (!data->uncompressible)

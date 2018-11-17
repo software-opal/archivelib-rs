@@ -1,4 +1,4 @@
-#include <cassert>
+#include <assert.h>
 
 #include "support/debug.h"
 
@@ -25,13 +25,14 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
       data->compressed_data_index = 0;
       if (data->compressed_data_length248 >= 0 &&
           data->compressed_data_length248 < BUFFER_SIZE) {
-        data->loaded_compressed_data_length246 = data->input_store->ReadBuffer(
-            data->compressed_data_buffer242, data->compressed_data_length248);
+        data->loaded_compressed_data_length246 = ALStorage_ReadBuffer(
+            data->input_store, data->compressed_data_buffer242,
+            data->compressed_data_length248);
         data->compressed_data_length248 -=
             data->loaded_compressed_data_length246;
       } else {
-        data->loaded_compressed_data_length246 = data->input_store->ReadBuffer(
-            data->compressed_data_buffer242, BUFFER_SIZE);
+        data->loaded_compressed_data_length246 = ALStorage_ReadBuffer(
+            data->input_store, data->compressed_data_buffer242, BUFFER_SIZE);
       }
       if (data->loaded_compressed_data_length246 <= 0)
         data->error_counter243++;
@@ -56,6 +57,5 @@ uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
   assert(bits_to_load219 <= 16);
   bits = (uint16_t)(data->bits182 >> (2 * CHAR_BIT - bits_to_load219));
   expand_read_bits(data, bits_to_load219);
-  std::cerr << " :" << get_as_binary(bits, bits_to_load219) << ": ";
   return bits;
 }

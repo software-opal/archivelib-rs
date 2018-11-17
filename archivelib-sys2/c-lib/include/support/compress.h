@@ -4,6 +4,22 @@
 #include "support/debug.h"
 #include "new/compress_struct.h"
 
+#ifdef NDEBUG
+
+RCompressData *clone_compress_data(RCompressData *data) {
+  if (data)
+    return NULL;
+  else
+    return data;
+}
+bool diff_compress_data(RCompressData *old_data, RCompressData *new_data) {
+  return old_data == new_data;
+}
+#define DC                                                                     \
+  {}
+
+#else
+
 RCompressData *clone_compress_data(RCompressData *data);
 bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
 
@@ -62,4 +78,5 @@ bool diff_compress_data(RCompressData *old_data, RCompressData *new_data);
     DEBUG_COMPRESS_DATA(fs, data);*/                                           \
   }
 
+#endif
 #endif
