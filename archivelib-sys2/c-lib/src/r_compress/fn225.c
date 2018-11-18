@@ -3,8 +3,8 @@
 
 #include "r_compress.hpp"
 
-void fn225 (RCompressData *data, int32_t run_start226, ushort *_187, short *_177,
-                      short _227) {
+void fn225(RCompressData *data, int32_t run_start226, uint16_t *_187,
+           int16_t *_177, int16_t _227) {
   DC;
   int32_t run_length276, _289;
   _289 = _177[run_start226];
@@ -17,6 +17,6 @@ void fn225 (RCompressData *data, int32_t run_start226, ushort *_187, short *_177
     _177[run_start226] = _177[run_length276];
     run_start226 = run_length276;
   }
-  _177[run_start226] = (ushort)_289;
+  _177[run_start226] = (uint16_t)_289;
   DC;
 }

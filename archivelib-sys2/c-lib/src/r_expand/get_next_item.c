@@ -5,19 +5,19 @@
 
 #include "r_expand.hpp"
 
-uint16_t RExpand::get_next_item() {
+uint16_t get_next_item(RExpandData *data) {
   uint16_t run_length276, _283;
   if (data->items_until_next_header == 0) {
     // This is the first 2 bytes in the file, and it represents the number of
     // calls that this header can handle. It's not exactly the number of bytes
     // because we read a variable number of bits per call.
-    data->items_until_next_header = get_bits(16);
+    data->items_until_next_header = get_bits(data, 16);
     DE;
-    fn253(CONST_N145_IS_19, CONST_N147_IS_5, 3);
-    fn255();
-    fn253(CONST_N142_IS_15, CONST_N540_IS_5, -1);
+    fn253(data, CONST_N145_IS_19, CONST_N147_IS_5, 3);
+    fn255(data);
+    fn253(data, CONST_N142_IS_15, CONST_N540_IS_5, -1);
     DE;
-    if (mStatus < 0)
+    if (data->error)
       return 0;
   }
   data->items_until_next_header--;
@@ -35,8 +35,7 @@ uint16_t RExpand::get_next_item() {
         run_length276 = data->dat_arr189[run_length276];
       _283 >>= 1;
     } while (run_length276 >= CONST_N141_IS_511);
-    abort();
   }
-  read_bits(data->dat_arr180[run_length276]);
+  read_bits(data, data->dat_arr180[run_length276]);
   return run_length276;
 }

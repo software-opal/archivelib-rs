@@ -7,14 +7,15 @@ extern crate rand;
 
 mod consts;
 mod expand;
-mod lookup_table;
 pub mod support;
 
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   unimplemented!();
 }
 
-pub use expand::do_decompress;
+pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
+  unimplemented!();
+}
 
 #[cfg(test)]
 mod test;

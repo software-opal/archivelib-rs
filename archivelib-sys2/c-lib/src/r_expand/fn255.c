@@ -3,13 +3,13 @@
 
 #include "r_expand.hpp"
 
-void RExpand::fn255() {
+void fn255(RExpandData *data) {
   DE;
   int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
-  bits_to_load219 = get_bits(CONST_N143_IS_9);
+  bits_to_load219 = get_bits(data, CONST_N143_IS_9);
   if (bits_to_load219 == 0) {
-    byte_or_run_length203 = get_bits(CONST_N143_IS_9);
+    byte_or_run_length203 = get_bits(data, CONST_N143_IS_9);
     for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++) {
       data->dat_arr180[run_start226] = 0;
     }
@@ -31,14 +31,15 @@ void RExpand::fn255() {
           _283 >>= 1;
         } while (byte_or_run_length203 >= CONST_N145_IS_19);
       }
-      read_bits(data->dat_arr181[byte_or_run_length203]);
+      read_bits(data, data->dat_arr181[byte_or_run_length203]);
       if (byte_or_run_length203 <= 2) {
         if (byte_or_run_length203 == 0) {
           byte_or_run_length203 = 1;
         } else if (byte_or_run_length203 == 1) {
-          byte_or_run_length203 = (int16_t)(get_bits(4) + 3);
+          byte_or_run_length203 = (int16_t)(get_bits(data, 4) + 3);
         } else {
-          byte_or_run_length203 = (int16_t)(get_bits(CONST_N143_IS_9) + 20);
+          byte_or_run_length203 =
+              (int16_t)(get_bits(data, CONST_N143_IS_9) + 20);
         }
         while (--byte_or_run_length203 >= 0) {
           data->dat_arr180[run_start226++] = 0;
@@ -50,7 +51,7 @@ void RExpand::fn255() {
     while (run_start226 < CONST_N141_IS_511) {
       data->dat_arr180[run_start226++] = 0;
     }
-    fn258(CONST_N141_IS_511, data->dat_arr180, 12, data->dat_arr240,
+    fn258(data, CONST_N141_IS_511, data->dat_arr180, 12, data->dat_arr240,
           CONST_N148_IS_4096);
   }
   DE;

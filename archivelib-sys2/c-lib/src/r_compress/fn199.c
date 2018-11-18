@@ -21,7 +21,7 @@ void fn199 (RCompressData *data, int16_t uncompressed_buffer_index200, int16_t _
       continue;
     if (_451[2] != l_uncompressed_buffer278[2])
       continue;
-    for (run_start226 = 3; run_start226 < CONST_N140_IS_256; run_start226++)
+    for (run_start226 = 3; run_start226 < MAX_RUN_LENGTH140; run_start226++)
       if (_451[run_start226] != l_uncompressed_buffer278[run_start226])
         break;
     if (run_start226 > data->dat168) {
@@ -32,7 +32,7 @@ void fn199 (RCompressData *data, int16_t uncompressed_buffer_index200, int16_t _
         break;
       }
       data->dat169 = _453;
-      if ((data->dat168 = run_start226) >= CONST_N140_IS_256)
+      if ((data->dat168 = run_start226) >= MAX_RUN_LENGTH140)
         break;
     }
   }

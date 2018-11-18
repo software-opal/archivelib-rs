@@ -29,7 +29,7 @@ create_compress_data(RCompressData *data, ALStorage *in_storage,
   data->dat_arr165_len = CONST_N155_IS_8192;
   data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->uncompressed_buffer_len =
-      data->max_uncompressed_data_size + CONST_N140_IS_256 + 2;
+      data->max_uncompressed_data_size + MAX_RUN_LENGTH140 + 2;
   data->uncompressed_buffer =
       (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(uint8_t));
   data->dat_arr167_len = 17;

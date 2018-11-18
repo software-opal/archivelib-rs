@@ -127,7 +127,7 @@ SimpleStatus al_decompress(ALGreenleafCompressionLevels compression_level,
 
   if (re.mStatus < 0)
     return re.mStatus.copyToSimple();
-  re.Expand();
+  Expand(re.data);
   if (re.mStatus < 0)
     return re.mStatus.copyToSimple();
   else if (input.mStatus < 0)

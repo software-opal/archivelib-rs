@@ -8,10 +8,14 @@
 
 #ifndef __cplusplus
 typedef void ALStorage;
+typedef void ALStatus;
 typedef enum ALErrors ALErrors;
 typedef enum ALGreenleafCompressionLevels ALGreenleafCompressionLevels;
 typedef ptrdiff_t ssize_t;
+
 typedef int8_t bool;
+#define false 0
+#define true !0
 #endif
 
 #ifdef __cplusplus
@@ -23,6 +27,8 @@ size_t ALStorage_WriteBuffer(ALStorage *storage, uint8_t *buffer,
                              size_t length);
 int16_t ALStorage_ReadChar(ALStorage *storage);
 int16_t ALStorage_mStatus(ALStorage *storage);
+
+int ALStatus_SetError(ALStatus *storage, int error, const char *fmt);
 
 #ifdef __cplusplus
 }

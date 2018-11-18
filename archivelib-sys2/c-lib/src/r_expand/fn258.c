@@ -2,11 +2,11 @@
 
 #include "r_expand.hpp"
 
-void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
-                    int32_t bit_size261, uint16_t *output_table262,
-                    uint16_t max_internal263) {
+void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
+           int32_t bit_size261, uint16_t *output_table262,
+           uint16_t max_internal263) {
   DE;
-  AL_ASSERT(max_internal263 == (1 << bit_size261), "");
+  // AL_ASSERT(max_internal263 == (1 << bit_size261), "");
   uint16_t _277[17], lookup_table287[17], lookup_table288[18], *_204;
   uint32_t i, _289, item209, j, rem_bit_size291, _292, tmp293, _283;
 
@@ -22,7 +22,8 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
     lookup_table288[i + 1] = lookup_table288[i] + (_277[i] << (16 - i));
   }
   if (lookup_table288[17] != 0) {
-    mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
+    data->error = AL_INTERNAL_ERROR;
+    // mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
     data->error_counter243 = 10;
     return;
   }
@@ -51,14 +52,13 @@ void RExpand::fn258(int32_t arg_arr260_len, uint8_t *arg_arr260,
     tmp293 = lookup_table288[item209] + lookup_table287[item209];
     if (item209 <= bit_size261) {
       if (tmp293 > max_internal263) {
-        mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_2_MSG);
+        data->error = AL_INTERNAL_ERROR;
         data->error_counter243 = 10;
         return;
       }
       for (i = lookup_table288[item209]; i < tmp293; i++)
         output_table262[i] = (uint16_t)j;
     } else {
-      abort();
       _289 = lookup_table288[item209];
       _204 = &output_table262[_289 >> rem_bit_size291];
       i = item209 - bit_size261;

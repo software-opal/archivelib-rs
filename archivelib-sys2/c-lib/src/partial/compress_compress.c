@@ -46,7 +46,7 @@ bool Compress(RCompressData *data) {
                    (CONST_N153_IS_4096 - 1));
   _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
                    max_size279);
-  while (_209 > CONST_N140_IS_256 + 4 && !data->uncompressible) {
+  while (_209 > MAX_RUN_LENGTH140 + 4 && !data->uncompressible) {
     fn199(data, buffer_pos, _201);
     if (data->dat168 < MIN_RUN_LENGTH135_IS_3) {
       fn202(data, l_uncompressed_buffer278[buffer_pos], 0);
@@ -68,12 +68,12 @@ bool Compress(RCompressData *data) {
       }
     }
   }
-  for (; _209 < CONST_N140_IS_256; _209++) {
+  for (; _209 < MAX_RUN_LENGTH140; _209++) {
     int byte_or_run_length203 = ALStorage_ReadChar(data->input_store);
     if (byte_or_run_length203 < 0)
       break;
     l_uncompressed_buffer278[s] = (unsigned char)byte_or_run_length203;
-    if (s < CONST_N140_IS_256 - 1)
+    if (s < MAX_RUN_LENGTH140 - 1)
       l_uncompressed_buffer278[s + max_size279] = l_uncompressed_buffer278[s];
     fn448(data->dat_arr163, data->dat_arr164, s);
     s = (int16_t)((s + 1) & (size_bitmask280));
@@ -95,7 +95,7 @@ bool Compress(RCompressData *data) {
         break;
       else
         l_uncompressed_buffer278[s] = (unsigned char)byte_or_run_length203;
-      if (s < CONST_N140_IS_256 - 1)
+      if (s < MAX_RUN_LENGTH140 - 1)
         l_uncompressed_buffer278[s + max_size279] = l_uncompressed_buffer278[s];
       fn448(data->dat_arr163, data->dat_arr164, s);
       s = (int16_t)((s + 1) & (size_bitmask280));

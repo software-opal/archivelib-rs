@@ -11,6 +11,8 @@ typedef struct RExpandData {
   ALStorage *input_store;
   ALStorage *output_store;
 
+  int32_t error;
+
   uint8_t *uncompressed_buffer;
   uint8_t *dat_arr180;
   uint8_t *dat_arr181;

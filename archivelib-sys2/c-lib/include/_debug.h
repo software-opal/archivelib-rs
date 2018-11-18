@@ -5,7 +5,7 @@
  * AL_ASSERT_OBJECT() when their assertion fails.
  */
 void _ALAssertFailure(const char *condition, const char *filename, int line,
-                      const char *message, ...);
+                      const char *message);
 #ifdef NDEBUG
 /*
  * In the non-debug versions, both of these macros basically go away.

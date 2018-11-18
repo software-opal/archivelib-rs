@@ -5,7 +5,7 @@
 
 #include "r_expand.hpp"
 
-int32_t RExpand::Expand() {
+int32_t Expand(RExpandData *data) {
   int16_t run_start226;
   int16_t run_length276;
   int16_t byte_or_run_length203;
@@ -27,18 +27,18 @@ int32_t RExpand::Expand() {
   buffer_pos = 0;
 
   // Seed bits182 with the first 2 bits
-  read_bits(2 * CHAR_BIT);
+  read_bits(data, 2 * CHAR_BIT);
 
   while (data->error_counter243 < 5) {
-    byte_or_run_length203 = get_next_item();
+    byte_or_run_length203 = get_next_item(data);
     assert(byte_or_run_length203 <= 0x1FE);
     if (byte_or_run_length203 <= UCHAR_MAX) {
       // byte_or_run_length203 is the decompressed byte
       l_uncompressed_buffer278[buffer_pos] = (uint8_t)byte_or_run_length203;
       if (++buffer_pos >= max_size279) {
         buffer_pos = 0;
-        if (data->output_store->WriteBuffer(l_uncompressed_buffer278,
-                                            max_size279) != max_size279)
+        if (ALStorage_WriteBuffer(data->output_store, l_uncompressed_buffer278,
+                                  max_size279) != max_size279)
           return false;
       }
     } else {
@@ -53,9 +53,9 @@ int32_t RExpand::Expand() {
         break;
       }
       run_start226 =
-          (buffer_pos - calculate_run_offset() - 1) & size_bitmask280;
-      if (run_start226 < max_size279 - CONST_N140_IS_256 - 1 &&
-          buffer_pos < max_size279 - CONST_N140_IS_256 - 1) {
+          (buffer_pos - calculate_run_offset(data) - 1) & size_bitmask280;
+      if (run_start226 < max_size279 - MAX_RUN_LENGTH140 - 1 &&
+          buffer_pos < max_size279 - MAX_RUN_LENGTH140 - 1) {
         while (--run_length276 >= 0) {
           l_uncompressed_buffer278[buffer_pos++] =
               l_uncompressed_buffer278[run_start226++];
@@ -66,8 +66,9 @@ int32_t RExpand::Expand() {
               l_uncompressed_buffer278[run_start226];
           if (++buffer_pos >= max_size279) {
             buffer_pos = 0;
-            if (data->output_store->WriteBuffer(l_uncompressed_buffer278,
-                                                max_size279) != max_size279)
+            if (ALStorage_WriteBuffer(data->output_store,
+                                      l_uncompressed_buffer278,
+                                      max_size279) != max_size279)
               return false;
           }
           run_start226 = (int16_t)((run_start226 + 1) & size_bitmask280);
@@ -77,7 +78,8 @@ int32_t RExpand::Expand() {
   }
   DE;
   if (buffer_pos != 0)
-    data->output_store->WriteBuffer(l_uncompressed_buffer278, buffer_pos);
+    ALStorage_WriteBuffer(data->output_store, l_uncompressed_buffer278,
+                          buffer_pos);
 
   return true;
 }

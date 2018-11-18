@@ -1,2 +1,26 @@
 pub const MAX_COMPRESSION_FACTOR: u8 = 14;
 pub const MIN_COMPRESSION_FACTOR: u8 = 10;
+
+pub const MIN_RUN_LENGTH135_IS_3: u16 = 3;
+pub const MAX_RUN_LENGTH140: u16 = 256;
+pub const END_OF_FILE_FLAG: u16 = MAX_RUN_LENGTH140 + 1;
+
+pub const MAX_COMPRESSION_CYCLES: u16 = 128;
+pub const BUFFER_SIZE: usize = 512;
+
+// CONST_N141_IS_511 = ((u8::max_value() as u16) + 1 + MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3 + 1 + 1);
+pub const CONST_N141_IS_511: usize = (u8::max_value() as usize) * 2 - 1;
+pub const CONST_N145_IS_19: usize = (u16::max_value().count_ones() as usize + 3);
+pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
+
+pub const CONST_N148_IS_4096: usize = 4096;
+pub const CONST_N149_IS_256: usize = 256;
+pub const CONST_N153_IS_4096: usize = 4096;
+
+pub const CONST_N142_IS_15: u16 = (MAX_COMPRESSION_FACTOR as u16 + 1);
+pub const CONST_N143_IS_9: u16 = 9;
+pub const CONST_N147_IS_5: u16 = 5;
+pub const CONST_N154_IS_4: u16 = 4;
+pub const CONST_N155_IS_8192: u16 = 8192;
+pub const CONST_N540_IS_5: u16 = 5;
+// #define TRUE157 (-1)
