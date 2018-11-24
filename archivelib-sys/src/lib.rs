@@ -30,7 +30,20 @@ impl AllocatedMemory {
   }
 }
 
+pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
+pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
+pub const AL_GREENLEAF_LEVEL_2: u8 = 2;
+pub const AL_GREENLEAF_LEVEL_3: u8 = 3;
+pub const AL_GREENLEAF_LEVEL_4: u8 = 4;
+
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
+  do_compress_level(input, AL_GREENLEAF_LEVEL_0)
+}
+
+pub fn do_compress_level(
+  input: &[u8],
+  compression_level: u8,
+) -> Result<Box<[u8]>, std::string::String> {
   let mut data = {
     let mut v = vec![];
     v.extend(input.iter());
@@ -38,12 +51,18 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   };
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  unsafe { compress(ptr, length) }
+  unsafe { compress(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
     .map_err(|o| o.unwrap_or("".to_string()))
 }
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
+  do_decompress_level(input, AL_GREENLEAF_LEVEL_0)
+}
+pub fn do_decompress_level(
+  input: &[u8],
+  compression_level: u8,
+) -> Result<Box<[u8]>, std::string::String> {
   let mut data = {
     let mut v = vec![];
     v.extend(input.iter());
@@ -51,7 +70,7 @@ pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   };
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  unsafe { decompress(ptr, length) }
+  unsafe { decompress(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
     .map_err(|o| o.unwrap_or("".to_string()))

@@ -2,13 +2,16 @@ use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseRead, BitwiseWrite};
 
 impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
-  fn get_next_item(self: &mut Self) -> u16 {
+  pub fn calculate_run_offset(&mut self) -> Result<u16> {
     unimplemented!();
   }
-  fn calculate_run_offset(self: &mut Self) -> u16 {
+  pub fn fn253(&mut self, _254: i16, _220: i16, _221: i16) -> Result<()> {
     unimplemented!();
   }
-  fn read_bits(self: &mut Self, bits_to_load219: i32) {
+  pub fn fn255(&mut self) -> Result<()> {
+    unimplemented!();
+  }
+  pub fn get_bits(&mut self, bits_to_load219: u8) -> Result<u16> {
     unimplemented!();
   }
 }

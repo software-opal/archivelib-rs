@@ -44,7 +44,7 @@ pub trait BitwiseRead {
     let mut out: u128 = 0;
     let mut shift = bits;
     while shift > 0 {
-      match self.try_read_bits(1)? {
+      match self.try_read_bits(bits)? {
         (_, 0) => panic!("Invariant of `try_read_bytes` failed"),
         (bytes, bits_read) => {
           shift -= bits_read;
@@ -103,11 +103,10 @@ impl<R: io::Read> BitwiseRead for BitwiseReader<R> {
     let mask = if pos == 8 {
       0xff
     } else {
-      // Shift the 0xff so that only the bits that have been used are set;
-      // Then invert that mask to create the unused bit mask
-      !u8::wrapping_shl(0xFF, pos as u32)
+      // Enable all bits upto & including pos
+      (0x1 << pos) - 1
     };
-    let usable_byte = byte & !(mask);
+    let usable_byte = byte & mask;
     if bits >= pos {
       self.index = 0;
       Ok((usable_byte, pos))

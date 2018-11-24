@@ -1,4 +1,4 @@
-use rand::distributions::{Binomial};
+use rand::distributions::Binomial;
 use rand::{thread_rng, Rng};
 
 use crate::test::util::{assert_series_arrays_equal, get_data};

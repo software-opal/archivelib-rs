@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #define _CHECK_RETURN_CODE(status, line)                                       \
   {                                                                            \
@@ -25,7 +26,7 @@ typedef struct AllocatedMemory {
   size_t length;
 } AllocatedMemory;
 
-extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length);
-extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length);
+extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8_t compression_level);
+extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length, uint8_t compression_level);
 
 extern "C" void clean(AllocatedMemory *memory);

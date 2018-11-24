@@ -71,12 +71,13 @@ AllocatedMemory build_output(ALStorage *out) {
   };
 }
 
-extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
+extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8_t compression_level) {
   std::string name = "compress";
   CREATE_BUFFER(in, name, input_buffer, length)
   CREATE_BUFFER(out, name, NULL, 0)
 
-  ALGreenleafEngine *engn = new ALGreenleafEngine(AL_GREENLEAF_LEVEL_0, false);
+  // Default is AL_GREENLEAF_LEVEL_0
+  ALGreenleafEngine *engn = new ALGreenleafEngine(compression_level , false);
   engn->Compress(*in, *out);
   CHECK_AL_STATUS(engn->mStatus);
   delete engn;
@@ -86,12 +87,13 @@ extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
 
   return build_output(out);
 }
-extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length) {
+extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length, uint8_t compression_level) {
   std::string name = "decompress";
   CREATE_BUFFER(in, name, input_buffer, length)
   CREATE_BUFFER(out, name, NULL, 0)
 
-  ALGreenleafEngine *engn = new ALGreenleafEngine(AL_GREENLEAF_LEVEL_0, false);
+    // Default is AL_GREENLEAF_LEVEL_0
+  ALGreenleafEngine *engn = new ALGreenleafEngine(compression_level, false);
   engn->Decompress(*in, *out);
   CHECK_AL_STATUS(engn->mStatus);
   delete engn;

@@ -1,27 +1,26 @@
 use std::io;
 
-pub trait BitwiseWrite {}
+pub trait BitwiseWrite: io::Write {}
 
-pub struct BitwiseWriter {}
+pub struct BitwiseWriter<W: io::Write> {
+  inner: W,
+}
 
-impl BitwiseWriter {
-  pub fn new() -> Self {
-    unimplemented!();
-    // Writer {
-    //   data: Vec::with_capacity(512),
-    // }
+impl<W: io::Write> BitwiseWriter<W> {
+  pub fn new(w: W) -> Self {
+    BitwiseWriter { inner: w }
   }
-
-  pub fn into_data(self) -> Box<[u8]> {
-    unimplemented!();
-    // return self.data.into_boxed_slice();
-  }
-
-  pub fn write_byte(&mut self, byte: u8) -> io::Result<()> {
-    unimplemented!();
-    // self.data.push(byte);
-    // Ok(())
+  pub fn into_inner(self) -> W {
+    return self.inner;
   }
 }
 
-impl BitwiseWrite for BitwiseWriter {}
+impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {}
+impl<W: io::Write> io::Write for BitwiseWriter<W> {
+  fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+    self.inner.write(buf)
+  }
+  fn flush(&mut self) -> io::Result<()> {
+    self.inner.flush()
+  }
+}

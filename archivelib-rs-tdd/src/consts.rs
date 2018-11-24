@@ -1,9 +1,9 @@
 pub const MAX_COMPRESSION_FACTOR: u8 = 14;
 pub const MIN_COMPRESSION_FACTOR: u8 = 10;
 
-pub const MIN_RUN_LENGTH135_IS_3: u16 = 3;
-pub const MAX_RUN_LENGTH140: u16 = 256;
-pub const END_OF_FILE_FLAG: u16 = MAX_RUN_LENGTH140 + 1;
+pub const MIN_RUN_LENGTH135_IS_3: usize = 3;
+pub const MAX_RUN_LENGTH140: usize = 256;
+pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140 + 1;
 
 pub const MAX_COMPRESSION_CYCLES: u16 = 128;
 pub const BUFFER_SIZE: usize = 512;
