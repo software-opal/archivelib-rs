@@ -1,10 +1,10 @@
 #include "arclib.h"
 
+#include <iostream>
+#include <ostream>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include <ostream>
-#include <iostream>
 
 //
 // void _ALAssertFailure( const char *condition,

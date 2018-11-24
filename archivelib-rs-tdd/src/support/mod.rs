@@ -1,6 +1,7 @@
 mod reader;
 mod writer;
 
+pub use self::readahead_reader::{BitwiseReadAheadRead, BitwiseReadAheadReader};
 pub use self::reader::{BitwiseRead, BitwiseReader, ReadError, VecReader};
 pub use self::writer::{BitwiseWrite, BitwiseWriter};
 

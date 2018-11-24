@@ -1,7 +1,7 @@
 
 #include "r_compress.hpp"
 
-void fn207 (RCompressData *data) {
+void fn207(RCompressData *data) {
   uint32_t run_start226, _289, _229, _454, _455;
   uint32_t _456 = 0;
   uint16_t _217[2 * CONST_N145_IS_19 - 1];
@@ -11,7 +11,8 @@ void fn207 (RCompressData *data) {
   write_bits_to_buffer(data, 16, (uint16_t)_455);
   if (_229 >= CONST_N141_IS_511) {
     fn216(data, _217);
-    _229 = fn211(data, CONST_N145_IS_19, _217, data->dat_arr181, data->dat_arr194);
+    _229 =
+        fn211(data, CONST_N145_IS_19, _217, data->dat_arr181, data->dat_arr194);
     if (_229 >= CONST_N145_IS_19) {
       fn218(data, CONST_N145_IS_19, CONST_N147_IS_5, 3);
     } else {
@@ -40,8 +41,8 @@ void fn207 (RCompressData *data) {
     else
       _456 <<= 1;
     if (_456 & (1U << (CHAR_BIT - 1))) {
-      write_stored_bits_to_buffer(data, 
-          (int16_t)(data->dat_arr165[_454++] + (1U << CHAR_BIT)));
+      write_stored_bits_to_buffer(
+          data, (int16_t)(data->dat_arr165[_454++] + (1U << CHAR_BIT)));
       _289 = data->dat_arr165[_454++];
       _289 += data->dat_arr165[_454++] << CHAR_BIT;
       fn224(data, (int16_t)_289);

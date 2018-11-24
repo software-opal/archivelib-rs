@@ -1,9 +1,9 @@
 #ifndef NEW__EXPAND_HPP
 #define NEW__EXPAND_HPP
 
+#include "aldefs.h"
 #include "new/const.h"
 #include "new/expand_struct.h"
-#include "aldefs.h"
 
 #ifdef __cplusplus
 extern "C" {

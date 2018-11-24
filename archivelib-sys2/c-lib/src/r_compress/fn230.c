@@ -3,8 +3,8 @@
 
 #include "r_compress.hpp"
 
-void fn230 (RCompressData *data, int32_t bits_to_load219, uint8_t *item209,
-                      uint16_t *_231) {
+void fn230(RCompressData *data, int32_t bits_to_load219, uint8_t *item209,
+           uint16_t *_231) {
   // Sibling method is fn258
   // Called with:
   // (CONST_N141_IS_511, dat_arr180, dat_arr192)

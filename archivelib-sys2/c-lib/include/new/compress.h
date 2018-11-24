@@ -1,10 +1,10 @@
 #ifndef NEW__COMPRESS_HPP
 #define NEW__COMPRESS_HPP
 
-#include "new/const.h"
-#include "new/compress_struct.h"
-#include "support/compress.h"
 #include "aldefs.h"
+#include "new/compress_struct.h"
+#include "new/const.h"
+#include "support/compress.h"
 
 #ifdef __cplusplus
 extern "C" {

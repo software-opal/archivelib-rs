@@ -14,14 +14,14 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data) {
 
 #else
 
-#include <string>
 #include <iostream>
 #include <sstream>
 #include <string.h>
+#include <string>
 
-#include "support/expand.h"
-#include "support/debug.h"
 #include "new/expand.h"
+#include "support/debug.h"
+#include "support/expand.h"
 
 #define DO_CLONE(new_data, old_data, member, type)                             \
   new_data->member = (type *)calloc(new_data->member##_len, sizeof(type));     \

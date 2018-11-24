@@ -1,17 +1,17 @@
 
+#include <sstream>
 #include <stdlib.h>
 #include <string.h>
-#include <sstream>
 #include <string>
 
 #include "api.h"
-#include "memstore.h"
-#include "grenengn.h"
 #include "enum_rev.hpp"
+#include "grenengn.h"
+#include "memstore.h"
 
 #ifndef CREATE_BUFFER
 #define CREATE_BUFFER(buf_name, input_buffer, length)                          \
-  ALMemory *buf_name = new ALMemory(input_buffer, length);             \
+  ALMemory *buf_name = new ALMemory(input_buffer, length);                     \
   buf_name->Create();                                                          \
   CHECK_AL_STATUS(buf_name->mStatus);
 #endif

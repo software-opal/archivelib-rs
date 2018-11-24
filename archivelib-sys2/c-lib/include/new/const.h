@@ -1,9 +1,9 @@
 #ifndef NEW__CONST_HPP
 #define NEW__CONST_HPP
 
-#include <stdint.h>
-#include <stddef.h>
 #include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #define UINT16_BIT 16
 #define MIN_RUN_LENGTH135_IS_3 3

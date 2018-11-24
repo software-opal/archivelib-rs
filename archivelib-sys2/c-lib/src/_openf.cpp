@@ -1,6 +1,5 @@
-#include "arclib.h"
 #include "_openf.h"
-
+#include "arclib.h"
 
 //
 // ALOpenInputFile::ALOpenInputFile( ALStorage &file )
@@ -26,8 +25,8 @@
 //   May 22, 1994  1.0A  : First release
 //
 
-ALOpenInputFile::ALOpenInputFile(ALStorage  &file) {
-mpFile = &file;
+ALOpenInputFile::ALOpenInputFile(ALStorage &file) {
+  mpFile = &file;
   miFileWasOpen = file.IsOpen();
   if (!miFileWasOpen)
     file.Open();
@@ -54,7 +53,7 @@ mpFile = &file;
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenInputFile::~ALOpenInputFile() {
+ALOpenInputFile::~ALOpenInputFile() {
   if (!miFileWasOpen)
     mpFile->Close();
 }
@@ -82,7 +81,7 @@ mpFile = &file;
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenOutputFile::ALOpenOutputFile(ALStorage  &file) {
+ALOpenOutputFile::ALOpenOutputFile(ALStorage &file) {
   mpFile = &file;
   miFileWasOpen = file.IsOpen();
   if (!miFileWasOpen)
@@ -110,7 +109,7 @@ mpFile = &file;
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenOutputFile::~ALOpenOutputFile() {
+ALOpenOutputFile::~ALOpenOutputFile() {
   if (!miFileWasOpen)
     mpFile->Close();
 }
@@ -147,8 +146,7 @@ mpFile = &file;
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenFiles::ALOpenFiles(ALStorage  &input,
-                                  ALStorage  &output)
+ALOpenFiles::ALOpenFiles(ALStorage &input, ALStorage &output)
     : mInputFile(input), mOutputFile(output) {}
 
 //
@@ -173,4 +171,4 @@ mpFile = &file;
 //   May 22, 1994  1.0A  : First release
 //
 
- ALOpenFiles::~ALOpenFiles() {}
+ALOpenFiles::~ALOpenFiles() {}

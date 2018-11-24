@@ -3,8 +3,8 @@
 
 #include "r_compress.hpp"
 
-int32_t fn211 (RCompressData *data, int32_t _212, uint16_t *_213, uint8_t *_214,
-                         uint16_t *_215) {
+int32_t fn211(RCompressData *data, int32_t _212, uint16_t *_213, uint8_t *_214,
+              uint16_t *_215) {
   DC;
   int32_t run_start226, run_length276, _289, _292;
   int16_t _227;

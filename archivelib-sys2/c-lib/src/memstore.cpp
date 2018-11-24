@@ -2,9 +2,9 @@
 
 #include "memstore.h"
 
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
 
 //
 // ALMemory::ALMemory( const char *buffer_name = "",
@@ -220,7 +220,7 @@ int ALMemory::Seek(long address) {
     return mStatus;
 
   if (mlFilePointer != address) {
-    if (address > (long) muUserBufferSize)
+    if (address > (long)muUserBufferSize)
       return mStatus.SetError(AL_SEEK_ERROR, "Attempt to seek past end of the "
                                              "buffer in ALMemory");
   }

@@ -9,9 +9,6 @@
 #define MEMORY_BLOCK_BYTES 1024
 #endif
 
-/*
- * Global enumerated error codes
- */
 enum ALErrors {
   AL_CANT_OPEN_BUFFER = -1200,
   AL_CANT_ALLOCATE_MEMORY,
@@ -42,10 +39,6 @@ enum ALErrors {
   AL_SUCCESS = 0
 };
 
-/*
- * Compressing levels used by the Greenleaf Engine.  In the archive, this
- * ratio is stored in the engine private data.
- */
 enum ALGreenleafCompressionLevels {
   AL_GREENLEAF_COPY = -1,
   AL_GREENLEAF_LEVEL_0 = 0,

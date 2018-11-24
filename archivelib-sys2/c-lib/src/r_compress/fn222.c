@@ -1,7 +1,7 @@
 
 #include "r_compress.hpp"
 
-void fn222 (RCompressData *data) {
+void fn222(RCompressData *data) {
   int16_t run_start226, _289, bits_to_load219, _277;
   bits_to_load219 = CONST_N141_IS_511;
   while (bits_to_load219 > 0 && data->dat_arr180[bits_to_load219 - 1] == 0)
@@ -12,7 +12,8 @@ void fn222 (RCompressData *data) {
     _289 = data->dat_arr180[run_start226++];
     if (_289 == 0) {
       _277 = 1;
-      while (run_start226 < bits_to_load219 && data->dat_arr180[run_start226] == 0) {
+      while (run_start226 < bits_to_load219 &&
+             data->dat_arr180[run_start226] == 0) {
         run_start226++;
         _277++;
       }

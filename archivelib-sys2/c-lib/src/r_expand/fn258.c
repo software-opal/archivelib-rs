@@ -22,7 +22,7 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
     lookup_table288[i + 1] = lookup_table288[i] + (_277[i] << (16 - i));
   }
   if (lookup_table288[17] != 0) {
-    data->error = AL_INTERNAL_ERROR;
+    data->error = -1189;
     // mStatus.SetError(AL_INTERNAL_ERROR, INTERNAL_ERROR_1_MSG);
     data->error_counter243 = 10;
     return;
@@ -52,7 +52,7 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
     tmp293 = lookup_table288[item209] + lookup_table287[item209];
     if (item209 <= bit_size261) {
       if (tmp293 > max_internal263) {
-        data->error = AL_INTERNAL_ERROR;
+        data->error = -1189;
         data->error_counter243 = 10;
         return;
       }

@@ -5,9 +5,9 @@
 typedef void ALStorage;
 #else
 
-#include <stdint.h>
-#include "status.h"
 #include "_debug.h"
+#include "status.h"
+#include <stdint.h>
 
 /*
  * class ALStorage

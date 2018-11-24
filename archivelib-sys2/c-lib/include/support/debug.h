@@ -4,14 +4,14 @@
 #ifdef NDEBUG
 
 #else
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include <string>
-#include <iomanip>
+#include <time.h>
 
 const time_t PROC_START = time(NULL);
 

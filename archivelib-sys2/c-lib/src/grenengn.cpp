@@ -1,7 +1,7 @@
 #include "arclib.h"
 
-#include "grenengn.h"
 #include "_openf.h"
+#include "grenengn.h"
 #include "r_compress.hpp"
 #include "r_expand.hpp"
 

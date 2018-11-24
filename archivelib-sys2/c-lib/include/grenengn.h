@@ -3,8 +3,8 @@
 
 #include "aldefs.h"
 #include "simple_status.h"
-#include "stor.h"
 #include "status.h"
+#include "stor.h"
 
 #if defined(__cplusplus)
 

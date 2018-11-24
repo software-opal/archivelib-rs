@@ -35,7 +35,7 @@ int32_t Expand(RExpandData *data) {
     if (byte_or_run_length203 <= UCHAR_MAX) {
       // byte_or_run_length203 is the decompressed byte
       l_uncompressed_buffer278[buffer_pos] = (uint8_t)byte_or_run_length203;
-      if (++buffer_pos >= max_size279) {
+      if (((size_t)++buffer_pos) >= max_size279) {
         buffer_pos = 0;
         if (ALStorage_WriteBuffer(data->output_store, l_uncompressed_buffer278,
                                   max_size279) != max_size279)
@@ -54,8 +54,8 @@ int32_t Expand(RExpandData *data) {
       }
       run_start226 =
           (buffer_pos - calculate_run_offset(data) - 1) & size_bitmask280;
-      if (run_start226 < max_size279 - MAX_RUN_LENGTH140 - 1 &&
-          buffer_pos < max_size279 - MAX_RUN_LENGTH140 - 1) {
+      if (((size_t)run_start226) < max_size279 - MAX_RUN_LENGTH140 - 1 &&
+          ((size_t)buffer_pos) < max_size279 - MAX_RUN_LENGTH140 - 1) {
         while (--run_length276 >= 0) {
           l_uncompressed_buffer278[buffer_pos++] =
               l_uncompressed_buffer278[run_start226++];
@@ -64,7 +64,7 @@ int32_t Expand(RExpandData *data) {
         while (--run_length276 >= 0) {
           l_uncompressed_buffer278[buffer_pos] =
               l_uncompressed_buffer278[run_start226];
-          if (++buffer_pos >= max_size279) {
+          if (((size_t)++buffer_pos) >= max_size279) {
             buffer_pos = 0;
             if (ALStorage_WriteBuffer(data->output_store,
                                       l_uncompressed_buffer278,

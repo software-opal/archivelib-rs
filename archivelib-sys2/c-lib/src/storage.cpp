@@ -1,7 +1,7 @@
 #include "arclib.h"
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 //
 // ALStorage::ALStorage( const char *file_name,

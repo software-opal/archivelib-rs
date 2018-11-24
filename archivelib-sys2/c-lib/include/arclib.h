@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 /* All these includes needed for various library features */
-#include "aldefs.h"
 #include "_debug.h"
+#include "aldefs.h"
 #include "status.h"
 #include "stor.h"
 

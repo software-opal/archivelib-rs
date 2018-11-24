@@ -1,6 +1,6 @@
 
-#include <stdlib.h>
 #include "include/simple_status.h"
+#include <stdlib.h>
 
 #define _CHECK_RETURN_CODE(status, line)                                       \
   {                                                                            \

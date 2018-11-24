@@ -1,8 +1,8 @@
 #ifndef SUPPORT__EXPAND_HPP
 #define SUPPORT__EXPAND_HPP
 
-#include "support/debug.h"
 #include "new/expand_struct.h"
+#include "support/debug.h"
 
 RExpandData *clone_expand_data(RExpandData *data);
 bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
