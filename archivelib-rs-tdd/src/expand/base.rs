@@ -4,8 +4,7 @@ use crate::consts::{
   BUFFER_SIZE, CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
-use crate::expand::reader::BitwiseReadAheadRead;
-use crate::support::{BitwiseRead, BitwiseWrite, ReadError};
+use crate::support::{BitwiseReadAheadRead, BitwiseWrite, ReadError};
 
 #[derive(Fail, Debug)]
 pub enum ExpandError {
@@ -60,20 +59,17 @@ pub struct RExpandData<R: BitwiseReadAheadRead, W: BitwiseWrite> {
   pub dat_arr190: Vec<u16>,
   pub dat_arr240: Vec<u16>,
   pub dat_arr241: Vec<u16>,
-  pub compressed_data_buffer242: Vec<u8>,
-  // pub bits_in_buffer172: isize, // usize?
+  pub bits_in_buffer172: i16, // usize?
   pub max_uncompressed_data_size: usize,
   pub max_uncompressed_data_size_bitmask: usize,
-  // pub bits182: u16,
+  pub bits182: u16,
   pub error_counter243: u8,
   pub items_until_next_header: usize,
   pub tmp_bit_buffer245: u8,
-  pub loaded_compressed_data_length246: isize,
-  pub compressed_data_length248: isize,
 }
 
 impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
-  pub fn new(reader: R, writer: W, in_length: usize, compression_level: u8) -> Result<Self> {
+  pub fn new(reader: R, writer: W, _in_length: usize, compression_level: u8) -> Result<Self> {
     if compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR {
       Err(ExpandError::IllegalCompressionLevel(compression_level))
     } else {
@@ -89,22 +85,36 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
         dat_arr190: vec![0; 2 * CONST_N141_IS_511 - 1],
         dat_arr240: vec![0; CONST_N148_IS_4096],
         dat_arr241: vec![0; CONST_N149_IS_256],
-        compressed_data_buffer242: vec![0; BUFFER_SIZE],
 
-        compressed_data_length248: in_length.try_into()?,
         max_uncompressed_data_size: max_size,
         max_uncompressed_data_size_bitmask: (max_size - 1),
         error_counter243: 0,
         items_until_next_header: 0,
-        // bits182: 0,
+        bits182: 0,
         tmp_bit_buffer245: 0,
-        // bits_in_buffer172: 0,
-        loaded_compressed_data_length246: 0,
+        bits_in_buffer172: 0,
       })
     }
   }
 
   pub fn into_writer(self) -> W {
     return self.output_store;
+  }
+
+  pub fn fn253(&mut self, mut _254: i16, mut _220: i16, mut _221: i16) {
+    unimplemented!();
+  }
+  pub fn fn255(&mut self) {
+    unimplemented!();
+  }
+  pub fn fn258(
+    &mut self,
+    _arg_arr260_len: i32,
+    _arg_arr260: *mut u8,
+    _bit_size261: i32,
+    _output_table262: *mut u16,
+    _max_internal263: u16,
+  ) {
+    unimplemented!();
   }
 }
