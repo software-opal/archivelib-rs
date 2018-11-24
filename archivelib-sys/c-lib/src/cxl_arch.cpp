@@ -393,7 +393,7 @@ extern "C" int AL_FUNCTION ALArchiveSetComment( hALArchive this_object, char *co
 {
     AL_ASSERT_OBJECT( this_object, ALArchiveBase, "ALArchiveSetComment" );
     if ( comment == 0 )
-        comment = "";
+        comment = (char *)"";
     return ( (ALArchiveBase *) this_object )->SetComment( comment );
 }
 

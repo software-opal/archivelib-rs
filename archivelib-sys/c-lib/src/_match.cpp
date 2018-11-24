@@ -69,8 +69,8 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #define MATCH_CHAR_EXCLAMATION_NEGATE   '!'
 
 /* forward function prototypes */
-int matche_after_star( register const char *pattern, register char *text);
-int fast_match_after_star(register char *pattern, register char *text);
+int matche_after_star( const char *pattern, char *text);
+int fast_match_after_star(char *pattern, char *text);
 
 
 /*----------------------------------------------------------------------------
@@ -257,7 +257,7 @@ BOOLEAN AL_FUNCTION is_valid_pattern( const char *p, int *error_type )
 
 int AL_FUNCTION matche( const char *p, char *t)
 {
-    register char range_start, range_end;       /* start and end in range */
+    char range_start, range_end;       /* start and end in range */
 
     BOOLEAN invert;             /* is this [..] or [!..] */
     BOOLEAN member_match;       /* have I matched the [..] construct? */
@@ -433,10 +433,10 @@ int AL_FUNCTION matche( const char *p, char *t)
  *
  ---------------------------------------------------------------------------*/
 
-int matche_after_star( register const char *p, register char *t)
+int matche_after_star( const char *p, char *t)
 {
-    register int match = 0;
-    register char nextp;
+    int match = 0;
+    char nextp;
 
     /* pass over existing ? and * in pattern */
     while (*p == MATCH_CHAR_SINGLE ||

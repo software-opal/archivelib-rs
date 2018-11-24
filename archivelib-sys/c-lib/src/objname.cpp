@@ -51,8 +51,10 @@ Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 static void strupr( char *s )
 {
-    while ( *s )
-        *s++ = toupper( *s );
+    while ( *s ){
+        *s = toupper( *s );
+        s++;
+    }
 
 }
 
@@ -85,8 +87,10 @@ static void strupr( char *s )
 
 static void strlwr( char *s )
 {
-    while ( *s )
-        *s++ = tolower( *s );
+    while ( *s ) {
+        *s = tolower( *s );
+        s++;
+    }
 }
 
 #endif
@@ -178,7 +182,7 @@ ALName ALName::operator+( const char AL_DLL_FAR *rhs )
     }
     ALName result( p, mCase );
     if ( p )
-        delete p;
+        delete[] p;
     return result;
 }
 
@@ -635,7 +639,7 @@ AL_PROTO ALName::operator const STRINGF() const
     if ( mszName )
         return mszName;
     else
-        return "";
+        return (char*)"";
 }
 
 //
@@ -780,7 +784,7 @@ int AL_PROTO ALName::WildCardMatch( const char AL_DLL_FAR *pattern )
         result = 1;
     else
         result = 0;
-    delete p;
+    delete[] p;
     return result;
 }
 
@@ -820,5 +824,3 @@ void AL_PROTO ALName::Strcpy( const char *s )
         default       : break;
      }
 }
-
-

@@ -386,7 +386,7 @@ ALEntrySetComment( hALEntry this_object, char *comment )
 {
     AL_ASSERT_OBJECT( this_object, ALEntry, "ALEntrySetComment" );
     if ( comment == 0 )
-        comment = "";
+        comment = (char *)"";
     return ( (ALEntry *) this_object )->SetComment( comment );
 }
 

@@ -109,14 +109,14 @@ _193[_226]=0; _173=0; _205(); _170=0; _185=1; _184=0; _186=0; _165[0]=0;
 _183=_155; _183-=(ushort )((3*CHAR_BIT)+6); } void RCompress::_197() {
 if(!_170) _207(); _206(); _183=0; _184=0; } void RCompress::_198() {
 #if defined(AL_FLAT_MODEL)||defined(AL_UNIX)
-register short *_450;
+short *_450;
 #else
-register short _far*_450;
+short _far*_450;
 #endif
-register short _226; _450=&_163[_175];
+short _226; _450=&_163[_175];
 for(_226=_153;_226>0;_226--) *_450++=_157; _450=_164;
 for(_226=_175;_226>0;_226--) *_450++=_157; } void RCompress::_199(short
-_200,short _201) { register uchar *_451; register uchar *_278; short
+_200,short _201) { uchar *_451; uchar *_278; short
 _226,_452,_204,_453; _452=_158; _168=0; _451=&_166[_200]; _204=_201;
 while((_204=_163[_204])!=_157){ if(--_452<0) break; _278=&_166[_204];
 if(_451[_168]!=_278[_168]) continue; if(_451[0]!=_278[0]) continue;
