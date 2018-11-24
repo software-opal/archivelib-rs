@@ -118,7 +118,7 @@ impl<R: io::Read> BitwiseRead for BitwiseReader<R> {
   }
 }
 
-struct VecReader {
+pub struct VecReader {
   data: Vec<u8>,
   index: usize,
 }
