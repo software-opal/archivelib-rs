@@ -1,4 +1,4 @@
-test_data!{
+test_data! {
   t00 => (
     in=hex!("00"),
     out=hex!("00 02 20 04 3F FB D3 00  10")

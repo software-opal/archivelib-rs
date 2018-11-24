@@ -44,7 +44,8 @@ macro_rules! _bytes_to_human_hex {
           .map(|s| s.join(" "))
           .collect::<Vec<_>>()
           .join("  ")
-      }).collect::<Vec<_>>()
+      })
+      .collect::<Vec<_>>()
   }};
 }
 

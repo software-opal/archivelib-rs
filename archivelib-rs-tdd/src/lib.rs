@@ -33,8 +33,8 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
 }
 
 pub fn do_compress_level(
-  input: &[u8],
-  compression_level: u8,
+  _input: &[u8],
+  _compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
   unimplemented!();
 }

@@ -1,7 +1,6 @@
-use crate::support::{BitwiseRead, ReadError, get_bitmask};
+use crate::support::{get_bitmask, BitwiseRead, ReadError};
 
 type Result<T> = std::result::Result<T, ReadError>;
-
 
 trait BitwiseReadAheadRead {
   fn read_ahead(&mut self, bits: usize) -> Result<u128>;
@@ -36,7 +35,7 @@ impl<R: BitwiseRead> BitwiseReadAheadRead for BitwiseReadAheadReader<R> {
 
     if self.bit_buffer_pos + bits > self.bit_buffer_len {
       let to_read = (self.bit_buffer_pos + bits) - self.bit_buffer_len;
-      let new_bytes = self.inner.read_bits(to_read);
+      let new_bytes = self.inner.read_bits(to_read)?;
       self.bit_buffer = (self.bit_buffer << to_read) | new_bytes;
       self.bit_buffer_len += to_read;
     }
@@ -49,7 +48,8 @@ impl<R: BitwiseRead> BitwiseReadAheadRead for BitwiseReadAheadReader<R> {
   }
   fn consume(&mut self, bits: usize) -> Result<u128> {
     if self.bit_buffer_pos + bits > self.bit_buffer_len {
-    self.  read_ahead((self.bit_buffer_pos + bits) - self.bit_buffer_len)?;
+      let bits_to_load = (self.bit_buffer_pos + bits) - self.bit_buffer_len;
+      self.read_ahead(bits_to_load)?;
     }
     self.bit_buffer_pos = 0;
 
@@ -66,12 +66,12 @@ impl<R: BitwiseRead> BitwiseReadAheadRead for BitwiseReadAheadReader<R> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::{ReadError, VecReader};
+  use crate::support::{BitwiseReader, ReadError, VecReader};
 
   #[test]
   fn test_buffer() {
     let data = vec![0xFA, 0xCE];
-    let mut reader = BitwiseReadAheadRead::new(BitwiseReader::new(VecReader::new(data)));
+    let mut reader = BitwiseReadAheadReader::new(BitwiseReader::new(VecReader::new(data)));
 
     assert_eq!(reader.read_ahead(4), Ok(0xF));
     assert_eq!(reader.read_ahead(4), Ok(0xA));
@@ -83,6 +83,6 @@ mod tests {
     assert_eq!(reader.consume(4), Ok(0xC));
     assert_eq!(reader.consume(3), Ok(0x7));
     assert_eq!(reader.consume(1), Ok(0x0));
-    assert_eq!(reader.consume(1), Err(ReadError::EndOfFile));
+    assert_eq!(reader.consume(1), Err(ReadError::EndOfFile()));
   }
 }

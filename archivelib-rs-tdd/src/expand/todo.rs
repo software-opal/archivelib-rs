@@ -11,7 +11,7 @@ impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn fn255(&mut self) -> Result<()> {
     unimplemented!();
   }
-  pub fn get_bits(&mut self, bits_to_load219: u8) -> Result<u16> {
+  pub fn get_bits(&mut self, _bits_to_load219: u8) -> Result<u16> {
     unimplemented!();
   }
 }

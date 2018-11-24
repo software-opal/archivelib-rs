@@ -1,5 +1,5 @@
-use archivelib_sys::do_compress_level;
 use crate::do_decompress_level;
+use archivelib_sys::do_compress_level;
 use proptest::collection::vec;
 use proptest::prelude::*;
 use proptest::test_runner::TestCaseError;
@@ -14,7 +14,7 @@ fn level_strat() -> impl Strategy<Value = u8> {
 proptest! {
   #[test]
   fn test_compress_algorithm(vec in raw_data_strat(), level in level_strat()) {
-    let data =  match do_compress_level(&vec, level) {
+    let _data =  match do_compress_level(&vec, level) {
       Ok(data) => data,
       Err(err) => return Err(TestCaseError::fail(err)),
     };
