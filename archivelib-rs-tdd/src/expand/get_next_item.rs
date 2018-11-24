@@ -13,9 +13,9 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
       // calls that this header can handle. It's not exactly the number of bytes
       // because we read a variable number of bits per call.
       self.items_until_next_header = self.get_bits(16)? as usize;
-      self.fn253(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3);
-      self.fn255();
-      self.fn253(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1);
+      self.fn253(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3)?;
+      self.fn255()?;
+      self.fn253(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1)?;
     }
     self.items_until_next_header = self.items_until_next_header - 1;
     run_length276 = self.dat_arr240[(self.bits182 >> 4) as usize];

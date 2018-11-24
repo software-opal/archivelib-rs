@@ -1,7 +1,5 @@
-use std::convert::TryInto;
-
 use crate::consts::{
-  BUFFER_SIZE, CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
+  CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
 use crate::support::{BitwiseReadAheadRead, BitwiseWrite, ReadError};
@@ -10,6 +8,8 @@ use crate::support::{BitwiseReadAheadRead, BitwiseWrite, ReadError};
 pub enum ExpandError {
   #[fail(display = "Illegal Compression level: {}", _0)]
   IllegalCompressionLevel(u8),
+  #[fail(display = "Internal Error: {}", _0)]
+  InternalError(u8),
   #[fail(display = "Unexpected EoF")]
   UnexpectedEndOfFile {
     #[cause]
@@ -99,22 +99,5 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
 
   pub fn into_writer(self) -> W {
     return self.output_store;
-  }
-
-  pub fn fn253(&mut self, mut _254: i16, mut _220: i16, mut _221: i16) {
-    unimplemented!();
-  }
-  pub fn fn255(&mut self) {
-    unimplemented!();
-  }
-  pub fn fn258(
-    &mut self,
-    _arg_arr260_len: i32,
-    _arg_arr260: *mut u8,
-    _bit_size261: i32,
-    _output_table262: *mut u16,
-    _max_internal263: u16,
-  ) {
-    unimplemented!();
   }
 }

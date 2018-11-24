@@ -1,4 +1,4 @@
-use crate::consts::{CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19};
+use crate::consts::CONST_N142_IS_15;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
 

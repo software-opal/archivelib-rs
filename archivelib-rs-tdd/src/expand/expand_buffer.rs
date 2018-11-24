@@ -1,4 +1,3 @@
-use crate::consts::{BUFFER_SIZE, CONST_N145_IS_19};
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
 
@@ -21,8 +20,8 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
       self.bits_in_buffer172 = CHAR_BIT;
     }
     self.bits_in_buffer172 = self.bits_in_buffer172 - bits_to_load219;
-    self.bits182 = ((self.bits182) << bits_to_load219)
-      + (self.tmp_bit_buffer245 as u16 >> 8 - bits_to_load219);
+    self.bits182 =
+      ((self.bits182) << bits_to_load219) + (self.tmp_bit_buffer245 as u16 >> 8 - bits_to_load219);
     self.tmp_bit_buffer245 = self.tmp_bit_buffer245 << bits_to_load219;
     Ok(())
   }

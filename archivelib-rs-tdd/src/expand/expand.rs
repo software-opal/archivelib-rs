@@ -1,6 +1,4 @@
-use crate::consts::{
-  CONST_N142_IS_15, END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3,
-};
+use crate::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
 
