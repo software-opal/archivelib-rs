@@ -1,8 +1,9 @@
 use crate::consts::{CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19};
+use crate::expand::reader::BitwiseReadAheadRead;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseRead, BitwiseWrite};
 
-impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn get_next_item(&mut self) -> Result<u16> {
     let mut run_length276: u16 = 0;
     if self.items_until_next_header == 0 {

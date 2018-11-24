@@ -44,7 +44,7 @@ pub trait BitwiseRead {
     let mut out: u128 = 0;
     let mut shift = bits;
     while shift > 0 {
-      match self.try_read_bits(bits)? {
+      match self.try_read_bits(shift)? {
         (_, 0) => panic!("Invariant of `try_read_bytes` failed"),
         (bytes, bits_read) => {
           shift -= bits_read;

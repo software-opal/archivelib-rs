@@ -1,7 +1,8 @@
+use crate::expand::reader::BitwiseReadAheadRead;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseRead, BitwiseWrite};
 
-impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn calculate_run_offset(&mut self) -> Result<u16> {
     unimplemented!();
   }

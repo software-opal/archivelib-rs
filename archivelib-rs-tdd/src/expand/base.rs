@@ -4,6 +4,7 @@ use crate::consts::{
   BUFFER_SIZE, CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
+use crate::expand::reader::BitwiseReadAheadRead;
 use crate::support::{BitwiseRead, BitwiseWrite, ReadError};
 
 #[derive(Fail, Debug)]
@@ -49,7 +50,7 @@ impl From<ReadError> for ExpandError {
 
 #[derive(Clone)]
 #[repr(C)]
-pub struct RExpandData<R: BitwiseRead, W: BitwiseWrite> {
+pub struct RExpandData<R: BitwiseReadAheadRead, W: BitwiseWrite> {
   pub input_store: R,
   pub output_store: W,
   pub uncompressed_buffer: Vec<u8>,
@@ -71,7 +72,7 @@ pub struct RExpandData<R: BitwiseRead, W: BitwiseWrite> {
   pub compressed_data_length248: isize,
 }
 
-impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn new(reader: R, writer: W, in_length: usize, compression_level: u8) -> Result<Self> {
     if compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR {
       Err(ExpandError::IllegalCompressionLevel(compression_level))

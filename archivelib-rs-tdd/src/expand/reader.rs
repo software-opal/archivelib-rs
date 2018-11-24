@@ -2,12 +2,12 @@ use crate::support::{get_bitmask, BitwiseRead, ReadError};
 
 type Result<T> = std::result::Result<T, ReadError>;
 
-trait BitwiseReadAheadRead {
+pub trait BitwiseReadAheadRead: BitwiseRead {
   fn read_ahead(&mut self, bits: usize) -> Result<u128>;
   fn consume(&mut self, bits: usize) -> Result<u128>;
 }
 
-struct BitwiseReadAheadReader<R: BitwiseRead> {
+pub struct BitwiseReadAheadReader<R: BitwiseRead> {
   inner: R,
   bit_buffer: u128,
   bit_buffer_len: usize,
@@ -47,8 +47,8 @@ impl<R: BitwiseRead> BitwiseReadAheadRead for BitwiseReadAheadReader<R> {
     return Ok(out);
   }
   fn consume(&mut self, bits: usize) -> Result<u128> {
-    if self.bit_buffer_pos + bits > self.bit_buffer_len {
-      let bits_to_load = (self.bit_buffer_pos + bits) - self.bit_buffer_len;
+    if bits > self.bit_buffer_len {
+      let bits_to_load = bits - self.bit_buffer_len;
       self.read_ahead(bits_to_load)?;
     }
     self.bit_buffer_pos = 0;
@@ -60,6 +60,13 @@ impl<R: BitwiseRead> BitwiseReadAheadRead for BitwiseReadAheadReader<R> {
     self.bit_buffer_len = rem_bits;
 
     return Ok(out);
+  }
+}
+impl<R: BitwiseRead> BitwiseRead for BitwiseReadAheadReader<R> {
+  fn try_read_bits(&mut self, bits: usize) -> Result<(u8, usize)> {
+    assert!(0 < bits && bits <= 8);
+    let res = self.consume(bits)?;
+    return Ok((res as u8, bits));
   }
 }
 

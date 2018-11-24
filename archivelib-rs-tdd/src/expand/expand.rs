@@ -1,19 +1,11 @@
-#![allow(
-  dead_code,
-  mutable_transmutes,
-  non_camel_case_types,
-  non_snake_case,
-  non_upper_case_globals,
-  unused_mut
-)]
-
 use crate::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
+use crate::expand::reader::BitwiseReadAheadRead;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseRead, BitwiseWrite};
 
 const U8_MAX: usize = 0xff; // u8::max_value().into();
 
-impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn expand(&mut self) -> Result<()> {
     let mut buffer_pos: usize = 0;
 

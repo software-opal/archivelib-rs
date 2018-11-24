@@ -1,8 +1,9 @@
 use crate::consts::{CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19};
+use crate::expand::reader::BitwiseReadAheadRead;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitwiseRead, BitwiseWrite};
 
-impl<R: BitwiseRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn calculate_run_offset(&mut self) -> Result<uint16_t> {
     let mut run_length276: u16 = self.dat_arr241[self.input_store.read_bits(8) as usize];
     if run_length276 as libc::c_int >= CONST_N142_IS_15 {
