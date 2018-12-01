@@ -13,6 +13,7 @@ extern crate proptest;
 #[cfg(test)]
 extern crate rand;
 
+mod compress;
 mod consts;
 mod expand;
 pub mod support;
