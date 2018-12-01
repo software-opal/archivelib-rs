@@ -11,6 +11,7 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
   Reads `bits_to_load219` bits into the LSB side of `data->bits182`.
   */
   assert(bits_to_load219 <= 16);
+  printf("bib: %d; ", bits_to_load219);
 
   while (bits_to_load219 > data->bits_in_buffer172) {
     // This loop loads 1 new byte into `data->tmp_bit_buffer245`(the temporary
@@ -50,6 +51,7 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
       (uint16_t)((data->bits182 << bits_to_load219) +
                  (data->tmp_bit_buffer245 >> (CHAR_BIT - bits_to_load219)));
   data->tmp_bit_buffer245 <<= bits_to_load219;
+  printf(" b: 0x%04x\n", data->bits182);
 }
 
 uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
@@ -57,5 +59,8 @@ uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
   assert(bits_to_load219 <= 16);
   bits = (uint16_t)(data->bits182 >> (2 * CHAR_BIT - bits_to_load219));
   expand_read_bits(data, bits_to_load219);
+  if (bits_to_load219 == 0) {
+    printf(":Zero: %x\n", bits);
+  }
   return bits;
 }

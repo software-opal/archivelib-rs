@@ -20,8 +20,8 @@ void _ALAssertFailure(const char *condition, const char *filename, int line,
  * an abort with an error message when the condition fails.
  */
 #define AL_ASSERT(condition, message)                                          \
-  ((condition) ? (void)0                                                       \
-               : _ALAssertFailure(#condition, __FILE__, __LINE__, message))
+  // ((condition) ? (void)0                                                       \
+  //              : _ALAssertFailure(#condition, __FILE__, __LINE__, message))
 
 #endif
 

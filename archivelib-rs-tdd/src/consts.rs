@@ -9,7 +9,8 @@ pub const MAX_COMPRESSION_CYCLES: u16 = 128;
 pub const BUFFER_SIZE: usize = 512;
 
 // CONST_N141_IS_511 = ((u8::max_value() as u16) + 1 + MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3 + 1 + 1);
-pub const CONST_N141_IS_511: usize = (u8::max_value() as usize) * 2 - 1;
+pub const CONST_N141_IS_511: usize =
+  (u8::max_value() as usize) + (MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3) + 3;
 pub const CONST_N145_IS_19: usize = (u16::max_value().count_ones() as usize + 3);
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 

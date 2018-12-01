@@ -1,6 +1,6 @@
 use crate::expand::base::ExpandError::InternalError;
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
+use crate::support::{BitRead, BitwiseWrite};
 
 pub enum Fn258Mode {
   Fn253,
@@ -29,7 +29,7 @@ macro_rules! data_table {
   };
 }
 
-impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn fn258(
     &mut self,
     mode: Fn258Mode,
@@ -67,7 +67,7 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
     while i < 17 {
       // This wraps around to 0.
       lookup_table288[i.wrapping_add(1) as usize] =
-        (lookup_table288[i as usize] + ((_277[i as usize]) << (16 - i))) as u16;
+        (lookup_table288[i as usize].wrapping_add((_277[i as usize]) << (16 - i))) as u16;
       i = i.wrapping_add(1)
     }
     if lookup_table288[17usize] != 0 {
@@ -113,7 +113,7 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
           } else {
             let mut _289 = lookup_table288[item209 as usize] as u32;
             let mut current_table = Fn258DataTable::OutputTable((_289 >> rem_bit_size291) as usize);
-                        i = item209.wrapping_sub(bit_size261);
+            i = item209.wrapping_sub(bit_size261);
             while i != 0 {
               if data_table!(current_table, output_table262, self) == 0 {
                 (self).dat_arr189[_292 as usize] = 0;
@@ -122,9 +122,15 @@ impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
                 _292 = _292.wrapping_add(1);
               }
               if 0 != _289 & _283 {
-                current_table= Fn258DataTable::Array190(data_table!(current_table, output_table262, self) as usize)
+                current_table =
+                  Fn258DataTable::Array190(
+                    data_table!(current_table, output_table262, self) as usize
+                  )
               } else {
-                current_table= Fn258DataTable::Array189(data_table!(current_table, output_table262, self) as usize)
+                current_table =
+                  Fn258DataTable::Array189(
+                    data_table!(current_table, output_table262, self) as usize
+                  )
               }
               _289 <<= 1;
               i = i.wrapping_sub(1)

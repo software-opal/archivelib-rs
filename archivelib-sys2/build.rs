@@ -61,7 +61,7 @@ fn main() {
     .define("AL_SUN4", None)
     .define("AL_UNIX", None)
     .define("AL_DISABLE_NEW", None)
-    .define("NDEBUG", None)
+    // .define("NDEBUG", None)
     .include("c-lib/")
     .include("c-lib/include");
   let mut c_build = base.clone();
@@ -69,7 +69,7 @@ fn main() {
 
   for file in files {
     match file.extension().unwrap().to_str().unwrap() {
-      "c" => c_build.file(file),
+      "c" => cpp_build.file(file),
       "cpp" => cpp_build.file(file),
       _ => unreachable!(),
     };

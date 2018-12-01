@@ -1,10 +1,10 @@
 use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19, CONST_N147_IS_5, CONST_N540_IS_5,
 };
-use crate::expand::{RExpandData, Result};
-use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
+use crate::expand::{ExpandError, RExpandData, Result};
+use crate::support::{BitRead, BitwiseWrite};
 
-impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn get_next_item(&mut self) -> Result<u16> {
     let mut run_length276: u16 = 0;
     let mut _283: u16 = 0;

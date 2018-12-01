@@ -36,7 +36,7 @@ pub fn do_compress_level(
   _input: &[u8],
   _compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
-  unimplemented!();
+  Err("No".to_string())
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
@@ -46,7 +46,7 @@ pub fn do_decompress_level(
   input: &[u8],
   compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
-  let reader = support::BitwiseReadAheadReader::new(support::BitwiseReader::new(input));
+  let reader = support::BitReader::from(input);
   let writer = support::BitwiseWriter::new(Vec::with_capacity(1024));
 
   let mut res = match expand::RExpandData::new(reader, writer, input.len(), compression_level + 10)

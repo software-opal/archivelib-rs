@@ -1,6 +1,8 @@
+mod bitreader;
 mod readahead_reader;
 mod reader;
 mod writer;
+pub use self::bitreader::{BitRead, BitReader, ExactCallBitReader};
 pub use self::readahead_reader::{BitwiseReadAheadRead, BitwiseReadAheadReader};
 pub use self::reader::{BitwiseRead, BitwiseReader, ReadError, VecReader};
 pub use self::writer::{BitwiseWrite, BitwiseWriter};

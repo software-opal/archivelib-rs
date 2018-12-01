@@ -1,9 +1,9 @@
 use super::fn258::Fn258Mode;
 use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N148_IS_4096};
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitwiseReadAheadRead, BitwiseWrite};
+use crate::support::{BitRead, BitwiseWrite};
 
-impl<R: BitwiseReadAheadRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn fn255(&mut self) -> Result<()> {
     let mut run_start226: i16 = 0;
     let mut byte_or_run_length203: i16 = 0;
