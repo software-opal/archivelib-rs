@@ -23,36 +23,36 @@ create_compress_data(RCompressData *data, ALStorage *in_storage,
   data->input_length = input_length;
 
   data->dat_arr163_len = data->max_uncompressed_data_size + CONST_N153_IS_4096;
-  data->dat_arr163 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
   data->dat_arr164_len = data->max_uncompressed_data_size;
-  data->dat_arr164 = (int16_t *)calloc(data->dat_arr164_len, sizeof(int16_t));
   data->dat_arr165_len = CONST_N155_IS_8192;
-  data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->uncompressed_buffer_len =
       data->max_uncompressed_data_size + MAX_RUN_LENGTH140 + 2;
+  data->dat_arr167_len = 17;
+  data->dat_arr177_len = CONST_N141_IS_511 + 1;
+  data->buffer_len = BUFFER_SIZE;
+  data->dat_arr180_len = CONST_N141_IS_511;
+  data->dat_arr181_len = CONST_N152_IS_19;
+  data->dat_arr189_len = 2 * CONST_N141_IS_511 - 1;
+  data->dat_arr190_len = 2 * CONST_N141_IS_511 - 1;
+  data->dat_arr191_len = 2 * CONST_N141_IS_511 - 1;
+  data->dat_arr192_len = CONST_N141_IS_511;
+  data->dat_arr193_len = 2 * CONST_N142_IS_15 - 1;
+  data->dat_arr194_len = CONST_N152_IS_19;
+  data->dat_arr163 = (int16_t *)calloc(data->dat_arr163_len, sizeof(int16_t));
+  data->dat_arr164 = (int16_t *)calloc(data->dat_arr164_len, sizeof(int16_t));
+  data->dat_arr165 = (uint8_t *)calloc(data->dat_arr165_len, sizeof(uint8_t));
   data->uncompressed_buffer =
       (uint8_t *)calloc(data->uncompressed_buffer_len, sizeof(uint8_t));
-  data->dat_arr167_len = 17;
   data->dat_arr167 = (uint16_t *)calloc(data->dat_arr167_len, sizeof(uint16_t));
-  data->dat_arr177_len = CONST_N141_IS_511 + 1;
   data->dat_arr177 = (int16_t *)calloc(data->dat_arr177_len, sizeof(int16_t));
-  data->buffer_len = BUFFER_SIZE;
   data->buffer = (uint8_t *)calloc(data->buffer_len, sizeof(uint8_t));
-  data->dat_arr180_len = CONST_N141_IS_511;
   data->dat_arr180 = (uint8_t *)calloc(data->dat_arr180_len, sizeof(uint8_t));
-  data->dat_arr181_len = CONST_N152_IS_19;
   data->dat_arr181 = (uint8_t *)calloc(data->dat_arr181_len, sizeof(uint8_t));
-  data->dat_arr189_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr189 = (uint16_t *)calloc(data->dat_arr189_len, sizeof(uint16_t));
-  data->dat_arr190_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr190 = (uint16_t *)calloc(data->dat_arr190_len, sizeof(uint16_t));
-  data->dat_arr191_len = 2 * CONST_N141_IS_511 - 1;
   data->dat_arr191 = (uint16_t *)calloc(data->dat_arr191_len, sizeof(uint16_t));
-  data->dat_arr192_len = CONST_N141_IS_511;
   data->dat_arr192 = (uint16_t *)calloc(data->dat_arr192_len, sizeof(uint16_t));
-  data->dat_arr193_len = 2 * CONST_N142_IS_15 - 1;
   data->dat_arr193 = (uint16_t *)calloc(data->dat_arr193_len, sizeof(uint16_t));
-  data->dat_arr194_len = CONST_N152_IS_19;
   data->dat_arr194 = (uint16_t *)calloc(data->dat_arr194_len, sizeof(uint16_t));
 
   if (!data->dat_arr163 || !data->dat_arr164 || !data->dat_arr165 ||

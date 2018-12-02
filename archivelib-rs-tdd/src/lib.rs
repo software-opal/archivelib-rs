@@ -34,10 +34,28 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
 }
 
 pub fn do_compress_level(
-  _input: &[u8],
-  _compression_level: u8,
+  input: &[u8],
+  compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
-  Err("No".to_string())
+  let reader = input;
+  let writer = support::BitwiseWriter::new(Vec::with_capacity(1024));
+  let mut res = match compress::RCompressData::new(
+    reader,
+    writer,
+    input.len(),
+    compression_level + 10,
+    false,
+  ) {
+    Ok(res) => res,
+    Err(err) => return Err(format!("{}", err)),
+  };
+
+  match res.compress() {
+    Ok(_) => (),
+    Err(err) => return Err(format!("{}", err)),
+  };
+
+  return Ok(res.into_writer().into_inner().into_boxed_slice());
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {

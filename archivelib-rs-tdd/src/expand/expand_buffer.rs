@@ -1,8 +1,8 @@
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite, ReadError};
+use crate::support::{BitRead, BitwiseWrite};
 
 impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
-  pub fn read_bits(&mut self, mut bits_to_load219: i16) -> Result<()> {
+  pub fn read_bits(&mut self, bits_to_load219: i16) -> Result<()> {
     self.input_store.read_bits(bits_to_load219 as u8)?;
     self.bits182 = self.input_store.current_bits();
     if self.input_store.is_eof() {

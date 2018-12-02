@@ -94,7 +94,7 @@ impl BitRead for ExactCallBitReader {
   fn is_eof(&self) -> bool {
     self.eof
   }
-  fn read_bits(&mut self, mut bits_to_load: u8) -> Result<()> {
+  fn read_bits(&mut self, bits_to_load: u8) -> Result<()> {
     assert!(
       self.index < self.expected_call_and_results.len(),
       "Call to read_bits after all calls have been used"

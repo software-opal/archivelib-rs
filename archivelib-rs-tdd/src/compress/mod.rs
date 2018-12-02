@@ -1,5 +1,7 @@
 mod base;
-// mod fn199;
+mod buffer;
+mod compress;
+mod fn199;
 // mod fn202;
 // mod fn207;
 // mod fn211;
@@ -11,4 +13,5 @@ mod base;
 // mod fn228;
 // mod fn230;
 
+mod tmp;
 pub use self::base::{CompressError, RCompressData, Result};

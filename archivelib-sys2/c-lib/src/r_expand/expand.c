@@ -31,7 +31,6 @@ int32_t Expand(RExpandData *data) {
 
   while (data->error_counter243 < 5) {
     byte_or_run_length203 = get_next_item(data);
-    printf("val: %x\n", byte_or_run_length203);
     assert(byte_or_run_length203 <= 0x1FE);
     if (byte_or_run_length203 <= UCHAR_MAX) {
       // byte_or_run_length203 is the decompressed byte

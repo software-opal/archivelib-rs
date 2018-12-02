@@ -44,6 +44,7 @@ bool Compress(RCompressData *data) {
   _201 = (int16_t)(((l_uncompressed_buffer278[buffer_pos] << CONST_N154_IS_4) ^
                     (l_uncompressed_buffer278[buffer_pos + 1])) &
                    (CONST_N153_IS_4096 - 1));
+  printf("%x %x -> %x\n", l_uncompressed_buffer278[buffer_pos], l_uncompressed_buffer278[buffer_pos +1], _201);
   _201 = (int16_t)(fn445(l_uncompressed_buffer278, buffer_pos, _201) +
                    max_size279);
   while (_209 > MAX_RUN_LENGTH140 + 4 && !data->uncompressible) {

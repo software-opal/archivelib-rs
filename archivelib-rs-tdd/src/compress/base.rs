@@ -2,19 +2,12 @@ use crate::consts::{
   BUFFER_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096,
   CONST_N155_IS_8192, MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
-use crate::support::{BitRead, BitwiseWrite, ReadError};
+use std::io::{Read, Write};
 
 #[derive(Fail, Debug)]
 pub enum CompressError {
   #[fail(display = "Illegal Compression level: {}", _0)]
   IllegalCompressionLevel(u8),
-  #[fail(display = "Internal Error: {}", _0)]
-  InternalError(u8),
-  #[fail(display = "Unexpected EoF")]
-  UnexpectedEndOfFile {
-    #[cause]
-    error: ReadError,
-  },
   #[fail(display = "Invalid conversion: {}", error)]
   InvalidIntegerConversion {
     #[cause]
@@ -38,16 +31,8 @@ impl From<std::io::Error> for CompressError {
     CompressError::IOError { error: v }
   }
 }
-impl From<ReadError> for CompressError {
-  fn from(e: ReadError) -> Self {
-    match e {
-      ReadError::EndOfFile() => CompressError::UnexpectedEndOfFile { error: e },
-      ReadError::IoError { error } => CompressError::IOError { error: error },
-    }
-  }
-}
 
-pub struct RCompressData<R: BitRead, W: BitwiseWrite> {
+pub struct RCompressData<R: Read, W: Write> {
   pub input_store: R,
   pub output_store: W,
   pub dat_arr163: Vec<i16>,
@@ -74,7 +59,7 @@ pub struct RCompressData<R: BitRead, W: BitwiseWrite> {
   pub fail_uncompressible: bool,
   pub dat168: i16,
   pub dat169: i16,
-  pub buffer_position: i16,
+  pub buffer_position: usize,
   pub bits_buffer_used172: u16,
   pub dat173: i16,
   pub dat174: i16,
@@ -87,7 +72,7 @@ pub struct RCompressData<R: BitRead, W: BitwiseWrite> {
   pub array165_tmp_counter186: u16,
 }
 
-impl<R: BitRead, W: BitwiseWrite> RCompressData<R, W> {
+impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn new(
     reader: R,
     writer: W,
@@ -101,13 +86,18 @@ impl<R: BitRead, W: BitwiseWrite> RCompressData<R, W> {
       let max_size = 1 << compression_level;
       let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
+      let mut dat_arr163 = vec![0; dat_arr163_len];
+      for i in max_size..dat_arr163.len() {
+        dat_arr163[i] = -1;
+      }
+
       Ok(RCompressData {
         input_store: reader,
         output_store: writer,
         fail_uncompressible: fail_uncompressible,
         input_length: input_length,
 
-        dat_arr163: vec![-1; dat_arr163_len],
+        dat_arr163: dat_arr163,
         dat_arr164: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140 + 2],
@@ -141,5 +131,9 @@ impl<R: BitRead, W: BitwiseWrite> RCompressData<R, W> {
         array165_tmp_counter186: 0,
       })
     }
+  }
+
+  pub fn into_writer(self) -> W {
+    return self.output_store;
   }
 }

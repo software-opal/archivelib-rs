@@ -28,7 +28,7 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
         // byte_or_run_length203 >= 0x100 indicates a flag
         // run_length276 = byte_or_run_length203 - 0x100 + 3; which is the length
         // of the run. Flag value of byte_or_run_length203 ==
-        let mut run_length276 = byte_or_run_length203 - (UCHAR_MAX + 1) + MIN_RUN_LENGTH135_IS_3;
+        let run_length276 = byte_or_run_length203 - (UCHAR_MAX + 1) + MIN_RUN_LENGTH135_IS_3;
         if run_length276 == END_OF_FILE_FLAG {
           // byte_or_run_length203 == 0x1FE. End of file.
           break;

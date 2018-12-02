@@ -5,14 +5,11 @@ use crate::support::{BitRead, BitwiseWrite};
 
 impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn fn253(&mut self, mut _254: i16, mut _220: i16, mut _221: i16) -> Result<()> {
-    let mut run_start226: i16 = 0;
-    let mut byte_or_run_length203: i16 = 0;
-    let mut bits_to_load219: i16 = 0;
     let mut _283: u16 = 0;
-    bits_to_load219 = self.get_bits(_220 as i16)? as i16;
+    let bits_to_load219: i16 = self.get_bits(_220 as i16)? as i16;
     if bits_to_load219 == 0 {
-      byte_or_run_length203 = self.get_bits(_220 as i16)? as i16;
-      run_start226 = 0 as i16;
+      let byte_or_run_length203: i16 = self.get_bits(_220 as i16)? as i16;
+      let mut run_start226: i16 = 0;
       while (run_start226) < _254 {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
         run_start226 += 1
@@ -23,9 +20,9 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
         run_start226 += 1
       }
     } else {
-      run_start226 = 0 as i16;
+      let mut run_start226: i16 = 0;
       while (run_start226) < bits_to_load219 {
-        byte_or_run_length203 = ((self).bits182 >> 13) as i16;
+        let mut byte_or_run_length203: i16 = ((self).bits182 >> 13) as i16;
         if byte_or_run_length203 == 7 {
           let mut bytes_read: usize = 3;
           _283 = (1 << 12) as u16;
@@ -56,7 +53,7 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
         run_start226 += 1
       }
-      self.fn258(Fn258Mode::Fn253, _254 as u32, 8, CONST_N149_IS_256 as u16)?;
+      self.fn258(Fn258Mode::Fn253, _254 as usize, 8, CONST_N149_IS_256 as u16)?;
     };
     Ok(())
   }

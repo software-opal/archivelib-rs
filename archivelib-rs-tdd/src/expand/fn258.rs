@@ -33,8 +33,8 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
   pub fn fn258(
     &mut self,
     mode: Fn258Mode,
-    arg_arr260_len: u32,
-    bit_size261: u32,
+    arg_arr260_len: usize,
+    bit_size261: usize,
     max_internal263: u16,
   ) -> Result<()> {
     let arg_arr260 = match mode {
@@ -50,41 +50,34 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
     let mut lookup_table287: [u16; 17] = [0; 17];
     let mut lookup_table288: [u16; 18] = [0; 18];
 
-    let mut i: u32 = 0;
-    let mut item209: u32 = 0;
-    let mut j: u32 = 0;
-    let mut rem_bit_size291: u32 = 0;
+    let mut item209: usize;
+    let rem_bit_size291: usize;
     let mut _292: u32 = 0;
-    let mut tmp293: u32 = 0;
     let mut _283: u32 = 0;
-
-    i = 0 as u32;
-    while i < arg_arr260_len {
-      _277[arg_arr260[i as usize] as usize] = _277[arg_arr260[i as usize] as usize].wrapping_add(1);
-      i = i.wrapping_add(1)
+    let mut i: usize;
+    let mut j: usize;
+    for i in 0..(arg_arr260_len as usize) {
+      _277[arg_arr260[i] as usize] = _277[arg_arr260[i] as usize].wrapping_add(1);
     }
-    i = 1 as u32;
-    while i < 17 {
+    for i in 1..17 {
       // This wraps around to 0.
-      lookup_table288[i.wrapping_add(1) as usize] =
-        (lookup_table288[i as usize].wrapping_add((_277[i as usize]) << (16 - i))) as u16;
-      i = i.wrapping_add(1)
+      lookup_table288[i + 1] = (lookup_table288[i].wrapping_add((_277[i]) << (16 - i))) as u16;
     }
-    if lookup_table288[17usize] != 0 {
+    if lookup_table288[17] != 0 {
       return Err(InternalError(1));
     } else {
-      rem_bit_size291 = (16 - bit_size261) as u32;
-      i = 1 as u32;
+      rem_bit_size291 = 16 - bit_size261;
+      i = 1;
       while i <= bit_size261 {
-        lookup_table288[i as usize] = (lookup_table288[i as usize] >> rem_bit_size291) as u16;
-        lookup_table287[i as usize] = (1 << (bit_size261).wrapping_sub(i)) as u16;
+        lookup_table288[i] = (lookup_table288[i] >> rem_bit_size291) as u16;
+        lookup_table287[i] = (1 << (bit_size261).wrapping_sub(i)) as u16;
         i = i.wrapping_add(1)
       }
       while i <= 16 {
-        lookup_table287[i as usize] = (1 << (16 - i)) as u16;
+        lookup_table287[i] = (1 << (16 - i)) as u16;
         i = i.wrapping_add(1)
       }
-      i = (lookup_table288[(bit_size261 + 1) as usize] >> rem_bit_size291) as u32;
+      i = (lookup_table288[bit_size261 + 1] >> rem_bit_size291) as usize;
       if i != (1 << 16) {
         let _289 = 1 << bit_size261;
         while i != _289 {
@@ -95,18 +88,18 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
       }
       _292 = arg_arr260_len as u32;
       _283 = 1 << 15 - bit_size261;
-      j = 0 as u32;
+      j = 0;
       while j < arg_arr260_len {
-        item209 = arg_arr260[j as usize] as u32;
+        item209 = arg_arr260[j] as usize;
         if !(item209 == 0) {
-          tmp293 = (lookup_table288[item209 as usize] + lookup_table287[item209 as usize]) as u32;
+          let tmp293: usize = (lookup_table288[item209] + lookup_table287[item209]) as usize;
           if item209 <= bit_size261 {
-            if tmp293 > max_internal263 as u32 {
+            if tmp293 > max_internal263 as usize {
               return Err(InternalError(2));
             } else {
-              i = lookup_table288[item209 as usize] as u32;
+              i = lookup_table288[item209 as usize] as usize;
               while i < tmp293 {
-                output_table262[i as usize] = j as u16;
+                output_table262[i] = j as u16;
                 i = i.wrapping_add(1)
               }
             }
