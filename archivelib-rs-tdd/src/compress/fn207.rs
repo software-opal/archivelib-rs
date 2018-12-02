@@ -1,104 +1,89 @@
-use crate::compress::{RCompressData, Result};
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
+use crate::compress::{CompressError, RCompressData, Result};
+use crate::consts::{
+  CONST_N141_IS_511, CONST_N142_IS_15, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N147_IS_5,
+  CONST_N540_IS_5,
+};
 use std::io::{Read, Write};
+const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: Write> RCompressData<R, W> {
-  pub fn fn207(&mut self) {
-    let mut run_start226: u32 = 0;
-    let mut _289: u32 = 0;
-    let mut _229: u32 = 0;
-    let mut _454: u32 = 0;
-    let mut _455: u32 = 0;
-    let mut _456: u32 = 0 as u32;
-    let mut _217: [u16; 37] = [0; 37];
-    _229 = fn211(
-      data,
-      127 * 2 + 1 + 1 + 256 - 3 + 1 + 1,
-      self.dat_arr191,
-      self.dat_arr180,
-      self.dat_arr192,
+  pub fn fn207(&mut self) -> Result<()> {
+    let mut var455: u32 = 0;
+    let mut var456: u32 = 0 as u32;
+    let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
+    let mut var229 = self.fn211(
+      CONST_N141_IS_511 as i32,
+      &mut self.dat_arr191,
+      &mut self.dat_arr180,
+      &mut self.dat_arr192,
     ) as u32;
-    _455 = *self.dat_arr191.offset(_229 as isize) as u32;
-    write_bits_to_buffer(data, 16, _455 as u16);
-    if _229 >= (127 * 2 + 1 + 1 + 256 - 3 + 1 + 1) {
-      fn216(data, _217.as_mut_ptr());
-      _229 = fn211(
-        data,
-        16 + 3,
-        _217.as_mut_ptr(),
-        self.dat_arr181,
-        self.dat_arr194,
+    var455 = self.dat_arr191[var229 as usize] as u32;
+    self.write_bits_to_buffer(16, var455 as u16)?;
+    if var229 >= CONST_N141_IS_511 as u32 {
+      self.fn216(&mut var217);
+      var229 = self.fn211(
+        CONST_N145_IS_19 as i32,
+        &mut var217,
+        &mut self.dat_arr181,
+        &mut self.dat_arr194,
       ) as u32;
-      if _229 >= (16 + 3) {
-        fn218(data, (16 + 3) as i16, 5 as i16, 3 as i16);
+      if var229 >= CONST_N145_IS_19 as u32 {
+        self.fn218(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3 as i16);
       } else {
-        write_bits_to_buffer(data, 5, 0 as u16);
-        write_bits_to_buffer(data, 5, _229 as u16);
+        self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
+        self.write_bits_to_buffer(CONST_N147_IS_5 as u16, var229 as u16)?;
       }
-      fn222(data);
+      self.fn222();
     } else {
-      write_bits_to_buffer(data, 5, 0 as u16);
-      write_bits_to_buffer(data, 5, 0 as u16);
-      write_bits_to_buffer(data, 9, 0 as u16);
-      write_bits_to_buffer(data, 9, _229 as u16);
+      self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
+      self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
+      self.write_bits_to_buffer(CONST_N143_IS_9 as u16, 0 as u16)?;
+      self.write_bits_to_buffer(CONST_N143_IS_9 as u16, var229 as u16)?;
     }
-    _229 = fn211(
-      data,
-      14 + 1,
-      self.dat_arr193,
-      self.dat_arr181,
-      self.dat_arr194,
+    var229 = self.fn211(
+      CONST_N142_IS_15 as i32,
+      &mut self.dat_arr193,
+      &mut self.dat_arr181,
+      &mut self.dat_arr194,
     ) as u32;
-    if _229 >= (14 + 1) {
-      fn218(data, (14 + 1) as i16, 5 as i16, -1 as i16);
+    if var229 >= CONST_N142_IS_15 as u32 {
+      self.fn218(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1 as i16);
     } else {
-      write_bits_to_buffer(data, 5, 0 as u16);
-      write_bits_to_buffer(data, 5, _229 as u16);
+      self.write_bits_to_buffer(CONST_N540_IS_5 as u16, 0 as u16)?;
+      self.write_bits_to_buffer(CONST_N540_IS_5 as u16, var229 as u16)?;
     }
-    _454 = 0 as u32;
-    run_start226 = 0 as u32;
-    while run_start226 < _455 {
-      if run_start226.wrapping_rem(8) == 0 {
-        let fresh0 = _454;
-        _454 = _454.wrapping_add(1);
-        _456 = *self.dat_arr165.offset(fresh0 as isize) as u32
+    let mut var454 = 0 as u32;
+    for run_start226 in 0..var455 {
+      if run_start226 % 8 == 0 {
+        var456 = self.dat_arr165[var454 as usize] as u32;
+        var454 += 1;
       } else {
-        _456 <<= 1
+        var456 <<= 1;
       }
-      if 0 != _456 & 1 << 8 - 1 {
-        let fresh1 = _454;
-        _454 = _454.wrapping_add(1);
-        write_stored_bits_to_buffer(
-          data,
-          (*self.dat_arr165.offset(fresh1 as isize)).wrapping_add(1 << 8) as i16,
-        );
-        let fresh2 = _454;
-        _454 = _454.wrapping_add(1);
-        _289 = *self.dat_arr165.offset(fresh2 as isize) as u32;
-        let fresh3 = _454;
-        _454 = _454.wrapping_add(1);
-        _289 = (_289).wrapping_add(((*self.dat_arr165.offset(fresh3 as isize)) << 8)) as u32 as u32;
-        fn224(data, _289 as i16 as u16);
+      if 0 != (var456 & (1 << (CHAR_BIT - 1))) {
+        let fresh1 = var454;
+        self.write_stored_bits_to_buffer(
+          (self.dat_arr165[var454 as usize]).wrapping_add(1 << CHAR_BIT) as i16,
+        )?;
+        var454 += 1;
+        let var289 = self.dat_arr165[var454 as usize] as u32
+          + (self.dat_arr165[(var454 + 1) as usize] << 8) as u32;
+        var454 += 2;
+        self.fn224(var289 as i16 as u16);
       } else {
-        let fresh4 = _454;
-        _454 = _454.wrapping_add(1);
-        write_stored_bits_to_buffer(data, *self.dat_arr165.offset(fresh4 as isize) as i16);
+        self.write_stored_bits_to_buffer(self.dat_arr165[var454 as usize] as i16)?;
+        var454 += 1;
       }
-      if 0 != self.uncompressible {
-        return;
-      } else {
-        run_start226 = run_start226.wrapping_add(1)
+      if self.uncompressible {
+        return Err(CompressError::InputUncompressable);
       }
     }
-    run_start226 = 0 as u32;
-    while run_start226 < (127 * 2 + 1 + 1 + 256 - 3 + 1 + 1) {
-      *self.dat_arr191.offset(run_start226 as isize) = 0 as u16;
-      run_start226 = run_start226.wrapping_add(1)
+    for i in 0..CONST_N141_IS_511 {
+      self.dat_arr191[i] = 0 as u16;
     }
-    run_start226 = 0 as u32;
-    while run_start226 < (14 + 1) {
-      *self.dat_arr193.offset(run_start226 as isize) = 0 as u16;
-      run_start226 = run_start226.wrapping_add(1)
+    for i in 0..CONST_N142_IS_15 {
+      self.dat_arr193[i] = 0 as u16;
     }
+    Ok(())
   }
 }

@@ -8,6 +8,10 @@ use std::io::{Read, Write};
 pub enum CompressError {
   #[fail(display = "Illegal Compression level: {}", _0)]
   IllegalCompressionLevel(u8),
+  #[fail(display = "Uncompressable")]
+  InputUncompressable,
+  #[fail(display = "Cursor {} Invariant failed", _0)]
+  InvalidCursor(String),
   #[fail(display = "Invalid conversion: {}", error)]
   InvalidIntegerConversion {
     #[cause]
@@ -50,9 +54,9 @@ pub struct RCompressData<R: Read, W: Write> {
   pub dat_arr192: Vec<u16>,
   pub dat_arr193: Vec<u16>,
   pub dat_arr194: Vec<u16>,
-  // pub dat_arr_cursor178: *mut u8,
-  // pub dat_arr_cursor187: *mut u16,
-  // pub dat_arr_cursor188: *mut u16,
+  // pub dat_arr_cursor178: Option<&'a [u8]>,
+  // pub dat_arr_cursor187: Option<&'a [u16]>,
+  // pub dat_arr_cursor188: Option<&'a [u16]>,
   pub chars_written: usize,
   pub input_length: usize,
   pub uncompressible: bool,
@@ -113,6 +117,9 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         dat_arr193: vec![0; 2 * CONST_N142_IS_15 - 1],
         dat_arr194: vec![0; CONST_N152_IS_19],
 
+        // dat_arr_cursor178: None,
+        // dat_arr_cursor187: None,
+        // dat_arr_cursor188: None,
         max_uncompressed_data_size: max_size,
         max_uncompressed_data_size_bitmask: (max_size - 1),
         chars_written: 0,

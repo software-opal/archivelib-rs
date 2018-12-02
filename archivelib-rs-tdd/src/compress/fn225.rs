@@ -1,36 +1,32 @@
-use crate::compress::{RCompressData, Result};
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
+use crate::compress::RCompressData;
 use std::io::{Read, Write};
 
 impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn225(
     &mut self,
-    mut run_start226: i32,
-    mut _187: *mut u16,
-    mut _177: *mut i16,
-    mut _227: i16,
+    run_start226: i32,
+    var187: &mut [u16], // Can be removed?
+    var177: &mut [i16], // Can be removed?
+    var227: i16,
   ) {
-    let mut run_length276: i32 = 0;
-    let mut _289: i32 = 0;
-    _289 = *_177.offset(run_start226 as isize) as i32;
+    let mut run_start: usize = run_start226 as usize;
+    let var289 = var177[run_start];
     loop {
-      run_length276 = 2 * run_start226;
-      if !(run_length276 <= _227) {
+      let mut run_length276 = 2 * run_start;
+      if !(run_length276 <= var227 as usize) {
         break;
       }
-      if run_length276 < _227
-        && *_187.offset(*_177.offset(run_length276 as isize) as isize)
-          > *_187.offset(*_177.offset((run_length276 + 1) as isize) as isize)
+      if run_length276 < var227 as usize
+        && var187[var177[run_length276] as usize] > var187[var177[run_length276 + 1] as usize]
       {
         run_length276 += 1
       }
-      if *_187.offset(_289 as isize) <= *_187.offset(*_177.offset(run_length276 as isize) as isize)
-      {
+      if var187[var289 as usize] <= var187[var177[run_length276] as usize] {
         break;
       }
-      *_177.offset(run_start226 as isize) = *_177.offset(run_length276 as isize);
-      run_start226 = run_length276
+      var177[run_start] = var177[run_length276];
+      run_start = run_length276
     }
-    *_177.offset(run_start226 as isize) = _289 as u16 as i16;
+    var177[run_start] = var289 as i16;
   }
 }

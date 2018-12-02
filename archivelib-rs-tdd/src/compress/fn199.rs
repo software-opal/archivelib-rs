@@ -3,8 +3,8 @@ use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
 use std::io::{Read, Write};
 
 impl<R: Read, W: Write> RCompressData<R, W> {
-  pub fn fn199(&mut self, uncompressed_buffer_index200: i16, mut _201: i16) {
-    let mut test_idx = _201 as usize;
+  pub fn fn199(&mut self, uncompressed_buffer_index200: i16, var201: i16) {
+    let mut test_idx = var201 as usize;
     let orig_idx = uncompressed_buffer_index200 as usize;
     self.dat168 = 0 as i16;
     for _ in 0..=MAX_COMPRESSION_CYCLES {

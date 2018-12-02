@@ -1,4 +1,4 @@
-use crate::compress::{RCompressData, Result};
+use crate::compress::{CompressError, RCompressData, Result};
 use crate::consts::{
   CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MIN_RUN_LENGTH135_IS_3,
 };
@@ -49,46 +49,56 @@ fn read_one(reader: &mut impl Read) -> Result<Option<u8>> {
 }
 
 impl<R: Read, W: Write> RCompressData<R, W> {
-  pub fn compress(&mut self) -> Result<bool> {
+  pub fn compress(&mut self) -> Result<()> {
     let mut buffer_pos: usize = 0;
     let size_bitmask280 = self.max_uncompressed_data_size_bitmask;
     let max_size279 = self.max_uncompressed_data_size;
-    let mut _209 = read_all(&mut self.input_store, &mut self.uncompressed_buffer)?;
-    let mut s = (_209 & size_bitmask280) as usize;
+    let mut var209 = read_all(&mut self.input_store, &mut self.uncompressed_buffer)?;
+    let mut s = (var209 & size_bitmask280) as usize;
 
     self.dat169 = 0 as i16;
     self.dat168 = 0 as i16;
-    let mut _201 = ((((self.uncompressed_buffer[buffer_pos] as u16) << CONST_N154_IS_4)
+    let mut var201 = ((((self.uncompressed_buffer[buffer_pos] as u16) << CONST_N154_IS_4)
       ^ (self.uncompressed_buffer[buffer_pos + 1] as u16))
       & (CONST_N153_IS_4096 as u16 - 1)) as i16;
-    _201 = fn445(&self.uncompressed_buffer, buffer_pos, _201) + (max_size279 as i16);
+    var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
 
-    while _209 > 256 + 4 && !self.uncompressible {
-      self.fn199(buffer_pos as i16, _201);
+    while var209 > 256 + 4 && !self.uncompressible {
+      self.fn199(buffer_pos as i16, var201);
       if (self.dat168) < 3 {
         let val = self.uncompressed_buffer[buffer_pos] as u16;
-        self.fn202(val, 0);
-        fn447(&mut self.dat_arr163, &mut self.dat_arr164, buffer_pos, _201);
+        self.fn202(val, 0)?;
+        fn447(
+          &mut self.dat_arr163,
+          &mut self.dat_arr164,
+          buffer_pos,
+          var201,
+        );
         buffer_pos += 1;
-        _201 = fn445(&mut self.uncompressed_buffer, buffer_pos, _201) + (max_size279 as i16);
-        _209 -= 1;
+        var201 = fn445(&mut self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+        var209 -= 1;
       } else {
-        _209 = _209 - (self.dat168 as usize);
+        var209 = var209 - (self.dat168 as usize);
         let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
         let a2 = self.dat169 as u16;
-        self.fn202(a1, a2);
+        self.fn202(a1, a2)?;
         loop {
           self.dat168 -= 1;
           if !(self.dat168 >= 0) {
             break;
           }
-          fn447(&mut self.dat_arr163, &mut self.dat_arr164, buffer_pos, _201);
+          fn447(
+            &mut self.dat_arr163,
+            &mut self.dat_arr164,
+            buffer_pos,
+            var201,
+          );
           buffer_pos += 1;
-          _201 = fn445(&mut self.uncompressed_buffer, buffer_pos, _201) + (max_size279 as i16)
+          var201 = fn445(&mut self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
         }
       }
     }
-    while (_209) < 256 {
+    while (var209) < 256 {
       let byte_or_run_length203 = match read_one(&mut self.input_store)? {
         None => break,
         Some(n) => n,
@@ -99,21 +109,21 @@ impl<R: Read, W: Write> RCompressData<R, W> {
       }
       fn448(&mut self.dat_arr163, &mut self.dat_arr164, s);
       s = (s + 1) & size_bitmask280;
-      _209 += 1
+      var209 += 1
     }
-    while _209 > 0 && !self.uncompressible {
-      self.fn199(buffer_pos as i16, _201);
-      if self.dat168 > _209 as i16 {
-        self.dat168 = _209 as i16
+    while var209 > 0 && !self.uncompressible {
+      self.fn199(buffer_pos as i16, var201);
+      if self.dat168 > var209 as i16 {
+        self.dat168 = var209 as i16
       }
       if (self.dat168) < 3 {
         self.dat168 = 1 as i16;
         let val = self.uncompressed_buffer[buffer_pos] as u16;
-        self.fn202(val, 0 as u16);
+        self.fn202(val, 0 as u16)?;
       } else {
         let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
         let a2 = self.dat169 as u16;
-        self.fn202(a1, a2);
+        self.fn202(a1, a2)?;
       }
       loop {
         self.dat168 -= 1;
@@ -130,9 +140,14 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         }
         fn448(&mut self.dat_arr163, &mut self.dat_arr164, s);
         s = (s + 1) & size_bitmask280;
-        fn447(&mut self.dat_arr163, &mut self.dat_arr164, buffer_pos, _201);
+        fn447(
+          &mut self.dat_arr163,
+          &mut self.dat_arr164,
+          buffer_pos,
+          var201,
+        );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        _201 = fn445(&self.uncompressed_buffer, buffer_pos, _201) + (max_size279 as i16)
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
       }
       loop {
         let fresh0 = self.dat168;
@@ -140,19 +155,24 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         if !(fresh0 >= 0) {
           break;
         }
-        fn447(&mut self.dat_arr163, &mut self.dat_arr164, buffer_pos, _201);
+        fn447(
+          &mut self.dat_arr163,
+          &mut self.dat_arr164,
+          buffer_pos,
+          var201,
+        );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        _201 = fn445(&self.uncompressed_buffer, buffer_pos, _201) + (max_size279 as i16);
-        _209 -= 1;
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+        var209 -= 1;
       }
     }
-    if !self.uncompressible {
-      self.fn202(
-        (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)) as u16,
-        0,
-      );
+    if self.uncompressible {
+      return Err(CompressError::InputUncompressable);
     }
-    self.finalise_compresson197();
-    return Ok(self.uncompressible);
+    self.fn202(
+      (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)) as u16,
+      0,
+    )?;
+    self.finalise_compresson197()
   }
 }

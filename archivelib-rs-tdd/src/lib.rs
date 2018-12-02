@@ -51,7 +51,7 @@ pub fn do_compress_level(
   };
 
   match res.compress() {
-    Ok(_) => (),
+    Ok(()) => (),
     Err(err) => return Err(format!("{}", err)),
   };
 

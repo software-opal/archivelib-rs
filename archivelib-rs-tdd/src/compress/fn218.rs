@@ -1,32 +1,31 @@
 use crate::compress::{RCompressData, Result};
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
 use std::io::{Read, Write};
 
+const USHRT_MAX: u16 = u16::max_value();
+
 impl<R: Read, W: Write> RCompressData<R, W> {
-  pub fn fn218(&mut self, mut bits_to_load219: i16, mut _220: i16, mut _221: i16) {
-    let mut run_start226: i16 = 0;
-    let mut _289: i16 = 0;
-    while bits_to_load219 > 0 && *self.dat_arr181.offset((bits_to_load219 - 1) as isize) == 0 {
+  pub fn fn218(&mut self, mut bits_to_load219: i16, var220: i16, var221: i16) -> Result<()> {
+    while bits_to_load219 > 0 && self.dat_arr181[bits_to_load219 as usize - 1] == 0 {
       bits_to_load219 -= 1
     }
-    write_bits_to_buffer(data, _220 as i32, bits_to_load219 as u16);
-    run_start226 = 0 as i16;
+    self.write_bits_to_buffer(var220 as u16, bits_to_load219 as u16)?;
+    let mut run_start226 = 0;
     while (run_start226) < bits_to_load219 {
-      let fresh0 = run_start226;
+      let var289 = self.dat_arr181[run_start226 as usize] as u16;
       run_start226 = run_start226 + 1;
-      _289 = *self.dat_arr181.offset(fresh0 as isize) as i16;
-      if _289 <= 6 {
-        write_bits_to_buffer(data, 3, _289 as u16);
+      if var289 <= 6 {
+        self.write_bits_to_buffer(3, var289)?;
       } else {
-        write_bits_to_buffer(data, _289 - 3, (32767 * 2 + 1 << 1) as u16);
+        self.write_bits_to_buffer(var289 - 3, (USHRT_MAX << 1) as u16)?;
       }
-      if !(run_start226 == _221) {
+      if !(run_start226 == var221) {
         continue;
       }
-      while (run_start226) < 6 && *self.dat_arr181.offset(run_start226 as isize) == 0 {
+      while (run_start226) < 6 && self.dat_arr181[run_start226 as usize] == 0 {
         run_start226 += 1
       }
-      write_bits_to_buffer(data, 2, (run_start226 - 3) as u16);
+      self.write_bits_to_buffer(2, (run_start226 - 3) as u16)?;
     }
+    Ok(())
   }
 }
