@@ -1,17 +1,16 @@
 use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result};
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
+
 use crate::support::ArrayAlias;
 use std::io::{Read, Write};
 
 impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn211(
     &mut self,
-    mut var212: i32,
+    var212: i32,
     dat_arr_cursor187: &mut CompressU16ArrayAlias,
     dat_arr_cursor178: &mut CompressU8ArrayAlias,
     dat_arr_cursor188: &mut CompressU16ArrayAlias,
   ) -> Result<i32> {
-    let dat_arr_cursor187_offset = dat_arr_cursor187.offset(self);
     let dat_arr_cursor178_offset = dat_arr_cursor178.offset(self);
     let dat_arr_cursor188_offset = dat_arr_cursor188.offset(self);
 

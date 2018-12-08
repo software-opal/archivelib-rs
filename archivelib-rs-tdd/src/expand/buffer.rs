@@ -24,7 +24,7 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::{BitReader, BitwiseWriter, ExactCallBitReader, VecReader};
+  use crate::support::{BitwiseWriter, ExactCallBitReader};
 
   // const data: Vec<u8> =
 

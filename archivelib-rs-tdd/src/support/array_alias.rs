@@ -57,7 +57,7 @@ macro_rules! array_alias_enum {
             $name::Custom(ref mut idx, _) => {*idx},
           }
         }
-        fn set_offset(&mut self, parent: &$parent, offset: usize) -> usize {
+        fn set_offset(&mut self, _parent: &$parent, offset: usize) -> usize {
           let new_idx = match self {
             $(
               $name::$key(ref mut idx) => {*idx = offset; *idx},

@@ -61,10 +61,8 @@ impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::consts::{
-    CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19, CONST_N147_IS_5, CONST_N540_IS_5,
-  };
-  use crate::support::{BitReader, BitwiseWriter, ExactCallBitReader, VecReader};
+  use crate::consts::{CONST_N145_IS_19, CONST_N147_IS_5};
+  use crate::support::{BitReader, BitwiseWriter, VecReader};
 
   #[test]
   fn test_name() {

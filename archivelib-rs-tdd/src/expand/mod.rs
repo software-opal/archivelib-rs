@@ -1,7 +1,7 @@
 mod base;
+mod buffer;
 mod calculate_run_offset;
 mod expand;
-mod expand_buffer;
 mod fn253;
 mod fn255;
 mod fn258;

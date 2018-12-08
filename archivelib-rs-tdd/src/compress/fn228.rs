@@ -3,12 +3,12 @@ use crate::support::ArrayAlias;
 use std::io::{Read, Write};
 
 pub fn calculate_pointer_depths(
-  mut left_array_ptr: &[u16],
-  mut right_array_ptr: &[u16],
-  mut depth_store_ptr: &mut [u16],
-  mut depth: usize,
-  mut series_start: usize,
-  mut curr_idx: usize,
+  left_array_ptr: &[u16],
+  right_array_ptr: &[u16],
+  depth_store_ptr: &mut [u16],
+  depth: usize,
+  series_start: usize,
+  curr_idx: usize,
 ) {
   /*
   * Pointer depth calculation?
@@ -54,7 +54,7 @@ pub fn calculate_pointer_depths(
 impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn228(
     &mut self,
-    mut var229: i32,
+    var229: i32,
     dat_arr_cursor178: &mut CompressU8ArrayAlias,
     dat_arr_cursor188: &mut CompressU16ArrayAlias,
   ) {

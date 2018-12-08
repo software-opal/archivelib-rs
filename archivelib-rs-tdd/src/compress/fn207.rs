@@ -17,7 +17,7 @@ impl<R: Read, W: Write> RCompressData<R, W> {
       &mut CompressU8ArrayAlias::Array180(0),
       &mut CompressU16ArrayAlias::Array192(0),
     )?;
-    let mut var455 = self.dat_arr191[var229 as usize];
+    let var455 = self.dat_arr191[var229 as usize];
     self.write_bits_to_buffer(16, var455 as u16)?;
     if var229 >= CONST_N141_IS_511 as i32 {
       self.fn216(&mut var217);
@@ -28,12 +28,12 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         &mut CompressU16ArrayAlias::Array194(0),
       )?;
       if var229 >= CONST_N145_IS_19 as i32 {
-        self.fn218(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3 as i16);
+        self.fn218(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3 as i16)?;
       } else {
         self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
         self.write_bits_to_buffer(CONST_N147_IS_5 as u16, var229 as u16)?;
       }
-      self.fn222();
+      self.fn222()?;
     } else {
       self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
       self.write_bits_to_buffer(CONST_N147_IS_5 as u16, 0 as u16)?;
@@ -47,7 +47,7 @@ impl<R: Read, W: Write> RCompressData<R, W> {
       &mut CompressU16ArrayAlias::Array194(0),
     )?;
     if var229 >= CONST_N142_IS_15 as i32 {
-      self.fn218(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1 as i16);
+      self.fn218(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1 as i16)?;
     } else {
       self.write_bits_to_buffer(CONST_N540_IS_5 as u16, 0 as u16)?;
       self.write_bits_to_buffer(CONST_N540_IS_5 as u16, var229 as u16)?;
@@ -67,7 +67,7 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         let var289 = self.dat_arr165[var454 as usize] as u32
           + ((self.dat_arr165[(var454 + 1) as usize] as u32) << 8);
         var454 += 2;
-        self.fn224(var289 as i16 as u16);
+        self.fn224(var289 as i16 as u16)?;
       } else {
         let a1 = self.dat_arr165[var454 as usize] as i16;
         self.write_stored_bits_to_buffer(a1)?;
