@@ -32,7 +32,11 @@ impl<R: Read, W: Write> RCompressData<R, W> {
     `data->bits_buffer_used172` Number of bits in use in `data->bits_buffer182`.
     */
     // Move the assigned bits into the highest bits of `bits203`
-    bits203 = ((bits203) << 16 - bit_count209) as u16;
+
+    bits203 = match bit_count209 {
+      0 => 0,
+      rest => bits203 << (16 - rest),
+    };
     // Combine the existing bits with these new bits without overlap
     self.bits_buffer182 =
       (self.bits_buffer182 | (bits203 >> self.bits_buffer_used172) as u16) as u16;
@@ -59,7 +63,11 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         self.buffer_position += 1;
         self.bits_buffer_used172 = (self.bits_buffer_used172 - 8) as u16;
         // Handle any bits that didn't fit the first time we tried.
-        self.bits_buffer182 = ((bits203) << bit_count209 - self.bits_buffer_used172) as u16;
+        let bits_left = bit_count209 - self.bits_buffer_used172;
+        self.bits_buffer182 = match bits_left {
+          16 => 0,
+          left => (bits203 as u16) << left,
+        };
       }
     }
     Ok(())

@@ -1,85 +1,77 @@
-use crate::compress::{RCompressData, Result};
+use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result};
 use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
+use crate::support::ArrayAlias;
 use std::io::{Read, Write};
 
 impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn211(
     &mut self,
     mut var212: i32,
-    mut var213: &mut [u16],
-    mut var214: &mut [u8],
-    mut var215: &mut [u16],
-  ) -> i32 {
-    let mut run_start226: i32 = 0;
-    let mut run_length276: i32 = 0;
-    let mut var289: i32 = 0;
-    let mut var292: i32 = 0;
-    let mut var227: i16 = 0;
+    dat_arr_cursor187: &mut CompressU16ArrayAlias,
+    dat_arr_cursor178: &mut CompressU8ArrayAlias,
+    dat_arr_cursor188: &mut CompressU16ArrayAlias,
+  ) -> Result<i32> {
+    let dat_arr_cursor187_offset = dat_arr_cursor187.offset(self);
+    let dat_arr_cursor178_offset = dat_arr_cursor178.offset(self);
+    let dat_arr_cursor188_offset = dat_arr_cursor188.offset(self);
+
     self.dat174 = var212 as i16;
-    self.dat_arr_cursor187 = var213;
-    self.dat_arr_cursor178 = var214;
-    var292 = self.dat174 as i32;
-    var227 = 0 as i16;
-    *self.dat_arr177.offset(1) = 0 as i16;
-    run_start226 = 0;
-    while run_start226 < self.dat174 {
-      *self.dat_arr_cursor178.offset(run_start226 as isize) = 0 as u8;
-      if 0 != *self.dat_arr_cursor187.offset(run_start226 as isize) {
+    let mut var292 = var212;
+    let mut var227 = 0;
+    self.dat_arr177[1] = 0;
+    for i in 0..(self.dat174 as usize) {
+      dat_arr_cursor178.set(self, i, 0);
+      if 0 != dat_arr_cursor187.get(self, i) {
         var227 += 1;
-        *self.dat_arr177.offset(var227 as isize) = run_start226 as i16
+        self.dat_arr177[var227] = i as i16
       }
-      run_start226 += 1
     }
-    if (var227) < 2 {
-      *var215.offset(*self.dat_arr177.offset(1) as isize) = 0 as u16;
-      return *self.dat_arr177.offset(1) as i32;
+    if var227 < 2 {
+      dat_arr_cursor188.set(self, self.dat_arr177[1] as usize, 0);
+      return Ok(self.dat_arr177[1] as i32);
     } else {
-      run_start226 = var227 / 2;
+      let mut run_start226 = (var227 / 2) as i16;
       while run_start226 >= 1 {
-        self.fn225(
-          run_start226,
-          self.dat_arr_cursor187,
-          self.dat_arr177,
-          var227,
-        );
+        self.fn225(run_start226 as i32, dat_arr_cursor187, var227 as i16);
         run_start226 -= 1
       }
-      self.dat_arr_cursor188 = var215;
+      let mut var289;
       loop {
-        run_start226 = *self.dat_arr177.offset(1) as i32;
+        run_start226 = self.dat_arr177[1];
         if run_start226 < self.dat174 {
-          let fresh0 = self.dat_arr_cursor188;
-          self.dat_arr_cursor188 = self.dat_arr_cursor188.offset(1);
-          *fresh0 = run_start226 as u16
+          dat_arr_cursor188.set(self, 0, run_start226 as u16);
+          dat_arr_cursor188.shift(self, 1);
         }
-        let fresh1 = var227;
-        var227 = var227 - 1;
-        *self.dat_arr177.offset(1) = *self.dat_arr177.offset(fresh1 as isize);
-        self.fn225(1, self.dat_arr_cursor187, self.dat_arr177, var227);
-        run_length276 = *self.dat_arr177.offset(1) as i32;
+        self.dat_arr177[1] = self.dat_arr177[var227];
+        var227 -= 1;
+        self.fn225(1, dat_arr_cursor187, var227 as i16);
+        let run_length276 = self.dat_arr177[1];
         if run_length276 < self.dat174 {
-          let fresh2 = self.dat_arr_cursor188;
-          self.dat_arr_cursor188 = self.dat_arr_cursor188.offset(1);
-          *fresh2 = run_length276 as u16
+          dat_arr_cursor188.set(self, 0, run_length276 as u16);
+          dat_arr_cursor188.shift(self, 1);
         }
-        let fresh3 = var292;
+        var289 = var292;
         var292 = var292 + 1;
-        var289 = fresh3;
-        *self.dat_arr_cursor187.offset(var289 as isize) =
-          (*self.dat_arr_cursor187.offset(run_start226 as isize)
-            + *self.dat_arr_cursor187.offset(run_length276 as isize)) as u16;
-        *self.dat_arr177.offset(1) = var289 as i16;
-        self.fn225(1, self.dat_arr_cursor187, self.dat_arr177, var227);
-        *self.dat_arr189.offset(var289 as isize) = run_start226 as u16;
-        *self.dat_arr190.offset(var289 as isize) = run_length276 as u16;
+        dat_arr_cursor187.set(
+          self,
+          var289 as usize,
+          dat_arr_cursor187.get(self, run_start226 as usize)
+            + dat_arr_cursor187.get(self, run_length276 as usize),
+        );
+        self.dat_arr177[1] = var289 as i16;
+        self.fn225(1, dat_arr_cursor187, var227 as i16);
+        self.dat_arr189[var289 as usize] = run_start226 as u16;
+        self.dat_arr190[var289 as usize] = run_length276 as u16;
         if !(var227 > 1) {
           break;
         }
       }
-      self.dat_arr_cursor188 = var215;
-      self.fn228(var289);
-      self.fn230(var212, var214, var215);
-      return var289;
+      dat_arr_cursor188.set_offset(self, dat_arr_cursor188_offset);
+      self.fn228(var289, dat_arr_cursor178, dat_arr_cursor188);
+      dat_arr_cursor188.set_offset(self, dat_arr_cursor188_offset);
+      dat_arr_cursor178.set_offset(self, dat_arr_cursor178_offset);
+      self.fn230(var212, dat_arr_cursor178, dat_arr_cursor188);
+      return Ok(var289);
     };
   }
 }

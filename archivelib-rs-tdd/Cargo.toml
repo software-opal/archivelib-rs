@@ -2,6 +2,7 @@
 name = "archivelib-rs-tdd"
 version = "0.1.0"
 authors = ["Opal Symes <code@opal.codes>"]
+edition = "2018"
 
 [dependencies]
 failure = "0.1.3"

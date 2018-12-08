@@ -13,11 +13,12 @@ extern crate proptest;
 #[cfg(test)]
 extern crate rand;
 
+#[macro_use]
+pub mod support;
+
 mod compress;
 mod consts;
 mod expand;
-pub mod support;
-
 // #[cfg(test)]
 // mod proptests;
 #[cfg(test)]

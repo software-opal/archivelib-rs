@@ -1,5 +1,5 @@
-use crate::compress::{RCompressData, Result};
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140};
+use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
+use crate::support::ArrayAlias;
 use std::io::{Read, Write};
 
 pub fn calculate_pointer_depths(
@@ -52,7 +52,12 @@ pub fn calculate_pointer_depths(
 }
 
 impl<R: Read, W: Write> RCompressData<R, W> {
-  pub fn fn228(&mut self, mut var229: i32) {
+  pub fn fn228(
+    &mut self,
+    mut var229: i32,
+    dat_arr_cursor178: &mut CompressU8ArrayAlias,
+    dat_arr_cursor188: &mut CompressU16ArrayAlias,
+  ) {
     for i in 0..16 {
       self.dat_arr167[i] = 0;
     }
@@ -86,12 +91,16 @@ impl<R: Read, W: Write> RCompressData<R, W> {
     while run_start226 > 0 {
       let mut var289 = self.dat_arr167[run_start226];
       loop {
-        var289 -= 1;
-        if !(var289 >= 0) {
+        if var289 == 0 {
           break;
         }
-        self.dat_arr_cursor178[self.dat_arr_cursor188[0]] = run_start226 as u8;
-        self.dat_arr_cursor188 = self.dat_arr_cursor188[1..];
+        var289 -= 1;
+        dat_arr_cursor178.set(
+          self,
+          dat_arr_cursor188.get(self, 0) as usize,
+          run_start226 as u8,
+        );
+        dat_arr_cursor188.shift(self, 1);
       }
       run_start226 -= 1
     }

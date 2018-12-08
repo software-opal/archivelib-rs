@@ -2,6 +2,7 @@ use crate::consts::{
   BUFFER_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096,
   CONST_N155_IS_8192, MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
+use crate::support::ArrayAlias;
 use std::io::{Read, Write};
 
 #[derive(Fail, Debug)]
@@ -35,6 +36,26 @@ impl From<std::io::Error> for CompressError {
     CompressError::IOError { error: v }
   }
 }
+array_alias_enum! {
+  pub enum<R: Read, W: Write> CompressU16ArrayAlias {
+    type Parent = RCompressData<R, W>;
+    type Item = u16;
+    Array167 => dat_arr167;
+    Array189 => dat_arr189;
+    Array190 => dat_arr190;
+    Array191 => dat_arr191;
+    Array192 => dat_arr192;
+    Array193 => dat_arr193;
+    Array194 => dat_arr194;
+  }
+  pub enum<R: Read, W: Write> CompressU8ArrayAlias {
+    type Parent = RCompressData<R, W>;
+    type Item = u8;
+    Array165 => dat_arr165;
+    Array180 => dat_arr180;
+    Array181 => dat_arr181;
+  }
+}
 
 pub struct RCompressData<R: Read, W: Write> {
   pub input_store: R,
@@ -54,9 +75,9 @@ pub struct RCompressData<R: Read, W: Write> {
   pub dat_arr192: Vec<u16>,
   pub dat_arr193: Vec<u16>,
   pub dat_arr194: Vec<u16>,
-  // pub dat_arr_cursor178: Option<&'a [u8]>,
-  // pub dat_arr_cursor187: Option<&'a [u16]>,
-  // pub dat_arr_cursor188: Option<&'a [u16]>,
+  // pub dat_arr_cursor178: Option<CompressU8ArrayAlias>,
+  // pub dat_arr_cursor187: Option<CompressU16ArrayAlias>,
+  // pub dat_arr_cursor188: Option<CompressU16ArrayAlias>,
   pub chars_written: usize,
   pub input_length: usize,
   pub uncompressible: bool,
