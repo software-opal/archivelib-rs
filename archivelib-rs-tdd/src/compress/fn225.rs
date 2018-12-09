@@ -6,7 +6,7 @@ impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn225(
     &mut self,
     run_start226: i32,
-    var187: &CompressU16ArrayAlias, // Can be removed?
+    var187: &CompressU16ArrayAlias<'_>, // Can be removed?
     // self.dat_arr177: &mut [i16], // Can be removed?  &mut self.dat_arr177,
     var227: i16,
   ) {

@@ -6,8 +6,8 @@ impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn228(
     &mut self,
     var229: i32,
-    dat_arr_cursor178: &mut CompressU8ArrayAlias,
-    dat_arr_cursor188: &mut CompressU16ArrayAlias,
+    dat_arr_cursor178: &mut CompressU8ArrayAlias<'_>,
+    dat_arr_cursor188: &mut CompressU16ArrayAlias<'_>,
   ) {
     let new_arr167 = pure_fn228(
       &self.dat_arr189,
@@ -20,8 +20,8 @@ impl<R: Read, W: Write> RCompressData<R, W> {
     }
 
     let mut offset = 0;
-    for (run_start226, &var289) in self.dat_arr167.iter().enumerate().rev() {
-      for i in 0..var289 {
+    for (run_start226, &var289) in new_arr167.iter().enumerate().rev() {
+      for _ in 0..var289 {
         dat_arr_cursor178.set(
           self,
           dat_arr_cursor188.get(self, offset) as usize,

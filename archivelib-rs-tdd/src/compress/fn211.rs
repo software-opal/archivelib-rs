@@ -7,9 +7,9 @@ impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn211(
     &mut self,
     var212: i32,
-    dat_arr_cursor187: &mut CompressU16ArrayAlias,
-    dat_arr_cursor178: &mut CompressU8ArrayAlias,
-    dat_arr_cursor188: &mut CompressU16ArrayAlias,
+    dat_arr_cursor187: &mut CompressU16ArrayAlias<'_>,
+    dat_arr_cursor178: &mut CompressU8ArrayAlias<'_>,
+    dat_arr_cursor188: &mut CompressU16ArrayAlias<'_>,
   ) -> Result<i32> {
     let dat_arr_cursor178_offset = dat_arr_cursor178.offset(self);
     let dat_arr_cursor188_offset = dat_arr_cursor188.offset(self);

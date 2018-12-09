@@ -3,15 +3,13 @@
 
 #[macro_use]
 extern crate failure_derive;
-extern crate failure;
+use failure;
 
-#[cfg(test)]
-extern crate archivelib_sys;
+
 #[cfg(test)]
 #[macro_use]
 extern crate proptest;
-#[cfg(test)]
-extern crate rand;
+
 
 #[macro_use]
 pub mod support;

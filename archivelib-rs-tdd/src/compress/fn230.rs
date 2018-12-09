@@ -6,8 +6,8 @@ impl<R: Read, W: Write> RCompressData<R, W> {
   pub fn fn230(
     &mut self,
     bits_to_load219: i32,
-    item209: &CompressU8ArrayAlias,
-    var231: &mut CompressU16ArrayAlias,
+    item209: &CompressU8ArrayAlias<'_>,
+    var231: &mut CompressU16ArrayAlias<'_>,
   ) {
     // Sibling method is fn258
     // Called with:

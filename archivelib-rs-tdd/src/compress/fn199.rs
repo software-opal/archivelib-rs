@@ -28,7 +28,7 @@ fn pure_fn199(
   let mut largest_run = 0;
   let mut largest_run_offset: Option<usize> = None;
   let mut test_index = test_index_start;
-  for iteration in 0..MAX_RUN_COPY_CHECK_ATTEMPTS {
+  for _iteration in 0..MAX_RUN_COPY_CHECK_ATTEMPTS {
     if dat_arr163[test_index] < 0 {
       break;
     }
