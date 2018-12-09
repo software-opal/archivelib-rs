@@ -118,7 +118,7 @@ mod tests {
     cd.dat174 = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       20,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -211,7 +211,7 @@ mod tests {
     cd.dat174 = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![6, 7, 1, 14, 2, 11, 10, 12, 0, 13, 9, 8, 0, 0, 0, 0, 0, 0, 0];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       29,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -307,7 +307,7 @@ mod tests {
       6, 8, 0, 57416, 57417, 57418, 14, 31, 1, 2, 57419, 57420, 57421, 57422, 57423, 57424, 57425,
       57426, 57427,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       16,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -446,7 +446,7 @@ mod tests {
       484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501,
       502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       562,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -605,7 +605,7 @@ mod tests {
       482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499,
       500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       606,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -719,7 +719,7 @@ mod tests {
     let mut dat_arr_cursor188 = vec![
       0, 6, 5, 3, 2, 7, 4, 8, 1, 10, 9, 30, 13, 5, 62, 50459, 50460, 50461, 50462,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -812,7 +812,7 @@ mod tests {
     cd.dat174 = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![0, 1, 6, 13, 2, 7, 12, 10, 11, 9, 8, 0, 0, 0, 0, 0, 0, 0, 0];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       28,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -907,7 +907,7 @@ mod tests {
     let mut dat_arr_cursor188 = vec![
       0, 1, 3, 7, 4, 8, 2, 6, 5, 10, 9, 13, 29, 62, 54555, 54556, 54557, 54558, 54559,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -1047,7 +1047,7 @@ mod tests {
       483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500,
       501, 502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       590,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -1158,7 +1158,7 @@ mod tests {
     cd.dat174 = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![2, 7, 6, 0, 8, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -1294,7 +1294,7 @@ mod tests {
       492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
       510,
     ];
-    let result = cd.fn228(
+    let _result = cd.fn228(
       511,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
