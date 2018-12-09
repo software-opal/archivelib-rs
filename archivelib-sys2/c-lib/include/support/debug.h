@@ -24,15 +24,15 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     std::stringstream filename;                                                \
     filename << "target/data-"                                                 \
              << std::put_time(std::localtime(&PROC_START),                     \
-                              "%Y-%m-%dI%H:%M:%S%z");                          \
+                              "%Y-%m-%dT%H-%M-%S%z");                          \
     SET_HEX(filename);                                                         \
-    filename << "-" << (intptr_t)(uniq) << ".json";                            \
+    filename << "-" << (intptr_t)(uniq) << ".yaml";                            \
     UNSET_HEX(filename);                                                       \
     fh.open(filename.str(), std::ofstream::out | std::ofstream::app);          \
                                                                                \
-    fs << "\n---\n\"file\": \"" << __FILE__ << "\"\n\"line\": " << __LINE__;   \
-    fs << "\n\"func\": \"" << __func__ << "\"\n\"now\": " << now;              \
-    fs << "\n\"data\": ";                                                      \
+    fh << "\n---\n\"file\": \"" << __FILE__ << "\"\n\"line\": " << __LINE__;   \
+    fh << "\n\"func\": \"" << __func__ << "\"\n\"now\": " << now;              \
+    fh << "\n\"data\": ";                                                      \
                                                                                \
     std::cerr << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
     std::cerr << now << ")\n";                                                 \

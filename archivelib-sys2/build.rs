@@ -37,6 +37,8 @@ fn main() {
   // the resulting bindings.
   let bindings = bindgen::Builder::default()
     .clang_arg("-xc++")
+    .clang_arg("-fsanitize=undefined")
+    .clang_arg("-fno-omit-frame-pointer")
     .header("c-lib/wrapper.h")
     .whitelist_function("compress")
     .whitelist_function("decompress")
