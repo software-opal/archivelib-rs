@@ -1,9 +1,9 @@
 extern crate archivelib_sys;
 
-pub fn compress(data: &mut [u8]) -> Result<Box<[u8]>, String> {
+pub fn compress(data: &mut [u8], level: u8) -> Result<Box<[u8]>, String> {
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  let re = unsafe { archivelib_sys::compress(ptr, length) }.to_err();
+  let re = unsafe { archivelib_sys::compress(ptr, length, level) }.to_err();
   match re {
     Ok(res) => Ok(res.into_boxed_slice()),
     Err(Some(err)) => Err(String::from_utf8_lossy(err.as_bytes()).to_string()),
@@ -11,10 +11,10 @@ pub fn compress(data: &mut [u8]) -> Result<Box<[u8]>, String> {
   }
 }
 
-pub fn decompress(data: &mut [u8]) -> Result<Box<[u8]>, String> {
+pub fn decompress(data: &mut [u8], level: u8) -> Result<Box<[u8]>, String> {
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  let re = unsafe { archivelib_sys::decompress(ptr, length) }.to_err();
+  let re = unsafe { archivelib_sys::decompress(ptr, length, level) }.to_err();
   match re {
     Ok(res) => Ok(res.into_boxed_slice()),
     Err(Some(err)) => Err(String::from_utf8_lossy(err.as_bytes()).to_string()),

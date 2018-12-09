@@ -51,6 +51,51 @@ let result = pure_fn199(
 assert_eq!(result, ({dat168}, {dat169}));"""
 
 
+def test_case_for_fn228(call):
+    if 'dat_arr_cursor178_after' in call['data']:
+        return test_case_for_fn228_full_call(call)
+    else:
+        return test_case_for_fn228_depth_generation(call)
+
+def test_case_for_fn228_full_call(call):
+    var229 = call['data']['_229']
+    dat174 = call['data']['dat174']
+    dat_arr189 = call['data']['dat_arr189']['content']
+    dat_arr190 = call['data']['dat_arr190']['content']
+    dat_arr167 = call['data']['dat_arr167']['content']
+    dat_arr_cursor178 = call['data']['dat_arr_cursor178']['content']
+    dat_arr_cursor188 = call['data']['dat_arr_cursor188']['content']
+    dat_arr_cursor178_post= call['data']['dat_arr_cursor178_after']['content']
+    return 'test_fn228_full_call', f"""
+let input = [0u8; 0];
+let mut output = [0u8; 0];
+let mut cd = RCompressData::new(&input[..], &mut output[..], 0, 10, true).unwrap();
+cd.dat_arr189 = vec!{dat_arr189};
+cd.dat_arr190 = vec!{dat_arr190};
+cd.dat174 = {dat174};
+let mut dat_arr_cursor178 = vec!{dat_arr_cursor178};
+let mut dat_arr_cursor188 = vec!{dat_arr_cursor188};
+let result = pure_fn228(
+  {var229},
+  &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
+  &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
+);
+assert_eq!(dat_arr_cursor178, vec!{dat_arr_cursor178_post});"""
+
+def test_case_for_fn228_depth_generation(call):
+    initial_index = call['data']['_229']
+    series_start = call['data']['dat174']
+    dat_arr189 = call['data']['dat_arr189']['content']
+    dat_arr190 = call['data']['dat_arr190']['content']
+    dat_arr167 = call['data']['dat_arr167']['content']
+    return 'test_fn228', f"""
+let result = pure_fn228(
+  &{dat_arr189},
+  &{dat_arr190},
+  {series_start},  // series_start
+  {initial_index},  // initial_index
+);
+assert_eq!(result, {dat_arr167});"""
 
 def main():
     test_cases = set()
@@ -62,6 +107,8 @@ def main():
                 res = test_case_for_fn230(call)
             elif call["func"] == "fn199":
                 res = test_case_for_fn199(call)
+            elif call['func'] == 'fn228':
+                res = test_case_for_fn228(call)
             if res:
                 test_cases.add(res)
             if len(test_cases) > 10:
@@ -79,7 +126,7 @@ def main():
             lines = ['#[cfg(test)]', 'mod tests {', '  use super::*;']
             for i, test in enumerate(test_cases):
                 lines += ['', '  #[test]', f'  fn {name}_{i}() {{']
-                lines += textwrap.indent(test, ' ' * 4).splitlines()
+                lines += textwrap.indent(test.strip(), ' ' * 4).splitlines()
                 lines += ['  }']
             lines += ['}']
             f.write('\n'.join(l.rstrip() for l in lines))
