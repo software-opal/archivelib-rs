@@ -41,6 +41,8 @@ mod tests {
 
   #[test]
   fn test_using_embroidermodder_hus_stitch_attrs() {
+    // This function uses the same data as the ones below, but checks that the data is correctly
+    // Placed back into the compress data, as well as the functionality
     let input = [0u8; 0];
     let mut output = [0u8; 0];
     let mut cd = RCompressData::new(&input[..], &mut output[..], 0, 10, true).unwrap();
