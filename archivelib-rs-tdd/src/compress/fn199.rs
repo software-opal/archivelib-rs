@@ -33,7 +33,6 @@ fn pure_fn199(
       break;
     }
     test_index = dat_arr163[test_index] as usize;
-    println!(": {} to {}", start_index, test_index);
     let mut run_length = 0;
     while run_length < MAX_RUN_LENGTH140 {
       if uncompressed_buffer[start_index + run_length]
@@ -43,18 +42,15 @@ fn pure_fn199(
       }
       run_length += 1;
     }
-    println!("{} -- {}", iteration, run_length);
     if run_length < MIN_RUN_LENGTH135_IS_3 {
       continue;
     } else if run_length > largest_run {
       let offset;
-      if test_index < (start_index - 1) {
-        println!("!!");
+      if (start_index - 1) < test_index {
         offset = max_data_size + (start_index - 1) - test_index
       } else {
         offset = start_index - test_index - 1
       }
-      println!("Off: {}; {}:{}", offset, start_index, test_index);
       if offset >= max_data_size {
         break;
       } else {
