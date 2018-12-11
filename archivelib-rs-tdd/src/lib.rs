@@ -5,11 +5,9 @@
 extern crate failure_derive;
 use failure;
 
-
 #[cfg(test)]
 #[macro_use]
 extern crate proptest;
-
 
 #[macro_use]
 pub mod support;
@@ -37,8 +35,8 @@ pub fn do_compress_level(
   compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
   let reader = input;
-  let writer = support::BitwiseWriter::new(Vec::with_capacity(1024));
-  let mut res = match compress::RCompressData::new(
+  let writer = Vec::with_capacity(1024);
+  let mut res = match compress::RCompressData::new_with_io_writer(
     reader,
     writer,
     input.len(),

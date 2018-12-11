@@ -1,9 +1,10 @@
 use crate::compress::{RCompressData, Result};
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
 const USHRT_MAX: u16 = u16::max_value();
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn218(&mut self, mut bits_to_load219: i16, var220: i16, var221: i16) -> Result<()> {
     while bits_to_load219 > 0 && self.dat_arr181[bits_to_load219 as usize - 1] == 0 {
       bits_to_load219 -= 1

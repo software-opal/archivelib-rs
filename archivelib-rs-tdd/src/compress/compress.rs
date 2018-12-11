@@ -2,7 +2,8 @@ use crate::compress::{CompressError, RCompressData, Result};
 use crate::consts::{
   CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MIN_RUN_LENGTH135_IS_3,
 };
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
 const UCHAR_MAX: usize = 255;
 
@@ -48,7 +49,7 @@ fn read_one(reader: &mut impl Read) -> Result<Option<u8>> {
   }
 }
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn compress(&mut self) -> Result<()> {
     let mut buffer_pos: usize = 0;
     let size_bitmask280 = self.max_uncompressed_data_size_bitmask;

@@ -1,8 +1,9 @@
 use crate::compress::{RCompressData, Result};
 use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9};
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn222(&mut self) -> Result<()> {
     let mut bits_to_load219 = CONST_N141_IS_511;
     while bits_to_load219 > 0 && self.dat_arr180[bits_to_load219 - 1] == 0 {

@@ -1,8 +1,9 @@
 use crate::compress::{CompressU16ArrayAlias, RCompressData};
 use crate::support::ArrayAlias;
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn225(&mut self, run_start226: i32, var187: &CompressU16ArrayAlias<'_>, var227: i16) {
     pure_fn225(
       run_start226 as usize,

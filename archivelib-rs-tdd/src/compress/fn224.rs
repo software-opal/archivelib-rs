@@ -1,7 +1,8 @@
 use crate::compress::{RCompressData, Result};
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn224(&mut self, var204: u16) -> Result<()> {
     let mut byte_or_run_length203 = 0;
     let mut var457 = var204;

@@ -1,8 +1,9 @@
 use crate::compress::RCompressData;
 use crate::consts::{CONST_N141_IS_511, CONST_N145_IS_19};
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn216(&mut self, var217: &mut [u16]) {
     for i in 0..CONST_N145_IS_19 {
       var217[i] = 0 as u16;

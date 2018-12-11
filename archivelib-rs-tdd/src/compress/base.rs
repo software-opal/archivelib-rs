@@ -2,7 +2,7 @@ use crate::consts::{
   BUFFER_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096,
   CONST_N155_IS_8192, MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
-use crate::support::ArrayAlias;
+use crate::support::{ArrayAlias, BitwiseWrite, BitwiseWriter};
 use std::io::{Read, Write};
 
 #[derive(Fail, Debug)]
@@ -37,7 +37,7 @@ impl From<std::io::Error> for CompressError {
   }
 }
 array_alias_enum! {
-  pub enum<R: Read, W: Write> CompressU16ArrayAlias {
+  pub enum<R: Read, W: BitwiseWrite> CompressU16ArrayAlias {
     type Parent = RCompressData<R, W>;
     type Item = u16;
     Array167 => dat_arr167;
@@ -48,7 +48,7 @@ array_alias_enum! {
     Array193 => dat_arr193;
     Array194 => dat_arr194;
   }
-  pub enum<R: Read, W: Write> CompressU8ArrayAlias {
+  pub enum<R: Read, W: BitwiseWrite> CompressU8ArrayAlias {
     type Parent = RCompressData<R, W>;
     type Item = u8;
     Array165 => dat_arr165;
@@ -57,7 +57,7 @@ array_alias_enum! {
   }
 }
 
-pub struct RCompressData<R: Read, W: Write> {
+pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub input_store: R,
   pub output_store: W,
   pub dat_arr163: Vec<i16>,
@@ -84,20 +84,35 @@ pub struct RCompressData<R: Read, W: Write> {
   pub fail_uncompressible: bool,
   pub dat168: i16,
   pub dat169: i16,
-  pub buffer_position: usize,
-  pub bits_buffer_used172: u16,
   pub dat173: i16,
   pub dat174: i16,
   pub max_uncompressed_data_size: usize,
   pub max_uncompressed_data_size_bitmask: usize,
-  pub bits_buffer182: u16,
   pub dat183_IS_CONST_8162: u16,
   pub array165_counter: u16,
   pub bitwise_counter185: u16,
   pub array165_tmp_counter186: u16,
 }
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: Write> RCompressData<R, BitwiseWriter<W>> {
+  pub fn new_with_io_writer(
+    reader: R,
+    writer: W,
+    input_length: usize,
+    compression_level: u8,
+    fail_uncompressible: bool,
+  ) -> Result<Self> {
+    Self::new(
+      reader,
+      BitwiseWriter::new(writer),
+      input_length,
+      compression_level,
+      fail_uncompressible,
+    )
+  }
+}
+
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn new(
     reader: R,
     writer: W,
@@ -128,7 +143,6 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140 + 2],
         dat_arr167: vec![0; 17],
         dat_arr177: vec![0; CONST_N141_IS_511 + 1],
-        buffer: vec![0; BUFFER_SIZE],
         dat_arr180: vec![0; CONST_N141_IS_511],
         dat_arr181: vec![0; CONST_N152_IS_19],
         dat_arr189: vec![0; 2 * CONST_N141_IS_511 - 1],
@@ -148,11 +162,8 @@ impl<R: Read, W: Write> RCompressData<R, W> {
         uncompressible: false,
         dat168: 0,
         dat169: 0,
-        buffer_position: 0,
-        bits_buffer_used172: 0,
         dat173: 0,
         dat174: 0,
-        bits_buffer182: 0,
         dat183_IS_CONST_8162: CONST_N155_IS_8192 as u16 - ((3 * 8) + 6),
         array165_counter: 0,
         bitwise_counter185: 0,

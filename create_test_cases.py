@@ -80,7 +80,7 @@ def test_case_for_fn228_full_call(call):
         f"""
 let input = [0u8; 0];
 let mut output = [0u8; 0];
-let mut cd = RCompressData::new(&input[..], &mut output[..], 0, 10, true).unwrap();
+let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
 cd.dat_arr189 = vec!{dat_arr189};
 cd.dat_arr190 = vec!{dat_arr190};
 cd.dat174 = {dat174};

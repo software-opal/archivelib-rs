@@ -5,13 +5,6 @@
 
 void fn225(RCompressData *data, int32_t run_start226, uint16_t *_187,
            int16_t *_177, int16_t _227) {
-  DEBUG_FILE_HANDLE(fs, data);
-  fs << "{\"ptr\": " << (intptr_t)(data);
-  WRITE_HEX(fs, "run_start226", run_start226);
-  WRITE_HEX(fs, "_227", _227);
-  WRITE_ARRAY_PTR(fs, data, "_187", _187, uint16_t);
-  WRITE_ARRAY_PTR(fs, data, "_177", _177, int16_t);
-
   int32_t run_length276, _289;
   _289 = _177[run_start226];
   while ((run_length276 = 2 * run_start226) <= _227) {
@@ -24,8 +17,4 @@ void fn225(RCompressData *data, int32_t run_start226, uint16_t *_187,
     run_start226 = run_length276;
   }
   _177[run_start226] = (uint16_t)_289;
-  WRITE_ARRAY_PTR(fs, data, "_177_after", _177, int16_t);
-  fs << "}";
-  fs.close();
-
 }

@@ -4,10 +4,11 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N147_IS_5,
   CONST_N540_IS_5,
 };
-use std::io::{Read, Write};
+use std::io::Read;
+use crate::support::BitwiseWrite;
 const CHAR_BIT: usize = 8;
 
-impl<R: Read, W: Write> RCompressData<R, W> {
+impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn207(&mut self) -> Result<()> {
     let mut var456: u32 = 0 as u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
