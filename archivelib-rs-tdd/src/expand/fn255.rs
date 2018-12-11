@@ -1,7 +1,7 @@
 use super::fn258::Fn258Mode;
 use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N148_IS_4096};
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite};
+use crate::support::{BitRead};
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {

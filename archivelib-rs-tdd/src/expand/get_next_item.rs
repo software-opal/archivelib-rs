@@ -2,7 +2,7 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19, CONST_N147_IS_5, CONST_N540_IS_5,
 };
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite};
+use crate::support::{BitRead};
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {

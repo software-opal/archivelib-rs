@@ -1,7 +1,7 @@
 use crate::compress::RCompressData;
 use crate::consts::{CONST_N141_IS_511, CONST_N145_IS_19};
-use std::io::Read;
 use crate::support::BitwiseWrite;
+use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn216(&mut self, var217: &mut [u16]) {

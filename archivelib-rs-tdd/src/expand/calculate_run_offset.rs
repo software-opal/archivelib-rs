@@ -1,6 +1,6 @@
 use crate::consts::CONST_N142_IS_15;
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite};
+use crate::support::{BitRead};
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {

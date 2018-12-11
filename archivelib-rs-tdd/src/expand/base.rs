@@ -2,7 +2,7 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
-use crate::support::{BitRead, BitwiseWrite, ReadError};
+use crate::support::{BitRead, ReadError};
 use std::io::Write;
 
 #[derive(Fail, Debug)]

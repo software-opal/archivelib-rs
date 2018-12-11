@@ -1,5 +1,5 @@
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite};
+use crate::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
@@ -25,7 +25,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::{BitwiseWriter, ExactCallBitReader};
+  use crate::support::ExactCallBitReader;
 
   // const data: Vec<u8> =
 

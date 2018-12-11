@@ -1,7 +1,7 @@
 use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
 use crate::support::ArrayAlias;
-use std::io::Read;
 use crate::support::BitwiseWrite;
+use std::io::Read;
 
 mod part_one;
 
@@ -45,7 +45,8 @@ mod tests {
   fn test_fn228_full_call_0() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -134,7 +135,8 @@ mod tests {
   fn test_fn228_full_call_1() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 19, 14, 2, 10, 12, 0, 13, 24, 26,
       8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -227,7 +229,8 @@ mod tests {
   fn test_fn228_full_call_2() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 15, 0, 0, 2, 19, 20, 8, 21, 22, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -323,7 +326,8 @@ mod tests {
   fn test_fn228_full_call_3() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -481,7 +485,8 @@ mod tests {
   fn test_fn228_full_call_4() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -640,7 +645,8 @@ mod tests {
   fn test_fn228_full_call_5() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 2, 4, 18, 1, 10, 9, 22, 0, 13, 24, 26,
       8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -735,7 +741,8 @@ mod tests {
   fn test_fn228_full_call_6() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 13, 7, 20, 10, 23, 24, 9, 8,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -828,7 +835,8 @@ mod tests {
   fn test_fn228_full_call_7() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 8, 6, 10, 9, 18, 20, 22, 23, 24, 9, 8,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -923,7 +931,8 @@ mod tests {
   fn test_fn228_full_call_8() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1082,7 +1091,8 @@ mod tests {
   fn test_fn228_full_call_9() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 19, 20, 8, 21, 22, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1174,7 +1184,8 @@ mod tests {
   fn test_fn228_full_call_10() {
     let input = [0u8; 0];
     let mut output = [0u8; 0];
-    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd =
+      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
     cd.dat_arr189 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

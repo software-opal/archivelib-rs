@@ -31,15 +31,27 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       if var229 >= CONST_N145_IS_19 as u32 {
         self.fn218(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3 as i16)?;
       } else {
-        self.output_store.write_bits(0u8 as u32, CONST_N147_IS_5 as usize)?;
-        self.output_store.write_bits(var229 as u32, CONST_N147_IS_5 as usize)?;
+        self
+          .output_store
+          .write_bits(0u8, CONST_N147_IS_5 as usize)?;
+        self
+          .output_store
+          .write_bits(var229 as u32, CONST_N147_IS_5 as usize)?;
       }
       self.fn222()?;
     } else {
-      self.output_store.write_bits(0u8 as u32, CONST_N147_IS_5 as usize)?;
-      self.output_store.write_bits(0u8 as u32, CONST_N147_IS_5 as usize)?;
-      self.output_store.write_bits(0u8 as u32, CONST_N143_IS_9 as usize)?;
-      self.output_store.write_bits(var229 as u32, CONST_N143_IS_9 as usize)?;
+      self
+        .output_store
+        .write_bits(0u8, CONST_N147_IS_5 as usize)?;
+      self
+        .output_store
+        .write_bits(0u8, CONST_N147_IS_5 as usize)?;
+      self
+        .output_store
+        .write_bits(0u8, CONST_N143_IS_9 as usize)?;
+      self
+        .output_store
+        .write_bits(var229 as u32, CONST_N143_IS_9 as usize)?;
     }
     var229 = self.fn211(
       CONST_N142_IS_15 as i32,
@@ -50,8 +62,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     if var229 >= CONST_N142_IS_15 as u32 {
       self.fn218(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1 as i16)?;
     } else {
-      self.output_store.write_bits(0u8 as u32, CONST_N540_IS_5 as usize)?;
-      self.output_store.write_bits(var229 as u32, CONST_N540_IS_5 as usize)?;
+      self
+        .output_store
+        .write_bits(0u8, CONST_N540_IS_5 as usize)?;
+      self
+        .output_store
+        .write_bits(var229 as u32, CONST_N540_IS_5 as usize)?;
     }
     let mut var454 = 0 as u32;
     for run_start226 in 0..var455 {

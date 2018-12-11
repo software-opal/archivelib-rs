@@ -2,8 +2,8 @@ use crate::compress::{CompressError, RCompressData, Result};
 use crate::consts::{
   CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MIN_RUN_LENGTH135_IS_3,
 };
-use std::io::Read;
 use crate::support::BitwiseWrite;
+use std::io::Read;
 
 const UCHAR_MAX: usize = 255;
 

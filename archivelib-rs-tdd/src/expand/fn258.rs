@@ -1,6 +1,6 @@
 use crate::expand::base::ExpandError::InternalError;
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead, BitwiseWrite};
+use crate::support::{BitRead};
 use std::io::Write;
 
 pub enum Fn258Mode {

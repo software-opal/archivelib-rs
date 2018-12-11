@@ -1,7 +1,7 @@
 use crate::compress::RCompressData;
-use crate::consts::{MAX_COMPRESSION_CYCLES, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
-use std::io::Read;
+use crate::consts::{MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::support::BitwiseWrite;
+use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn199(&mut self, uncompressed_buffer_index200: i16, var201: i16) {

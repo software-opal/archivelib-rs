@@ -5,8 +5,7 @@ pub const MIN_RUN_LENGTH135_IS_3: usize = 3;
 pub const MAX_RUN_LENGTH140: usize = 256;
 pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140 + 1;
 
-pub const MAX_COMPRESSION_CYCLES: u16 = 128;
-pub const BUFFER_SIZE: usize = 512;
+// pub const MAX_COMPRESSION_CYCLES: u16 = 128;
 
 // CONST_N141_IS_511 = ((u8::max_value() as u16) + 1 + MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3 + 1 + 1);
 pub const CONST_N141_IS_511: usize =

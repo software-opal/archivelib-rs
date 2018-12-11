@@ -1,6 +1,6 @@
 use crate::compress::{CompressError, RCompressData, Result};
-use std::io::Read;
 use crate::support::BitwiseWrite;
+use std::io::Read;
 
 const CHAR_BIT: usize = 8;
 
