@@ -33,6 +33,12 @@ implBitwise!(u32);
 implBitwise!(u64);
 implBitwise!(u128);
 
+impl BitwiseIterable for bool {
+  fn into_bits(self) -> Box<[bool]> {
+    vec![self].into_boxed_slice()
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -40,16 +46,16 @@ mod tests {
   #[test]
   fn test_into_bits() {
     assert_eq!(
-      0x1u8.into_bits()[..],
+      &0x1u8.into_bits()[..],
       &[true, false, false, false, false, false, false, false]
     );
-    assert_eq!(0x0u128.into_bits()[..], &[false; 128]);
+    assert_eq!(&0x0u128.into_bits()[..], &[false; 128][..]);
     assert_eq!(
-      0xffu8.into_bits()[..],
+      &0xffu8.into_bits()[..],
       &[true, true, true, true, true, true, true, true]
     );
     assert_eq!(
-      0xf0u8.into_bits()[..],
+      &0xf0u8.into_bits()[..],
       &[false, false, false, false, true, true, true, true]
     );
   }

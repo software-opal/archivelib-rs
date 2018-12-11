@@ -2,8 +2,9 @@ use super::fn258::Fn258Mode;
 use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N148_IS_4096};
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn255(&mut self) -> Result<()> {
     let mut _283: u16 = 0;
     let bits_to_load219: i16 = self.get_bits(CONST_N143_IS_9 as i16)? as i16;

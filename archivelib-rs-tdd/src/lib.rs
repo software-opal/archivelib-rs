@@ -52,7 +52,7 @@ pub fn do_compress_level(
     Err(err) => return Err(format!("{}", err)),
   };
 
-  return Ok(res.into_writer().into_inner().into_boxed_slice());
+  return Ok(res.into_writer().checked_into_inner().into_boxed_slice());
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
@@ -63,7 +63,7 @@ pub fn do_decompress_level(
   compression_level: u8,
 ) -> Result<Box<[u8]>, std::string::String> {
   let reader = support::BitReader::from(input);
-  let writer = support::BitwiseWriter::new(Vec::with_capacity(1024));
+  let writer = Vec::with_capacity(1024);
 
   let mut res = match expand::RExpandData::new(reader, writer, input.len(), compression_level + 10)
   {
@@ -76,5 +76,5 @@ pub fn do_decompress_level(
     Err(err) => return Err(format!("{}", err)),
   };
 
-  return Ok(res.into_writer().into_inner().into_boxed_slice());
+  return Ok(res.into_writer().into_boxed_slice());
 }

@@ -66,7 +66,6 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub uncompressed_buffer: Vec<u8>,
   pub dat_arr167: Vec<u16>,
   pub dat_arr177: Vec<i16>,
-  pub buffer: Vec<u8>,
   pub dat_arr180: Vec<u8>,
   pub dat_arr181: Vec<u8>,
   pub dat_arr189: Vec<u16>,

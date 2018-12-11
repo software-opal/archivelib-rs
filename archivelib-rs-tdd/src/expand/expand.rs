@@ -1,10 +1,11 @@
 use crate::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
 const UCHAR_MAX: usize = 255;
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn expand(&mut self) -> Result<()> {
     let max_size279 = self.max_uncompressed_data_size;
     let size_bitmask280: usize = self.max_uncompressed_data_size_bitmask;

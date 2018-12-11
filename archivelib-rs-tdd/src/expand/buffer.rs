@@ -1,7 +1,8 @@
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn read_bits(&mut self, bits_to_load219: i16) -> Result<()> {
     self.input_store.read_bits(bits_to_load219 as u8)?;
     self.bits182 = self.input_store.current_bits();
@@ -115,8 +116,7 @@ mod tests {
       (5, 0xe000),
       (4, 0x0000),
     ]);
-    let mut test =
-      RExpandData::new(expected_call_results, BitwiseWriter::new(out), length, 10).unwrap();
+    let mut test = RExpandData::new(expected_call_results, out, length, 10).unwrap();
 
     test.expand().unwrap();
   }

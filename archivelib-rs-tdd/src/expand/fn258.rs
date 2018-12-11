@@ -1,6 +1,7 @@
 use crate::expand::base::ExpandError::InternalError;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
 pub enum Fn258Mode {
   Fn253,
@@ -29,7 +30,7 @@ macro_rules! data_table {
   };
 }
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn258(
     &mut self,
     mode: Fn258Mode,

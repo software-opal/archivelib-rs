@@ -2,8 +2,9 @@ use super::fn258::Fn258Mode;
 use crate::consts::CONST_N149_IS_256;
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn253(&mut self, mut _254: i16, mut _220: i16, mut _221: i16) -> Result<()> {
     let mut _283: u16 = 0;
     let bits_to_load219: i16 = self.get_bits(_220 as i16)? as i16;
@@ -73,13 +74,8 @@ mod tests {
       0xF0,
     ];
     let length = data.len();
-    let mut test = RExpandData::new(
-      BitReader::from(VecReader::new(data)),
-      BitwiseWriter::new(out),
-      length,
-      10,
-    )
-    .unwrap();
+    let mut test =
+      RExpandData::new(BitReader::from(VecReader::new(data)), (out), length, 10).unwrap();
 
     test.read_bits(16).unwrap();
     test.get_bits(16).unwrap();

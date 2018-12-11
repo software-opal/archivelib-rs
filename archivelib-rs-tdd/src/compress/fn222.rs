@@ -9,7 +9,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     while bits_to_load219 > 0 && self.dat_arr180[bits_to_load219 - 1] == 0 {
       bits_to_load219 -= 1
     }
-    self.write_bits_to_buffer(CONST_N143_IS_9 as u16, bits_to_load219 as u16)?;
+    self.output_store.write_bits(bits_to_load219 as u32, CONST_N143_IS_9 as usize)?;
     let mut run_start226 = 0;
     while run_start226 < bits_to_load219 {
       let mut var289 = self.dat_arr180[run_start226] as i16;
@@ -25,32 +25,32 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           while (var289) < var277 {
             let a1 = self.dat_arr181[0] as u16;
             let a2 = self.dat_arr194[0];
-            self.write_bits_to_buffer(a1, a2)?;
+            self.output_store.write_bits(a2 as u32, a1 as usize)?;
             var289 += 1
           }
         } else if var277 <= 18 {
           let a1 = self.dat_arr181[1] as u16;
           let a2 = self.dat_arr194[1];
-          self.write_bits_to_buffer(a1, a2)?;
-          self.write_bits_to_buffer(4, (var277 - 3) as u16)?;
+          self.output_store.write_bits(a2 as u32, a1 as usize)?;
+          self.output_store.write_bits((var277 - 3) as u32, 4 as usize)?;
         } else if var277 == 19 {
           let a1 = self.dat_arr181[0] as u16;
           let a2 = self.dat_arr194[0];
-          self.write_bits_to_buffer(a1, a2)?;
+          self.output_store.write_bits(a2 as u32, a1 as usize)?;
           let a1 = self.dat_arr181[1] as u16;
           let a2 = self.dat_arr194[1];
-          self.write_bits_to_buffer(a1, a2)?;
-          self.write_bits_to_buffer(4, 15)?;
+          self.output_store.write_bits(a2 as u32, a1 as usize)?;
+          self.output_store.write_bits(15 as u32, 4 as usize)?;
         } else {
           let a1 = self.dat_arr181[2] as u16;
           let a2 = self.dat_arr194[2];
-          self.write_bits_to_buffer(a1, a2)?;
-          self.write_bits_to_buffer(CONST_N143_IS_9 as u16, (var277 - 20) as u16)?;
+          self.output_store.write_bits(a2 as u32, a1 as usize)?;
+          self.output_store.write_bits((var277 - 20) as u32, CONST_N143_IS_9 as usize)?;
         }
       } else {
         let a1 = self.dat_arr181[var289 as usize + 2] as u16;
         let a2 = self.dat_arr194[var289 as usize + 2];
-        self.write_bits_to_buffer(a1, a2)?;
+        self.output_store.write_bits(a2 as u32, a1 as usize)?;
       }
     }
     Ok(())

@@ -3,8 +3,9 @@ use crate::consts::{
 };
 use crate::expand::{RExpandData, Result};
 use crate::support::{BitRead, BitwiseWrite};
+use std::io::Write;
 
-impl<R: BitRead, W: BitwiseWrite> RExpandData<R, W> {
+impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn get_next_item(&mut self) -> Result<u16> {
     let mut _283: u16 = 0;
     if self.items_until_next_header == 0 {

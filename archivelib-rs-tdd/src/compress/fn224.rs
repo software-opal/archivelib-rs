@@ -12,9 +12,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     }
     let a1 = self.dat_arr181[byte_or_run_length203];
     let a2 = self.dat_arr194[byte_or_run_length203];
-    self.write_bits_to_buffer(a1 as u16, a2)?;
+    self.output_store.write_bits(a2 as u32, a1 as usize)?;
     if byte_or_run_length203 > 1 {
-      self.write_bits_to_buffer(byte_or_run_length203 as u16 - 1, var204)?;
+      self.output_store.write_bits(var204 as u32, byte_or_run_length203 - 1 as usize)?;
     }
     Ok(())
   }
