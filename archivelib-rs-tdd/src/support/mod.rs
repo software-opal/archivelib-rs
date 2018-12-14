@@ -11,7 +11,7 @@ pub use self::bit_iter::BitwiseIterable;
 pub use self::bitreader::{BitRead, BitReader, ExactCallBitReader};
 pub use self::readahead_reader::{BitwiseReadAheadRead, BitwiseReadAheadReader};
 pub use self::reader::{BitwiseRead, BitwiseReader, ReadError, VecReader};
-pub use self::writer::{BitwiseWrite, BitwiseWriter};
+pub use self::writer::{BitwiseWrite, BitwiseWriter, ExactCallWriter};
 
 pub fn get_bitmask(bits: usize) -> u128 {
   if bits == 128 {

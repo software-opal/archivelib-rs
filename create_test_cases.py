@@ -4,6 +4,24 @@ import textwrap
 import pathlib
 
 
+def find_output_calls(call_data):
+    output_calls = {}
+    for k, v in call_data.items():
+        if k.startswith('output['):
+            idx = int(k[len('output['):-1])
+            output_calls[idx] = v
+        elif k.startswith('output'):
+            output_calls[max(output_calls) + 1](v)
+    calls = []
+    for _, item in sorted(output_calls.items()):
+        if isinstance(item, dict):
+            calls.append((item['bits'], item['bit_count']))
+        else:
+            bit_count, bits = item
+            calls.append((bits, bit_count))
+    return calls
+
+
 def test_case_for_fn230(call):
     return None
     run_length = run_length
@@ -135,6 +153,30 @@ assert_eq!(var177, vec!{var177_after});""",
     )
 
 
+def test_case_for_fn224(call):
+    var204 = call["data"]["_204"]
+    dat_arr181 = call["data"]["dat_arr181"]["content"]
+    dat_arr194 = call["data"]["dat_arr194"]["content"]
+    output_calls = "".join(f"\n  ({bits}, {bit_count})," for bits, bit_count in find_output_calls(call['data']))
+    if output_calls:
+        output_calls += '\n'
+    return (
+        "test_fn224",
+        f"""
+let dat_arr181 = vec!{dat_arr181};
+let dat_arr194 = vec!{dat_arr194};
+let expected_calls = ExactCallWriter::from(vec![{output_calls}]);
+pure_fn224(
+  {var204},
+  &mut expected_calls,
+  &dat_arr181,
+  &dat_arr194,
+);
+expected_calls.assert_drained();""",
+    )
+
+
+
 def main():
     test_cases = set()
     for file in map(pathlib.Path, sys.argv[1:]):
@@ -149,9 +191,11 @@ def main():
                 res = test_case_for_fn228(call)
             elif call["func"] == "fn225":
                 res = test_case_for_fn225(call)
+            elif call["func"] == "fn224":
+                res = test_case_for_fn224(call)
             if res:
                 test_cases.add(res)
-            if len(test_cases) > 10:
+            if len(test_cases) > 40:
                 break
         if len(test_cases) > 10:
             break

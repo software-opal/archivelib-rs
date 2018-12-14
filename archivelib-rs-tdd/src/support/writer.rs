@@ -53,3 +53,37 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
     self.commit_buffer()
   }
 }
+
+pub struct ExactCallWriter {
+  calls: Vec<(u128, usize)>,
+  pub written_bits: usize,
+}
+
+impl ExactCallWriter {
+  pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
+    return Self {
+      calls: calls,
+      written_bits: 0,
+    };
+  }
+  pub fn assert_drained(&self) {
+    assert_eq!(self.calls, vec![])
+  }
+}
+impl BitwiseWrite for ExactCallWriter {
+  fn write_bits(&mut self, bits: impl Into<u128>, bit_count: usize) -> io::Result<usize> {
+    assert!(
+      !self.calls.is_empty(),
+      "Attempting to call write_bits({:X}, {}) when it wasn't expected; Calls expended",
+      bits.into(),
+      bit_count
+    );
+    let (expected_bits, expected_bit_count) = self.calls.remove(0);
+    assert_eq!(
+      (bits.into(), bit_count),
+      (expected_bits, expected_bit_count)
+    );
+    self.written_bits += bit_count;
+    Ok(self.written_bits % 8)
+  }
+}
