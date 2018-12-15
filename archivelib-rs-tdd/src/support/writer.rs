@@ -1,8 +1,13 @@
 use super::BitwiseIterable;
+use num::ToPrimitive;
 use std::io;
 
 pub trait BitwiseWrite {
-  fn write_bits(&mut self, bits: impl Into<u128>, bit_count: usize) -> io::Result<usize>;
+  fn write_bits(
+    &mut self,
+    bits: impl ToPrimitive,
+    bit_count: impl ToPrimitive,
+  ) -> io::Result<usize>;
 }
 
 pub struct BitwiseWriter<W: io::Write> {
@@ -42,11 +47,17 @@ impl<W: io::Write> BitwiseWriter<W> {
 }
 
 impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
-  fn write_bits(&mut self, bits: impl Into<u128>, bit_count: usize) -> io::Result<usize> {
+  fn write_bits(
+    &mut self,
+    bits_: impl ToPrimitive,
+    bit_count_: impl ToPrimitive,
+  ) -> io::Result<usize> {
+    let bits = bits_.to_u128().unwrap();
+    let bit_count = bit_count_.to_usize().unwrap();
     if bit_count > 0 {
       // 'bit_array' starts out as LSB-MSB, but we want to reverse that order so we can add it to
       // the buffer array in MSB-LSB(the way we'll write it out)
-      let mut bit_array = bits.into().into_bits()[..bit_count].to_vec();
+      let mut bit_array = bits.into_bits()[..bit_count].to_vec();
       bit_array.reverse();
       self.buffer.extend(bit_array.into_iter());
     }
@@ -71,11 +82,17 @@ impl ExactCallWriter {
   }
 }
 impl BitwiseWrite for ExactCallWriter {
-  fn write_bits(&mut self, bits: impl Into<u128>, bit_count: usize) -> io::Result<usize> {
+  fn write_bits(
+    &mut self,
+    bits_: impl ToPrimitive,
+    bit_count_: impl ToPrimitive,
+  ) -> io::Result<usize> {
+    let bits = bits_.to_u128().unwrap();
+    let bit_count = bit_count_.to_usize().unwrap();
     assert!(
       !self.calls.is_empty(),
       "Attempting to call write_bits({:X}, {}) when it wasn't expected; Calls expended",
-      bits.into(),
+      bits,
       bit_count
     );
     let (expected_bits, expected_bit_count) = self.calls.remove(0);
