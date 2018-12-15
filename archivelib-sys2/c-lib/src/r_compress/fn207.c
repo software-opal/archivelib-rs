@@ -41,8 +41,8 @@ void fn207(RCompressData *data) {
     else
       _456 <<= 1;
     if (_456 & (1U << (CHAR_BIT - 1))) {
-      write_stored_bits_to_buffer(data,
-           (int16_t)(data->dat_arr165[_454++] + (1U << CHAR_BIT)));
+      write_stored_bits_to_buffer(
+          data, (int16_t)(data->dat_arr165[_454++] + (1U << CHAR_BIT)));
       _289 = data->dat_arr165[_454++];
       _289 += data->dat_arr165[_454++] << CHAR_BIT;
       fn224(data, (int16_t)_289);

@@ -1,5 +1,6 @@
 import yaml
 import sys
+import subprocess
 import textwrap
 import pathlib
 
@@ -171,9 +172,33 @@ pure_fn224(
   &mut expected_calls,
   &dat_arr181,
   &dat_arr194,
-);
+).unwrap();
 expected_calls.assert_drained();""",
     )
+
+def test_case_for_fn218(call):
+    bits_to_load219 = call["data"]["bits_to_load219"]
+    var220 = call["data"]["_220"]
+    var221 = call["data"]["_221"]
+    dat_arr181 = call["data"]["dat_arr181"]["content"]
+    output_calls = "".join(f"\n  ({bits}, {bit_count})," for bits, bit_count in find_output_calls(call['data']))
+    if output_calls:
+        output_calls += '\n'
+    return (
+        "test_fn218",
+        f"""
+let dat_arr181 = vec!{dat_arr181};
+let expected_calls = ExactCallWriter::from(vec![{output_calls}]);
+pure_fn218(
+  &mut expected_calls,
+  &dat_arr181,
+  {bits_to_load219},
+  {var220},
+  {var221},
+).unwrap();
+expected_calls.assert_drained();""",
+    )
+
 
 
 
@@ -193,11 +218,13 @@ def main():
                 res = test_case_for_fn225(call)
             elif call["func"] == "fn224":
                 res = test_case_for_fn224(call)
+            elif call["func"] == "fn218":
+                res = test_case_for_fn218(call)
             if res:
                 test_cases.add(res)
             if len(test_cases) > 40:
                 break
-        if len(test_cases) > 10:
+        if len(test_cases) > 40:
             break
 
     test_group_names = set(name for name, _ in test_cases)
@@ -206,7 +233,8 @@ def main():
         for name in test_group_names
     }
     for name, test_cases in test_groups.items():
-        with pathlib.Path(f"{name}.rs").open("w") as f:
+        path = pathlib.Path(f"{name}.rs")
+        with path.open("w") as f:
             lines = ["#[cfg(test)]", "mod tests {", "  use super::*;"]
             for i, test in enumerate(test_cases):
                 lines += ["", "  #[test]", f"  fn {name}_{i}() {{"]
@@ -214,6 +242,7 @@ def main():
                 lines += ["  }"]
             lines += ["}"]
             f.write("\n".join(l.rstrip() for l in lines))
+        subprocess.run(['rustfmt', '--edition=2018', str(path)]);
 
 
 if __name__ == "__main__":

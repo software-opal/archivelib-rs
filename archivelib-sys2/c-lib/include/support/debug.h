@@ -38,6 +38,17 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     std::cerr << now << ")\n";                                                 \
   } while (0);
 
+#define WRITE_OUTPUT_BITS(fh, data, bit_count, bits)                           \
+  {                                                                            \
+    int32_t bc = bit_count;                                                        \
+    uint16_t bt = bits;                                                             \
+    clock_t now = std::clock();                                                \
+    fh << ",'output[" << now << "]': {";                                       \
+    fh << "'bit_count': " << bc << ", 'bits': " << bt;                         \
+    fh << "}";                                                                 \
+    write_bits_to_buffer(data, bc, bt)      ;                                   \
+  }
+
 #ifndef ARRAY_CONTENT_DEBUG
 #define WRITE_ARRAY_CONTENT(stream, arr, len)                                  \
   do {                                                                         \

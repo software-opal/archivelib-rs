@@ -41,7 +41,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(4, 3), (194, 7)]);
-    pure_fn224(194, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(194, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -52,7 +52,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(30, 5), (25, 4)]);
-    pure_fn224(25, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(25, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -63,7 +63,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(2, 3), (41, 5)]);
-    pure_fn224(41, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(41, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -74,7 +74,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(2, 3), (36, 5)]);
-    pure_fn224(36, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(36, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -85,7 +85,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(6, 3), (636, 9)]);
-    pure_fn224(636, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(636, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -96,7 +96,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(5, 3), (442, 8)]);
-    pure_fn224(442, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(442, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -107,7 +107,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(2, 3), (52, 5)]);
-    pure_fn224(52, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(52, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -118,7 +118,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(3, 3), (94, 6)]);
-    pure_fn224(94, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(94, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -129,7 +129,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(3, 3), (65, 6)]);
-    pure_fn224(65, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(65, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -140,7 +140,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(3, 3), (85, 6)]);
-    pure_fn224(85, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(85, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 
@@ -151,7 +151,7 @@ mod tests {
       62, 0, 1, 14, 63, 30, 2, 3, 4, 5, 6, 34912, 34913, 34914, 34915, 34918, 34919, 34920, 34921,
     ];
     let mut expected_calls = ExactCallWriter::from_vec(vec![(14, 4), (7, 2)]);
-    pure_fn224(7, &mut expected_calls, &dat_arr181, &dat_arr194);
+    pure_fn224(7, &mut expected_calls, &dat_arr181, &dat_arr194).unwrap();
     expected_calls.assert_drained();
   }
 }
