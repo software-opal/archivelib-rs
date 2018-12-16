@@ -166,7 +166,7 @@ def test_case_for_fn224(call):
         f"""
 let dat_arr181 = vec!{dat_arr181};
 let dat_arr194 = vec!{dat_arr194};
-let expected_calls = ExactCallWriter::from(vec![{output_calls}]);
+let mut expected_calls = ExactCallWriter::from_vec(vec![{output_calls}]);
 pure_fn224(
   {var204},
   &mut expected_calls,
@@ -188,7 +188,7 @@ def test_case_for_fn218(call):
         "test_fn218",
         f"""
 let dat_arr181 = vec!{dat_arr181};
-let expected_calls = ExactCallWriter::from(vec![{output_calls}]);
+let mut expected_calls = ExactCallWriter::from_vec(vec![{output_calls}]);
 pure_fn218(
   &mut expected_calls,
   &dat_arr181,

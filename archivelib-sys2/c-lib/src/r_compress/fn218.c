@@ -4,7 +4,7 @@
 void fn218(RCompressData *data, int16_t bits_to_load219, int16_t _220,
            int16_t _221) {
   if (_221 != -1 && _221 != 3) {
-    printf("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n" );
+    abort();
   }
   DEBUG_FILE_HANDLE(fs, data);
   fs << "{\"ptr\": " << (intptr_t)(data);
@@ -14,8 +14,9 @@ void fn218(RCompressData *data, int16_t bits_to_load219, int16_t _220,
   WRITE_DATA_ARRAY(fs, data, dat_arr181, uint8_t);
 
   int16_t run_start226, _289;
-  while (bits_to_load219 > 0 && data->dat_arr181[bits_to_load219 - 1] == 0)
+  while (bits_to_load219 > 0 && data->dat_arr181[bits_to_load219 - 1] == 0) {
     bits_to_load219--;
+  }
 
   WRITE_OUTPUT_BITS(fs, data, _220, bits_to_load219);
   run_start226 = 0;
@@ -23,11 +24,13 @@ void fn218(RCompressData *data, int16_t bits_to_load219, int16_t _220,
     _289 = data->dat_arr181[run_start226++];
     if (_289 <= 6) {
       WRITE_OUTPUT_BITS(fs, data, 3, _289);
-    } else
+    } else {
       WRITE_OUTPUT_BITS(fs, data, _289 - 3, (uint16_t)(USHRT_MAX << 1));
+    }
     if (run_start226 == _221) {
-      while (run_start226 < 6 && data->dat_arr181[run_start226] == 0)
+      while (run_start226 < 6 && data->dat_arr181[run_start226] == 0) {
         run_start226++;
+      }
       WRITE_OUTPUT_BITS(fs, data, 2, (uint16_t)(run_start226 - 3));
     }
   }

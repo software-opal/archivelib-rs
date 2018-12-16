@@ -34,19 +34,22 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     fh << "\n\"func\": \"" << __func__ << "\"\n\"now\": " << now;              \
     fh << "\n\"data\": ";                                                      \
                                                                                \
-    std::cerr << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
-    std::cerr << now << ")\n";                                                 \
+    std::cout << __FILE__ << ":" << __LINE__ << " -- " << __func__ << "(";     \
+    std::cout << now << ")\n";                                                 \
   } while (0);
 
 #define WRITE_OUTPUT_BITS(fh, data, bit_count, bits)                           \
   {                                                                            \
-    int32_t bc = bit_count;                                                        \
-    uint16_t bt = bits;                                                             \
+    int32_t bc = bit_count;                                                    \
+    uint16_t bt = bits;                                                        \
     clock_t now = std::clock();                                                \
     fh << ",'output[" << now << "]': {";                                       \
     fh << "'bit_count': " << bc << ", 'bits': " << bt;                         \
     fh << "}";                                                                 \
-    write_bits_to_buffer(data, bc, bt)      ;                                   \
+    std::cout << ",'output[" << now << "]': {";                                \
+    std::cout << "'bit_count': " << bc << ", 'bits': " << bt;                  \
+    std::cout << "}\n";                                                        \
+    write_bits_to_buffer(data, bc, bt);                                        \
   }
 
 #ifndef ARRAY_CONTENT_DEBUG
