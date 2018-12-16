@@ -6,13 +6,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn finalise_compresson197(&mut self) -> Result<()> {
     if !self.uncompressible {
       self.fn207()?;
-      let bits_remaining = self.output_store.write_bits(0u8, 0 as usize)?;
-      if bits_remaining > 0 {
-        // Fill the gap in the last bit with zeros.
-        self
-          .output_store
-          .write_bits(0u8, 8 - bits_remaining as usize)?;
-      }
+      self.output_store.finalise();
     }
     self.dat183_IS_CONST_8162 = 0;
     self.array165_counter = 0;

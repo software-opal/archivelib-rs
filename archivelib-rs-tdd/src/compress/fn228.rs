@@ -12,7 +12,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     dat_arr_cursor178: &mut CompressU8ArrayAlias<'_>,
     dat_arr_cursor188: &CompressU16ArrayAlias<'_>,
   ) {
-    println!("{:?}, {:?}", dat_arr_cursor178, dat_arr_cursor188);
     let new_arr167 = part_one::pure_fn228_part_one(
       &self.dat_arr189,
       &self.dat_arr190,

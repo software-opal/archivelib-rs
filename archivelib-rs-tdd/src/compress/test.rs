@@ -6,8 +6,8 @@ use std::io::Read;
 
 #[test]
 pub fn test_embroidermodder_hus_stitch_attrs() {
-  use crate::test::fixed::real_world::embroidermodder_hus::stitch_attrs::get_compressed;
-  let input = get_compressed();
+  use crate::test::fixed::real_world::embroidermodder_hus::stitch_attrs::get_uncompressed;
+  let input = get_uncompressed();
   let output = ExactCallWriter::from_vec(vec![
     (24, 16),
     (8, 5),

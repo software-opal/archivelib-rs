@@ -27,17 +27,12 @@ where
   W: BitwiseWrite + Sized,
 {
   assert!(run_start_check == -1 || run_start_check == 3);
-
-  println!("{}, {}, {}", bits_to_write, bit_length, run_start_check);
-  println!("{:?}", arr181);
   while bits_to_write > 0 && arr181[bits_to_write - 1] == 0 {
     bits_to_write -= 1
   }
-  println!(" => {}", bits_to_write);
   out.write_bits(bits_to_write, bit_length)?;
   let mut run_start226: usize = 0;
   while run_start226 < bits_to_write {
-    println!("{}: {}", run_start226, arr181[run_start226]);
     let var289 = arr181[run_start226];
     run_start226 = run_start226 + 1;
     if var289 <= 6 {

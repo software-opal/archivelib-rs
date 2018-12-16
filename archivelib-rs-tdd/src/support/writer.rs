@@ -8,6 +8,7 @@ pub trait BitwiseWrite {
     bits: impl ToPrimitive,
     bit_count: impl ToPrimitive,
   ) -> io::Result<usize>;
+  fn finalise(&mut self) -> io::Result<()>;
 }
 
 pub struct BitwiseWriter<W: io::Write> {
@@ -63,6 +64,13 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
     }
     self.commit_buffer()
   }
+  fn finalise(&mut self) -> io::Result<()> {
+    let unwritten = (self.buffer.len() % 8);
+    if unwritten > 0 {
+      self.write_bits(0, 8 - unwritten)?;
+    }
+    Ok(())
+  }
 }
 
 pub struct ExactCallWriter {
@@ -99,14 +107,24 @@ impl BitwiseWrite for ExactCallWriter {
     );
     let actual = (bits, bit_count);
     let expected = self.calls.remove(0);
-    assert_eq!(
-      actual, expected,
-      "Trying to write {:?} when {:?} was expected at index {}",
-      actual, expected, self.write_calls
-    );
+    if self.calls.is_empty() {
+      assert_eq!(actual.0, expected.0);
+    } else {
+      assert_eq!(
+        actual, expected,
+        "Trying to write {:?} when {:?} was expected at index {}",
+        actual, expected, self.write_calls
+      );
+    }
     self.written_bits += bit_count;
     self.write_calls += 1;
     Ok(self.written_bits % 8)
+  }
+  fn finalise(&mut self) -> io::Result<()> {
+    let expected = self.calls.remove(0);
+    assert_eq!(self.calls, vec![]);
+    assert_eq!(expected.0, 0);
+    Ok(())
   }
 }
 
@@ -118,6 +136,9 @@ impl NullBitwiseWriter {
 }
 impl BitwiseWrite for NullBitwiseWriter {
   fn write_bits(&mut self, _: impl ToPrimitive, _: impl ToPrimitive) -> io::Result<usize> {
-    return Ok(0);
+    Ok(0)
+  }
+  fn finalise(&mut self) -> io::Result<()> {
+    Ok(())
   }
 }

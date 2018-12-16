@@ -1,6 +1,6 @@
 use crate::compress::{CompressError, RCompressData, Result};
 use crate::consts::{
-  CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MIN_RUN_LENGTH135_IS_3,
+  CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3,
 };
 use crate::support::BitwiseWrite;
 use std::io::Read;
@@ -54,7 +54,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let mut buffer_pos: usize = 0;
     let size_bitmask280 = self.max_uncompressed_data_size_bitmask;
     let max_size279 = self.max_uncompressed_data_size;
-    let mut var209 = read_all(&mut self.input_store, &mut self.uncompressed_buffer)?;
+    let mut var209 = read_all(
+      &mut self.input_store,
+      &mut self.uncompressed_buffer[..max_size279],
+    )?;
     let mut s = (var209 & size_bitmask280) as usize;
 
     self.dat169 = 0 as i16;
@@ -64,7 +67,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       & (CONST_N153_IS_4096 as u16 - 1)) as i16;
     var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
 
-    while var209 > 256 + 4 && !self.uncompressible {
+    while var209 > MAX_RUN_LENGTH140 + 4 {
+      println!("var209: {}", var209);
       self.fn199(buffer_pos as i16, var201);
       if (self.dat168) < 3 {
         let val = self.uncompressed_buffer[buffer_pos] as u16;
@@ -99,7 +103,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         }
       }
     }
-    while (var209) < 256 {
+    while var209 < 256 {
       let byte_or_run_length203 = match read_one(&mut self.input_store)? {
         None => break,
         Some(n) => n,
@@ -112,7 +116,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       s = (s + 1) & size_bitmask280;
       var209 += 1
     }
-    while var209 > 0 && !self.uncompressible {
+    while var209 > 0 {
       self.fn199(buffer_pos as i16, var201);
       if self.dat168 > var209 as i16 {
         self.dat168 = var209 as i16
@@ -166,9 +170,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
         var209 -= 1;
       }
-    }
-    if self.uncompressible {
-      return Err(CompressError::InputUncompressable);
     }
     self.fn202(
       (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)) as u16,
