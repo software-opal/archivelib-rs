@@ -5,12 +5,7 @@ use std::io::Read;
 const USHRT_MAX: u16 = u16::max_value();
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn218(
-    &mut self,
-    mut bits_to_write: i16,
-    bit_length: i16,
-    run_start_check: i16,
-  ) -> Result<()> {
+  pub fn fn218(&mut self, bits_to_write: i16, bit_length: i16, run_start_check: i16) -> Result<()> {
     pure_fn218(
       &mut self.output_store,
       &self.dat_arr181,

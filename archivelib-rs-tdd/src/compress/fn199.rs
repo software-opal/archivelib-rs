@@ -5,6 +5,7 @@ use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn199(&mut self, uncompressed_buffer_index200: i16, var201: i16) {
+    println!("fn199");
     let (dat168, dat169) = pure_fn199(
       &self.dat_arr163,
       &self.uncompressed_buffer,

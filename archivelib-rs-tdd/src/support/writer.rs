@@ -117,11 +117,7 @@ impl NullBitwiseWriter {
   }
 }
 impl BitwiseWrite for NullBitwiseWriter {
-  fn write_bits(
-    &mut self,
-    bits_: impl ToPrimitive,
-    bit_count_: impl ToPrimitive,
-  ) -> io::Result<usize> {
+  fn write_bits(&mut self, _: impl ToPrimitive, _: impl ToPrimitive) -> io::Result<usize> {
     return Ok(0);
   }
 }
