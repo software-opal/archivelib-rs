@@ -8,15 +8,15 @@ import pathlib
 def find_output_calls(call_data):
     output_calls = {}
     for k, v in call_data.items():
-        if k.startswith('output['):
-            idx = int(k[len('output['):-1])
+        if k.startswith("output["):
+            idx = int(k[len("output[") : -1])
             output_calls[idx] = v
-        elif k.startswith('output'):
+        elif k.startswith("output"):
             output_calls[max(output_calls) + 1](v)
     calls = []
     for _, item in sorted(output_calls.items()):
         if isinstance(item, dict):
-            calls.append((item['bits'], item['bit_count']))
+            calls.append((item["bits"], item["bit_count"]))
         else:
             bit_count, bits = item
             calls.append((bits, bit_count))
@@ -137,8 +137,8 @@ def test_case_for_fn225(call):
     var187 = call["data"]["_187"]["content"]
     var177 = call["data"]["_177"]["content"]
     var177_after = call["data"]["_177_after"]["content"]
-    run_start226 = call['data']['run_start226']
-    _227 = call['data']['_227']
+    run_start226 = call["data"]["run_start226"]
+    _227 = call["data"]["_227"]
     return (
         "test_fn225",
         f"""
@@ -158,9 +158,12 @@ def test_case_for_fn224(call):
     var204 = call["data"]["_204"]
     dat_arr181 = call["data"]["dat_arr181"]["content"]
     dat_arr194 = call["data"]["dat_arr194"]["content"]
-    output_calls = "".join(f"\n  ({bits}, {bit_count})," for bits, bit_count in find_output_calls(call['data']))
+    output_calls = "".join(
+        f"\n  ({bits}, {bit_count}),"
+        for bits, bit_count in find_output_calls(call["data"])
+    )
     if output_calls:
-        output_calls += '\n'
+        output_calls += "\n"
     return (
         "test_fn224",
         f"""
@@ -176,14 +179,45 @@ pure_fn224(
 expected_calls.assert_drained();""",
     )
 
+
+def test_case_for_fn222(call):
+    dat_arr180 = call["data"]["dat_arr180"]["content"]
+    dat_arr181 = call["data"]["dat_arr181"]["content"]
+    dat_arr194 = call["data"]["dat_arr194"]["content"]
+    output_calls = "".join(
+        f"\n  ({bits}, {bit_count}),"
+        for bits, bit_count in find_output_calls(call["data"])
+    )
+    if output_calls:
+        output_calls += "\n"
+    return (
+        "test_fn222",
+        f"""
+let arr180 = vec!{dat_arr180};
+let arr181 = vec!{dat_arr181};
+let arr194 = vec!{dat_arr194};
+let mut expected_calls = ExactCallWriter::from_vec(vec![{output_calls}]);
+pure_fn222(
+  &mut expected_calls,
+  &arr180,
+  &arr181,
+  &arr194,
+).unwrap();
+expected_calls.assert_drained();""",
+    )
+
+
 def test_case_for_fn218(call):
     bits_to_load219 = call["data"]["bits_to_load219"]
     var220 = call["data"]["_220"]
     var221 = call["data"]["_221"]
     dat_arr181 = call["data"]["dat_arr181"]["content"]
-    output_calls = "".join(f"\n  ({bits}, {bit_count})," for bits, bit_count in find_output_calls(call['data']))
+    output_calls = "".join(
+        f"\n  ({bits}, {bit_count}),"
+        for bits, bit_count in find_output_calls(call["data"])
+    )
     if output_calls:
-        output_calls += '\n'
+        output_calls += "\n"
     return (
         "test_fn218",
         f"""
@@ -198,8 +232,6 @@ pure_fn218(
 ).unwrap();
 expected_calls.assert_drained();""",
     )
-
-
 
 
 def main():
@@ -218,6 +250,8 @@ def main():
                 res = test_case_for_fn225(call)
             elif call["func"] == "fn224":
                 res = test_case_for_fn224(call)
+            elif call["func"] == "fn222":
+                res = test_case_for_fn222(call)
             elif call["func"] == "fn218":
                 res = test_case_for_fn218(call)
             if res:
@@ -242,7 +276,7 @@ def main():
                 lines += ["  }"]
             lines += ["}"]
             f.write("\n".join(l.rstrip() for l in lines))
-        subprocess.run(['rustfmt', '--edition=2018', str(path)]);
+        subprocess.run(["rustfmt", "--edition=2018", str(path)])
 
 
 if __name__ == "__main__":

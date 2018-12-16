@@ -43,7 +43,7 @@ std::string get_as_binary(uintmax_t value, uint8_t max_bits);
     int32_t bc = bit_count;                                                    \
     uint16_t bt = bits;                                                        \
     clock_t now = std::clock();                                                \
-    fh << ",'output[" << now << "]': {";                                       \
+    fh << ",'output[" << fh.tellp() << "]': {";                                \
     fh << "'bit_count': " << bc << ", 'bits': " << bt;                         \
     fh << "}";                                                                 \
     std::cout << ",'output[" << now << "]': {";                                \
