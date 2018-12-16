@@ -1,8 +1,8 @@
 #[macro_use]
 pub mod macros;
 
-mod bench;
-mod fixed;
-mod q;
-mod random;
-mod util;
+pub mod bench;
+pub mod fixed;
+pub mod q;
+pub mod random;
+pub mod util;

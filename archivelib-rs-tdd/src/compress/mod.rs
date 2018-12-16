@@ -13,6 +13,9 @@ mod fn225;
 mod fn228;
 mod fn230;
 
+#[cfg(test)]
+mod test;
+
 pub use self::base::{
   CompressError, CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result,
 };

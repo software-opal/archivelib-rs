@@ -88,9 +88,9 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub max_uncompressed_data_size: usize,
   pub max_uncompressed_data_size_bitmask: usize,
   pub dat183_IS_CONST_8162: u16,
-  pub array165_counter: u16,
+  pub array165_counter: usize,
   pub bitwise_counter185: u16,
-  pub array165_tmp_counter186: u16,
+  pub array165_tmp_counter186: usize,
 }
 
 impl<R: Read, W: Write> RCompressData<R, BitwiseWriter<W>> {

@@ -67,6 +67,7 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
 
 pub struct ExactCallWriter {
   calls: Vec<(u128, usize)>,
+  write_calls: usize,
   pub written_bits: usize,
 }
 
@@ -74,6 +75,7 @@ impl ExactCallWriter {
   pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
     return Self {
       calls: calls,
+      write_calls: 0,
       written_bits: 0,
     };
   }
@@ -95,12 +97,31 @@ impl BitwiseWrite for ExactCallWriter {
       bits,
       bit_count
     );
-    let (expected_bits, expected_bit_count) = self.calls.remove(0);
+    let actual = (bits, bit_count);
+    let expected = self.calls.remove(0);
     assert_eq!(
-      (bits.into(), bit_count),
-      (expected_bits, expected_bit_count)
+      actual, expected,
+      "Trying to write {:?} when {:?} was expected at index {}",
+      actual, expected, self.write_calls
     );
     self.written_bits += bit_count;
+    self.write_calls += 1;
     Ok(self.written_bits % 8)
+  }
+}
+
+pub struct NullBitwiseWriter {}
+impl NullBitwiseWriter {
+  pub fn new() -> Self {
+    NullBitwiseWriter {}
+  }
+}
+impl BitwiseWrite for NullBitwiseWriter {
+  fn write_bits(
+    &mut self,
+    bits_: impl ToPrimitive,
+    bit_count_: impl ToPrimitive,
+  ) -> io::Result<usize> {
+    return Ok(0);
   }
 }

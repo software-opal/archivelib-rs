@@ -14,7 +14,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   }
 }
 
-fn pure_fn225(mut run_start226: usize, var187: &[u16], var177: &mut [i16], upper_bound: usize) {
+pub fn pure_fn225(mut run_start226: usize, var187: &[u16], var177: &mut [i16], upper_bound: usize) {
   let var289 = var177[run_start226];
   loop {
     let mut run_length276 = 2 * run_start226;

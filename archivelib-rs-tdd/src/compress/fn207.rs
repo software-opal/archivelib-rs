@@ -12,6 +12,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn207(&mut self) -> Result<()> {
     let mut var456: u32 = 0 as u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
+    println!("{:?}", self.dat_arr191);
     let mut var229 = self.fn211(
       CONST_N141_IS_511 as i32,
       &mut CompressU16ArrayAlias::Array191(0),
@@ -19,6 +20,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       &mut CompressU16ArrayAlias::Array192(0),
     )?;
     let var455 = self.dat_arr191[var229 as usize];
+    println!("{:?}", self.dat_arr191);
     self.output_store.write_bits(var455 as u32, 16 as usize)?;
     if var229 >= CONST_N141_IS_511 as u32 {
       self.fn216(&mut var217);

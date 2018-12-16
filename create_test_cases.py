@@ -1,4 +1,4 @@
-import yaml
+get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)get_array($1)import yaml
 import sys
 import subprocess
 import textwrap
@@ -23,14 +23,23 @@ def find_output_calls(call_data):
     return calls
 
 
+def get_array(arr_data):
+    if isinstance(arr_data['content'], list):
+        return arr_data['content']
+    else:
+        arr = [0] * arr_data['length']
+        for idx, val in arr_data['content'].items():
+            arr[idx] = val
+        return arr
+
+
 def test_case_for_fn230(call):
-    return None
     run_length = run_length
-    lookup_table_pre = call["data"]["lookup_table288_pre"]["content"]
-    lookup_table_post = call["data"]["lookup_table288_post"]["content"]
-    dat_arr167 = call["data"]["dat_arr167"]["content"]
-    item209 = call["data"]["item209"]["content"]
-    result = call["data"]["_231"]["content"][:run_length]
+    lookup_table_pre = get_array(call["data"]["lookup_table288_pre"])
+    lookup_table_post = get_array(call["data"]["lookup_table288_post"])
+    dat_arr167 = get_array(call["data"]["dat_arr167"])
+    item209 = get_array(call["data"]["item209"])
+    result = get_array(call["data"]["_231"])[:run_length]
     return (
         "test_fn230",
         f"""
@@ -54,9 +63,9 @@ def test_case_for_fn199(call):
     test_index = call["data"]["_201"]
     dat_arr163 = [
         +(val if val < 0x8000000000000000 else val - 0x10000000000000000)
-        for val in call["data"]["dat_arr163"]["content"]
+        for val in get_array(call["data"]["dat_arr163"])
     ]
-    uncompressed_buffer = call["data"]["uncompressed_buffer"]["content"]
+    uncompressed_buffer = get_array(call["data"]["uncompressed_buffer"])
     if "dat168" in call["data"]:
         dat168 = call["data"]["dat168"]
         dat169 = "Some(%d)" % call["data"]["dat169"]
@@ -88,12 +97,12 @@ def test_case_for_fn228(call):
 def test_case_for_fn228_full_call(call):
     var229 = call["data"]["_229"]
     dat174 = call["data"]["dat174"]
-    dat_arr189 = call["data"]["dat_arr189"]["content"]
-    dat_arr190 = call["data"]["dat_arr190"]["content"]
-    dat_arr167 = call["data"]["dat_arr167"]["content"]
-    dat_arr_cursor178 = call["data"]["dat_arr_cursor178"]["content"]
-    dat_arr_cursor188 = call["data"]["dat_arr_cursor188"]["content"]
-    dat_arr_cursor178_post = call["data"]["dat_arr_cursor178_after"]["content"]
+    dat_arr189 = get_array(call["data"]["dat_arr189"])
+    dat_arr190 = get_array(call["data"]["dat_arr190"])
+    dat_arr167 = get_array(call["data"]["dat_arr167"])
+    dat_arr_cursor178 = get_array(call["data"]["dat_arr_cursor178"])
+    dat_arr_cursor188 = get_array(call["data"]["dat_arr_cursor188"])
+    dat_arr_cursor178_post = get_array(call["data"]["dat_arr_cursor178_after"])
     return (
         "test_fn228_full_call",
         f"""
@@ -117,9 +126,9 @@ assert_eq!(dat_arr_cursor178, vec!{dat_arr_cursor178_post});""",
 def test_case_for_fn228_depth_generation(call):
     initial_index = call["data"]["_229"]
     series_start = call["data"]["dat174"]
-    dat_arr189 = call["data"]["dat_arr189"]["content"]
-    dat_arr190 = call["data"]["dat_arr190"]["content"]
-    dat_arr167 = call["data"]["dat_arr167"]["content"]
+    dat_arr189 = get_array(call["data"]["dat_arr189"])
+    dat_arr190 = get_array(call["data"]["dat_arr190"])
+    dat_arr167 = get_array(call["data"]["dat_arr167"])
     return (
         "test_fn228",
         f"""
@@ -134,9 +143,9 @@ assert_eq!(result, {dat_arr167});""",
 
 
 def test_case_for_fn225(call):
-    var187 = call["data"]["_187"]["content"]
-    var177 = call["data"]["_177"]["content"]
-    var177_after = call["data"]["_177_after"]["content"]
+    var187 = get_array(call["data"]["_187"])
+    var177 = get_array(call["data"]["_177"])
+    var177_after = get_array(call["data"]["_177_after"])
     run_start226 = call["data"]["run_start226"]
     _227 = call["data"]["_227"]
     return (
@@ -156,8 +165,8 @@ assert_eq!(var177, vec!{var177_after});""",
 
 def test_case_for_fn224(call):
     var204 = call["data"]["_204"]
-    dat_arr181 = call["data"]["dat_arr181"]["content"]
-    dat_arr194 = call["data"]["dat_arr194"]["content"]
+    dat_arr181 = get_array(call["data"]["dat_arr181"])
+    dat_arr194 = get_array(call["data"]["dat_arr194"])
     output_calls = "".join(
         f"\n  ({bits}, {bit_count}),"
         for bits, bit_count in find_output_calls(call["data"])
@@ -181,9 +190,9 @@ expected_calls.assert_drained();""",
 
 
 def test_case_for_fn222(call):
-    dat_arr180 = call["data"]["dat_arr180"]["content"]
-    dat_arr181 = call["data"]["dat_arr181"]["content"]
-    dat_arr194 = call["data"]["dat_arr194"]["content"]
+    dat_arr180 = get_array(call["data"]["dat_arr180"])
+    dat_arr181 = get_array(call["data"]["dat_arr181"])
+    dat_arr194 = get_array(call["data"]["dat_arr194"])
     output_calls = "".join(
         f"\n  ({bits}, {bit_count}),"
         for bits, bit_count in find_output_calls(call["data"])
@@ -211,7 +220,7 @@ def test_case_for_fn218(call):
     bits_to_load219 = call["data"]["bits_to_load219"]
     var220 = call["data"]["_220"]
     var221 = call["data"]["_221"]
-    dat_arr181 = call["data"]["dat_arr181"]["content"]
+    dat_arr181 = get_array(call["data"]["dat_arr181"])
     output_calls = "".join(
         f"\n  ({bits}, {bit_count}),"
         for bits, bit_count in find_output_calls(call["data"])
@@ -234,6 +243,37 @@ expected_calls.assert_drained();""",
     )
 
 
+def test_case_for_fn202(call):
+    bits_to_load219 = call["data"]["bits_to_load219"]
+    var220 = call["data"]["_220"]
+    var221 = call["data"]["_221"]
+    dat_arr181 = get_array(call["data"]["dat_arr181"])
+    output_calls = "".join(
+        f"\n  ({bits}, {bit_count}),"
+        for bits, bit_count in find_output_calls(call["data"])
+    )
+    if output_calls:
+        output_calls += "\n"
+    return (
+        "test_fn202",
+        f"""
+let input = [0u8; 0];
+let mut output = NullBitwiseWriter::new();
+let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+let dat_arr181 = vec!{dat_arr181};
+let mut expected_calls = ExactCallWriter::from_vec(vec![{output_calls}]);
+pure_fn218(
+  &mut expected_calls,
+  &dat_arr181,
+  {bits_to_load219},
+  {var220},
+  {var221},
+).unwrap();
+expected_calls.assert_drained();""",
+    )
+
+
+
 def main():
     test_cases = set()
     for file in map(pathlib.Path, sys.argv[1:]):
@@ -254,6 +294,8 @@ def main():
                 res = test_case_for_fn222(call)
             elif call["func"] == "fn218":
                 res = test_case_for_fn218(call)
+            elif call["func"] == "fn202":
+                res = test_case_for_fn202(call)
             if res:
                 test_cases.add(res)
             if len(test_cases) > 40:

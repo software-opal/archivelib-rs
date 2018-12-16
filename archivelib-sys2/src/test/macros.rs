@@ -131,7 +131,7 @@ macro_rules! assert_bytes_eq {
 macro_rules! test_data {
   ($($name: ident => (in=$uncompressed_data:expr, out=$compressed_data:expr),)*) => {
     $(
-      mod $name {
+      pub mod $name {
         #[allow(unused_imports)]
         use std::iter::repeat;
 
@@ -141,17 +141,20 @@ macro_rules! test_data {
         #[allow(unused_imports)]
         use super::*;
 
+        pub fn get_uncompressed() -> Box<[u8]> { $uncompressed_data }
+        pub fn get_compressed() -> Box<[u8]> { $compressed_data }
+
         #[test]
         fn test_compress() {
-          let uncompressed = $uncompressed_data;
-          let compressed = $compressed_data;
+          let uncompressed = get_uncompressed();
+          let compressed = get_compressed();
           let compress_output = do_compress(&uncompressed[..]).unwrap();
           assert_bytes_eq!(&compressed[..], &compress_output);
         }
         #[test]
         fn test_decompress() {
-          let uncompressed = $uncompressed_data;
-          let compressed = $compressed_data;
+          let uncompressed = get_uncompressed();
+          let compressed = get_compressed();
           let decompress_output = do_decompress(&compressed[..]).unwrap();
           assert_bytes_eq!(&uncompressed[..], &decompress_output);
         }
