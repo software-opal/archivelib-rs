@@ -68,7 +68,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
 
     while var209 > MAX_RUN_LENGTH140 + 4 {
-      println!("var209: {}", var209);
       self.fn199(buffer_pos as i16, var201);
       if (self.dat168) < 3 {
         let val = self.uncompressed_buffer[buffer_pos] as u16;

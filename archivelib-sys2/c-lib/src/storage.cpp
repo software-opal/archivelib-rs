@@ -257,7 +257,6 @@ int ALStorage::Close() {
 size_t ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
   size_t bytes_left_to_read = length;
   size_t buffer_bytes_available;
-  printf("%p: Reading %zu bytes\n", this, length);
   while (bytes_left_to_read) {
     buffer_bytes_available = muBufferValidData - muReadIndex;
     if (buffer_bytes_available == 0) {
