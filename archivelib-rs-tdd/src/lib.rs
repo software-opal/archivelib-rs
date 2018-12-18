@@ -15,8 +15,8 @@ pub mod support;
 mod compress;
 mod consts;
 mod expand;
-// #[cfg(test)]
-// mod proptests;
+#[cfg(test)]
+mod proptests;
 #[cfg(test)]
 mod test;
 

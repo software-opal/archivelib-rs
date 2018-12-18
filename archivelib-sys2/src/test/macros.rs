@@ -132,12 +132,7 @@ macro_rules! test_data {
   ($($name: ident => (in=$uncompressed_data:expr, out=$compressed_data:expr),)*) => {
     $(
       pub mod $name {
-        #[allow(unused_imports)]
-        use std::iter::repeat;
-
         use crate::{do_compress, do_decompress};
-        #[allow(unused_imports)]
-        use crate::test::fixed::*;
         #[allow(unused_imports)]
         use super::*;
 
@@ -157,6 +152,39 @@ macro_rules! test_data {
           let compressed = get_compressed();
           let decompress_output = do_decompress(&compressed[..]).unwrap();
           assert_bytes_eq!(&uncompressed[..], &decompress_output);
+        }
+      }
+    )*
+  };
+}
+
+macro_rules! fuzzer_test_data {
+  ($($name: ident => $uncompressed_data:expr,)*) => {
+    $(
+      pub mod $name {
+        #[allow(unused_imports)]
+        use std::iter::repeat;
+
+        use crate::{do_compress, do_decompress};
+        #[allow(unused_imports)]
+        use crate::test::fixed::*;
+        #[allow(unused_imports)]
+        use super::*;
+        pub fn get_uncompressed() -> Box<[u8]> { $uncompressed_data }
+
+        #[test]
+        fn test_compression_port(vec in raw_data_strat(), level in level_strat()) {
+          let uncompressed = get_uncompressed();
+          let real_data = match do_compress(&uncompressed, level).unwrap();
+          let test_data = match do_ported_compress(&uncompressed, level).unwrap();
+          assert_eq!(real_data, test_data, "Compression produced different results");
+        }
+        #[test]
+        fn test_decompression_port(vec in raw_data_strat(), level in level_strat()) {
+          let uncompressed = get_uncompressed();
+          let data = match do_compress(&uncompressed).unwrap();
+          let result = match do_ported_decompress_level(&data);
+          assert_eq!(&uncompressed[..], &result[..], "Data is not identical after decompression");
         }
       }
     )*
