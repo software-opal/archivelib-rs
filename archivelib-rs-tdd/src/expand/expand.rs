@@ -1,6 +1,6 @@
 use crate::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead};
+use crate::support::BitRead;
 use std::io::Write;
 
 const UCHAR_MAX: usize = 255;
@@ -12,13 +12,13 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     let mut buffer_pos: usize = 0;
     // Seed bits182 with the first 2 bits
     self.read_bits(2 * 8)?;
-    while self.error_counter243 < 5 {
+    while self.error_counter243 < 10 {
       let byte_or_run_length203 = self.get_next_item()? as usize;
       if byte_or_run_length203 <= UCHAR_MAX {
         // byte_or_run_length203 is the decompressed byte
-        self.uncompressed_buffer[buffer_pos as usize] = byte_or_run_length203 as u8;
+        self.uncompressed_buffer[buffer_pos] = byte_or_run_length203 as u8;
         buffer_pos += 1;
-        if buffer_pos as usize >= max_size279 {
+        if buffer_pos >= max_size279 {
           self
             .output_store
             .write_all(&self.uncompressed_buffer[..buffer_pos])?;
@@ -43,7 +43,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           {
             for _ in 0..run_length276 {
               self.uncompressed_buffer[buffer_pos] = self.uncompressed_buffer[run_start226];
-              buffer_pos = buffer_pos + 1;
+              buffer_pos += 1;
               run_start226 = run_start226 + 1;
             }
           } else {

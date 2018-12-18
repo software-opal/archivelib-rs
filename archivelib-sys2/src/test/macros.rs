@@ -1,25 +1,25 @@
 #[macro_export]
 macro_rules! hex {
   ($data: expr) => {{
-    let cleaned: Vec<u32> = $data.chars().filter_map(|c| c.to_digit(16)).collect();
+    let cleaned: std::vec::Vec<u32> = $data.chars().filter_map(|c| c.to_digit(16)).collect();
     assert!(cleaned.len() % 2 == 0);
     cleaned
       .chunks(2)
       .map(|dat| ((dat[0] << 4) + dat[1]) as u8)
-      .collect::<Vec<_>>()
+      .collect::<std::vec::Vec<_>>()
       .into_boxed_slice()
   }};
 }
 #[macro_export]
 macro_rules! from_iter {
   ($iter: expr) => {
-    $iter.collect::<Vec<_>>().into_boxed_slice()
+    $iter.collect::<std::vec::Vec<_>>().into_boxed_slice()
   };
   ($($iter: expr),+) => {
     from_iter!($($iter,)+);
   };
   ($($iter: expr, )+) => {{
-    let mut data: Vec<u8> = Vec::new();
+    let mut data: std::vec::Vec<u8> = Vec::new();
     $(
     data.extend($iter);
     )+

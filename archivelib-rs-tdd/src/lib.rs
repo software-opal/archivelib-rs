@@ -18,7 +18,10 @@ mod expand;
 #[cfg(test)]
 mod proptests;
 #[cfg(test)]
+#[macro_use]
 mod test;
+#[cfg(test)]
+mod tests;
 
 pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
 pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
