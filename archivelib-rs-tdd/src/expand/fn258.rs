@@ -1,6 +1,6 @@
 use crate::expand::base::ExpandError::InternalError;
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead};
+use crate::support::BitRead;
 use std::io::Write;
 
 pub enum Fn258Mode {
@@ -93,7 +93,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       while j < arg_arr260_len {
         item209 = arg_arr260[j] as usize;
         if !(item209 == 0) {
-          let tmp293: usize = (lookup_table288[item209] + lookup_table287[item209]) as usize;
+          let tmp293: usize =
+            (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
           if item209 <= bit_size261 {
             if tmp293 > max_internal263 as usize {
               return Err(InternalError(2));
