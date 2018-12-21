@@ -1,8 +1,18 @@
 [package]
 name = "archivelib"
 version = "0.1.0"
-authors = ["Opal Symes <leesdolphin@gmail.com>"]
+authors = ["Opal Symes <code@opal.codes>"]
 edition = "2018"
 
+[workspace]
+members = ["archivelib-sys"]
+
 [dependencies]
-archivelib-sys = { version = "0.1", path = "archivelib-sys" }
+failure = "0.1.3"
+failure_derive = "0.1.3"
+num = "0.2"
+
+[dev-dependencies]
+rand = "0.5.5"
+proptest = "0.8.7"
+archivelib-sys = { path = "archivelib-sys" }

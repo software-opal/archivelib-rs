@@ -1,52 +1,83 @@
-extern crate archivelib_sys;
+#![feature(try_from)]
+#![feature(const_int_ops)]
 
-pub fn compress(data: &mut [u8], level: u8) -> Result<Box<[u8]>, String> {
-  let length = data.len();
-  let ptr = data.as_mut_ptr();
-  let re = unsafe { archivelib_sys::compress(ptr, length, level) }.to_err();
-  match re {
-    Ok(res) => Ok(res.into_boxed_slice()),
-    Err(Some(err)) => Err(String::from_utf8_lossy(err.as_bytes()).to_string()),
-    Err(None) => Err("Unknown".to_string()),
-  }
-}
-
-pub fn decompress(data: &mut [u8], level: u8) -> Result<Box<[u8]>, String> {
-  let length = data.len();
-  let ptr = data.as_mut_ptr();
-  let re = unsafe { archivelib_sys::decompress(ptr, length, level) }.to_err();
-  match re {
-    Ok(res) => Ok(res.into_boxed_slice()),
-    Err(Some(err)) => Err(String::from_utf8_lossy(err.as_bytes()).to_string()),
-    Err(None) => Err("Unknown".to_string()),
-  }
-}
+#[macro_use]
+extern crate failure_derive;
+use failure;
 
 #[cfg(test)]
-mod tests {
-  use super::*;
+#[macro_use]
+extern crate proptest;
 
-  use std::iter::repeat;
+#[macro_use]
+pub mod support;
 
-  const SMALL_HEART_DATA: &[u8] = include_bytes!("../test_data/small_heart.hus");
+mod compress;
+mod consts;
+mod expand;
+#[cfg(test)]
+mod proptests;
+#[cfg(test)]
+#[macro_use]
+mod test;
+#[cfg(test)]
+mod tests;
 
-  fn to_u32(d: &[u8]) -> u32 {
-    return d[0] as u32 | ((d[1] as u32 | ((d[2] as u32 | ((d[3] as u32) << 8)) << 8)) << 8);
-  }
+pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
+pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
+pub const AL_GREENLEAF_LEVEL_2: u8 = 2;
+pub const AL_GREENLEAF_LEVEL_3: u8 = 3;
+pub const AL_GREENLEAF_LEVEL_4: u8 = 4;
 
-  #[test]
-  fn something() {
-    let block1_start = to_u32(&SMALL_HEART_DATA[0x14..0x18]) as usize;
-    let block2_start = to_u32(&SMALL_HEART_DATA[0x18..0x1C]) as usize;
+pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
+  do_compress_level(input, AL_GREENLEAF_LEVEL_0)
+}
 
-    let mut data = vec![];
-    data.extend(SMALL_HEART_DATA[block1_start..block2_start].iter());
-    let out_data = decompress(&mut data).unwrap();
-    let mut block1_expected: Vec<u8> = repeat(0x80).take(0x4D).collect();
-    block1_expected.extend(repeat(0x81).take(3));
-    block1_expected.extend(repeat(0x80).take(0x374 - 0x50));
-    block1_expected.extend([0x81, 0x81, 0x81, 0x81, 0x90].iter());
-    assert_eq!(out_data[..], block1_expected[..])
-  }
+pub fn do_compress_level(
+  input: &[u8],
+  compression_level: u8,
+) -> Result<Box<[u8]>, std::string::String> {
+  let reader = input;
+  let writer = Vec::with_capacity(1024);
+  let mut res = match compress::RCompressData::new_with_io_writer(
+    reader,
+    writer,
+    input.len(),
+    compression_level + 10,
+    false,
+  ) {
+    Ok(res) => res,
+    Err(err) => return Err(format!("{}", err)),
+  };
 
+  match res.compress() {
+    Ok(()) => (),
+    Err(err) => return Err(format!("{}", err)),
+  };
+
+  return Ok(res.into_writer().checked_into_inner().into_boxed_slice());
+}
+
+pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
+  do_decompress_level(input, AL_GREENLEAF_LEVEL_0)
+}
+pub fn do_decompress_level(
+  input: &[u8],
+  compression_level: u8,
+) -> Result<Box<[u8]>, std::string::String> {
+  let reader = support::BitReader::from(input);
+  let writer = Vec::with_capacity(1024);
+
+  let mut res = match expand::RExpandData::new(reader, writer, input.len(), compression_level + 10)
+  {
+    Ok(res) => res,
+    Err(err) => return Err(format!("{}", err)),
+  };
+
+  match res.expand() {
+    Ok(()) => {}
+    Err(err) => return Err(format!("{}", err)),
+  };
+
+  return Ok(res.into_writer().into_boxed_slice());
 }
