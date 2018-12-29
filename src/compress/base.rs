@@ -151,9 +151,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat_arr193: vec![0; 2 * CONST_N142_IS_15 - 1],
         dat_arr194: vec![0; CONST_N152_IS_19],
 
-        // dat_arr_cursor178: None,
-        // dat_arr_cursor187: None,
-        // dat_arr_cursor188: None,
         max_uncompressed_data_size: max_size,
         max_uncompressed_data_size_bitmask: (max_size - 1),
         chars_written: 0,

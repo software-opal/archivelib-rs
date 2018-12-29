@@ -6,7 +6,7 @@ use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn255(&mut self) -> Result<()> {
-    let mut _283: u16 = 0;
+    let mut var283: u16 = 0;
     let bits_to_load219: i16 = self.get_bits(CONST_N143_IS_9 as i16)? as i16;
     if bits_to_load219 == 0 {
       let byte_or_run_length203: i16 = self.get_bits(CONST_N143_IS_9 as i16)? as i16;
@@ -26,14 +26,14 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         let mut byte_or_run_length203: i16 =
           (self).dat_arr241[((self).bits182 >> 8) as usize] as i16;
         if byte_or_run_length203 >= CONST_N145_IS_19 as i16 {
-          _283 = (1 << 7) as u16;
+          var283 = (1 << 7) as u16;
           loop {
-            if 0 != (self).bits182 & _283 {
+            if 0 != (self).bits182 & var283 {
               byte_or_run_length203 = (self).dat_arr190[byte_or_run_length203 as usize] as i16
             } else {
               byte_or_run_length203 = (self).dat_arr189[byte_or_run_length203 as usize] as i16
             }
-            _283 = (_283 >> 1) as u16;
+            var283 = (var283 >> 1) as u16;
             if !(byte_or_run_length203 >= CONST_N145_IS_19 as i16) {
               break;
             }

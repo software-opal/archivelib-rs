@@ -6,7 +6,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn finalise_compresson197(&mut self) -> Result<()> {
     if !self.uncompressible {
       self.fn207()?;
-      self.output_store.finalise();
+      self.output_store.finalise()?;
     }
     self.dat183_IS_CONST_8162 = 0;
     self.array165_counter = 0;
