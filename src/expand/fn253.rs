@@ -5,13 +5,13 @@ use crate::support::{BitRead};
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
-  pub fn fn253(&mut self, mut _254: i16, mut _220: i16, mut _221: i16) -> Result<()> {
-    let mut _283: u16 = 0;
-    let bits_to_load219: i16 = self.get_bits(_220 as i16)? as i16;
+  pub fn fn253(&mut self, mut var254: i16, mut var220: i16, mut var221: i16) -> Result<()> {
+    let mut var283: u16 = 0;
+    let bits_to_load219: i16 = self.get_bits(var220 as i16)? as i16;
     if bits_to_load219 == 0 {
-      let byte_or_run_length203: i16 = self.get_bits(_220 as i16)? as i16;
+      let byte_or_run_length203: i16 = self.get_bits(var220 as i16)? as i16;
       let mut run_start226: i16 = 0;
-      while (run_start226) < _254 {
+      while (run_start226) < var254 {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
         run_start226 += 1
       }
@@ -26,9 +26,9 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         let mut byte_or_run_length203: i16 = ((self).bits182 >> 13) as i16;
         if byte_or_run_length203 == 7 {
           let mut bytes_read: usize = 3;
-          _283 = (1 << 12) as u16;
-          while 0 != _283 & (self).bits182 {
-            _283 = (_283 >> 1) as u16;
+          var283 = (1 << 12) as u16;
+          while 0 != var283 & (self).bits182 {
+            var283 = (var283 >> 1) as u16;
             byte_or_run_length203 += 1;
             bytes_read = bytes_read.wrapping_add(1)
           }
@@ -39,7 +39,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         }
         self.dat_arr181[run_start226 as usize] = byte_or_run_length203 as u8;
         run_start226 = run_start226 + 1;
-        if !(run_start226 == _221) {
+        if !(run_start226 == var221) {
           continue;
         }
         byte_or_run_length203 = self.get_bits(2)? as i16;
@@ -50,11 +50,11 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           byte_or_run_length203 -= 1
         }
       }
-      while (run_start226) < _254 {
+      while (run_start226) < var254 {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
         run_start226 += 1
       }
-      self.fn258(Fn258Mode::Fn253, _254 as usize, 8, CONST_N149_IS_256 as u16)?;
+      self.fn258(Fn258Mode::Fn253, var254 as usize, 8, CONST_N149_IS_256 as u16)?;
     };
     Ok(())
   }

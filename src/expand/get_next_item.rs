@@ -2,12 +2,11 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N145_IS_19, CONST_N147_IS_5, CONST_N540_IS_5,
 };
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead};
+use crate::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn get_next_item(&mut self) -> Result<u16> {
-    let mut _283: u16 = 0;
     if self.items_until_next_header == 0 {
       // This is the first 2 bytes in the file, and it represents the number of
       // calls that this header can handle. It's not exactly the number of bytes
@@ -24,14 +23,14 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     // long
     if run_length276 as usize >= CONST_N141_IS_511 {
       // No test cases exercise this condition.
-      _283 = (1 << 3) as u16;
+      let mut var283 = 1u16 << 3;
       loop {
-        if 0 != self.bits182 & _283 {
+        if 0 != self.bits182 & var283 {
           run_length276 = self.dat_arr190[run_length276 as usize]
         } else {
           run_length276 = self.dat_arr189[run_length276 as usize]
         }
-        _283 = (_283 >> 1) as u16;
+        var283 = var283 >> 1;
         if !(run_length276 as usize >= CONST_N141_IS_511) {
           break;
         }
