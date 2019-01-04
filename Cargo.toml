@@ -13,6 +13,6 @@ failure_derive = "0.1.3"
 num = "0.2"
 
 [dev-dependencies]
-rand = "0.5.5"
+rand = "0.6.1"
 proptest = "0.8.7"
 archivelib-sys = { path = "archivelib-sys" }
