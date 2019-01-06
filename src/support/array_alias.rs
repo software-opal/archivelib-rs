@@ -31,6 +31,7 @@ macro_rules! array_alias_enum {
     )+
   ) => (
     $(
+      #[allow(dead_code)]
       #[derive(Debug, PartialEq)]
       pub enum $name<'a> {
         $(

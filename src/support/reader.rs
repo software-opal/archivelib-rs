@@ -73,7 +73,7 @@ impl<R: io::Read> BitwiseReader<R> {
     BitwiseReader {
       pending_byte: 0,
       index: 0,
-      inner: inner,
+      inner,
     }
   }
 
@@ -124,10 +124,7 @@ pub struct VecReader {
 }
 impl VecReader {
   pub fn new(data: Vec<u8>) -> Self {
-    VecReader {
-      data: data,
-      index: 0,
-    }
+    VecReader { data, index: 0 }
   }
 }
 impl io::Read for VecReader {

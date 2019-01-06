@@ -5,6 +5,7 @@ use crate::consts::{
 use crate::support::{ArrayAlias, BitwiseWrite, BitwiseWriter};
 use std::io::{Read, Write};
 
+#[allow(dead_code)]
 #[derive(Fail, Debug)]
 pub enum CompressError {
   #[fail(display = "Illegal Compression level: {}", _0)]
@@ -133,10 +134,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       Ok(RCompressData {
         input_store: reader,
         output_store: writer,
-        fail_uncompressible: fail_uncompressible,
-        input_length: input_length,
+        fail_uncompressible,
+        input_length,
 
-        dat_arr163: dat_arr163,
+        dat_arr163,
         dat_arr164: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140 + 2],

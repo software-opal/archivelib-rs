@@ -1,12 +1,12 @@
 use super::fn258::Fn258Mode;
 use crate::consts::CONST_N149_IS_256;
 use crate::expand::{RExpandData, Result};
-use crate::support::{BitRead};
+use crate::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
-  pub fn fn253(&mut self, mut var254: i16, mut var220: i16, mut var221: i16) -> Result<()> {
-    let mut var283: u16 = 0;
+  pub fn fn253(&mut self, var254: i16, var220: i16, var221: i16) -> Result<()> {
+    let mut var283: u16;
     let bits_to_load219: i16 = self.get_bits(var220 as i16)? as i16;
     if bits_to_load219 == 0 {
       let byte_or_run_length203: i16 = self.get_bits(var220 as i16)? as i16;
@@ -44,6 +44,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         }
         byte_or_run_length203 = self.get_bits(2)? as i16;
         while byte_or_run_length203 > 0 {
+          println!("AAA;;;;AA");
           let fresh1 = run_start226;
           run_start226 = run_start226 + 1;
           self.dat_arr181[fresh1 as usize] = 0 as u8;
@@ -54,7 +55,12 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
         run_start226 += 1
       }
-      self.fn258(Fn258Mode::Fn253, var254 as usize, 8, CONST_N149_IS_256 as u16)?;
+      self.fn258(
+        Fn258Mode::Fn253,
+        var254 as usize,
+        8,
+        CONST_N149_IS_256 as u16,
+      )?;
     };
     Ok(())
   }

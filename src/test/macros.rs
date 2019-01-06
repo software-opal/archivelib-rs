@@ -27,6 +27,17 @@ macro_rules! from_iter {
   }};
 }
 
+#[macro_export]
+macro_rules! rvec {
+  ($($val: expr => $count: expr),+) => {{
+      let mut v = Vec::new();
+      $(
+        v.resize(v.len() + $count, $val);
+      )+
+      v}
+  };
+}
+
 macro_rules! _bytes_to_human_hex {
   ($expected: expr, $len: expr) => {{
     let expected: &[u8] = $expected;
@@ -158,6 +169,7 @@ macro_rules! test_data {
   };
 }
 
+#[macro_export]
 macro_rules! fuzzer_test_data {
   ($($name: ident => $uncompressed_data:expr,)*) => {
     $(

@@ -53,8 +53,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
 
     let mut item209: usize;
     let rem_bit_size291: usize;
-    let mut var292: u32 = 0;
-    let mut var283: u32 = 0;
+    let mut var292: u32;
+    let var283: u32;
     let mut i: usize;
     let mut j: usize;
     for i in 0..(arg_arr260_len as usize) {
@@ -107,7 +107,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
           } else {
             let mut var289 = lookup_table288[item209 as usize] as u32;
-            let mut current_table = Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
+            let mut current_table =
+              Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
             i = item209.wrapping_sub(bit_size261);
             while i != 0 {
               if data_table!(current_table, output_table262, self) == 0 {

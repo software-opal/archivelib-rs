@@ -12,9 +12,38 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       // calls that this header can handle. It's not exactly the number of bytes
       // because we read a variable number of bits per call.
       self.items_until_next_header = self.get_bits(16)? as usize;
+      println!("AAAAa");
       self.fn253(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3)?;
+      println!("dat_arr181 = {:X?}", self.dat_arr181);
+      println!("dat_arr241 = {:X?}", self.dat_arr241);
+      println!("AAAAa");
       self.fn255()?;
+      println!("AAAAa");
       self.fn253(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1)?;
+
+      println!("uncompressed_buffer = {:X?}", self.uncompressed_buffer);
+      println!("dat_arr180 = {:X?}", self.dat_arr180);
+      println!("dat_arr181 = {:X?}", self.dat_arr181);
+      // println!("dat_arr189 = {:X?}", self.dat_arr189);
+      // println!("dat_arr190 = {:X?}", self.dat_arr190);
+      println!("dat_arr240 = {:X?}", self.dat_arr240);
+      println!("dat_arr241 = {:X?}", self.dat_arr241);
+      println!("bits_in_buffer172 = {:X?}", self.bits_in_buffer172);
+      println!(
+        "max_uncompressed_data_size = {:X?}",
+        self.max_uncompressed_data_size
+      );
+      println!(
+        "max_uncompressed_data_size_bitmask = {:X?}",
+        self.max_uncompressed_data_size_bitmask
+      );
+      println!("bits182 = {:X?}", self.bits182);
+      println!("error_counter243 = {:X?}", self.error_counter243);
+      println!(
+        "items_until_next_header = {:X?}",
+        self.items_until_next_header
+      );
+      println!("tmp_bit_buffer245 = {:X?}", self.tmp_bit_buffer245);
     }
     self.items_until_next_header = self.items_until_next_header - 1;
     let mut run_length276 = self.dat_arr240[(self.bits182 >> 4) as usize];
@@ -22,6 +51,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     // 0x100 <= run_length276 <= 0x1FE are runs (run_length276 - 0x100 + 3) bits
     // long
     if run_length276 as usize >= CONST_N141_IS_511 {
+      assert!(false);
       // No test cases exercise this condition.
       let mut var283 = 1u16 << 3;
       loop {

@@ -1,4 +1,4 @@
-use crate::compress::{CompressError, RCompressData, Result};
+use crate::compress::{RCompressData, Result};
 use crate::consts::{
   CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3,
 };

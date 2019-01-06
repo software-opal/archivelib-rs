@@ -9,12 +9,6 @@ use failure;
 #[macro_use]
 extern crate proptest;
 
-#[macro_use]
-pub mod support;
-
-mod compress;
-mod consts;
-mod expand;
 #[cfg(test)]
 mod proptests;
 #[cfg(test)]
@@ -22,6 +16,14 @@ mod proptests;
 mod test;
 #[cfg(test)]
 mod tests;
+
+#[macro_use]
+pub mod support;
+
+mod compress;
+mod consts;
+mod expand;
+mod expand_new;
 
 pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
 pub const AL_GREENLEAF_LEVEL_1: u8 = 1;

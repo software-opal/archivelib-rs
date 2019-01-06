@@ -1,4 +1,4 @@
-use super::BitwiseIterable;
+use super::IntoBits;
 use num::ToPrimitive;
 use std::io;
 
@@ -65,7 +65,7 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
     self.commit_buffer()
   }
   fn finalise(&mut self) -> io::Result<()> {
-    let unwritten = (self.buffer.len() % 8);
+    let unwritten = self.buffer.len() % 8;
     if unwritten > 0 {
       self.write_bits(0, 8 - unwritten)?;
     }
@@ -82,7 +82,7 @@ pub struct ExactCallWriter {
 impl ExactCallWriter {
   pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
     return Self {
-      calls: calls,
+      calls,
       write_calls: 0,
       written_bits: 0,
     };

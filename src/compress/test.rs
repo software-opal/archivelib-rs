@@ -1,8 +1,5 @@
-use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
-use crate::support::ArrayAlias;
-use crate::support::BitwiseWrite;
+use crate::compress::RCompressData;
 use crate::support::ExactCallWriter;
-use std::io::Read;
 
 #[test]
 pub fn test_embroidermodder_hus_stitch_attrs() {

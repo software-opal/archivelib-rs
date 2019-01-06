@@ -4,6 +4,7 @@ pub fn pure_fn228_part_one(
   series_start: usize,
   initial_index: usize,
 ) -> [u16; 17] {
+  #![allow(unreachable_code)]
   let mut dat_arr167 = [0u16; 17];
   calculate_pointer_depths(
     dat_arr189,
