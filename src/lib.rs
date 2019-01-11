@@ -19,6 +19,8 @@ mod tests;
 
 #[macro_use]
 pub mod support;
+pub mod level;
+pub use self::level::CompressionLevel;
 
 mod compress;
 mod consts;

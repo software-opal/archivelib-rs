@@ -49,6 +49,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           } else {
             byte_or_run_length203 = (self.get_bits(CONST_N143_IS_9 as i16)? + 20) as i16
           }
+          let mut count = 0;
+          println!("byte_or_run_length203: {}", byte_or_run_length203);
           loop {
             byte_or_run_length203 -= 1;
             if !(byte_or_run_length203 >= 0) {
@@ -56,15 +58,17 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
             let fresh0 = run_start226;
             run_start226 = run_start226 + 1;
-            (self).dat_arr180[fresh0 as usize] = 0 as u8
+            (self).dat_arr180[fresh0 as usize] = 0 as u8;
+            count += 1;
           }
+          println!("Count: {}", count);
         } else {
           let fresh1 = run_start226;
           run_start226 = run_start226 + 1;
           (self).dat_arr180[fresh1 as usize] = (byte_or_run_length203 - 2) as u8
         }
       }
-      while (run_start226) < 127 * 2 + 1 + 1 + 256 - 3 + 1 + 1 {
+      while (run_start226) < (CONST_N141_IS_511 as i16) {
         let fresh2 = run_start226;
         run_start226 = run_start226 + 1;
         (self).dat_arr180[fresh2 as usize] = 0 as u8

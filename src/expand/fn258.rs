@@ -51,19 +51,21 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     let mut lookup_table287: [u16; 17] = [0; 17];
     let mut lookup_table288: [u16; 18] = [0; 18];
 
-    let mut item209: usize;
     let rem_bit_size291: usize;
     let mut var292: u32;
     let var283: u32;
     let mut i: usize;
-    let mut j: usize;
+    let mut ij: usize;
     for i in 0..(arg_arr260_len as usize) {
       var277[arg_arr260[i] as usize] = var277[arg_arr260[i] as usize].wrapping_add(1);
     }
+    let mut tmp: u32 = 0;
     for i in 1..17 {
       // This wraps around to 0.
+      tmp += (var277[i] as u32) << (16 - i);
       lookup_table288[i + 1] = (lookup_table288[i].wrapping_add((var277[i]) << (16 - i))) as u16;
     }
+    assert!(tmp == 0 || tmp == 0x10000);
     if lookup_table288[17] != 0 {
       return Err(InternalError(1));
     } else {
@@ -79,6 +81,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         i = i.wrapping_add(1)
       }
       i = (lookup_table288[bit_size261 + 1] >> rem_bit_size291) as usize;
+      println!("AAAA: {:X?}{}", lookup_table288, i);
       if i != (1 << 16) {
         let var289 = 1 << bit_size261;
         while i != var289 {
@@ -86,12 +89,14 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           i = i.wrapping_add(1);
           output_table262[fresh0 as usize] = 0 as u16
         }
+      } else {
+        unreachable!("This, in theory, is not a reachable case!");
       }
       var292 = arg_arr260_len as u32;
       var283 = 1 << 15 - bit_size261;
-      j = 0;
-      while j < arg_arr260_len {
-        item209 = arg_arr260[j] as usize;
+      ij = 0;
+      while ij < arg_arr260_len {
+        let item209 = arg_arr260[ij] as usize;
         if !(item209 == 0) {
           let tmp293: usize =
             (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
@@ -101,7 +106,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             } else {
               i = lookup_table288[item209 as usize] as usize;
               while i < tmp293 {
-                output_table262[i] = j as u16;
+                output_table262[i] = ij as u16;
                 i = i.wrapping_add(1)
               }
             }
@@ -112,9 +117,10 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             i = item209.wrapping_sub(bit_size261);
             while i != 0 {
               if data_table!(current_table, output_table262, self) == 0 {
-                (self).dat_arr189[var292 as usize] = 0;
-                (self).dat_arr190[var292 as usize] = 0;
+                self.dat_arr189[var292 as usize] = 0;
+                self.dat_arr190[var292 as usize] = 0;
                 data_table!((current_table, output_table262, self) = var292 as u16);
+                assert_ne!(var292, 0);
                 var292 = var292.wrapping_add(1);
               }
               if 0 != var289 & var283 {
@@ -131,11 +137,11 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
               var289 <<= 1;
               i = i.wrapping_sub(1)
             }
-            data_table!((current_table, output_table262, self) = j as u16)
+            data_table!((current_table, output_table262, self) = ij as u16)
           }
           lookup_table288[item209 as usize] = tmp293 as u16
         }
-        j = j.wrapping_add(1)
+        ij = ij.wrapping_add(1)
       }
     }
     Ok(())
