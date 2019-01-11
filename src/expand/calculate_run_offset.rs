@@ -14,15 +14,15 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       } else {
         run_length276 = self.dat_arr189[run_length276 as usize];
       }
-      var283 = var283 >> 1;
+      var283 >>= 1;
       panic!();
     }
-    let bits = self.dat_arr181[run_length276 as usize] as i16;
+    let bits = i16::from(self.dat_arr181[run_length276 as usize]);
     self.read_bits(bits)?;
     if run_length276 != 0 {
-      run_length276 = run_length276 - 1;
+      run_length276 -= 1;
       run_length276 = (1 << run_length276) + self.get_bits(run_length276 as i16)?;
     }
-    return Ok(run_length276);
+    Ok(run_length276)
   }
 }

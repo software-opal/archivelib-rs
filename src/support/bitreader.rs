@@ -7,7 +7,7 @@ pub trait BitRead {
   fn get_bits(&mut self, bits_to_load: u8) -> Result<u16> {
     let bits: u16 = self.current_bits() >> (16 - bits_to_load);
     self.read_bits(bits_to_load)?;
-    return Ok(bits);
+    Ok(bits)
   }
 }
 pub struct BitReader<R: Read> {
@@ -44,10 +44,10 @@ impl<R: Read> BitRead for BitReader<R> {
     while bits_to_load > self.tmp_bits_size {
       // This loop loads 1 new byte into `data->tmp_bits`(the temporary
       // buffer)
-      bits_to_load = bits_to_load - self.tmp_bits_size;
+      bits_to_load -= self.tmp_bits_size;
       // Rotate in the remaining bits from the tmp_bit_buffer.
-      self.bits =
-        ((self.bits) << self.tmp_bits_size) + (self.tmp_bits as u16 >> 8 - self.tmp_bits_size);
+      self.bits = ((self.bits) << self.tmp_bits_size)
+        + (u16::from(self.tmp_bits) >> (8 - self.tmp_bits_size));
       let mut tmp = [0];
       self.tmp_bits = match self.inner.read_exact(&mut tmp) {
         Ok(()) => tmp[0],
@@ -62,9 +62,9 @@ impl<R: Read> BitRead for BitReader<R> {
       };
       self.tmp_bits_size = 8;
     }
-    self.tmp_bits_size = self.tmp_bits_size - bits_to_load;
-    self.bits = ((self.bits) << bits_to_load) + (self.tmp_bits as u16 >> 8 - bits_to_load);
-    self.tmp_bits = self.tmp_bits.wrapping_shl(bits_to_load as u32);
+    self.tmp_bits_size -= bits_to_load;
+    self.bits = (self.bits << bits_to_load) + (u16::from(self.tmp_bits) >> (8 - bits_to_load));
+    self.tmp_bits = self.tmp_bits.wrapping_shl(u32::from(bits_to_load));
     Ok(())
   }
 }
@@ -107,7 +107,7 @@ impl BitRead for ExactCallBitReader {
       self.index
     );
     self.bits = Some(bits);
-    self.eof = self.expected_call_and_results.len() == 0;
+    self.eof = self.expected_call_and_results.is_empty();
     Ok(())
   }
 }

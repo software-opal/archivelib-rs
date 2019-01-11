@@ -45,7 +45,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       );
       println!("tmp_bit_buffer245 = {:X?}", self.tmp_bit_buffer245);
     }
-    self.items_until_next_header = self.items_until_next_header - 1;
+    self.items_until_next_header -= 1;
     let mut run_length276 = self.dat_arr240[(self.bits182 >> 4) as usize];
     // run_length276 <= 0xFF are the uncompressed bits.
     // 0x100 <= run_length276 <= 0x1FE are runs (run_length276 - 0x100 + 3) bits
@@ -60,14 +60,14 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         } else {
           run_length276 = self.dat_arr189[run_length276 as usize]
         }
-        var283 = var283 >> 1;
-        if !(run_length276 as usize >= CONST_N141_IS_511) {
+        var283 >>= 1;
+        if (run_length276 as usize) < CONST_N141_IS_511 {
           break;
         }
       }
     }
-    let bits = self.dat_arr180[run_length276 as usize] as i16;
+    let bits = i16::from(self.dat_arr180[run_length276 as usize]);
     self.read_bits(bits)?;
-    return Ok(run_length276);
+    Ok(run_length276)
   }
 }

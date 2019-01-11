@@ -33,7 +33,7 @@ fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
     var231[i] = lookup_table288[lookup_offset as usize];
     lookup_table288[lookup_offset as usize] += 1;
   }
-  return var231;
+  var231
 }
 
 #[cfg(test)]

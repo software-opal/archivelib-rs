@@ -77,8 +77,12 @@ pub fn generate_binary_tree(
       if temp > output.len() {
         return Err(BinaryTreeInvariantError::Type2);
       }
-      for j in (lookup_tables.table1[bit_len])..temp {
-        output[j] = i as u16;
+      for v in output
+        .iter_mut()
+        .take(temp)
+        .skip(lookup_tables.table1[bit_len])
+      {
+        *v = i as u16;
       }
     } else {
       let mut bit_tmp = lookup_tables.table1[bit_len];
@@ -99,6 +103,7 @@ pub fn generate_binary_tree(
             Some(true) => tree.left[output_index] = out_val,
             Some(false) => tree.right[output_index] = out_val,
           }
+          tree_index += 1;
         }
         output_index = out_val as usize;
         if bit_tmp & (1 << (15 - bit_size)) == 0 {

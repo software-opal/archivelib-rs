@@ -19,7 +19,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let i = arg203 as usize;
     self
       .output_store
-      .write_bits(self.dat_arr192[i] as u32, self.dat_arr180[i] as usize)?;
+      .write_bits(u32::from(self.dat_arr192[i]), self.dat_arr180[i] as usize)?;
     Ok(())
   }
 }

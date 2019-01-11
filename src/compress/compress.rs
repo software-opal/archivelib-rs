@@ -8,8 +8,7 @@ use std::io::Read;
 const UCHAR_MAX: usize = 255;
 
 fn fn445(arg278: &[u8], buff_pos: usize, arg446: i16) -> i16 {
-  return ((arg446 << CONST_N154_IS_4) ^ (arg278[buff_pos + 2] as i16))
-    & (CONST_N153_IS_4096 as i16 - 1);
+  ((arg446 << CONST_N154_IS_4) ^ i16::from(arg278[buff_pos + 2])) & (CONST_N153_IS_4096 as i16 - 1)
 }
 fn fn447(arg163: &mut [i16], arg164: &mut [i16], buff_pos: usize, arg201: i16) {
   let local204 = arg163[arg201 as usize];
@@ -62,15 +61,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
     self.dat169 = 0 as i16;
     self.dat168 = 0 as i16;
-    let mut var201 = ((((self.uncompressed_buffer[buffer_pos] as u16) << CONST_N154_IS_4)
-      ^ (self.uncompressed_buffer[buffer_pos + 1] as u16))
+    let mut var201 = (((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
+      ^ u16::from(self.uncompressed_buffer[buffer_pos + 1]))
       & (CONST_N153_IS_4096 as u16 - 1)) as i16;
     var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
 
     while var209 > MAX_RUN_LENGTH140 + 4 {
       self.fn199(buffer_pos as i16, var201);
       if (self.dat168) < 3 {
-        let val = self.uncompressed_buffer[buffer_pos] as u16;
+        let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0)?;
         fn447(
           &mut self.dat_arr163,
@@ -79,16 +78,16 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           var201,
         );
         buffer_pos += 1;
-        var201 = fn445(&mut self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
         var209 -= 1;
       } else {
-        var209 = var209 - (self.dat168 as usize);
+        var209 -= self.dat168 as usize;
         let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
         let a2 = self.dat169 as u16;
         self.fn202(a1, a2)?;
         loop {
           self.dat168 -= 1;
-          if !(self.dat168 >= 0) {
+          if self.dat168 < 0 {
             break;
           }
           fn447(
@@ -98,7 +97,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
             var201,
           );
           buffer_pos += 1;
-          var201 = fn445(&mut self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
+          var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
         }
       }
     }
@@ -122,7 +121,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       }
       if (self.dat168) < 3 {
         self.dat168 = 1 as i16;
-        let val = self.uncompressed_buffer[buffer_pos] as u16;
+        let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0 as u16)?;
       } else {
         let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
@@ -131,7 +130,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       }
       loop {
         self.dat168 -= 1;
-        if !(self.dat168 >= 0) {
+        if self.dat168 < 0 {
           break;
         }
         let byte_or_run_length203 = match read_one(&mut self.input_store)? {
@@ -155,8 +154,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       }
       loop {
         let fresh0 = self.dat168;
-        self.dat168 = self.dat168 - 1;
-        if !(fresh0 >= 0) {
+        self.dat168 -= 1;
+        if fresh0 < 0 {
           break;
         }
         fn447(

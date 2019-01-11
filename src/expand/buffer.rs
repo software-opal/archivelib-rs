@@ -20,7 +20,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     let bits: u16 = self.bits182 >> (2 * 8 - bits_to_load219);
     println!("get_bits: {}, {:0>16b}", bits_to_load219, bits);
     self.read_bits(bits_to_load219)?;
-    return Ok(bits);
+    Ok(bits)
   }
 }
 

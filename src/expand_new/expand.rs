@@ -8,7 +8,6 @@ use crate::level::CompressionLevel;
 const EOF_FLAG: u16 = 0x1FE;
 const U8_MAX: u16 = 0xFF;
 const MIN_RUN_LENGTH: u16 = 3;
-const MAX_RUN_LENGTH: u16 = EOF_FLAG - 1 - (U8_MAX + 1);
 
 #[derive(Debug)]
 pub enum ExpandError {
@@ -77,7 +76,12 @@ impl ExpandData {
       unimplemented!("This case is never tested; however it exists in the original code.");
     }
     reader.consume_bits(table.run_offset_lookup_len[run_length])?;
-    Ok(run_length)
+    if run_length == 0 {
+      Ok(0)
+    } else {
+      let tmp = run_length - 1;
+      Ok((1 << tmp) + reader.consume::<usize>(tmp)?)
+    }
   }
 }
 
@@ -91,7 +95,7 @@ pub fn expand(
   let mut expand_data = ExpandData::new();
 
   // While we have something to read; or we are expecting more items.
-  while reader.look_ahead_bits(1)?.len() == 1 || expand_data.items_until_next_header > 0 {
+  while !reader.look_ahead_bits(1)?.is_empty() || expand_data.items_until_next_header > 0 {
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;

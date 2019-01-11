@@ -63,7 +63,7 @@ fn pure_fn199(
       }
     }
   }
-  return (largest_run, largest_run_offset);
+  (largest_run, largest_run_offset)
 }
 
 #[cfg(test)]

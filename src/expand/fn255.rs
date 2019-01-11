@@ -34,12 +34,12 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
               byte_or_run_length203 = (self).dat_arr189[byte_or_run_length203 as usize] as i16
             }
             var283 = (var283 >> 1) as u16;
-            if !(byte_or_run_length203 >= CONST_N145_IS_19 as i16) {
+            if byte_or_run_length203 < CONST_N145_IS_19 as i16 {
               break;
             }
           }
         }
-        let bits = (self).dat_arr181[byte_or_run_length203 as usize] as i16;
+        let bits = i16::from(self.dat_arr181[byte_or_run_length203 as usize]);
         self.read_bits(bits)?;
         if byte_or_run_length203 <= 2 {
           if byte_or_run_length203 == 0 {
@@ -53,24 +53,24 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           println!("byte_or_run_length203: {}", byte_or_run_length203);
           loop {
             byte_or_run_length203 -= 1;
-            if !(byte_or_run_length203 >= 0) {
+            if byte_or_run_length203 < 0 {
               break;
             }
             let fresh0 = run_start226;
-            run_start226 = run_start226 + 1;
+            run_start226 += 1;
             (self).dat_arr180[fresh0 as usize] = 0 as u8;
             count += 1;
           }
           println!("Count: {}", count);
         } else {
           let fresh1 = run_start226;
-          run_start226 = run_start226 + 1;
+          run_start226 += 1;
           (self).dat_arr180[fresh1 as usize] = (byte_or_run_length203 - 2) as u8
         }
       }
       while (run_start226) < (CONST_N141_IS_511 as i16) {
         let fresh2 = run_start226;
-        run_start226 = run_start226 + 1;
+        run_start226 += 1;
         (self).dat_arr180[fresh2 as usize] = 0 as u8
       }
       self.fn258(

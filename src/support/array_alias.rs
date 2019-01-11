@@ -59,14 +59,12 @@ macro_rules! array_alias_enum {
           }
         }
         fn set_offset(&mut self, _parent: &$parent, offset: usize) -> usize {
-          let new_idx = match self {
+          match self {
             $(
               $name::$key(ref mut idx) => {*idx = offset; *idx},
             )*
             $name::Custom(ref mut idx, _) => {*idx = offset; *idx},
-          };
-          // self.get(parent, 0);
-          new_idx
+          }
         }
         fn slice_copy(&self, parent: &$parent) -> Box<[Self::Item]> {
           match self {

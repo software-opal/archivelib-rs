@@ -22,10 +22,11 @@ pub mod support;
 pub mod level;
 pub use self::level::CompressionLevel;
 
+pub mod expand_new;
+
 mod compress;
 mod consts;
 mod expand;
-mod expand_new;
 
 pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
 pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
@@ -59,7 +60,7 @@ pub fn do_compress_level(
     Err(err) => return Err(format!("{}", err)),
   };
 
-  return Ok(res.into_writer().checked_into_inner().into_boxed_slice());
+  Ok(res.into_writer().checked_into_inner().into_boxed_slice())
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
@@ -83,5 +84,5 @@ pub fn do_decompress_level(
     Err(err) => return Err(format!("{}", err)),
   };
 
-  return Ok(res.into_writer().into_boxed_slice());
+  Ok(res.into_writer().into_boxed_slice())
 }

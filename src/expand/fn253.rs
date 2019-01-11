@@ -38,22 +38,22 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           self.read_bits(3)?;
         }
         self.dat_arr181[run_start226 as usize] = byte_or_run_length203 as u8;
-        run_start226 = run_start226 + 1;
-        if !(run_start226 == var221) {
+        run_start226 += 1;
+        if run_start226 != var221 {
           continue;
         }
         byte_or_run_length203 = self.get_bits(2)? as i16;
         while byte_or_run_length203 > 0 {
           println!("AAA;;;;AA");
           let fresh1 = run_start226;
-          run_start226 = run_start226 + 1;
+          run_start226 += 1;
           self.dat_arr181[fresh1 as usize] = 0 as u8;
           byte_or_run_length203 -= 1
         }
       }
       while (run_start226) < var254 {
         self.dat_arr181[run_start226 as usize] = 0 as u8;
-        run_start226 += 1
+        run_start226 += 1;
       }
       self.fn258(
         Fn258Mode::Fn253,

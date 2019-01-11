@@ -101,7 +101,7 @@ impl LookupTables {
         self.run_offset_lookup_len[i] = 0;
         i += 1;
       }
-      let limit = if do_pad_length { 19 } else { 15 };
+      // let limit = if do_pad_length { 19 } else { 15 };
       generate_binary_tree(
         8,
         &mut self.run_offset_lookup,
@@ -177,15 +177,6 @@ impl LookupTables {
 mod tests {
   use super::*;
   use crate::support::LookAheadBitwiseReader;
-
-  #[test]
-  fn reader_calls() {
-    let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
-    let mut reader = LookAheadBitwiseReader::new(&data[..]);
-
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000000000000011);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000000000000100);
-  }
 
   #[test]
   fn base_data_seperated_calls() {

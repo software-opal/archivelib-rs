@@ -28,11 +28,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     }
     if var227 < 2 {
       dat_arr_cursor188.set(self, self.dat_arr177[1] as usize, 0);
-      return Ok(self.dat_arr177[1] as u32);
+      Ok(self.dat_arr177[1] as u32)
     } else {
       let mut run_start226 = (var227 / 2) as i16;
       while run_start226 >= 1 {
-        self.fn225(run_start226 as i32, dat_arr_cursor187, var227 as i16);
+        self.fn225(i32::from(run_start226), dat_arr_cursor187, var227 as i16);
         run_start226 -= 1
       }
       let mut var289;
@@ -51,7 +51,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           dat_arr_cursor188.shift(self, 1);
         }
         var289 = var292;
-        var292 = var292 + 1;
+        var292 += 1;
         dat_arr_cursor187.set(
           self,
           var289 as usize,
@@ -62,7 +62,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         self.fn225(1, dat_arr_cursor187, var227 as i16);
         self.dat_arr189[var289 as usize] = run_start226 as u16;
         self.dat_arr190[var289 as usize] = run_length276 as u16;
-        if !(var227 > 1) {
+        if var227 <= 1 {
           break;
         }
       }
@@ -71,7 +71,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       dat_arr_cursor188.set_offset(self, dat_arr_cursor188_offset);
       dat_arr_cursor178.set_offset(self, dat_arr_cursor178_offset);
       self.fn230(var212, dat_arr_cursor178, dat_arr_cursor188);
-      return Ok(var289);
-    };
+      Ok(var289)
+    }
   }
 }

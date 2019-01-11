@@ -25,10 +25,10 @@ impl<W: io::Write> BitwiseWriter<W> {
   }
   pub fn checked_into_inner(self) -> W {
     assert_eq!(self.buffer, vec![]);
-    return self.into_inner();
+    self.into_inner()
   }
   pub fn into_inner(self) -> W {
-    return self.inner;
+    self.inner
   }
   pub fn commit_buffer(&mut self) -> io::Result<usize> {
     if self.buffer.len() >= 8 {
@@ -43,7 +43,7 @@ impl<W: io::Write> BitwiseWriter<W> {
       }
       self.inner.write_all(&to_write)?;
     }
-    return Ok(self.buffer.len());
+    Ok(self.buffer.len())
   }
 }
 
@@ -81,11 +81,11 @@ pub struct ExactCallWriter {
 
 impl ExactCallWriter {
   pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
-    return Self {
+    Self {
       calls,
       write_calls: 0,
       written_bits: 0,
-    };
+    }
   }
   pub fn assert_drained(&self) {
     assert_eq!(self.calls, vec![])
@@ -132,6 +132,11 @@ pub struct NullBitwiseWriter {}
 impl NullBitwiseWriter {
   pub fn new() -> Self {
     NullBitwiseWriter {}
+  }
+}
+impl Default for NullBitwiseWriter {
+  fn default() -> Self {
+    NullBitwiseWriter::new()
   }
 }
 impl BitwiseWrite for NullBitwiseWriter {

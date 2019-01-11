@@ -62,7 +62,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     let mut tmp: u32 = 0;
     for i in 1..17 {
       // This wraps around to 0.
-      tmp += (var277[i] as u32) << (16 - i);
+      tmp += u32::from(var277[i]) << (16 - i);
       lookup_table288[i + 1] = (lookup_table288[i].wrapping_add((var277[i]) << (16 - i))) as u16;
     }
     assert!(tmp == 0 || tmp == 0x10000);
@@ -93,11 +93,11 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         unreachable!("This, in theory, is not a reachable case!");
       }
       var292 = arg_arr260_len as u32;
-      var283 = 1 << 15 - bit_size261;
+      var283 = 1 << (15 - bit_size261);
       ij = 0;
       while ij < arg_arr260_len {
         let item209 = arg_arr260[ij] as usize;
-        if !(item209 == 0) {
+        if item209 != 0 {
           let tmp293: usize =
             (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
           if item209 <= bit_size261 {
@@ -111,7 +111,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
               }
             }
           } else {
-            let mut var289 = lookup_table288[item209 as usize] as u32;
+            let mut var289 = u32::from(lookup_table288[item209 as usize]);
             let mut current_table =
               Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
             i = item209.wrapping_sub(bit_size261);
@@ -120,7 +120,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
                 self.dat_arr189[var292 as usize] = 0;
                 self.dat_arr190[var292 as usize] = 0;
                 data_table!((current_table, output_table262, self) = var292 as u16);
-                assert_ne!(var292, 0);
                 var292 = var292.wrapping_add(1);
               }
               if 0 != var289 & var283 {

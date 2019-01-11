@@ -26,7 +26,7 @@ where
   let mut run_start226 = 0;
   while run_start226 < bits_to_load219 {
     let var289 = arr180[run_start226] as usize;
-    run_start226 = run_start226 + 1;
+    run_start226 += 1;
     if var289 == 0 {
       let mut var277 = 1;
       while (run_start226) < bits_to_load219 && arr180[run_start226] == 0 {

@@ -69,7 +69,7 @@ mod tests {
   fn test_into_bits() {
     assert_eq!(
       &0x1u8.into_bits()[..],
-      &[true, false, false, false, false, false, false, false]
+      &[false, false, false, false, false, false, false, true]
     );
     assert_eq!(&0x0u128.into_bits()[..], &[false; 128][..]);
     assert_eq!(
@@ -78,7 +78,7 @@ mod tests {
     );
     assert_eq!(
       &0xf0u8.into_bits()[..],
-      &[false, false, false, false, true, true, true, true]
+      &[true, true, true, true, false, false, false, false]
     );
   }
 }

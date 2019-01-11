@@ -48,7 +48,7 @@ pub trait BitwiseRead {
         (_, 0) => panic!("Invariant of `try_read_bytes` failed"),
         (bytes, bits_read) => {
           shift -= bits_read;
-          out |= (bytes as u128) << shift;
+          out |= u128::from(bytes) << shift;
         }
       }
     }

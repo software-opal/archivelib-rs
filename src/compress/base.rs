@@ -127,8 +127,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
       let mut dat_arr163 = vec![0; dat_arr163_len];
-      for i in max_size..dat_arr163.len() {
-        dat_arr163[i] = -1;
+      for v in dat_arr163.iter_mut().skip(max_size) {
+        *v = -1;
       }
 
       Ok(RCompressData {
@@ -170,6 +170,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   }
 
   pub fn into_writer(self) -> W {
-    return self.output_store;
+    self.output_store
   }
 }

@@ -44,7 +44,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             for _ in 0..run_length276 {
               self.uncompressed_buffer[buffer_pos] = self.uncompressed_buffer[run_start226];
               buffer_pos += 1;
-              run_start226 = run_start226 + 1;
+              run_start226 += 1;
             }
           } else {
             for _ in 0..run_length276 {
@@ -68,6 +68,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         .output_store
         .write_all(&self.uncompressed_buffer[..buffer_pos])?;
     }
-    return Ok(());
+    Ok(())
   }
 }

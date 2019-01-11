@@ -8,7 +8,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn202(&mut self, byte_or_run_length203: u16, arg204: u16) -> Result<()> {
     self.bitwise_counter185 = (self.bitwise_counter185 >> 1) as u16;
     if self.bitwise_counter185 == 0 {
-      self.bitwise_counter185 = (1 << CHAR_BIT - 1) as u16;
+      self.bitwise_counter185 = (1 << (CHAR_BIT - 1)) as u16;
       if self.array165_counter >= 8162 {
         self.fn207()?;
         self.array165_counter = 0;
@@ -53,5 +53,5 @@ pub fn pure_fn202_part_2(
     let counter = 16 - arg204.leading_zeros();
     dat_arr193[counter as usize] += 1;
   }
-  return array165_counter;
+  array165_counter
 }

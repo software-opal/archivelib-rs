@@ -43,7 +43,7 @@ impl From<ReadError> for ExpandError {
   fn from(e: ReadError) -> Self {
     match e {
       ReadError::EndOfFile() => ExpandError::UnexpectedEndOfFile { error: e },
-      ReadError::IoError { error } => ExpandError::IOError { error: error },
+      ReadError::IoError { error } => ExpandError::IOError { error },
     }
   }
 }
@@ -100,6 +100,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
   }
 
   pub fn into_writer(self) -> W {
-    return self.output_store;
+    self.output_store
   }
 }

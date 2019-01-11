@@ -44,14 +44,14 @@ fn proptest_compress(vec: Vec<u8>, level: u8) -> Result<(), TestCaseError> {
 }
 
 proptest! {
-  #[test]
-  fn test_compression_port(vec in raw_data_strat(), level in level_strat()) {
-    proptest_compress(vec, level)?
-  }
-  #[test]
-  fn test_compression_port_with_repeat_strat(vec in repeating_data_strat(), level in level_strat())  {
-    proptest_compress(vec, level)?
-  }
+  // #[test]
+  // fn test_compression_port(vec in raw_data_strat(), level in level_strat()) {
+  //   proptest_compress(vec, level)?
+  // }
+  // #[test]
+  // fn test_compression_port_with_repeat_strat(vec in repeating_data_strat(), level in level_strat())  {
+  //   proptest_compress(vec, level)?
+  // }
   #[test]
   fn test_decompression_port(vec in raw_data_strat(), level in level_strat()) {
     let data = match archivelib_sys::do_compress_level(&vec, level) {
@@ -64,16 +64,16 @@ proptest! {
     };
     prop_assert_eq!(&vec[..], &result[..], "Data is not identical after decompression");
   }
-    #[test]
-    fn test_decompression_port_with_repeat_strat(vec in repeating_data_strat(), level in level_strat()) {
-      let data = match archivelib_sys::do_compress_level(&vec, level) {
-        Ok(data) => data,
-        Err(err) => return Err(TestCaseError::reject(format!("Compression failed: {}", err))),
-      };
-      let result = match crate::do_decompress_level(&data, level) {
-        Ok(data) => data,
-        Err(err) => return Err(TestCaseError::fail(err)),
-      };
-      prop_assert_eq!(&vec[..], &result[..], "Data is not identical after decompression");
-    }
+  // #[test]
+  // fn test_decompression_port_with_repeat_strat(vec in repeating_data_strat(), level in level_strat()) {
+  //   let data = match archivelib_sys::do_compress_level(&vec, level) {
+  //     Ok(data) => data,
+  //     Err(err) => return Err(TestCaseError::reject(format!("Compression failed: {}", err))),
+  //   };
+  //   let result = match crate::do_decompress_level(&data, level) {
+  //     Ok(data) => data,
+  //     Err(err) => return Err(TestCaseError::fail(err)),
+  //   };
+  //   prop_assert_eq!(&vec[..], &result[..], "Data is not identical after decompression");
+  // }
 }
