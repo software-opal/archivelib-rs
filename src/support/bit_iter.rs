@@ -1,5 +1,5 @@
-pub trait IntoBits {
-  fn into_bits(self) -> Box<[bool]>;
+pub trait ToBits {
+  fn to_bits(&self) -> Box<[bool]>;
 }
 pub trait FromBits {
   fn size() -> usize;
@@ -10,8 +10,8 @@ pub trait FromBits {
 
 macro_rules! implBitwise {
   ($type:path) => {
-    impl IntoBits for $type {
-      fn into_bits(self) -> Box<[bool]> {
+    impl ToBits for $type {
+      fn to_bits(&self) -> Box<[bool]> {
         let size = Self::size();
         let mut v = vec![false; size];
         for i in 0..size {
@@ -44,9 +44,9 @@ implBitwise!(u64);
 implBitwise!(u128);
 implBitwise!(usize);
 
-impl IntoBits for bool {
-  fn into_bits(self) -> Box<[bool]> {
-    vec![self].into_boxed_slice()
+impl ToBits for bool {
+  fn to_bits(&self) -> Box<[bool]> {
+    vec![*self].into_boxed_slice()
   }
 }
 impl FromBits for bool {
@@ -61,23 +61,43 @@ impl FromBits for bool {
   }
 }
 
+impl<I: ToBits> ToBits for Vec<I> {
+  fn to_bits(&self) -> Box<[bool]> {
+    self
+      .iter()
+      .flat_map(|v| v.to_bits().into_vec())
+      .collect::<Vec<_>>()
+      .into_boxed_slice()
+  }
+}
+
+impl<I: ToBits> ToBits for &[I] {
+  fn to_bits(&self) -> Box<[bool]> {
+    self
+      .iter()
+      .flat_map(|v| v.to_bits().into_vec())
+      .collect::<Vec<_>>()
+      .into_boxed_slice()
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
 
   #[test]
-  fn test_into_bits() {
+  fn test_to_bits() {
     assert_eq!(
-      &0x1u8.into_bits()[..],
+      &0x1u8.to_bits()[..],
       &[false, false, false, false, false, false, false, true]
     );
-    assert_eq!(&0x0u128.into_bits()[..], &[false; 128][..]);
+    assert_eq!(&0x0u128.to_bits()[..], &[false; 128][..]);
     assert_eq!(
-      &0xffu8.into_bits()[..],
+      &0xffu8.to_bits()[..],
       &[true, true, true, true, true, true, true, true]
     );
     assert_eq!(
-      &0xf0u8.into_bits()[..],
+      &0xf0u8.to_bits()[..],
       &[true, true, true, true, false, false, false, false]
     );
   }

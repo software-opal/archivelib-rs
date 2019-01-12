@@ -9,7 +9,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     if self.input_store.is_eof() {
       self.error_counter243 += 1;
     }
-    println!("read: {:?}; {:0>16b}", bits_to_load219, self.bits182);
     Ok(())
   }
 
@@ -18,7 +17,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       return Ok(0);
     }
     let bits: u16 = self.bits182 >> (2 * 8 - bits_to_load219);
-    println!("get_bits: {}, {:0>16b}", bits_to_load219, bits);
     self.read_bits(bits_to_load219)?;
     Ok(bits)
   }

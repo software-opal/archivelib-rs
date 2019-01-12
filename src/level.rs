@@ -1,4 +1,4 @@
-#[derive(PartialEq, PartialOrd, Debug)]
+#[derive(PartialEq, PartialOrd, Copy, Clone, Debug)]
 pub enum CompressionLevel {
   Level0,
   Level1,

@@ -1,4 +1,4 @@
-use super::IntoBits;
+use super::ToBits;
 use num::ToPrimitive;
 use std::io;
 
@@ -55,12 +55,13 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
   ) -> io::Result<usize> {
     let bits = bits_.to_u128().unwrap();
     let bit_count = bit_count_.to_usize().unwrap();
+    println!("bits: 0x{:X?} bit_count: {:?}", bits, bit_count);
     if bit_count > 0 {
-      // 'bit_array' starts out as LSB-MSB, but we want to reverse that order so we can add it to
-      // the buffer array in MSB-LSB(the way we'll write it out)
-      let mut bit_array = bits.into_bits()[..bit_count].to_vec();
-      bit_array.reverse();
-      self.buffer.extend(bit_array.into_iter());
+      let bit_array = bits.to_bits();
+      println!("Arr: {:?}", bit_array);
+      self
+        .buffer
+        .extend(bit_array.iter().skip(bit_array.len() - bit_count));
     }
     self.commit_buffer()
   }

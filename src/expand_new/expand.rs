@@ -49,13 +49,16 @@ impl ExpandData {
           self.table = Some(t);
         }
       }
+      println!("Loaded table");
     }
     let table = match &self.table {
       Some(t) => t,
       None => unreachable!(),
     };
     self.items_until_next_header -= 1;
+    println!("Reading: {}", reader.look_ahead::<usize>(12)?);
     let run_length = table.bit_lookup[reader.look_ahead::<usize>(12)?];
+    println!("run_length: {}", run_length);
     // run_length <= 0xFF are the uncompressed bits.
     // 0x100 <= run_length < 0x1FE are runs (run_length - 0x100 + 3) bits long.
     // 0x1FE == EOF_FLAG == run_length indicates end of file.
@@ -85,17 +88,32 @@ impl ExpandData {
   }
 }
 
+pub fn do_expand_level(data: &[u8], level: CompressionLevel) -> Result<Box<[u8]>, ExpandError> {
+  use crate::support::LookAheadBitwiseReader;
+
+  let mut reader = LookAheadBitwiseReader::new(&data[..]);
+  let mut writer = Vec::with_capacity(level.buffer_size());
+  expand(&mut reader, &mut writer, level)?;
+  Ok(writer.into_boxed_slice())
+}
+
 pub fn expand(
   reader: &mut impl LookAheadBitwiseRead,
   writer: &mut impl io::Write,
   level: CompressionLevel,
 ) -> Result<(), ExpandError> {
   let mut buffer = vec![0u8; level.buffer_size()];
+  let mut has_filled_buffer = false;
   let mut buffer_idx = 0;
   let mut expand_data = ExpandData::new();
 
   // While we have something to read; or we are expecting more items.
   while !reader.look_ahead_bits(1)?.is_empty() || expand_data.items_until_next_header > 0 {
+    println!(
+      "Conditions: {}, {}",
+      reader.look_ahead_bits(1)?.is_empty(),
+      expand_data.items_until_next_header > 0
+    );
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;
@@ -105,17 +123,23 @@ pub fn expand(
       if buffer_idx >= buffer.len() {
         writer.write_all(&buffer[..buffer_idx])?;
         buffer_idx = 0;
+        has_filled_buffer = true;
       }
     } else {
       let run_length = (item - (U8_MAX + 1) + MIN_RUN_LENGTH) as usize;
       let run_offset = expand_data.run_offset(reader)?;
-      let run_start = buffer_idx - 1 - run_offset;
+      let run_start = if has_filled_buffer {
+        (buffer.len() + buffer_idx) - 1 - run_offset
+      } else {
+        buffer_idx - 1 - run_offset
+      };
       for i in 0..run_length {
         buffer[buffer_idx] = buffer[(run_start + i) % buffer.len()];
         buffer_idx += 1;
         if buffer_idx >= buffer.len() {
           writer.write_all(&buffer[..buffer_idx])?;
           buffer_idx = 0;
+          has_filled_buffer = true;
         }
       }
     }
@@ -124,4 +148,41 @@ pub fn expand(
     writer.write_all(&buffer[..buffer_idx])?;
   }
   Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[cfg(test)]
+  mod expand_data {
+    use super::*;
+    use crate::support::lookahead_reader::ExpectedCallLookAheadBitwiseReader;
+
+    #[test]
+    fn test_next_item() {
+      // Uncompressed data is [0x1A, 0x1A]
+      let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
+      let mut reader = ExpectedCallLookAheadBitwiseReader::new(
+        &data[..],
+        &[16, 5, 3, 3, 3, 2, 3, 9, 1, 9, 1, 1, 9, 1, 5, 5, 1, 1, 1],
+      );
+      let mut data = ExpandData::new();
+      assert_eq!(26, data.next_item(&mut reader).unwrap());
+      assert_eq!(26, data.next_item(&mut reader).unwrap());
+      assert_eq!(510, data.next_item(&mut reader).unwrap());
+      assert_eq!(0, data.items_until_next_header);
+      // Doesn't actually use the last bit; surprisingly
+      assert_eq!(reader.look_ahead_bits(16).unwrap(), vec![false]);
+    }
+  }
+
+  #[test]
+  fn test_expand() {
+    let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
+    assert_eq!(
+      [0x1A, 0x1A],
+      do_expand_level(&data, CompressionLevel::Level0).unwrap()[..]
+    );
+  }
 }

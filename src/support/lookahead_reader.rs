@@ -1,5 +1,12 @@
-use super::bit_iter::{FromBits, IntoBits};
+use super::bit_iter::{FromBits, ToBits};
 use std::io;
+
+fn pad_bit_arr(mut bit_data: Vec<bool>, target_len: usize) -> Vec<bool> {
+  for _ in bit_data.len()..target_len {
+    bit_data.push(false);
+  }
+  bit_data
+}
 
 pub trait LookAheadBitwiseRead {
   fn consume_bits(&mut self, bits: usize) -> io::Result<Vec<bool>>;
@@ -13,7 +20,7 @@ pub trait LookAheadBitwiseRead {
       bits <= T::size(),
       "Requested bit size would be out of bounds"
     );
-    Ok(T::from_bits(self.consume_bits(bits)?))
+    Ok(T::from_bits(pad_bit_arr(self.consume_bits(bits)?, bits)))
   }
   fn look_ahead<T>(&mut self, bits: usize) -> io::Result<T>
   where
@@ -23,7 +30,7 @@ pub trait LookAheadBitwiseRead {
       bits <= T::size(),
       "Requested bit size would be out of bounds"
     );
-    Ok(T::from_bits(self.look_ahead_bits(bits)?))
+    Ok(T::from_bits(pad_bit_arr(self.look_ahead_bits(bits)?, bits)))
   }
   fn look_ahead_skip<T>(&mut self, skip: usize, bits: usize) -> io::Result<T>
   where
@@ -35,7 +42,7 @@ pub trait LookAheadBitwiseRead {
     );
     let mut all_bits = self.look_ahead_bits(bits + skip)?;
     all_bits.drain(..skip);
-    Ok(T::from_bits(all_bits))
+    Ok(T::from_bits(pad_bit_arr(all_bits, bits)))
   }
 }
 
@@ -62,11 +69,9 @@ impl<R: io::Read> LookAheadBitwiseReader<R> {
           _ => return Err(e),
         },
         Ok(0) => break,
-        Ok(count) => self.buffer.extend(
-          block[..count]
-            .iter()
-            .flat_map(|&v| v.into_bits().into_vec()),
-        ),
+        Ok(count) => self
+          .buffer
+          .extend(block[..count].iter().flat_map(|&v| v.to_bits().into_vec())),
       }
     }
     Ok(self.buffer.len() >= min_buffer_size)
@@ -90,6 +95,57 @@ impl<R: io::Read> LookAheadBitwiseRead for LookAheadBitwiseReader<R> {
     } else {
       Ok(self.buffer[..].to_vec())
     }
+  }
+}
+
+pub struct ExpectedCallLookAheadBitwiseReader {
+  data: Vec<bool>,
+  index: usize,
+  consume_calls: Vec<usize>,
+  consume_call_index: usize,
+}
+
+impl ExpectedCallLookAheadBitwiseReader {
+  pub fn new(data: impl ToBits, consume_calls: &[usize]) -> Self {
+    ExpectedCallLookAheadBitwiseReader {
+      data: data.to_bits().into_vec(),
+      index: 0,
+      consume_calls: consume_calls.to_vec(),
+      consume_call_index: 0,
+    }
+  }
+}
+
+impl LookAheadBitwiseRead for ExpectedCallLookAheadBitwiseReader {
+  fn consume_bits(&mut self, bits: usize) -> io::Result<Vec<bool>> {
+    assert!(
+      self.consume_call_index < self.consume_calls.len(),
+      "Unexpected consume call for {} bits; Too many calls",
+      bits
+    );
+    let expected = self.consume_calls[self.consume_call_index];
+    assert_eq!(
+      bits, expected,
+      "Unexpected consume call(#{}) for {} bits; was expecting a call for {} bits",
+      self.consume_call_index, bits, expected
+    );
+
+    let items = self.look_ahead_bits(bits)?;
+    println!("{} -> {:?} <- {}", self.index, items, self.index + bits - 1);
+    self.index += bits;
+    self.consume_call_index += 1;
+    Ok(items)
+  }
+  fn look_ahead_bits(&mut self, bits: usize) -> io::Result<Vec<bool>> {
+    let data = self
+      .data
+      .iter()
+      .skip(self.index)
+      .take(bits)
+      .map(|&a| a)
+      .collect();
+    println!("Lookahead {} bits: {:?}", bits, data);
+    Ok(data)
   }
 }
 

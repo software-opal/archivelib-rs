@@ -7,12 +7,6 @@ use failure;
 
 #[cfg(test)]
 #[macro_use]
-extern crate proptest;
-
-#[cfg(test)]
-mod proptests;
-#[cfg(test)]
-#[macro_use]
 mod test;
 #[cfg(test)]
 mod tests;
