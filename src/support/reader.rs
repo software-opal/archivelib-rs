@@ -48,7 +48,7 @@ pub trait BitwiseRead {
         (_, 0) => panic!("Invariant of `try_read_bytes` failed"),
         (bytes, bits_read) => {
           shift -= bits_read;
-          out |= (bytes as u128) << shift;
+          out |= u128::from(bytes) << shift;
         }
       }
     }
@@ -73,7 +73,7 @@ impl<R: io::Read> BitwiseReader<R> {
     BitwiseReader {
       pending_byte: 0,
       index: 0,
-      inner: inner,
+      inner,
     }
   }
 
@@ -124,10 +124,7 @@ pub struct VecReader {
 }
 impl VecReader {
   pub fn new(data: Vec<u8>) -> Self {
-    VecReader {
-      data: data,
-      index: 0,
-    }
+    VecReader { data, index: 0 }
   }
 }
 impl io::Read for VecReader {

@@ -34,7 +34,7 @@ where
   let mut run_start226: usize = 0;
   while run_start226 < bits_to_write {
     let var289 = arr181[run_start226];
-    run_start226 = run_start226 + 1;
+    run_start226 += 1;
     if var289 <= 6 {
       out.write_bits(var289, 3)?;
     } else {

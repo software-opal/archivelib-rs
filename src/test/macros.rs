@@ -27,13 +27,30 @@ macro_rules! from_iter {
   }};
 }
 
+#[macro_export]
+macro_rules! rvec {
+  ($($val: expr => $count: expr),+) => {{
+      let mut v = Vec::new();
+      $(
+        v.resize(v.len() + $count, $val);
+      )+
+      v}
+  };
+}
+
 macro_rules! _bytes_to_human_hex {
   ($expected: expr, $len: expr) => {{
-    let expected: &[u8] = $expected;
+    let expected = $expected.clone();
     let len: usize = $len;
     let mut b = expected
       .iter()
-      .map(|b| format!("{:02X}", b))
+      .map(|&b| {
+        format!(
+          "{:01$X}",
+          b,
+          (b.count_zeros() + b.count_ones()) as usize / 8
+        )
+      })
       .collect::<Vec<_>>();
     while b.len() < len {
       b.push("~~".to_string());
@@ -52,9 +69,10 @@ macro_rules! _bytes_to_human_hex {
 #[macro_export]
 macro_rules! assert_bytes_eq {
   ($expected: expr, $actual: expr) => {{
-    let expected: &[u8] = $expected;
-    let actual: &[u8] = $actual;
+    let expected = $expected.into_iter().collect::<Vec<_>>();
+    let actual = $actual.into_iter().collect::<Vec<_>>();
     if expected == actual {
+      assert_eq!(expected, actual, "Sanity check failed");
       return;
     }
     let len = expected.len().max(actual.len());
@@ -158,6 +176,7 @@ macro_rules! test_data {
   };
 }
 
+#[macro_export]
 macro_rules! fuzzer_test_data {
   ($($name: ident => $uncompressed_data:expr,)*) => {
     $(

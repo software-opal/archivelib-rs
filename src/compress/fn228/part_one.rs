@@ -4,6 +4,7 @@ pub fn pure_fn228_part_one(
   series_start: usize,
   initial_index: usize,
 ) -> [u16; 17] {
+  #![allow(unreachable_code)]
   let mut dat_arr167 = [0u16; 17];
   calculate_pointer_depths(
     dat_arr189,
@@ -14,8 +15,8 @@ pub fn pure_fn228_part_one(
     initial_index,
   );
   let mut var458: u32 = 0;
-  for i in 1..=16 {
-    var458 += (dat_arr167[i] as u32) << (16 - i);
+  for (i, &v) in dat_arr167.iter().enumerate().skip(1) {
+    var458 += u32::from(v) << (16 - i);
   }
   while var458 != (1 << 16) {
     unimplemented!();
@@ -24,7 +25,7 @@ pub fn pure_fn228_part_one(
     while run_start226 > 0 {
       if dat_arr167[run_start226] != 0 {
         dat_arr167[run_start226] -= 1;
-        dat_arr167[run_start226 + 1] = dat_arr167[run_start226 + 1] + 2;
+        dat_arr167[run_start226 + 1] += 2;
         break;
       } else {
         run_start226 -= 1;
@@ -32,7 +33,7 @@ pub fn pure_fn228_part_one(
     }
     var458 -= 1;
   }
-  return dat_arr167;
+  dat_arr167
 }
 
 pub fn calculate_pointer_depths(

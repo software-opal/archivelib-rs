@@ -5,6 +5,7 @@ use crate::consts::{
 use crate::support::{ArrayAlias, BitwiseWrite, BitwiseWriter};
 use std::io::{Read, Write};
 
+#[allow(dead_code)]
 #[derive(Fail, Debug)]
 pub enum CompressError {
   #[fail(display = "Illegal Compression level: {}", _0)]
@@ -126,17 +127,17 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
       let mut dat_arr163 = vec![0; dat_arr163_len];
-      for i in max_size..dat_arr163.len() {
-        dat_arr163[i] = -1;
+      for v in dat_arr163.iter_mut().skip(max_size) {
+        *v = -1;
       }
 
       Ok(RCompressData {
         input_store: reader,
         output_store: writer,
-        fail_uncompressible: fail_uncompressible,
-        input_length: input_length,
+        fail_uncompressible,
+        input_length,
 
-        dat_arr163: dat_arr163,
+        dat_arr163,
         dat_arr164: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140 + 2],
@@ -169,6 +170,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   }
 
   pub fn into_writer(self) -> W {
-    return self.output_store;
+    self.output_store
   }
 }

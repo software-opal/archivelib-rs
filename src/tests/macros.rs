@@ -17,6 +17,7 @@ macro_rules! test_compare_sys {
       fn test_decompress() {
         let data = get_data();
         let compressed = archivelib_sys::do_compress(&data).unwrap();
+        println!("input = {:X?}", compressed);
         let decompressed = crate::do_decompress(&compressed).unwrap();
         assert_eq!(decompressed[..], data[..]);
       }

@@ -3,4 +3,3 @@ pub mod macros;
 
 pub mod fixed;
 pub mod q;
-pub mod util;
