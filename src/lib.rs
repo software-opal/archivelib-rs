@@ -22,7 +22,6 @@ pub mod expand_new;
 
 mod compress;
 mod consts;
-mod expand;
 
 pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
 pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
