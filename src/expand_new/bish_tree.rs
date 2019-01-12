@@ -34,13 +34,13 @@ impl BinaryTreeLengthLookupTables {
     }
     for (i, &len_count) in length_occurance.iter().enumerate().skip(1) {
       // Originally a 16-bit unsigned integer with wrapping addition.
-      lookup_table1[i + 1] = lookup_table1[i] + (len_count << (16 - i));
+      lookup_table1[i + 1] = (lookup_table1[i] + (len_count << (16 - i))) % 0x10000;
     }
-    if lookup_table1[17] % 0x10000 != 0 {
+    if lookup_table1[17] != 0 {
       return Err(BinaryTreeInvariantError::Type1);
     }
-    for v in lookup_table1.iter_mut() {
-      *v = (*v % 0x10000) >> remaining_bit_size;
+    for v in lookup_table1.iter_mut().skip(1).take(bit_size) {
+      *v = (*v) >> remaining_bit_size;
     }
 
     let mut lookup_table2 = [0; 17];
@@ -66,13 +66,16 @@ pub fn generate_binary_tree(
   bit_lengths: &[usize],
   tree: &mut BinaryTree,
 ) -> Result<(), BinaryTreeInvariantError> {
+  println!("ltable: ({:#?}, {:#?})", bit_size, bit_lengths);
   let mut lookup_tables = BinaryTreeLengthLookupTables::generate(bit_size, bit_lengths)?;
   let mut tree_index = bit_lengths.len();
+
   for (i, &bit_len) in bit_lengths.iter().enumerate() {
     if bit_len == 0 {
       continue;
     }
     let temp = lookup_tables.table1[bit_len] + lookup_tables.table2[bit_len];
+    println!("i: {}, temp: {}", i, temp);
     if bit_len <= bit_size {
       if temp > output.len() {
         return Err(BinaryTreeInvariantError::Type2);
@@ -123,4 +126,82 @@ pub fn generate_binary_tree(
   }
 
   Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_generate_lookup_tables_from_1st_call() {
+    let lookup_tables = BinaryTreeLengthLookupTables::generate(
+      8,
+      &[2, 3, 9, 0, 0, 9, 8, 6, 5, 4, 1, 7, 0, 0, 0, 0, 0, 0, 0],
+    )
+    .unwrap();
+    assert_eq!(
+      lookup_tables.table1,
+      [0, 0, 128, 192, 224, 240, 248, 252, 254, 65280, 0, 0, 0, 0, 0, 0, 0, 0]
+    );
+
+    assert_eq!(
+      lookup_tables.table2,
+      [0, 128, 64, 32, 16, 8, 4, 2, 1, 128, 64, 32, 16, 8, 4, 2, 1],
+    );
+  }
+
+  #[test]
+  fn test_generate_lookup_tables_from_3rd_call() {
+    let lookup_tables = BinaryTreeLengthLookupTables::generate(
+      8,
+      &[4, 6, 4, 0, 3, 5, 4, 2, 2, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0],
+    )
+    .unwrap();
+
+    assert_eq!(
+      lookup_tables.table1,
+      [0, 0, 0, 128, 192, 240, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    );
+    assert_eq!(
+      lookup_tables.table2,
+      [0, 128, 64, 32, 16, 8, 4, 2, 1, 128, 64, 32, 16, 8, 4, 2, 1]
+    );
+  }
+
+  #[test]
+  fn test_generate_lookup_tables_from_2nd_call() {
+    let lookup_tables = BinaryTreeLengthLookupTables::generate(
+      12,
+      &[
+        3, 7, 6, 9, 8, 5, 7, 9, 6, 0, 5, 0, 0, 0, 0, 0, 8, 0, 8, 7, 8, 0, 0, 7, 0, 0, 6, 7, 7, 6,
+        0, 8, 8, 8, 8, 0, 8, 8, 0, 0, 8, 0, 8, 6, 8, 0, 8, 0, 8, 8, 0, 0, 8, 0, 8, 0, 0, 8, 8, 7,
+        0, 8, 0, 6, 7, 5, 0, 0, 6, 0, 0, 0, 0, 8, 8, 0, 0, 8, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0, 8, 0,
+        8, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 8, 7, 8, 0, 0, 0, 0, 0, 0, 8, 0,
+        0, 0, 8, 0, 0, 0, 0, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 0, 0, 0, 8, 0, 0,
+        0, 8, 0, 0, 0, 8, 0, 0, 8, 0, 0, 0, 6, 8, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        8, 0, 6, 0, 0, 0, 0, 8, 0, 0, 8, 0, 7, 0, 7, 0, 8, 7, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 8, 0, 0, 8, 0, 0, 0, 0, 0, 8, 7, 0, 0, 8, 0, 8, 5, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 8, 0, 7, 8, 8, 8, 0, 8, 7, 0, 8, 8, 4, 4, 6, 6, 8, 8, 8, 8, 0, 8, 8, 8, 8, 8, 0,
+        0, 0, 8, 8, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        8,
+      ],
+    )
+    .unwrap();
+    assert_eq!(
+      lookup_tables.table1,
+      [0, 0, 0, 0, 512, 1024, 1536, 2304, 2944, 4080, 0, 0, 0, 0, 0, 0, 0, 0]
+    );
+    assert_eq!(
+      lookup_tables.table2,
+      [0, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 8, 4, 2, 1]
+    );
+  }
+
 }

@@ -59,89 +59,81 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     for i in 0..(arg_arr260_len as usize) {
       var277[arg_arr260[i] as usize] = var277[arg_arr260[i] as usize].wrapping_add(1);
     }
-    let mut tmp: u32 = 0;
     for i in 1..17 {
       // This wraps around to 0.
-      tmp += u32::from(var277[i]) << (16 - i);
       lookup_table288[i + 1] = (lookup_table288[i].wrapping_add((var277[i]) << (16 - i))) as u16;
     }
-    assert!(tmp == 0 || tmp == 0x10000);
     if lookup_table288[17] != 0 {
       return Err(InternalError(1));
+    }
+    rem_bit_size291 = 16 - bit_size261;
+    i = 1;
+    while i <= bit_size261 {
+      print!(", {:?}", lookup_table288[i]);
+      lookup_table288[i] = (lookup_table288[i] >> rem_bit_size291) as u16;
+      lookup_table287[i] = (1 << (bit_size261).wrapping_sub(i)) as u16;
+      println!(" => {}", lookup_table288[i]);
+      i = i.wrapping_add(1)
+    }
+    while i <= 16 {
+      lookup_table287[i] = (1 << (16 - i)) as u16;
+      i = i.wrapping_add(1)
+    }
+    i = (lookup_table288[bit_size261 + 1] >> rem_bit_size291) as usize;
+    if i != (1 << 16) {
+      let var289 = 1 << bit_size261;
+      while i != var289 {
+        let fresh0 = i;
+        i = i.wrapping_add(1);
+        output_table262[fresh0 as usize] = 0 as u16
+      }
     } else {
-      rem_bit_size291 = 16 - bit_size261;
-      i = 1;
-      while i <= bit_size261 {
-        lookup_table288[i] = (lookup_table288[i] >> rem_bit_size291) as u16;
-        lookup_table287[i] = (1 << (bit_size261).wrapping_sub(i)) as u16;
-        i = i.wrapping_add(1)
-      }
-      while i <= 16 {
-        lookup_table287[i] = (1 << (16 - i)) as u16;
-        i = i.wrapping_add(1)
-      }
-      i = (lookup_table288[bit_size261 + 1] >> rem_bit_size291) as usize;
-      println!("AAAA: {:X?}{}", lookup_table288, i);
-      if i != (1 << 16) {
-        let var289 = 1 << bit_size261;
-        while i != var289 {
-          let fresh0 = i;
-          i = i.wrapping_add(1);
-          output_table262[fresh0 as usize] = 0 as u16
-        }
-      } else {
-        unreachable!("This, in theory, is not a reachable case!");
-      }
-      var292 = arg_arr260_len as u32;
-      var283 = 1 << (15 - bit_size261);
-      ij = 0;
-      while ij < arg_arr260_len {
-        let item209 = arg_arr260[ij] as usize;
-        if item209 != 0 {
-          let tmp293: usize =
-            (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
-          if item209 <= bit_size261 {
-            if tmp293 > max_internal263 as usize {
-              return Err(InternalError(2));
-            } else {
-              i = lookup_table288[item209 as usize] as usize;
-              while i < tmp293 {
-                output_table262[i] = ij as u16;
-                i = i.wrapping_add(1)
-              }
-            }
+      unreachable!("This, in theory, is not a reachable case!");
+    }
+    var292 = arg_arr260_len as u32;
+    var283 = 1 << (15 - bit_size261);
+    ij = 0;
+    while ij < arg_arr260_len {
+      let item209 = arg_arr260[ij] as usize;
+      if item209 != 0 {
+        let tmp293: usize =
+          (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
+        if item209 <= bit_size261 {
+          if tmp293 > max_internal263 as usize {
+            return Err(InternalError(2));
           } else {
-            let mut var289 = u32::from(lookup_table288[item209 as usize]);
-            let mut current_table =
-              Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
-            i = item209.wrapping_sub(bit_size261);
-            while i != 0 {
-              if data_table!(current_table, output_table262, self) == 0 {
-                self.dat_arr189[var292 as usize] = 0;
-                self.dat_arr190[var292 as usize] = 0;
-                data_table!((current_table, output_table262, self) = var292 as u16);
-                var292 = var292.wrapping_add(1);
-              }
-              if 0 != var289 & var283 {
-                current_table =
-                  Fn258DataTable::Array190(
-                    data_table!(current_table, output_table262, self) as usize
-                  )
-              } else {
-                current_table =
-                  Fn258DataTable::Array189(
-                    data_table!(current_table, output_table262, self) as usize
-                  )
-              }
-              var289 <<= 1;
-              i = i.wrapping_sub(1)
+            i = lookup_table288[item209 as usize] as usize;
+            while i < tmp293 {
+              output_table262[i] = ij as u16;
+              i = i.wrapping_add(1)
             }
-            data_table!((current_table, output_table262, self) = ij as u16)
           }
-          lookup_table288[item209 as usize] = tmp293 as u16
+        } else {
+          let mut var289 = u32::from(lookup_table288[item209 as usize]);
+          let mut current_table = Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
+          i = item209.wrapping_sub(bit_size261);
+          while i != 0 {
+            if data_table!(current_table, output_table262, self) == 0 {
+              self.dat_arr189[var292 as usize] = 0;
+              self.dat_arr190[var292 as usize] = 0;
+              data_table!((current_table, output_table262, self) = var292 as u16);
+              var292 = var292.wrapping_add(1);
+            }
+            if 0 != var289 & var283 {
+              current_table =
+                Fn258DataTable::Array190(data_table!(current_table, output_table262, self) as usize)
+            } else {
+              current_table =
+                Fn258DataTable::Array189(data_table!(current_table, output_table262, self) as usize)
+            }
+            var289 <<= 1;
+            i = i.wrapping_sub(1)
+          }
+          data_table!((current_table, output_table262, self) = ij as u16)
         }
-        ij = ij.wrapping_add(1)
+        lookup_table288[item209 as usize] = tmp293 as u16
       }
+      ij = ij.wrapping_add(1)
     }
     Ok(())
   }

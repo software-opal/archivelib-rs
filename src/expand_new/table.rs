@@ -188,11 +188,11 @@ mod tests {
     tables
       .generate_run_offset_lookup(&mut reader, true)
       .unwrap();
-    assert_eq!(
+    assert_bytes_eq!(
       tables.run_offset_lookup_len,
       rvec![0x00 => 2, 0x01 => 2, 0x00 => 15]
     );
-    assert_eq!(tables.run_offset_lookup, rvec![0x02 => 128, 0x03 => 128]);
+    assert_bytes_eq!(tables.run_offset_lookup, rvec![0x02 => 128, 0x03 => 128]);
   }
 
   #[test]
@@ -210,13 +210,13 @@ mod tests {
       reader.look_ahead_bits(16).unwrap(),
       vec![false, false, true, false]
     );
-    assert_eq!(tables.bit_lookup, rvec![0x1A => 2048, 0x1FE => 2048]);
-    assert_eq!(
+    assert_bytes_eq!(tables.bit_lookup, rvec![0x1A => 2048, 0x1FE => 2048]);
+    assert_bytes_eq!(
       tables.bit_lookup_len,
       rvec![0x00 => 26, 0x01 => 1, 0x00 => 483, 0x01 => 1]
     );
-    assert_eq!(tables.run_offset_lookup, rvec![0x00 => 256]);
-    assert_eq!(tables.run_offset_lookup_len, rvec![0x00 => 19]);
+    assert_bytes_eq!(tables.run_offset_lookup, rvec![0x00 => 256]);
+    assert_bytes_eq!(tables.run_offset_lookup_len, rvec![0x00 => 19]);
   }
 
   #[test]
@@ -254,11 +254,11 @@ mod tests {
       .generate_run_offset_lookup(&mut reader, true)
       .unwrap();
 
-    assert_eq!(
+    assert_bytes_eq!(
       tables.run_offset_lookup_len,
       vec![2, 3, 9, 0, 0, 9, 8, 6, 5, 4, 1, 7, 0, 0, 0, 0, 0, 0, 0]
     );
-    assert_eq!(
+    assert_bytes_eq!(
       tables.run_offset_lookup,
       rvec![
         0x0A => 128, 0x00 => 64, 0x01 => 32, 0x09 => 16, 0x08 => 8, 0x07 => 4, 0x0B => 2,
@@ -266,10 +266,10 @@ mod tests {
       ]
     );
 
-    assert_eq!(tables.tree.left, rvec![0x00 => 19, 0x02 => 1, 0x00 => 1000]);
+    assert_eq!(tables.tree.left, rvec![0x00 => 19, 0x02 => 1, 0x00 => 1001]);
     assert_eq!(
       tables.tree.right,
-      rvec![0x00 => 19, 0x05 => 1, 0x00 => 1000]
+      rvec![0x00 => 19, 0x05 => 1, 0x00 => 1001]
     );
   }
 
@@ -306,7 +306,7 @@ mod tests {
     let mut tables = LookupTables::new();
     tables.generate(&mut reader).unwrap();
 
-    assert_eq!(
+    assert_bytes_eq!(
       tables.bit_lookup_len,
       vec![
         3, 7, 6, 9, 8, 5, 7, 9, 6, 0, 5, 0, 0, 0, 0, 0, 8, 0, 8, 7, 8, 0, 0, 7, 0, 0, 6, 7, 7, 6,
@@ -329,7 +329,7 @@ mod tests {
         8
       ]
     );
-    assert_eq!(
+    assert_bytes_eq!(
       tables.bit_lookup,
       rvec![
         0x00 => 512, 0xFF => 256, 0x100 => 256, 0x05 => 128, 0x0A => 128, 0x41 => 128,
@@ -351,7 +351,7 @@ mod tests {
         0x07 => 8
       ]
     );
-    assert_eq!(
+    assert_bytes_eq!(
       tables.run_offset_lookup_len,
       vec![4, 6, 4, 0, 3, 5, 4, 2, 2, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0]
     );
@@ -360,8 +360,8 @@ mod tests {
       rvec![0x07 => 64, 0x08 => 64, 0x04 => 32, 0x09 => 32, 0x00 => 32, 0x02 => 32, 0x06 => 32, 0x05=> 8, 0x01 => 4, 0x0A => 4]
     );
 
-    assert_eq!(tables.tree.left, rvec![0x00 => 19, 0x02 => 1, 0x00 => 1000]);
-    assert_eq!(
+    assert_bytes_eq!(tables.tree.left, rvec![0x00 => 19, 0x02 => 1, 0x00 => 1000]);
+    assert_bytes_eq!(
       tables.tree.right,
       rvec![0x00 => 19, 0x05 => 1, 0x00 => 1000]
     )
