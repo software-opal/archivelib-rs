@@ -9,6 +9,8 @@ use failure;
 #[macro_use]
 mod test;
 #[cfg(test)]
+mod proptests;
+#[cfg(test)]
 mod tests;
 
 #[macro_use]
@@ -80,3 +82,20 @@ pub fn do_decompress_level(
 
   Ok(res.into_writer().into_boxed_slice())
 }
+
+// pub fn do_decompress_level(
+//   input: &[u8],
+//   compression_level: u8,
+// ) -> Result<Box<[u8]>, std::string::String> {
+//   let mut reader = support::lookahead_reader::LookAheadBitwiseReader::new(input);
+//   let mut writer = Vec::with_capacity(1024);
+//   let level = match CompressionLevel::from_compression_level(compression_level) {
+//     Some(l) => l,
+//     None => return Err(format!("Invalid compression level {}", compression_level)),
+//   };
+//
+//   match expand_new::expand(&mut reader, &mut writer, level) {
+//     Ok(_) => Ok(writer.into_boxed_slice()),
+//     Err(err) => Err(format!("{:?}", err)),
+//   }
+// }

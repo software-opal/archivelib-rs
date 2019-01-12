@@ -86,7 +86,6 @@ impl<R: io::Read> LookAheadBitwiseRead for LookAheadBitwiseReader<R> {
       ..self.buffer.len()
     };
     let data = self.buffer.drain(range).collect();
-    println!("consume {}: {:X?}", bits, data);
     Ok(data)
   }
   fn look_ahead_bits(&mut self, bits: usize) -> io::Result<Vec<bool>> {
@@ -131,7 +130,6 @@ impl LookAheadBitwiseRead for ExpectedCallLookAheadBitwiseReader {
     );
 
     let items = self.look_ahead_bits(bits)?;
-    println!("{} -> {:?} <- {}", self.index, items, self.index + bits - 1);
     self.index += bits;
     self.consume_call_index += 1;
     Ok(items)
@@ -142,9 +140,8 @@ impl LookAheadBitwiseRead for ExpectedCallLookAheadBitwiseReader {
       .iter()
       .skip(self.index)
       .take(bits)
-      .map(|&a| a)
+      .cloned()
       .collect();
-    println!("Lookahead {} bits: {:?}", bits, data);
     Ok(data)
   }
 }
@@ -175,7 +172,7 @@ mod tests {
       vec![true, true, true, true, true, true]
     );
     assert_eq!(reader.look_ahead_bits(4).unwrap(), vec![true, true]);
-    assert_eq!(reader.consume::<u8>(4).unwrap(), 0b11);
+    assert_eq!(reader.consume::<u8>(4).unwrap(), 0b1100);
     assert_eq!(reader.look_ahead_bits(4).unwrap(), vec![]);
     assert_eq!(reader.consume::<u8>(8).unwrap(), 0);
   }

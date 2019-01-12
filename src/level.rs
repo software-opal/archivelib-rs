@@ -18,13 +18,13 @@ impl CompressionLevel {
       _ => None,
     }
   }
-  pub fn buffer_size(&self) -> usize {
+  pub fn buffer_size(self) -> usize {
     1 << self.compression_factor()
   }
-  pub fn compression_factor(&self) -> u8 {
+  pub fn compression_factor(self) -> u8 {
     10 + self.compression_level()
   }
-  pub fn compression_level(&self) -> u8 {
+  pub fn compression_level(self) -> u8 {
     match self {
       CompressionLevel::Level0 => 0,
       CompressionLevel::Level1 => 1,

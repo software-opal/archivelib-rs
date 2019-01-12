@@ -12,26 +12,25 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       let byte_or_run_length203: i16 = self.get_bits(CONST_N143_IS_9 as i16)? as i16;
       let mut run_start226: i16 = 0 as i16;
       while (run_start226) < CONST_N141_IS_511 as i16 {
-        (self).dat_arr180[run_start226 as usize] = 0 as u8;
+        self.dat_arr180[run_start226 as usize] = 0 as u8;
         run_start226 += 1
       }
       run_start226 = 0 as i16;
       while (run_start226) < CONST_N148_IS_4096 as i16 {
-        (self).dat_arr240[run_start226 as usize] = byte_or_run_length203 as u16;
+        self.dat_arr240[run_start226 as usize] = byte_or_run_length203 as u16;
         run_start226 += 1
       }
     } else {
       let mut run_start226: i16 = 0 as i16;
       while (run_start226) < bits_to_load219 {
-        let mut byte_or_run_length203: i16 =
-          (self).dat_arr241[((self).bits182 >> 8) as usize] as i16;
+        let mut byte_or_run_length203: i16 = self.dat_arr241[(self.bits182 >> 8) as usize] as i16;
         if byte_or_run_length203 >= CONST_N145_IS_19 as i16 {
           var283 = (1 << 7) as u16;
           loop {
-            if 0 != (self).bits182 & var283 {
-              byte_or_run_length203 = (self).dat_arr190[byte_or_run_length203 as usize] as i16
+            if 0 != self.bits182 & var283 {
+              byte_or_run_length203 = self.dat_arr190[byte_or_run_length203 as usize] as i16
             } else {
-              byte_or_run_length203 = (self).dat_arr189[byte_or_run_length203 as usize] as i16
+              byte_or_run_length203 = self.dat_arr189[byte_or_run_length203 as usize] as i16
             }
             var283 = (var283 >> 1) as u16;
             if byte_or_run_length203 < CONST_N145_IS_19 as i16 {
@@ -50,7 +49,10 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             byte_or_run_length203 = (self.get_bits(CONST_N143_IS_9 as i16)? + 20) as i16
           }
           let mut count = 0;
-          println!("byte_or_run_length203: {}", byte_or_run_length203);
+          println!(
+            "byte_or_run_length203:{}, {}",
+            run_start226, byte_or_run_length203
+          );
           loop {
             byte_or_run_length203 -= 1;
             if byte_or_run_length203 < 0 {
@@ -58,20 +60,19 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
             let fresh0 = run_start226;
             run_start226 += 1;
-            (self).dat_arr180[fresh0 as usize] = 0 as u8;
+            self.dat_arr180[fresh0 as usize] = 0 as u8;
             count += 1;
           }
-          println!("Count: {}", count);
         } else {
           let fresh1 = run_start226;
           run_start226 += 1;
-          (self).dat_arr180[fresh1 as usize] = (byte_or_run_length203 - 2) as u8
+          self.dat_arr180[fresh1 as usize] = (byte_or_run_length203 - 2) as u8
         }
       }
       while (run_start226) < (CONST_N141_IS_511 as i16) {
         let fresh2 = run_start226;
         run_start226 += 1;
-        (self).dat_arr180[fresh2 as usize] = 0 as u8
+        self.dat_arr180[fresh2 as usize] = 0 as u8
       }
       self.fn258(
         Fn258Mode::Fn255,

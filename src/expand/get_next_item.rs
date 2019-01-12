@@ -13,6 +13,13 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       // because we read a variable number of bits per call.
       self.items_until_next_header = self.get_bits(16)? as usize;
       self.fn253(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3)?;
+
+      println!("dat_arr180: {:X?}", self.dat_arr180);
+      println!("dat_arr181: {:X?}", self.dat_arr181);
+      println!("dat_arr189: {:X?}", self.dat_arr189);
+      println!("dat_arr190: {:X?}", self.dat_arr190);
+      println!("dat_arr240: {:X?}", self.dat_arr240);
+      println!("dat_arr241: {:X?}", self.dat_arr241);
       self.fn255()?;
       self.fn253(CONST_N142_IS_15 as i16, CONST_N540_IS_5 as i16, -1)?;
     }
