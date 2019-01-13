@@ -66,7 +66,6 @@ pub fn generate_binary_tree(
   bit_lengths: &[usize],
   tree: &mut BinaryTree,
 ) -> Result<(), BinaryTreeInvariantError> {
-  println!("ltable: ({:#?}, {:#?})", bit_size, bit_lengths);
   let mut lookup_tables = BinaryTreeLengthLookupTables::generate(bit_size, bit_lengths)?;
   let mut tree_index = bit_lengths.len();
 
@@ -75,7 +74,6 @@ pub fn generate_binary_tree(
       continue;
     }
     let temp = lookup_tables.table1[bit_len] + lookup_tables.table2[bit_len];
-    println!("i: {}, temp: {}", i, temp);
     if bit_len <= bit_size {
       if temp > output.len() {
         return Err(BinaryTreeInvariantError::Type2);

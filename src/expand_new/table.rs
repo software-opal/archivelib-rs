@@ -150,7 +150,6 @@ impl LookupTables {
             2 => reader.consume::<u16>(9)? + 20,
             _ => unreachable!(),
           };
-          println!("Target Index: {}, {}", i, idx);
           for _ in 0..idx {
             self.bit_lookup_len[i] = 0;
             i += 1;

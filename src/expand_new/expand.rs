@@ -49,16 +49,13 @@ impl ExpandData {
           self.table = Some(t);
         }
       }
-      println!("Loaded table");
     }
     let table = match &self.table {
       Some(t) => t,
       None => unreachable!(),
     };
     self.items_until_next_header -= 1;
-    println!("Reading: {}", reader.look_ahead::<usize>(12)?);
     let run_length = table.bit_lookup[reader.look_ahead::<usize>(12)?];
-    println!("run_length: {}", run_length);
     // run_length <= 0xFF are the uncompressed bits.
     // 0x100 <= run_length < 0x1FE are runs (run_length - 0x100 + 3) bits long.
     // 0x1FE == EOF_FLAG == run_length indicates end of file.
@@ -109,11 +106,6 @@ pub fn expand(
 
   // While we have something to read; or we are expecting more items.
   while !reader.look_ahead_bits(1)?.is_empty() || expand_data.items_until_next_header > 0 {
-    println!(
-      "Conditions: {}, {}",
-      reader.look_ahead_bits(1)?.is_empty(),
-      expand_data.items_until_next_header > 0
-    );
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;
