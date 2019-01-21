@@ -59,8 +59,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     )?;
     let mut s = (var209 & size_bitmask280) as usize;
 
-    println!("{:?}", self);
-
     self.dat169 = 0 as i16;
     self.dat168 = 0 as i16;
     let mut var201 = (((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
@@ -103,7 +101,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         }
       }
     }
-    println!("{:?}", self);
 
     while var209 < 256 {
       let byte_or_run_length203 = match read_one(&mut self.input_store)? {
