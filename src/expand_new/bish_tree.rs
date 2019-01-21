@@ -40,7 +40,7 @@ impl BinaryTreeLengthLookupTables {
       return Err(BinaryTreeInvariantError::Type1);
     }
     for v in lookup_table1.iter_mut().skip(1).take(bit_size) {
-      *v = (*v) >> remaining_bit_size;
+      *v >>= remaining_bit_size;
     }
 
     let mut lookup_table2 = [0; 17];

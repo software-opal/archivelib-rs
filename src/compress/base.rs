@@ -3,6 +3,7 @@ use crate::consts::{
   MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
 use crate::support::{ArrayAlias, BitwiseWrite, BitwiseWriter};
+use std::fmt;
 use std::io::{Read, Write};
 
 #[allow(dead_code)]
@@ -92,6 +93,81 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub array165_counter: usize,
   pub bitwise_counter185: u16,
   pub array165_tmp_counter186: usize,
+}
+
+fn vec_to_nice_debug<T: fmt::Debug + PartialEq>(v: &[T]) -> String {
+  let mut base = "[".to_owned();
+  if let Some(t) = v.first() {
+    let mut last = t;
+    let mut count = 0;
+    for val in v {
+      if val == last {
+        count += 1;
+      } else {
+        if base.len() > 1 {
+          base += ", ";
+        }
+        base += &match count {
+          0 => "".to_owned(),
+          1 => format!("{:?}", last),
+          2 => format!("{:?}, {:?}", last, last),
+          _ => format!("{:?} => {}", last, count),
+        };
+        last = val;
+        count = 1;
+      }
+    }
+    if base.len() > 1 {
+      base += ", ";
+    }
+    base += &format!("{:?} => {}", last, count);
+  }
+  base + "]"
+}
+
+impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
+  fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    formatter
+      .debug_struct("RCompressData")
+      .field("dat_arr163", &vec_to_nice_debug(&self.dat_arr163))
+      .field("dat_arr164", &vec_to_nice_debug(&self.dat_arr164))
+      .field("dat_arr165", &vec_to_nice_debug(&self.dat_arr165))
+      .field(
+        "uncompressed_buffer",
+        &vec_to_nice_debug(&self.uncompressed_buffer),
+      )
+      .field("dat_arr167", &vec_to_nice_debug(&self.dat_arr167))
+      .field("dat_arr177", &vec_to_nice_debug(&self.dat_arr177))
+      .field("dat_arr180", &vec_to_nice_debug(&self.dat_arr180))
+      .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
+      .field("dat_arr189", &vec_to_nice_debug(&self.dat_arr189))
+      .field("dat_arr190", &vec_to_nice_debug(&self.dat_arr190))
+      .field("dat_arr191", &vec_to_nice_debug(&self.dat_arr191))
+      .field("dat_arr192", &vec_to_nice_debug(&self.dat_arr192))
+      .field("dat_arr193", &vec_to_nice_debug(&self.dat_arr193))
+      .field("dat_arr194", &vec_to_nice_debug(&self.dat_arr194))
+      .field("chars_written", &self.chars_written)
+      .field("input_length", &self.input_length)
+      .field("uncompressible", &self.uncompressible)
+      .field("fail_uncompressible", &self.fail_uncompressible)
+      .field("dat168", &self.dat168)
+      .field("dat169", &self.dat169)
+      .field("dat173", &self.dat173)
+      .field("dat174", &self.dat174)
+      .field(
+        "max_uncompressed_data_size",
+        &self.max_uncompressed_data_size,
+      )
+      .field(
+        "max_uncompressed_data_size_bitmask",
+        &self.max_uncompressed_data_size_bitmask,
+      )
+      .field("dat183_IS_CONST_8162", &self.dat183_IS_CONST_8162)
+      .field("array165_counter", &self.array165_counter)
+      .field("bitwise_counter185", &self.bitwise_counter185)
+      .field("array165_tmp_counter186", &self.array165_tmp_counter186)
+      .finish()
+  }
 }
 
 impl<R: Read, W: Write> RCompressData<R, BitwiseWriter<W>> {
