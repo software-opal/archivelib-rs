@@ -7,7 +7,7 @@ authors = ["Opal Symes <leesdolphin@gmail.com>"]
 edition = "2018"
 
 homepage = "https://github.com/software-opal/archivelib-rs"
-license = "LGPLv3"
+license = "GPL-2.0-only"
 license-file = "../LICENSE.md"
 
 [build-dependencies]
