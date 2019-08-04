@@ -24,11 +24,11 @@ AllocatedMemory _build_error(int status, std::string data) {
     raw_data = (u_int8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data.c_str(), len);
   }
-  return AllocatedMemory{
-      .status = status,
-      .data = raw_data,
-      .length = len,
-  };
+  AllocatedMemory m = {};
+  m.status = status;
+  m.data = raw_data;
+  m.length = len;
+  return m;
 }
 
 AllocatedMemory build_error_from_status_code(int status) {
@@ -64,11 +64,11 @@ AllocatedMemory build_output(ALStorage *out) {
     data = (u_int8_t *)realloc(data, actual_len);
   }
 
-  return AllocatedMemory{
-      .status = 0,
-      .data = data,
-      .length = actual_len,
-  };
+  AllocatedMemory m = {};
+  m.status = 0;
+  m.data = data;
+  m.length = actual_len;
+  return m;
 }
 
 extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8_t compression_level) {
