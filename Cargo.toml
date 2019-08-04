@@ -1,7 +1,7 @@
 [package]
 name = "archivelib"
 description = "An implementaton of the Greenleaf ArchiveLib compression/decompression algorithm"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Opal Symes <code@opal.codes>"]
 edition = "2018"
 
