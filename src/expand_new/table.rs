@@ -10,9 +10,9 @@
 // // 241 length lookup
 // self.dat_arr181
 //
-// // Binary tree(ish) pair. No test cases. No worries
-// self.dat_arr190
-// self.dat_arr189
+// // Binary tree(ish) pair. No test cases. No worries.
+// self.dat_arr190 -> tree.right
+// self.dat_arr189 -> tree.left
 use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
 use crate::support::LookAheadBitwiseRead;
 use std::io;
@@ -365,5 +365,4 @@ mod tests {
       rvec![0x00 => 19, 0x05 => 1, 0x00 => 1000]
     )
   }
-
 }

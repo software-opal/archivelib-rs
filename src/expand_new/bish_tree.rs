@@ -4,6 +4,7 @@ pub enum BinaryTreeInvariantError {
   Type2,
 }
 
+// Was dat_arr189/dat_arr190
 pub struct BinaryTree {
   pub left: Vec<u16>,
   pub right: Vec<u16>,
@@ -201,5 +202,4 @@ mod tests {
       [0, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 8, 4, 2, 1]
     );
   }
-
 }

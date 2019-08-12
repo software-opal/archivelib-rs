@@ -19,9 +19,9 @@
 
 AllocatedMemory _build_error(int status, std::string data) {
   size_t len = data.length() + 1;
-  u_int8_t *raw_data = NULL;
+  uint8_t *raw_data = NULL;
   if (len > 1) {
-    raw_data = (u_int8_t *)calloc(len, sizeof(char));
+    raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data.c_str(), len);
   }
   AllocatedMemory m = {};
@@ -51,7 +51,7 @@ AllocatedMemory build_output(ALStorage *out) {
   CHECK_AL_STATUS(out->mStatus);
 
   size_t data_len = out->GetSize();
-  u_int8_t *data = (u_int8_t *)calloc(data_len, sizeof(char));
+  uint8_t *data = (uint8_t *)calloc(data_len, sizeof(char));
   size_t actual_len = out->ReadBuffer((unsigned char *)data, data_len);
   out->Close();
   if (out->mStatus.GetStatusCode() != AL_SUCCESS) {
@@ -61,7 +61,7 @@ AllocatedMemory build_output(ALStorage *out) {
   }
   delete out;
   if (data_len != actual_len) {
-    data = (u_int8_t *)realloc(data, actual_len);
+    data = (uint8_t *)realloc(data, actual_len);
   }
 
   AllocatedMemory m = {};
@@ -71,7 +71,7 @@ AllocatedMemory build_output(ALStorage *out) {
   return m;
 }
 
-extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8_t compression_level) {
+extern "C" AllocatedMemory compress(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
   std::string name = "compress";
   CREATE_BUFFER(in, name, input_buffer, length)
   CREATE_BUFFER(out, name, NULL, 0)
@@ -87,7 +87,7 @@ extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8
 
   return build_output(out);
 }
-extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length, uint8_t compression_level) {
+extern "C" AllocatedMemory decompress(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
   std::string name = "decompress";
   CREATE_BUFFER(in, name, input_buffer, length)
   CREATE_BUFFER(out, name, NULL, 0)

@@ -39,14 +39,17 @@ fn main() {
     })
     .collect::<Vec<_>>();
   files.sort();
+  let mut builder = cc::Build::new();
+  builder.cpp(true); // Switch to C++ library compilation.
+  builder.warnings(false);
+  if !cfg!(windows) {
+    builder.define("AL_UNIX", None);
+    builder.define("AL_SUN4", None);
+  }
 
-  cc::Build::new()
-    .cpp(true) // Switch to C++ library compilation.
-    .warnings(false)
+  builder
     .define("AL_CUSTOM", None)
-    .define("AL_SUN4", None)
-    .define("AL_UNIX", None)
-    .define("AL_SYMANTEC", None)  // This is needed to compile on OSX
+    .define("AL_SYMANTEC", None) // This is needed to compile on OSX
     .include("c-lib/")
     .include("c-lib/include")
     .file("c-lib/api.cpp")

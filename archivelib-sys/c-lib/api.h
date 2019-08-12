@@ -22,11 +22,11 @@
 
 typedef struct AllocatedMemory {
   int status;
-  u_int8_t *data;
+  uint8_t *data;
   size_t length;
 } AllocatedMemory;
 
-extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length, uint8_t compression_level);
-extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length, uint8_t compression_level);
+extern "C" AllocatedMemory compress(uint8_t *input_buffer, size_t length, uint8_t compression_level);
+extern "C" AllocatedMemory decompress(uint8_t *input_buffer, size_t length, uint8_t compression_level);
 
 extern "C" void clean(AllocatedMemory *memory);

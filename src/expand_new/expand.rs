@@ -61,6 +61,15 @@ impl ExpandData {
     // 0x1FE == EOF_FLAG == run_length indicates end of file.
     // 0x1FE < run_length indicates use the table.tree to find the real value; this path is not tested
     if run_length > EOF_FLAG {
+      // let _283 = 1usize << 3;
+      // let bits = reader.look_ahead(3)?;
+      // while (run_length276 >= );
+      // //   if (data->bits182 & _283)
+      // //     run_length276 = data->dat_arr190[run_length276];
+      // //   else
+      // //     run_length276 = data->dat_arr189[run_length276];
+      // //   _283 >>= 1;
+      // }
       unimplemented!("This case is never tested; however exists in the original code.");
     }
     reader.consume_bits(table.bit_lookup_len[run_length as usize])?;
@@ -71,7 +80,18 @@ impl ExpandData {
       Some(t) => t,
       None => unreachable!(),
     };
-    let run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
+    let mut run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
+    let mut var283 = (1 << 7) as u16;
+    let mut read_offset = 7;
+    while run_length >= 15 {
+      // run_length = if reader.look_ahead_skip(read_offset, 1)? {
+      //   table.tree.right[run_length]
+      // } else {
+      //   table.tree.left[run_length]
+      // } as usize;
+      // read_offset += 1;
+      panic!();
+    }
     if run_length >= 15 {
       unimplemented!("This case is never tested; however it exists in the original code.");
     }

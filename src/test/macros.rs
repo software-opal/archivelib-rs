@@ -123,10 +123,7 @@ macro_rules! assert_bytes_eq {
       }
       out.push_str(&format!("      ╭╴Expected: {}\n", expected_r));
       out.push_str(&format!("{:>5}╺┽──╴Actual: {}\n", row, actual_r));
-      out.push_str(&format!(
-        "      ╰───────────{}\n",
-        note_r
-      ));
+      out.push_str(&format!("      ╰───────────{}\n", note_r));
       last = row;
     }
     if has_more {
@@ -175,18 +172,50 @@ macro_rules! test_data {
     )*
   };
 }
+#[macro_export]
+macro_rules! match_sys_test_data {
+  ($($name: ident => $compressed_data:expr,)*) => {
+    $(
+      pub mod $name {
+        #[allow(unused_imports)]
+        use super::*;
+
+        pub fn get_uncompressed() -> Box<[u8]> {
+          let compressed = get_compressed();
+          archivelib_sys::do_decompress(&compressed[..]).unwrap()
+        }
+        pub fn get_compressed() -> Box<[u8]> { $compressed_data }
+
+        #[test]
+        fn test_compress() {
+          let uncompressed = get_uncompressed();
+          let compressed = archivelib_sys::do_compress(&uncompressed[..]).unwrap();
+          let compress_output = crate::do_compress(&uncompressed[..]).unwrap();
+          assert_bytes_eq!(&compressed[..], &compress_output);
+        }
+        #[test]
+        fn test_decompress() {
+          let uncompressed = get_uncompressed();
+          let compressed = get_compressed();
+          let decompress_output = crate::do_decompress(&compressed[..]).unwrap();
+          assert_bytes_eq!(&uncompressed[..], &decompress_output);
+        }
+      }
+    )*
+  };
+}
 
 #[macro_export]
 macro_rules! fuzzer_test_data {
   ($($name: ident => $uncompressed_data:expr,)*) => {
     $(
       pub mod $name {
-        #[allow(unused_imports)]
-        use std::iter::repeat;
+        // #[allow(unused_imports)]
+        // use std::iter::repeat;
+        // #[allow(unused_imports)]
+        // use crate::test::fixed::*;
 
         use crate::{do_compress, do_decompress};
-        #[allow(unused_imports)]
-        use crate::test::fixed::*;
         #[allow(unused_imports)]
         use super::*;
         pub fn get_uncompressed() -> Box<[u8]> { $uncompressed_data }
