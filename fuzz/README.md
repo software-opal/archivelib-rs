@@ -1,3 +1,11 @@
+For these fuzzers to work, you may need to add the following flags to your environment:
+
+- `export RUSTFLAGS="-Clink-arg=-fuse-ld=gold -Copt-level=0"`
+
+
+`cargo-fuzz`
+============
+
 This folder contains a series of fuzzing targets. From the root of the repo run:
 
     cargo fuzz run {fuzz_decompress,fuzz_compress,fuzz_decompress_correctness,fuzz_compress_correctness}

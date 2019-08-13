@@ -21,6 +21,7 @@ use std::io;
 pub enum LookupTableGenerationError {
   IOError(io::Error),
   BinaryTreeError(BinaryTreeInvariantError),
+  InvariantFailue,
 }
 
 impl From<io::Error> for LookupTableGenerationError {
@@ -36,21 +37,21 @@ impl From<BinaryTreeInvariantError> for LookupTableGenerationError {
 
 #[allow(dead_code)]
 pub struct LookupTables {
-  pub bit_lookup: Vec<u16>,
-  pub bit_lookup_len: Vec<usize>,
+  pub bit_lookup: [u16; 4096],
+  pub bit_lookup_len: [usize; 511],
   // Should be usize; but due to type requirements for the tree; we use u16
-  pub run_offset_lookup: Vec<u16>,
-  pub run_offset_lookup_len: Vec<usize>,
+  pub run_offset_lookup: [u16; 256],
+  pub run_offset_lookup_len: [usize; 19],
   pub tree: BinaryTree,
 }
 
 impl LookupTables {
   pub fn new() -> Self {
     Self {
-      bit_lookup: vec![0; 4096],
-      bit_lookup_len: vec![0; 511],
-      run_offset_lookup: vec![0; 256],
-      run_offset_lookup_len: vec![0; 19],
+      bit_lookup: [0; 4096],
+      bit_lookup_len: [0; 511],
+      run_offset_lookup: [0; 256],
+      run_offset_lookup_len: [0; 19],
       tree: BinaryTree::new(1021),
     }
   }
@@ -87,11 +88,17 @@ impl LookupTables {
             bit_length += 1;
           }
         }
+        if i > self.run_offset_lookup_len.len() {
+          return Err(LookupTableGenerationError::InvariantFailue);
+        }
         self.run_offset_lookup_len[i] = bit_length;
         i += 1;
         if do_pad_length && i == 3 {
           let pad_length: usize = reader.consume(2)?;
           for _ in 0..pad_length {
+            if i > self.run_offset_lookup_len.len() {
+              return Err(LookupTableGenerationError::InvariantFailue);
+            }
             self.run_offset_lookup_len[i] = 0;
             i += 1;
           }
@@ -354,7 +361,7 @@ mod tests {
       tables.run_offset_lookup_len,
       vec![4, 6, 4, 0, 3, 5, 4, 2, 2, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0]
     );
-    assert_eq!(
+    assert_bytes_eq!(
       tables.run_offset_lookup,
       rvec![0x07 => 64, 0x08 => 64, 0x04 => 32, 0x09 => 32, 0x00 => 32, 0x02 => 32, 0x06 => 32, 0x05=> 8, 0x01 => 4, 0x0A => 4]
     );

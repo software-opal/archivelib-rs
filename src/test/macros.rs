@@ -69,8 +69,10 @@ macro_rules! _bytes_to_human_hex {
 #[macro_export]
 macro_rules! assert_bytes_eq {
   ($expected: expr, $actual: expr) => {{
-    let expected = $expected.into_iter().collect::<Vec<_>>();
-    let actual = $actual.into_iter().collect::<Vec<_>>();
+    let orig_expected = $expected;
+    let orig_actual = $actual;
+    let expected = orig_expected.iter().collect::<Vec<_>>();
+    let actual = orig_actual.iter().collect::<Vec<_>>();
     if expected == actual {
       assert_eq!(expected, actual, "Sanity check failed");
       return;
@@ -186,18 +188,18 @@ macro_rules! match_sys_test_data {
         }
         pub fn get_compressed() -> Box<[u8]> { $compressed_data }
 
-        #[test]
-        fn test_compress() {
-          let uncompressed = get_uncompressed();
-          let compressed = archivelib_sys::do_compress(&uncompressed[..]).unwrap();
-          let compress_output = crate::do_compress(&uncompressed[..]).unwrap();
-          assert_bytes_eq!(&compressed[..], &compress_output);
-        }
+        // #[test]
+        // fn test_compress() {
+        //   let uncompressed = get_uncompressed();
+        //   let compressed = archivelib_sys::do_compress(&uncompressed[..]).unwrap();
+        //   let compress_output = crate::do_compress(&uncompressed[..]).unwrap();
+        //   assert_bytes_eq!(&compressed[..], &compress_output);
+        // }
         #[test]
         fn test_decompress() {
-          let uncompressed = get_uncompressed();
           let compressed = get_compressed();
           let decompress_output = crate::do_decompress(&compressed[..]).unwrap();
+          let uncompressed = get_uncompressed();
           assert_bytes_eq!(&uncompressed[..], &decompress_output);
         }
       }
@@ -236,5 +238,33 @@ macro_rules! fuzzer_test_data {
         }
       }
     )*
+  };
+}
+
+#[macro_export]
+macro_rules! test_compare_sys {
+  ($name:ident = $data:expr) => {
+    mod $name {
+      fn get_data() -> Box<[u8]> {
+        $data
+      }
+
+      #[test]
+      fn test_compress() {
+        let data = get_data();
+        let compressed_sample = archivelib_sys::do_compress(&data).unwrap();
+        let compressed_test = crate::do_compress(&data).unwrap();
+        assert_eq!(compressed_sample[..], compressed_test[..]);
+      }
+
+      #[test]
+      fn test_decompress() {
+        let data = get_data();
+        let compressed = archivelib_sys::do_compress(&data).unwrap();
+        println!("input = {:X?}", compressed);
+        let decompressed = crate::do_decompress(&compressed).unwrap();
+        assert_eq!(decompressed[..], data[..]);
+      }
+    }
   };
 }
