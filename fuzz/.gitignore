@@ -2,5 +2,5 @@
 target
 corpus
 artifacts
-afl_out
+afl_out*
 graph
