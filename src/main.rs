@@ -165,7 +165,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
   };
   afl::fuzz!(|input| {
-    run(input, args.mode, args.level);
+    match std::panic::catch_unwind(|| run(&input, args.mode, args.level)) {
+      Ok(Ok(v)) => {}
+      Ok(Err(_)) => {}
+      Err(_) => {
+        if args.abort_on_panic {
+          std::process::abort()
+        } else {
+        }
+      }
+    };
   });
   Ok(())
 }
@@ -181,7 +190,14 @@ fn main() -> Result<(), Box<dyn Error>> {
   };
   loop {
     honggfuzz::fuzz!(|input| {
-      run(input, args.mode, args.level);
+      if args.abort_on_panic {
+        match std::panic::catch_unwind(|| run(&input, args.mode, args.level)) {
+          Ok(v) => v?,
+          Err(_) => std::process::abort(),
+        }
+      } else {
+        run(&input, args.mode, args.level)?
+      };
     })
   }
 }

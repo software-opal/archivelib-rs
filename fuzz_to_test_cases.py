@@ -17,7 +17,7 @@ NON_ALPHA = re.compile("(^[0-9]|[^a-zA-Z0-9_])")
 
 cargo_afl = ["cargo", "afl"]
 afl_opts = ["-t1000"]
-target = ["target/debug/archivelib", "-d", "-x"]
+target = ["target/debug/archivelib", "-d"]
 
 
 def bytes_to_test_hex(data):
@@ -80,7 +80,7 @@ def run_fuzz(out_dir):
             ],
             cwd=str(ROOT),
             check=False,
-            timeout=60*60,
+            timeout=24*60*60,
         )
         if res.returncode not in [0, 130]:
             res.check_returncode()
@@ -125,12 +125,16 @@ def main():
     afl_out = (ROOT / 'fuzz/afl_out')
     run_fuzz(afl_out)
     graph_fuzz(afl_out, ROOT / 'fuzz/graph/')
-    for type in ['crashes', 'hangs']:
-        for crash in (afl_out / type).iterdir():
-            if crash.name == 'README.txt':
-                continue
-            else:
-                run_test_case_minifier(crash, type)
+    bad_files = [
+        (type, file)
+        for type in ['crashes', 'hangs']
+        for file in (afl_out / type).iterdir()
+    if file.name != 'README.txt'
+    ]
+    # with tempfile.NamedTemporaryFile() as f:
+    #     subprocess.call([*target, bad_files[0][1], f.name], cwd=ROOT)
+    for (type, crash) in bad_files:
+                    run_test_case_minifier(crash, type)
 
 
 if __name__ == "__main__":

@@ -40,9 +40,9 @@ fn main() {
     .clang_arg("-fsanitize=undefined")
     .clang_arg("-fno-omit-frame-pointer")
     .header("c-lib/wrapper.h")
-    .whitelist_function("compress")
-    .whitelist_function("decompress")
-    .whitelist_function("clean")
+    .whitelist_function("compress2")
+    .whitelist_function("decompress2")
+    .whitelist_function("clean2")
     .whitelist_function("reverse*")
     .generate()
     .expect("Unable to generate bindings");
@@ -55,15 +55,15 @@ fn main() {
 
   let mut files = find_sources(PathBuf::from("c-lib/src/"));
   files.sort();
-
   let mut base = cc::Build::new();
+  base.warnings(false);
+  if !cfg!(windows) {
+    base.define("AL_UNIX", None);
+    base.define("AL_SUN4", None);
+  }
   base
-    .warnings(true)
     .define("AL_CUSTOM", None)
-    .define("AL_SUN4", None)
-    .define("AL_UNIX", None)
-    .define("AL_DISABLE_NEW", None)
-    // .define("NDEBUG", None)
+    .define("AL_SYMANTEC", None) // This is needed to compile on OSX
     .include("c-lib/")
     .include("c-lib/include");
   let mut c_build = base.clone();
@@ -76,10 +76,10 @@ fn main() {
       _ => unreachable!(),
     };
   }
-  c_build.compile("archivelib_c");
+  c_build.compile("archivelib2_c");
   cpp_build
     .cpp(true)
     .file("c-lib/api.cpp")
     .file("c-lib/enum_rev.cpp")
-    .compile("archivelib");
+    .compile("archivelib2");
 }

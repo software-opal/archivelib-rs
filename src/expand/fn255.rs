@@ -49,10 +49,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             byte_or_run_length203 = (self.get_bits(CONST_N143_IS_9 as i16)? + 20) as i16
           }
           let mut count = 0;
-          println!(
-            "byte_or_run_length203:{}, {}",
-            run_start226, byte_or_run_length203
-          );
           loop {
             byte_or_run_length203 -= 1;
             if byte_or_run_length203 < 0 {

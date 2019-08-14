@@ -291,9 +291,9 @@ ALStatus &ALStatus::operator=(ALStatus &rhs) {
 SimpleStatus ALStatus::copyToSimple() {
   const char *data = GetStatusDetail();
   size_t len = strlen(data) + 1;
-  u_int8_t *raw_data = NULL;
+  uint8_t *raw_data = NULL;
   if (len > 1) {
-    raw_data = (u_int8_t *)calloc(len, sizeof(char));
+    raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data, len);
   }
   return SimpleStatus{miStatus, raw_data, len};

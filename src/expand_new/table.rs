@@ -70,6 +70,7 @@ impl LookupTables {
     do_pad_length: bool,
   ) -> Result<(), LookupTableGenerationError> {
     let bits_to_load: usize = reader.consume(5)?;
+    println!("Bits to load: {}", bits_to_load);
     if bits_to_load == 0 {
       let offset_const = reader.consume(5)?;
       for e in self.run_offset_lookup.iter_mut() {
@@ -88,7 +89,7 @@ impl LookupTables {
             bit_length += 1;
           }
         }
-        if i > self.run_offset_lookup_len.len() {
+        if i >= self.run_offset_lookup_len.len() {
           return Err(LookupTableGenerationError::InvariantFailue);
         }
         self.run_offset_lookup_len[i] = bit_length;

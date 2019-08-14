@@ -16,45 +16,45 @@
   CHECK_AL_STATUS(buf_name->mStatus);
 #endif
 
-AllocatedMemory _build_error(int status, std::string data) {
+AllocatedMemory2 _build_error(int status, std::string data) {
   size_t len = data.length() + 1;
-  u_int8_t *raw_data = NULL;
+  uint8_t *raw_data = NULL;
   if (len > 1) {
-    raw_data = (u_int8_t *)calloc(len, sizeof(char));
+    raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data.c_str(), len);
   }
-  return AllocatedMemory{
+  return AllocatedMemory2{
       .status = status,
       .data = raw_data,
       .length = len,
   };
 }
 
-AllocatedMemory build_error_from_status_code(int status) {
+AllocatedMemory2 build_error_from_status_code(int status) {
   std::stringstream stream;
   stream << reverseALErrors(status) << " (" << status << ")";
   return _build_error(status, stream.str());
 }
 
-AllocatedMemory build_error_from_status_obj(ALStatus *status) {
+AllocatedMemory2 build_error_from_status_obj(ALStatus *status) {
   std::stringstream stream;
   stream << reverseALErrors(status->GetStatusCode()) << " (" << status << ") ";
   stream << status->GetStatusDetail();
   return _build_error(status->GetStatusCode(), stream.str());
 }
 
-AllocatedMemory build_output(ALStorage *out) {
+AllocatedMemory2 build_output(ALStorage *out) {
   out->FlushBuffer();
   CHECK_AL_STATUS(out->mStatus);
   out->Seek(0);
   CHECK_AL_STATUS(out->mStatus);
 
   size_t data_len = out->GetSize();
-  u_int8_t *data = (u_int8_t *)calloc(data_len, sizeof(char));
+  uint8_t *data = (uint8_t *)calloc(data_len, sizeof(char));
   size_t actual_len = out->ReadBuffer((uint8_t *)data, data_len);
   out->Close();
   if (out->mStatus.GetStatusCode() != AL_SUCCESS) {
-    AllocatedMemory status = build_error_from_status_obj(&out->mStatus);
+    AllocatedMemory2 status = build_error_from_status_obj(&out->mStatus);
     delete out;
     free(data);
     return status;
@@ -62,24 +62,24 @@ AllocatedMemory build_output(ALStorage *out) {
     delete out;
   }
   if (data_len != actual_len) {
-    uint8_t *tmp = (u_int8_t *)realloc(data, actual_len);
+    uint8_t *tmp = (uint8_t *)realloc(data, actual_len);
     if (tmp != NULL) {
       data = tmp;
     }
   }
 
-  return AllocatedMemory{
+  return AllocatedMemory2{
       .status = 0,
       .data = data,
       .length = actual_len,
   };
 }
 
-extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
+extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_compress(AL_GREENLEAF_LEVEL_0, *in, *out);
+  SimpleStatus status = al_compress((ALGreenleafCompressionLevels) compression_level, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }
@@ -89,11 +89,11 @@ extern "C" AllocatedMemory compress(u_int8_t *input_buffer, size_t length) {
 
   return build_output(out);
 }
-extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length) {
+extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_decompress(AL_GREENLEAF_LEVEL_0, *in, *out);
+  SimpleStatus status = al_decompress((ALGreenleafCompressionLevels) compression_level, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }
@@ -103,7 +103,7 @@ extern "C" AllocatedMemory decompress(u_int8_t *input_buffer, size_t length) {
 
   return build_output(out);
 }
-extern "C" void clean(AllocatedMemory *memory) {
+extern "C" void clean2(AllocatedMemory2 *memory) {
   if (memory->data) {
     free(memory->data);
     memory->data = NULL;

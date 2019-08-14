@@ -35,18 +35,27 @@ where
   return bitstring;
 }
 
-macro_rules! debug_bits {
-  ($name: expr, $bits: expr, $size: expr) => {
-    use std::convert::TryInto;
-    println!(
-      "Bits {}: {}",
-      $name,
-      crate::support::get_bit_string($bits, ($size).try_into().unwrap()),
-    );
-  };
-  ($bits: expr, $size: expr) => {
-    debug_bits!("", $bits, $size);
-  };
+macro_rules! pending_test {
+  () => ({
+    pending_test!("?")
+  });
+  ($msg:expr) => ({
+    #[cfg(any(feature = "fuzz-afl", feature = "fuzz-hfuzz"))]
+    {
+      eprintln!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
+      std::process::abort();
+    }
+    #[cfg(all(not(feature = "fuzz-afl"), not(feature = "fuzz-hfuzz")))]
+    {
+      unimplemented!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
+    }
+  });
+  ($msg:expr,) => ({
+    pending_test!($msg)
+  });
+  ($fmt:expr, $($arg:tt)+) => ({
+    pending_test!(&format_args!($fmt, $($arg)+))
+  });
 }
 
 #[cfg(test)]

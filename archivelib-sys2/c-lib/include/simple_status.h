@@ -2,10 +2,11 @@
 #define _SIMPLE_STATUS_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct SimpleStatus {
   int status;
-  u_int8_t *data;
+  uint8_t *data;
   size_t length;
 } SimpleStatus;
 

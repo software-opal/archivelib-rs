@@ -69,9 +69,12 @@ impl<R: io::Read> LookAheadBitwiseReader<R> {
           _ => return Err(e),
         },
         Ok(0) => break,
-        Ok(count) => self
-          .buffer
-          .extend(block[..count].iter().flat_map(|&v| v.to_bits().into_vec())),
+        Ok(count) => {
+          // println!("Read: {:X?}", &block[..count]);
+          self
+            .buffer
+            .extend(block[..count].iter().flat_map(|&v| v.to_bits().into_vec()))
+        }
       }
     }
     Ok(self.buffer.len() >= min_buffer_size)
@@ -86,12 +89,15 @@ impl<R: io::Read> LookAheadBitwiseRead for LookAheadBitwiseReader<R> {
       ..self.buffer.len()
     };
     let data = self.buffer.drain(range).collect();
+    // println!("Consume {}: {:?}", bits, data);
     Ok(data)
   }
   fn look_ahead_bits(&mut self, bits: usize) -> io::Result<Vec<bool>> {
     if self.ensure_buffer(bits)? {
+      // println!("Look ahead {}: {:X?}", bits, &self.buffer[..bits]);
       Ok(self.buffer[..bits].to_vec())
     } else {
+      // println!("Look ahead {}: {:X?}", bits, &self.buffer[..]);
       Ok(self.buffer[..].to_vec())
     }
   }

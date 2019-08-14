@@ -29,6 +29,16 @@ impl<R: Read> From<R> for BitReader<R> {
     }
   }
 }
+impl<R: Read> std::fmt::Debug for BitReader<R> {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.debug_struct("BitReader")
+      .field("eof", &self.eof)
+      .field("bits", &self.bits)
+      .field("tmp_bits", &self.tmp_bits)
+      .field("tmp_bits_size", &self.tmp_bits_size)
+      .finish()
+  }
+}
 
 impl<R: Read> BitRead for BitReader<R> {
   fn current_bits(&self) -> u16 {
@@ -41,6 +51,7 @@ impl<R: Read> BitRead for BitReader<R> {
     /*
     Reads `bits_to_load` bits into the LSB side of `data->bits`.
     */
+    println!("Read bits: {}, state: {:?}", bits_to_load, self);
     while bits_to_load > self.tmp_bits_size {
       // This loop loads 1 new byte into `data->tmp_bits`(the temporary
       // buffer)
@@ -65,6 +76,7 @@ impl<R: Read> BitRead for BitReader<R> {
     self.tmp_bits_size -= bits_to_load;
     self.bits = (self.bits << bits_to_load) + (u16::from(self.tmp_bits) >> (8 - bits_to_load));
     self.tmp_bits = self.tmp_bits.wrapping_shl(u32::from(bits_to_load));
+    println!("new state: {:?}", self);
     Ok(())
   }
 }
@@ -109,5 +121,58 @@ impl BitRead for ExactCallBitReader {
     self.bits = Some(bits);
     self.eof = self.expected_call_and_results.is_empty();
     Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  #[test]
+  fn test_bit_reader_correctness() {
+    let input: Vec<u8> = vec![0b11001010, 0b01100110, 0b01111011];
+    let mut reader = BitReader::from(&input[..]);
+    assert_eq!(0x00_00, reader.current_bits());
+    reader.read_bits(10).unwrap();
+    assert_eq!(0b000000_11001010_01, reader.current_bits());
+    reader.read_bits(7).unwrap();
+    assert_eq!(0b1001010_01100110_0, reader.current_bits());
+    reader.read_bits(4).unwrap();
+    assert_eq!(
+      0b010_01100110_01111,
+      reader.current_bits(),
+      "Current bits: {:#b}",
+      reader.current_bits()
+    );
+    reader.read_bits(15).unwrap();
+    assert_eq!(
+      0b1011_000000000000,
+      reader.current_bits(),
+      "Current bits: {:#b}",
+      reader.current_bits()
+    );
+  }
+  #[test]
+  fn test_bit_reader_real_data() {
+    let input: Vec<u8> = vec![0b11001010, 0b01100110, 0b01111011];
+    let mut reader = BitReader::from(&input[..]);
+    assert_eq!(0x00_00, reader.current_bits());
+    reader.read_bits(10).unwrap();
+    assert_eq!(0b000000_11001010_01, reader.current_bits());
+    reader.read_bits(7).unwrap();
+    assert_eq!(0b1001010_01100110_0, reader.current_bits());
+    reader.read_bits(4).unwrap();
+    assert_eq!(
+      0b010_01100110_01111,
+      reader.current_bits(),
+      "Current bits: {:#b}",
+      reader.current_bits()
+    );
+    reader.read_bits(15).unwrap();
+    assert_eq!(
+      0b1011_000000000000,
+      reader.current_bits(),
+      "Current bits: {:#b}",
+      reader.current_bits()
+    );
   }
 }

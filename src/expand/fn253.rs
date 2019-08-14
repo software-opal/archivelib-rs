@@ -44,7 +44,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         }
         byte_or_run_length203 = self.get_bits(2)? as i16;
         while byte_or_run_length203 > 0 {
-          println!("AAA;;;;AA");
           let fresh1 = run_start226;
           run_start226 += 1;
           self.dat_arr181[fresh1 as usize] = 0 as u8;

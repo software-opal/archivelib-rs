@@ -69,10 +69,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     rem_bit_size291 = 16 - bit_size261;
     i = 1;
     while i <= bit_size261 {
-      print!(", {:?}", lookup_table288[i]);
       lookup_table288[i] = (lookup_table288[i] >> rem_bit_size291) as u16;
       lookup_table287[i] = (1 << (bit_size261).wrapping_sub(i)) as u16;
-      println!(" => {}", lookup_table288[i]);
       i = i.wrapping_add(1)
     }
     while i <= 16 {

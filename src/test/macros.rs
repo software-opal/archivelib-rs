@@ -207,6 +207,27 @@ macro_rules! match_sys_test_data {
   };
 }
 
+macro_rules! test_crash_case {
+  ($($name: ident => $compressed_data:expr,)*) => {
+    $(
+      #[test]
+      fn $name() {
+        let compressed = $compressed_data;
+        match crate::do_decompress(&compressed[..]) {
+          Ok(data) => {
+            // If we succeed; then the sys library should too
+            let expected2 = archivelib_sys2::do_decompress(&compressed[..]).unwrap();
+            let expected = archivelib_sys::do_decompress(&compressed[..]).unwrap();
+            assert_eq!(data, expected, "Decompress of {:X?} differed from sys.", &compressed[..]);
+            // assert!(false, "Decompress should have failed on {:X?}, instead got {:X?}", &compressed[..], data);
+          }
+          Err(_) => {}
+        }
+      }
+    )*
+  };
+}
+
 #[macro_export]
 macro_rules! fuzzer_test_data {
   ($($name: ident => $uncompressed_data:expr,)*) => {

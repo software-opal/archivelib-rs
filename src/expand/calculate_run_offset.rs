@@ -15,7 +15,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         run_length276 = self.dat_arr189[run_length276 as usize];
       }
       var283 >>= 1;
-      panic!();
+      pending_test!();
     }
     let bits = i16::from(self.dat_arr181[run_length276 as usize]);
     self.read_bits(bits)?;

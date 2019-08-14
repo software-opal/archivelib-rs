@@ -19,7 +19,7 @@ pub fn pure_fn228_part_one(
     var458 += u32::from(v) << (16 - i);
   }
   while var458 != (1 << 16) {
-    unimplemented!();
+    pending_test!();
     dat_arr167[16] -= 1;
     let mut run_start226 = 15;
     while run_start226 > 0 {
