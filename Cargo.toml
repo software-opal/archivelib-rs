@@ -34,4 +34,4 @@ fuzz-afl = ["afl"]
 fuzz-hfuzz = ["honggfuzz"]
 new_impl = []
 
-# default=["new_impl"]
+default=["new_impl"]

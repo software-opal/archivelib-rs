@@ -1,4 +1,4 @@
-use super::bit_iter::{FromBits, ToBits};
+use crate::support::bit_iter::{FromBits, ToBits};
 use std::io;
 
 fn pad_bit_arr(mut bit_data: Vec<bool>, target_len: usize) -> Vec<bool> {
@@ -194,7 +194,7 @@ mod tests {
         "Expected {:#X}, got {:#X}",
         expected, actual
       );
-      reader.consume_bits(advance);
+      reader.consume_bits(advance).unwrap();
     }
   }
 
@@ -203,8 +203,10 @@ mod tests {
     let data: Vec<u8> = vec![0b11001110, 0b00011010, 0b11001001];
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
-    assert_eq!(reader.look_ahead_bits(16).unwrap(), binary_vec![1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0 ])
-
+    assert_eq!(
+      reader.look_ahead_bits(16).unwrap(),
+      binary_vec![1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0]
+    )
   }
 
   #[test]

@@ -4,12 +4,10 @@ mod writer;
 
 pub use self::writer::{BitwiseWrite, BitwiseWriter, ExactCallWriter, NullBitwiseWriter};
 
+// #[cfg(feature = "new_impl")]
+mod lah_reader;
 #[cfg(feature = "new_impl")]
-mod lookahead_reader;
-#[cfg(all(test, feature = "new_impl"))]
-pub use self::lookahead_reader::ExpectedCallLookAheadBitwiseReader;
-#[cfg(feature = "new_impl")]
-pub use self::lookahead_reader::{LookAheadBitwiseRead, LookAheadBitwiseReader};
+pub use self::lah_reader::*;
 
 #[cfg(not(feature = "new_impl"))]
 mod bitreader;
