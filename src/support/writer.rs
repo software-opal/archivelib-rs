@@ -1,4 +1,4 @@
-use super::ToBits;
+use super::bit_iter::ToBits;
 use num::ToPrimitive;
 use std::io;
 

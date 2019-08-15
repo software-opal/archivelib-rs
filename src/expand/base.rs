@@ -2,7 +2,7 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
-use crate::support::{BitRead, ReadError};
+use crate::support::BitRead;
 use std::io::Write;
 
 #[derive(Fail, Debug)]
@@ -11,11 +11,11 @@ pub enum ExpandError {
   IllegalCompressionLevel(u8),
   #[fail(display = "Internal Error: {}", _0)]
   InternalError(u8),
-  #[fail(display = "Unexpected EoF")]
-  UnexpectedEndOfFile {
-    #[cause]
-    error: ReadError,
-  },
+  // #[fail(display = "Unexpected EoF")]
+  // UnexpectedEndOfFile {
+  //   #[cause]
+  //   error: ReadError,
+  // },
   #[fail(display = "Invalid conversion: {}", error)]
   InvalidIntegerConversion {
     #[cause]
@@ -39,14 +39,14 @@ impl From<std::io::Error> for ExpandError {
     ExpandError::IOError { error: v }
   }
 }
-impl From<ReadError> for ExpandError {
-  fn from(e: ReadError) -> Self {
-    match e {
-      ReadError::EndOfFile() => ExpandError::UnexpectedEndOfFile { error: e },
-      ReadError::IoError { error } => ExpandError::IOError { error },
-    }
-  }
-}
+// impl From<ReadError> for ExpandError {
+//   fn from(e: ReadError) -> Self {
+//     match e {
+//       ReadError::EndOfFile() => ExpandError::UnexpectedEndOfFile { error: e },
+//       ReadError::IoError { error } => ExpandError::IOError { error },
+//     }
+//   }
+// }
 
 #[derive(Clone)]
 #[repr(C)]

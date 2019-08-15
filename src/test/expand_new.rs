@@ -5,10 +5,10 @@ macro_rules! adversarial {
     $(
       #[test]
       fn $name() {
-        use archivelib::expand_new::expand;
-        use archivelib::do_compress_level;
-        use archivelib::CompressionLevel;
-        use archivelib::support::LookAheadBitwiseReader;
+        use crate::expand_new::expand;
+        use crate::do_compress_level;
+        use crate::CompressionLevel;
+        use crate::support::LookAheadBitwiseReader;
         use std::iter;
 
         let level = CompressionLevel::from_compression_level($level).unwrap();
@@ -23,7 +23,7 @@ macro_rules! adversarial {
         let repeats = $repeat;
 
         let input_data = iter::repeat(base).take(repeats).flatten().collect::<Vec<_>>();
-        let compressed_data = do_compress_level(&input_data, level.compression_level()).unwrap();
+        let compressed_data = do_compress_level(&input_data, level).unwrap();
 
         let mut reader = LookAheadBitwiseReader::new(&compressed_data[..]);
         let mut writer = Vec::with_capacity(input_data.len());

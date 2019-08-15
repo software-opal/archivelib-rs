@@ -164,23 +164,47 @@ mod tests {
     assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000000000000011);
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000000000000100);
   }
+
   #[test]
-  fn reader_calls_empty() {
-    let data: Vec<u8> = vec![0xff];
+  fn reader_matches_c_implementation_real_data() {
+    let data: Vec<u8> = vec![0x30, 0x30, 0x03];
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
-    assert_eq!(
-      reader.look_ahead_bits(16).unwrap(),
-      vec![true, true, true, true, true, true, true, true]
-    );
-    assert_eq!(
-      reader.consume_bits(6).unwrap(),
-      vec![true, true, true, true, true, true]
-    );
-    assert_eq!(reader.look_ahead_bits(4).unwrap(), vec![true, true]);
-    assert_eq!(reader.consume::<u8>(4).unwrap(), 0b1100);
-    assert_eq!(reader.look_ahead_bits(4).unwrap(), vec![]);
-    assert_eq!(reader.consume::<u8>(8).unwrap(), 0);
+    for &(expected, advance) in &[
+      (0x3030, 16),
+      (0x0330, 16),
+      (0x6606, 5),
+      (0xc0c0, 5),
+      (0x8181, 9),
+      (0x8181, 0),
+      (0x8181, 0),
+      (0x8181, 3),
+      (0x0c0c, 3),
+      (0x6060, 3),
+      (0x0303, 3),
+      (0x1818, 3),
+      (0xc0c0, 3),
+      (0x0606, 3),
+      (0x3030, 3),
+      (0x8181, 3),
+    ] {
+      let actual = reader.look_ahead::<u16>(16).unwrap();
+      assert_eq!(
+        actual, expected,
+        "Expected {:#X}, got {:#X}",
+        expected, actual
+      );
+      reader.consume_bits(advance);
+    }
+  }
+
+  #[test]
+  fn reader_matches_c_implementation_testing() {
+    let data: Vec<u8> = vec![0b11001110, 0b00011010, 0b11001001];
+    let mut reader = LookAheadBitwiseReader::new(&data[..]);
+
+    assert_eq!(reader.look_ahead_bits(16).unwrap(), binary_vec![1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0 ])
+
   }
 
   #[test]

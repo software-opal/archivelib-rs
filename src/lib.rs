@@ -9,29 +9,25 @@ mod test;
 // mod proptests;
 
 #[macro_use]
-pub mod support;
-pub mod level;
+mod support;
+mod level;
 pub use self::level::CompressionLevel;
 
-pub mod expand;
-pub mod expand_new;
+#[cfg(not(feature = "new_impl"))]
+mod expand;
+#[cfg(feature = "new_impl")]
+mod expand_new;
 
 mod compress;
 mod consts;
 
-pub const AL_GREENLEAF_LEVEL_0: u8 = 0;
-pub const AL_GREENLEAF_LEVEL_1: u8 = 1;
-pub const AL_GREENLEAF_LEVEL_2: u8 = 2;
-pub const AL_GREENLEAF_LEVEL_3: u8 = 3;
-pub const AL_GREENLEAF_LEVEL_4: u8 = 4;
-
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-  do_compress_level(input, AL_GREENLEAF_LEVEL_0)
+  do_compress_level(input, CompressionLevel::Level0)
 }
 
 pub fn do_compress_level(
   input: &[u8],
-  compression_level: u8,
+  compression_level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
   let reader = input;
   let writer = Vec::with_capacity(1024);
@@ -39,7 +35,7 @@ pub fn do_compress_level(
     reader,
     writer,
     input.len(),
-    compression_level + 10,
+    compression_level.compression_factor(),
     false,
   ) {
     Ok(res) => res,
@@ -55,19 +51,23 @@ pub fn do_compress_level(
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-  do_decompress_level(input, AL_GREENLEAF_LEVEL_0)
+  do_decompress_level(input, CompressionLevel::Level0)
 }
 
 #[cfg(not(feature = "new_impl"))]
 pub fn do_decompress_level(
   input: &[u8],
-  compression_level: u8,
+  compression_level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
   let reader = support::BitReader::from(input);
   let writer = Vec::with_capacity(1024);
 
-  let mut res = match expand::RExpandData::new(reader, writer, input.len(), compression_level + 10)
-  {
+  let mut res = match expand::RExpandData::new(
+    reader,
+    writer,
+    input.len(),
+    compression_level.compression_factor(),
+  ) {
     Ok(res) => res,
     Err(err) => return Err(format!("{}", err)),
   };
@@ -83,14 +83,10 @@ pub fn do_decompress_level(
 #[cfg(feature = "new_impl")]
 pub fn do_decompress_level(
   input: &[u8],
-  compression_level: u8,
+  level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
-  let mut reader = support::lookahead_reader::LookAheadBitwiseReader::new(input);
+  let mut reader = support::LookAheadBitwiseReader::new(input);
   let mut writer = Vec::with_capacity(1024);
-  let level = match CompressionLevel::from_compression_level(compression_level) {
-    Some(l) => l,
-    None => return Err(format!("Invalid compression level {}", compression_level)),
-  };
   match expand_new::expand(&mut reader, &mut writer, level) {
     Ok(_) => Ok(writer.into_boxed_slice()),
     Err(err) => Err(format!("{:?}", err)),

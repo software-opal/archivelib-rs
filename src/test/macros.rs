@@ -10,7 +10,9 @@ macro_rules! hex {
       .into_boxed_slice()
   }};
 }
+
 #[macro_export]
+#[cfg(test)]
 macro_rules! from_iter {
   ($iter: expr) => {
     $iter.collect::<std::vec::Vec<_>>().into_boxed_slice()
@@ -28,6 +30,7 @@ macro_rules! from_iter {
 }
 
 #[macro_export]
+#[cfg(test)]
 macro_rules! rvec {
   ($($val: expr => $count: expr),+) => {{
       let mut v = Vec::new();
@@ -145,6 +148,7 @@ macro_rules! assert_bytes_eq {
 }
 
 #[macro_export]
+#[cfg(test)]
 macro_rules! test_data {
   ($($name: ident => (in=$uncompressed_data:expr, out=$compressed_data:expr),)*) => {
     $(
@@ -175,6 +179,7 @@ macro_rules! test_data {
   };
 }
 #[macro_export]
+#[cfg(test)]
 macro_rules! match_sys_test_data {
   ($($name: ident => $compressed_data:expr,)*) => {
     $(
@@ -207,6 +212,7 @@ macro_rules! match_sys_test_data {
   };
 }
 
+#[cfg(test)]
 macro_rules! test_crash_case {
   ($($name: ident => $compressed_data:expr,)*) => {
     $(
@@ -216,7 +222,7 @@ macro_rules! test_crash_case {
         match crate::do_decompress(&compressed[..]) {
           Ok(data) => {
             // If we succeed; then the sys library should too
-            let expected2 = archivelib_sys2::do_decompress(&compressed[..]).unwrap();
+            // let expected2 = archivelib_sys2::do_decompress(&compressed[..]).unwrap();
             let expected = archivelib_sys::do_decompress(&compressed[..]).unwrap();
             assert_eq!(data, expected, "Decompress of {:X?} differed from sys.", &compressed[..]);
             // assert!(false, "Decompress should have failed on {:X?}, instead got {:X?}", &compressed[..], data);
@@ -228,7 +234,16 @@ macro_rules! test_crash_case {
   };
 }
 
+#[cfg(test)]
+macro_rules! binary_vec {
+  () => {vec![]};
+  ($($t:tt),*) => {vec![$(binary_vec!(=> $t)),*]};
+  (=> 1) => {true};
+  (=> 0) => {false};
+}
+
 #[macro_export]
+#[cfg(test)]
 macro_rules! fuzzer_test_data {
   ($($name: ident => $uncompressed_data:expr,)*) => {
     $(
@@ -263,6 +278,7 @@ macro_rules! fuzzer_test_data {
 }
 
 #[macro_export]
+#[cfg(test)]
 macro_rules! test_compare_sys {
   ($name:ident = $data:expr) => {
     mod $name {

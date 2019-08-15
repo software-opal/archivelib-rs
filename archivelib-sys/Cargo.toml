@@ -1,5 +1,5 @@
 [package]
-name = "archivelib-sys"
+name = "archivelib-sys_a"
 description = "An implementaton(in C++) of the Greenleaf ArchiveLib compression/decompression algorithm"
 build = "build.rs"
 version = "0.1.1"

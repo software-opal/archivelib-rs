@@ -1,4 +1,5 @@
-use crate::support::{get_bitmask, BitwiseRead, ReadError};
+use crate::bit_iter::get_bitmask;
+use crate::support::{BitwiseRead, ReadError};
 
 type Result<T> = std::result::Result<T, ReadError>;
 

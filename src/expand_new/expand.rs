@@ -181,7 +181,7 @@ mod tests {
   #[cfg(test)]
   mod expand_data {
     use super::*;
-    use crate::support::lookahead_reader::ExpectedCallLookAheadBitwiseReader;
+    use crate::support::ExpectedCallLookAheadBitwiseReader;
 
     #[test]
     fn test_next_item() {

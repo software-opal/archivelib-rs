@@ -57,5 +57,6 @@ uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
   assert(bits_to_load219 <= 16);
   bits = (uint16_t)(data->bits182 >> (2 * CHAR_BIT - bits_to_load219));
   expand_read_bits(data, bits_to_load219);
+  printf("{%d;%04x}", bits_to_load219, data->bits182);
   return bits;
 }

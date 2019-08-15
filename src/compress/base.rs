@@ -1,8 +1,9 @@
+use super::array_alias::ArrayAlias;
 use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096, CONST_N155_IS_8192,
   MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
-use crate::support::{ArrayAlias, BitwiseWrite, BitwiseWriter};
+use crate::support::{BitwiseWrite, BitwiseWriter};
 use std::fmt;
 use std::io::{Read, Write};
 

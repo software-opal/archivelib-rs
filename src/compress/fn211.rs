@@ -1,6 +1,6 @@
 use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result};
 
-use crate::support::ArrayAlias;
+use super::array_alias::ArrayAlias;
 use crate::support::BitwiseWrite;
 use std::io::Read;
 

@@ -18,6 +18,7 @@ pub trait ArrayAlias<P> {
   }
 }
 
+#[macro_export]
 macro_rules! array_alias_enum {
   (
     $(

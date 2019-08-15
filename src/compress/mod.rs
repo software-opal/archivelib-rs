@@ -1,3 +1,6 @@
+#[macro_use]
+mod array_alias;
+
 mod base;
 mod buffer;
 mod compress;

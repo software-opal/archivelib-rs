@@ -9,7 +9,11 @@ homepage = "https://github.com/software-opal/archivelib-rs"
 license = "GPL-2.0-only"
 
 [workspace]
-members = ["archivelib-sys", "archivelib-sys2", "fuzz"]
+members = [
+  # "archivelib-sys",
+  "archivelib-sys2",
+  "fuzz"
+]
 
 [dependencies]
 failure = "0.1.3"
@@ -22,8 +26,8 @@ honggfuzz = { version = "*", optional = true }
 [dev-dependencies]
 rand = "0.6.1"
 proptest = "0.8.7"
-archivelib-sys = { version = "0.1.0", path = "archivelib-sys" }
-archivelib-sys2 = { version = "0.1.0", path = "archivelib-sys2" }
+# archivelib-sys = { version = "0.1.0", path = "archivelib-sys" }
+archivelib-sys = { version = "0.1.0", path = "archivelib-sys2" }
 
 [features]
 fuzz-afl = ["afl"]

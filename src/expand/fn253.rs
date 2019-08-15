@@ -68,7 +68,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
 mod tests {
   use super::*;
   use crate::consts::{CONST_N145_IS_19, CONST_N147_IS_5};
-  use crate::support::{BitReader, VecReader};
+  use crate::support::BitReader;
 
   #[test]
   fn test_name() {
@@ -79,8 +79,7 @@ mod tests {
       0xF0,
     ];
     let length = data.len();
-    let mut test =
-      RExpandData::new(BitReader::from(VecReader::new(data)), out, length, 10).unwrap();
+    let mut test = RExpandData::new(BitReader::from(&data[..]), out, length, 10).unwrap();
 
     test.read_bits(16).unwrap();
     test.get_bits(16).unwrap();
