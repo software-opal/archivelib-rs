@@ -60,12 +60,22 @@ macro_rules! check_rust_against_sys_decompress {
             Ok(_sys_output) => {
               panic!("archivelib::do_decompress failed with a binary tree error({}); but the system library succeeded!", msg)
             }
-            Err(_err) => {unimplemented!();}
+            Err(err) => {
+              match msg.as_str() {
+                "BinaryTreeError(Type1)" => {
+                  assert_eq!(err, "Internal error: -101\0")
+                },
+                "BinaryTreeError(Type2)" => {
+                  assert_eq!(err, "Internal error: -102\0")
+                },
+                _ => unreachable!()
+              }
+            }
           }
         } else if msg == "InvariantFailue" {
           // These usually crash the system library; so just *assume* the input is fine
         } else if msg == "FileExhausted" {
-          unimplemented!();
+          unimplemented!("File exhausted!");
         } else {
           panic!("archivelib::do_decompress failed with an unexpected error: {}", msg);
         }
