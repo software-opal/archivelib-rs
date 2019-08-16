@@ -10,14 +10,6 @@ pub struct ExpectedCallLookAheadBitwiseReader {
 }
 
 impl ExpectedCallLookAheadBitwiseReader {
-  pub fn new(data: impl ToBits, consume_calls: &[usize]) -> Self {
-    ExpectedCallLookAheadBitwiseReader {
-      data: data.to_bits().into_vec(),
-      index: 0,
-      consume_calls: consume_calls.to_vec(),
-      consume_call_index: 0,
-    }
-  }
   pub fn new_correct(
     data: impl ToBits,
     consume_calls: &[usize],

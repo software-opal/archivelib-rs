@@ -102,9 +102,7 @@ impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseRe
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::{
-    ExpectedCallLookAheadBitwiseReader, LookAheadBitwiseRead, LookAheadBitwiseReader,
-  };
+  use crate::support::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 
   #[test]
   fn test_empty_reader() {

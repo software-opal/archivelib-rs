@@ -10,6 +10,7 @@ cargo-fuzz = true
 
 [dependencies.archivelib]
 path = ".."
+features = ["new_impl"]
 [dependencies.libfuzzer-sys]
 git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
 

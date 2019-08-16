@@ -1,7 +1,6 @@
 use super::bish_tree::BinaryTreeInvariantError;
 use super::table::{LookupTableGenerationError, LookupTables};
 use crate::support::CorrectLookAheadBitwiseRead;
-// use crate::support::{LookAheadBitwiseRead};
 use std::io;
 
 use crate::level::CompressionLevel;
@@ -138,7 +137,6 @@ pub fn expand(
   level: CompressionLevel,
 ) -> Result<(), ExpandError> {
   let mut buffer = vec![0u8; level.buffer_size()];
-  let mut has_filled_buffer = false;
   let mut buffer_idx = 0;
   let mut expand_data = ExpandData::new();
 
@@ -153,23 +151,18 @@ pub fn expand(
       if buffer_idx >= buffer.len() {
         writer.write_all(&buffer[..buffer_idx])?;
         buffer_idx = 0;
-        has_filled_buffer = true;
       }
     } else {
       let run_length = (item - (U8_MAX + 1) + MIN_RUN_LENGTH) as usize;
       let run_offset = expand_data.run_offset(reader)?;
-      let run_start = if has_filled_buffer {
-        (buffer.len() + buffer_idx) - 1 - run_offset
-      } else {
-        buffer_idx - 1 - run_offset
-      };
+      assert!(run_offset < buffer.len());
+      let run_start = (buffer.len() + buffer_idx) - 1 - run_offset;
       for i in 0..run_length {
         buffer[buffer_idx] = buffer[(run_start + i) % buffer.len()];
         buffer_idx += 1;
         if buffer_idx >= buffer.len() {
           writer.write_all(&buffer[..buffer_idx])?;
           buffer_idx = 0;
-          has_filled_buffer = true;
         }
       }
     }
@@ -183,6 +176,7 @@ pub fn expand(
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::support::LookAheadBitwiseRead;
 
   #[cfg(test)]
   mod expand_data {

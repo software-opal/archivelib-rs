@@ -13,7 +13,6 @@
 // self.dat_arr189 -> tree.left
 use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
 use crate::support::CorrectLookAheadBitwiseRead;
-// use crate::support::LookAheadBitwiseRead;
 use std::io;
 
 #[derive(Debug)]
@@ -69,7 +68,6 @@ impl LookupTables {
     do_pad_length: bool,
   ) -> Result<(), LookupTableGenerationError> {
     let bits_to_load: usize = reader.consume(5)?;
-    println!("Bits to load: {}", bits_to_load);
     if bits_to_load == 0 {
       let offset_const = reader.consume(5)?;
       for e in self.run_offset_lookup.iter_mut() {
@@ -184,6 +182,7 @@ impl LookupTables {
 mod tests {
   use super::*;
   use crate::support::CorrectLookAheadBitwiseReader;
+  use crate::support::LookAheadBitwiseRead;
 
   #[test]
   fn base_data_seperated_calls() {

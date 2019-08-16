@@ -8,15 +8,17 @@ import tempfile
 offset = [20, 24, 28]
 
 ROOT = pathlib.Path(__file__).parent
-# AFL_OUTPUT_DIR = ROOT / "fuzz/afl_out"
-KNOWN_INPUTS = ROOT / "fuzz/known_inputs"
-MINIFIED_OUTPUTS = ROOT / "fuzz/minified_data"
+FUZZ_DIR = ROOT / "fuzz"
+FUZZ_CRASHES_DIR = FUZZ_DIR / "artifacts"
+AFL_OUTPUT_DIR = FUZZ_DIR / "afl_out"
+KNOWN_INPUTS = FUZZ_DIR / "known_inputs"
+MINIFIED_OUTPUTS = FUZZ_DIR / "minified_data"
 MINIFIED_TEST_OUTPUTS = ROOT / "src/test/minified_data"
 NON_ALPHA = re.compile("(^[0-9]|[^a-zA-Z0-9_])")
 
 
 cargo_afl = ["cargo", "afl"]
-afl_opts = ["-t1000"]
+afl_opts = ["-t1000", "-m250MB"]
 target = ["target/debug/cli", "-d"]
 
 
@@ -38,6 +40,7 @@ def bytes_to_test_hex(data):
         out += f'      {"  ".join(bparts)}\n'
     return out
 
+
 def write_test(data, desc):
     sha1 = hashlib.sha1(data).hexdigest()
     (MINIFIED_OUTPUTS / sha1).write_bytes(data)
@@ -49,18 +52,20 @@ def write_test(data, desc):
         + '  "),\n'
         + "}\n"
     )
-    mod_file = (MINIFIED_TEST_OUTPUTS / f"mod.rs")
+    mod_file = MINIFIED_TEST_OUTPUTS / f"mod.rs"
     try:
         lines = set(mod_file.read_text().splitlines(keepends=False))
     except IOError:
         lines = set()
-    lines.add(f'mod test_{sha1.lower()};')
-    mod_file.write_text('\n'.join(sorted(lines)) + '\n')
+    lines.add(f"mod test_{sha1.lower()};")
+    mod_file.write_text("\n".join(sorted(lines)) + "\n")
 
 
 def run_build():
     subprocess.run(
-        ["cargo", "afl", "build", "--features", "fuzz-afl"], cwd=str(ROOT / 'cli'), check=True
+        ["cargo", "afl", "build", "--features", "fuzz-afl"],
+        cwd=str(ROOT / "cli"),
+        check=True,
     )
 
 
@@ -80,7 +85,7 @@ def run_fuzz(out_dir):
             ],
             cwd=str(ROOT),
             check=False,
-            timeout=24*60*60,
+            timeout=24 * 60 * 60,
         )
         if res.returncode not in [0, 130]:
             res.check_returncode()
@@ -114,28 +119,33 @@ def run_test_case_minifier(test_case, test_type):
             check=True,
         )
         min_data = pathlib.Path(out.name).read_bytes()
-        write_test(min_data, f'Minified from {test_type}: {test_case.name}')
+        write_test(min_data, f"Minified from {test_type}: {test_case.name}")
     # cargo afl tmin -t 1000 -i out/crashes/id\:000001\,sig\:06\,src\:000001\,op\:flip1\,pos\:1 -o min_id_000001 --
 
 
 def main():
     MINIFIED_OUTPUTS.mkdir(exist_ok=True, parents=True)
     MINIFIED_TEST_OUTPUTS.mkdir(exist_ok=True, parents=True)
-    run_build()
-    afl_out = (ROOT / 'fuzz/afl_out')
-    run_fuzz(afl_out)
-    graph_fuzz(afl_out, ROOT / 'fuzz/graph/')
+    # run_build()
+    # run_fuzz(AFL_OUTPUT_DIR)
+    # graph_fuzz(AFL_OUTPUT_DIR, FUZZ_DIR / "graph/")
     bad_files = [
         (type, file)
-        for type in ['crashes', 'hangs']
-        for file in (afl_out / type).iterdir()
-    if file.name != 'README.txt'
+        for type in ["crashes", "hangs"]
+        for file in (AFL_OUTPUT_DIR / type).iterdir()
+        if file.name != "README.txt"
+    ] + [
+        (f'fuzz_crash_{dir.name}', file)
+        for dir in filter(pathlib.Path.is_dir, FUZZ_CRASHES_DIR.iterdir())
+        for file in dir.iterdir()
     ]
+
     # with tempfile.NamedTemporaryFile() as f:
     #     subprocess.call([*target, bad_files[0][1], f.name], cwd=ROOT)
+    # for (type, crash) in bad_files:
+    #     run_test_case_minifier(crash, type)
     for (type, crash) in bad_files:
-                    run_test_case_minifier(crash, type)
-
+        write_test(crash.read_bytes(), f"Minified from {type}: {crash.name}")
 
 if __name__ == "__main__":
     main()

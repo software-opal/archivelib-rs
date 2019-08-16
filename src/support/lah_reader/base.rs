@@ -127,8 +127,8 @@ mod tests {
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
     assert_eq!(
-      reader.look_ahead_bits(16).unwrap(),
-      binary_vec![1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0]
+      reader.look_ahead::<u16>(16).unwrap(),
+      0b1100_1110__0001_1010
     )
   }
 

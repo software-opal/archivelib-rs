@@ -43,9 +43,5 @@ adversarial! {
 }
 
 match_sys_test_data! {
-  sample => (
-    // in=
-    hex!("00 03 20 04 3F F0 1A E7  C0 02")
-    // out=hex!("1A 1A")
-  ),
+  sample => hex!("00 03 20 04 3F F0 1A E7  C0 02"),
 }

@@ -2,14 +2,13 @@
 extern crate failure_derive;
 use failure;
 
+#[macro_use]
+mod support;
+
 #[cfg(test)]
 #[macro_use]
 mod test;
-// #[cfg(test)]
-// mod proptests;
 
-#[macro_use]
-mod support;
 mod level;
 pub use self::level::CompressionLevel;
 
@@ -20,6 +19,7 @@ mod expand_new;
 
 mod compress;
 mod consts;
+
 
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)

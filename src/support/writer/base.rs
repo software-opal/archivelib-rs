@@ -1,22 +1,21 @@
 use crate::support::bit_iter::ToBits;
 use num::ToPrimitive;
-use std::io;
 
 pub trait BitwiseWrite {
   fn write_bits(
     &mut self,
     bits: impl ToPrimitive,
     bit_count: impl ToPrimitive,
-  ) -> io::Result<usize>;
-  fn finalise(&mut self) -> io::Result<()>;
+  ) -> std::io::Result<usize>;
+  fn finalise(&mut self) -> std::io::Result<()>;
 }
 
-pub struct BitwiseWriter<W: io::Write> {
+pub struct BitwiseWriter<W: std::io::Write> {
   inner: W,
   buffer: Vec<bool>,
 }
 
-impl<W: io::Write> BitwiseWriter<W> {
+impl<W: std::io::Write> BitwiseWriter<W> {
   pub fn new(w: W) -> Self {
     BitwiseWriter {
       inner: w,
@@ -30,7 +29,7 @@ impl<W: io::Write> BitwiseWriter<W> {
   pub fn into_inner(self) -> W {
     self.inner
   }
-  pub fn commit_buffer(&mut self) -> io::Result<usize> {
+  pub fn commit_buffer(&mut self) -> std::io::Result<usize> {
     if self.buffer.len() >= 8 {
       let mut to_write = Vec::with_capacity(self.buffer.len() / 8);
       while self.buffer.len() >= 8 {
@@ -47,12 +46,12 @@ impl<W: io::Write> BitwiseWriter<W> {
   }
 }
 
-impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
+impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
   fn write_bits(
     &mut self,
     bits_: impl ToPrimitive,
     bit_count_: impl ToPrimitive,
-  ) -> io::Result<usize> {
+  ) -> std::io::Result<usize> {
     let bits = bits_.to_u128().unwrap();
     let bit_count = bit_count_.to_usize().unwrap();
     if bit_count > 0 {
@@ -63,7 +62,7 @@ impl<W: io::Write> BitwiseWrite for BitwiseWriter<W> {
     }
     self.commit_buffer()
   }
-  fn finalise(&mut self) -> io::Result<()> {
+  fn finalise(&mut self) -> std::io::Result<()> {
     let unwritten = self.buffer.len() % 8;
     if unwritten > 0 {
       self.write_bits(0, 8 - unwritten)?;

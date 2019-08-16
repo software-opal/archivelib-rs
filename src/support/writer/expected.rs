@@ -1,3 +1,6 @@
+use super::base::BitwiseWrite;
+use num::ToPrimitive;
+
 pub struct ExpectedCallWriter {
   calls: Vec<(u128, usize)>,
   write_calls: usize,
@@ -21,7 +24,7 @@ impl BitwiseWrite for ExpectedCallWriter {
     &mut self,
     bits_: impl ToPrimitive,
     bit_count_: impl ToPrimitive,
-  ) -> io::Result<usize> {
+  ) -> std::io::Result<usize> {
     let bits = bits_.to_u128().unwrap();
     let bit_count = bit_count_.to_usize().unwrap();
     assert!(
@@ -45,7 +48,7 @@ impl BitwiseWrite for ExpectedCallWriter {
     self.write_calls += 1;
     Ok(self.written_bits % 8)
   }
-  fn finalise(&mut self) -> io::Result<()> {
+  fn finalise(&mut self) -> std::io::Result<()> {
     let expected = self.calls.remove(0);
     assert_eq!(self.calls, vec![]);
     assert_eq!(expected.0, 0);
