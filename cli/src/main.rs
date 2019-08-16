@@ -128,8 +128,18 @@ impl Args {
 }
 fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, Box<dyn Error>> {
   Ok(match mode {
-    Mode::COMPRESS => archivelib::do_compress_level(&input, level)?,
-    Mode::DECOMPRESS => archivelib::do_decompress_level(&input, level)?,
+    Mode::COMPRESS => {
+      let result = archivelib::do_compress_level(&input, level)?;
+      let sys_result = archivelib_sys::do_decompress_level(&input, level.compression_level());
+      assert_eq!(sys_result.unwrap(), result);
+      result
+    }
+    Mode::DECOMPRESS => {
+      let result = archivelib::do_decompress_level(&input, level)?;
+      let sys_result = archivelib_sys::do_compress_level(&input, level.compression_level());
+      assert_eq!(sys_result.unwrap(), result);
+      result
+    }
   })
 }
 

@@ -85,7 +85,7 @@ pub fn do_decompress_level(
   input: &[u8],
   level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
-  let mut reader = support::LookAheadBitwiseReader::new(input);
+  let mut reader = support::CorrectLookAheadBitwiseReader::from_reader(input);
   let mut writer = Vec::with_capacity(1024);
   match expand_new::expand(&mut reader, &mut writer, level) {
     Ok(_) => Ok(writer.into_boxed_slice()),

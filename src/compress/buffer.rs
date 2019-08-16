@@ -8,7 +8,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       self.fn207()?;
       self.output_store.finalise()?;
     }
-    self.dat183_IS_CONST_8162 = 0;
+    // self.dat183_IS_CONST_8162 = 0;
     self.array165_counter = 0;
     Ok(())
   }

@@ -7,7 +7,7 @@ void fn253(RExpandData *data, int16_t _254, int16_t _220, int16_t _221) {
   uint16_t _283;
   DE;
   bits_to_load219 = get_bits(data, _220);
-  printf("bits_to_load219: %d\n", bits_to_load219);
+  // printf("bits_to_load219: %d\n", bits_to_load219);
   if (bits_to_load219 == 0) {
     byte_or_run_length203 = get_bits(data, _220);
     for (run_start226 = 0; run_start226 < _254; run_start226++) {

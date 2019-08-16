@@ -1,6 +1,7 @@
 use super::bish_tree::BinaryTreeInvariantError;
 use super::table::{LookupTableGenerationError, LookupTables};
-use crate::support::LookAheadBitwiseRead;
+use crate::support::CorrectLookAheadBitwiseRead;
+// use crate::support::{LookAheadBitwiseRead};
 use std::io;
 
 use crate::level::CompressionLevel;
@@ -41,7 +42,10 @@ impl ExpandData {
       table: None,
     }
   }
-  pub fn next_item(&mut self, reader: &mut impl LookAheadBitwiseRead) -> Result<u16, ExpandError> {
+  pub fn next_item(
+    &mut self,
+    reader: &mut impl CorrectLookAheadBitwiseRead,
+  ) -> Result<u16, ExpandError> {
     // println!("Gimme some sweet sweet next_item");
     if self.table.is_none() || self.items_until_next_header == 0 {
       self.items_until_next_header = reader.consume(16)?;
@@ -86,12 +90,15 @@ impl ExpandData {
     reader.consume_bits(table.bit_lookup_len[run_length as usize])?;
     Ok(run_length)
   }
-  pub fn run_offset(&self, reader: &mut impl LookAheadBitwiseRead) -> Result<usize, ExpandError> {
+  pub fn run_offset(
+    &self,
+    reader: &mut impl CorrectLookAheadBitwiseRead,
+  ) -> Result<usize, ExpandError> {
     let table = match &self.table {
       Some(t) => t,
       None => unreachable!(),
     };
-    let mut run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
+    let run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
     // let mut var283 = (1 << 7) as u16;
     // let mut read_offset = 7;
     while run_length >= 15 {
@@ -104,7 +111,6 @@ impl ExpandData {
       pending_test!();
     }
     if run_length >= 15 {
-      std::process::abort();
       pending_test!("This case is never tested; however it exists in the original code.");
     }
     reader.consume_bits(table.run_offset_lookup_len[run_length])?;
@@ -117,17 +123,17 @@ impl ExpandData {
   }
 }
 
-pub fn do_expand_level(data: &[u8], level: CompressionLevel) -> Result<Box<[u8]>, ExpandError> {
-  use crate::support::LookAheadBitwiseReader;
-
-  let mut reader = LookAheadBitwiseReader::new(&data[..]);
-  let mut writer = Vec::with_capacity(level.buffer_size());
-  expand(&mut reader, &mut writer, level)?;
-  Ok(writer.into_boxed_slice())
-}
+// pub fn do_expand_level(data: &[u8], level: CompressionLevel) -> Result<Box<[u8]>, ExpandError> {
+//   use crate::support::CorrectLookAheadBitwiseReader;
+//
+//   let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
+//   let mut writer = Vec::with_capacity(level.buffer_size());
+//   expand(&mut reader, &mut writer, level)?;
+//   Ok(writer.into_boxed_slice())
+// }
 
 pub fn expand(
-  reader: &mut impl LookAheadBitwiseRead,
+  reader: &mut impl CorrectLookAheadBitwiseRead,
   writer: &mut impl io::Write,
   level: CompressionLevel,
 ) -> Result<(), ExpandError> {
@@ -187,7 +193,7 @@ mod tests {
     fn test_next_item() {
       // Uncompressed data is [0x1A, 0x1A]
       let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
-      let mut reader = ExpectedCallLookAheadBitwiseReader::new(
+      let mut reader = ExpectedCallLookAheadBitwiseReader::new_correct(
         &data[..],
         &[16, 5, 3, 3, 3, 2, 3, 9, 1, 9, 1, 1, 9, 1, 5, 5, 1, 1, 1],
       );
@@ -197,7 +203,7 @@ mod tests {
       assert_eq!(510, data.next_item(&mut reader).unwrap());
       assert_eq!(0, data.items_until_next_header);
       // Doesn't actually use the last bit; surprisingly
-      assert_eq!(reader.look_ahead_bits(16).unwrap(), vec![false]);
+      assert_eq!(reader.look_ahead_bits_nopad(16).unwrap(), vec![false]);
     }
 
     #[test]
@@ -210,7 +216,7 @@ mod tests {
         0xDA, 0xD7, 0xB8, 0xDE, 0x66, 0x66, 0x24, 0x92, 0x49, 0x25, 0xFA, 0xFC, 0xF8, 0x00, 0x02,
         0xEE, 0xEC, 0x02, 0xEC, 0x3C, 0x75, 0x40, 0x00, 0x00,
       ];
-      let mut reader = ExpectedCallLookAheadBitwiseReader::new(
+      let mut reader = ExpectedCallLookAheadBitwiseReader::new_correct(
         &test_data[..],
         &[
           16, 5, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 9, 6, 4, 2, 4, 2, 2, 2, 2, 2, 4, 4,
@@ -226,13 +232,13 @@ mod tests {
       // Setup ExpandData with the data from test::match_sys::paris1_hus::x_coords
       assert_eq!(0, data.next_item(&mut reader).unwrap());
       assert_eq!(
-        reader.look_ahead_bits(16).unwrap(),
+        reader.look_ahead_bits_nopad(16).unwrap(),
         vec![false, false, false, false, false, false,]
       );
 
       // Clear out that data; and use the state from a prior run
       let test_data: Vec<u8> = vec![0x01, 0xFF, 0xB8, 0x00];
-      let mut reader = ExpectedCallLookAheadBitwiseReader::new(&test_data[..], &[7, 14]);
+      let mut reader = ExpectedCallLookAheadBitwiseReader::new_correct(&test_data[..], &[7, 14]);
       // Setup initial state
       reader.consume_bits(7).unwrap();
       assert_eq!(
@@ -242,16 +248,7 @@ mod tests {
         reader.look_ahead::<u16>(16).unwrap()
       );
       assert_eq!(110, data.next_item(&mut reader).unwrap());
-      assert_eq!(reader.look_ahead_bits(16).unwrap(), vec![false; 11]);
+      assert_eq!(reader.look_ahead_bits_nopad(16).unwrap(), vec![false; 11]);
     }
-  }
-
-  #[test]
-  fn test_expand() {
-    let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
-    assert_eq!(
-      [0x1A, 0x1A],
-      do_expand_level(&data, CompressionLevel::Level0).unwrap()[..]
-    );
   }
 }

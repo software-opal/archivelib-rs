@@ -1,19 +1,51 @@
-use super::base::LookAheadBitwiseRead;
+use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
   fn is_eof(&self) -> bool;
+  fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
+  fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
 }
 pub struct CorrectLookAheadBitwiseReader<R: LookAheadBitwiseRead> {
   reader: R,
-  is_eof: Option<usize>,
+  is_eof: bool,
   buffer: [bool; 16],
 }
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
-  fn new(reader: R) -> Self {
+  pub fn new(reader: R) -> Self {
     CorrectLookAheadBitwiseReader {
       reader,
-      is_eof: None,
+      is_eof: false,
+      buffer: [false; 16],
+    }
+  }
+  fn pad_buffer(&self, bits: usize, buffer: &mut Vec<bool>) -> usize {
+    if buffer.len() == bits {
+      return 0;
+    }
+    assert!(buffer.len() < bits);
+    if buffer.capacity() < bits {
+      buffer.reserve(bits - buffer.capacity());
+    }
+    while buffer.len() + self.buffer.len() <= bits {
+      buffer.extend_from_slice(&self.buffer);
+    }
+    assert!(bits - buffer.len() < self.buffer.len());
+    if buffer.len() < bits {
+      let remaining = bits - buffer.len();
+      buffer.extend_from_slice(&self.buffer[..remaining]);
+      return remaining;
+    }
+    assert_eq!(buffer.len(), bits);
+    return 0;
+  }
+}
+
+impl<I: std::io::Read> CorrectLookAheadBitwiseReader<LookAheadBitwiseReader<I>> {
+  pub fn from_reader(reader: I) -> Self {
+    CorrectLookAheadBitwiseReader {
+      reader: LookAheadBitwiseReader::new(reader),
+      is_eof: false,
       buffer: [false; 16],
     }
   }
@@ -27,16 +59,13 @@ impl<R: LookAheadBitwiseRead> From<R> for CorrectLookAheadBitwiseReader<R> {
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
   fn is_eof(&self) -> bool {
-    self.is_eof == Some(0)
+    self.is_eof
   }
-}
-impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
-  fn consume_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
+  fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     if bits == 0 {
       return Ok(vec![]);
     }
-    let mut consumed = self.reader.consume_bits(bits)?;
-    println!("Read: {:X?}; buffer: {:X?}", consumed, self.buffer);
+    let consumed = self.reader.consume_bits(bits)?;
     assert!(consumed.len() <= bits);
     if consumed.len() >= self.buffer.len() {
       let start = consumed.len() - self.buffer.len();
@@ -46,39 +75,26 @@ impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseRe
       self.buffer.rotate_left(consumed.len());
       self.buffer[start..].copy_from_slice(&consumed[..]);
     }
-    println!("Buffer updated: {:X?}; {:X?}", consumed, self.buffer);
-    consumed.reserve(bits - consumed.len());
-    while consumed.len() < bits {
-      let to_move = bits - consumed.len();
-      println!("To move remaining: {}", to_move);
-      if to_move >= self.buffer.len() {
-        // Move at most 1 buffer load at a time to make life easy.
-        consumed.extend_from_slice(&self.buffer);
-      } else {
-        consumed.extend_from_slice(&self.buffer[..to_move]);
-        self.buffer.rotate_left(to_move);
-      }
+    Ok(consumed)
+  }
+  fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
+    self.reader.look_ahead_bits(bits)
+  }
+}
+impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
+  fn consume_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
+    let mut consumed = self.consume_bits_nopad(bits)?;
+    if bits != consumed.len() {
+      self.is_eof = true;
+      let to_shift = self.pad_buffer(bits, &mut consumed);
+      self.buffer.rotate_left(to_shift);
     }
-    println!("Consume padded: {:X?}; {:X?}", consumed, self.buffer);
     assert_eq!(consumed.len(), bits);
     Ok(consumed)
   }
   fn look_ahead_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
-    if bits == 0 {
-      return Ok(vec![]);
-    }
-    let mut lookahead = self.reader.look_ahead_bits(bits)?;
-
-    while lookahead.len() + self.buffer.len() <= bits {
-      lookahead.extend_from_slice(&self.buffer);
-    }
-    assert!(bits - lookahead.len() < self.buffer.len());
-    if lookahead.len() < bits {
-      let remaining = bits - lookahead.len();
-      lookahead.extend_from_slice(&self.buffer[..remaining]);
-    }
-    assert_eq!(lookahead.len(), bits);
-
+    let mut lookahead = self.look_ahead_bits_nopad(bits)?;
+    self.pad_buffer(bits, &mut lookahead);
     Ok(lookahead)
   }
 }
@@ -112,28 +128,41 @@ mod tests {
     let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
 
     assert_eq!(reader.consume_bits(0).unwrap(), vec![]);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0x30_30);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0x03_30);
-    let expected = vec![
-      (0x6606, 5),
-      (0xc0c0, 5),
-      (0x8181, 9),
-      (0x8181, 0),
-      (0x8181, 0),
-      (0x8181, 3),
-      (0x0c0c, 3),
-      (0x6060, 3),
-      (0x0303, 3),
-      (0x1818, 3),
-      (0xc0c0, 3),
-      (0x0606, 3),
-      (0x3030, 3),
-      (0x8181, 3),
-    ];
-    for (i, (target, advance)) in expected.into_iter().enumerate() {
-      reader.consume_bits(advance).unwrap();
-      let actual = reader.look_ahead::<u16>(16).unwrap();
-      assert_eq!(actual, target, "({})Expected {:#X}, got {:#X}", i, target, actual);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000__0011_0000);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000_0011__0011_0000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000_0);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b011__00);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b11_000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0__0000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0011__0);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b011_00);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b00__000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0011);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000__0000_0011);
+    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0011_0000);
+    assert_eq!(reader.consume::<u8>(7).unwrap(), 0b0011_000);
+    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0__0000_001);
+  }
+  #[test]
+  fn test_eof() {
+    let data = (0..=255u8).collect::<Vec<_>>();
+    let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
+
+    let mut counter = 0usize;
+    while !reader.is_eof() {
+      assert!(
+        counter <= 256 * 8,
+        "Counter: {:#X}; EOF: {:?}",
+        counter,
+        reader.is_eof
+      );
+      assert_eq!(
+        reader.look_ahead::<bool>(1).unwrap(),
+        reader.consume(1).unwrap()
+      );
+      counter += 1;
     }
+    assert!(counter == (256 * 8) + 1);
+    assert_eq!(reader.look_ahead::<u16>(15).unwrap(), 0b111_1110__1111_1111);
   }
 }

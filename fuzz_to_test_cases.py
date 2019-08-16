@@ -17,7 +17,7 @@ NON_ALPHA = re.compile("(^[0-9]|[^a-zA-Z0-9_])")
 
 cargo_afl = ["cargo", "afl"]
 afl_opts = ["-t1000"]
-target = ["target/debug/archivelib", "-d"]
+target = ["target/debug/cli", "-d"]
 
 
 def bytes_to_test_hex(data):
@@ -60,7 +60,7 @@ def write_test(data, desc):
 
 def run_build():
     subprocess.run(
-        ["cargo", "afl", "build", "--features", "fuzz-afl"], cwd=str(ROOT), check=True
+        ["cargo", "afl", "build", "--features", "fuzz-afl"], cwd=str(ROOT / 'cli'), check=True
     )
 
 

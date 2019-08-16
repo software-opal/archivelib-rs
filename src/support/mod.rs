@@ -2,12 +2,12 @@
 mod bit_iter;
 mod writer;
 
-pub use self::writer::{BitwiseWrite, BitwiseWriter, ExactCallWriter, NullBitwiseWriter};
-
-// #[cfg(feature = "new_impl")]
+#[cfg(feature = "new_impl")]
 mod lah_reader;
 #[cfg(feature = "new_impl")]
 pub use self::lah_reader::*;
+
+pub use self::writer::*;
 
 #[cfg(not(feature = "new_impl"))]
 mod bitreader;

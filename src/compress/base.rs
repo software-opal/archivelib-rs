@@ -90,7 +90,7 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub dat174: i16,
   pub max_uncompressed_data_size: usize,
   pub max_uncompressed_data_size_bitmask: usize,
-  pub dat183_IS_CONST_8162: u16,
+  // pub dat183_IS_CONST_8162: u16,
   pub array165_counter: usize,
   pub bitwise_counter185: u16,
   pub array165_tmp_counter186: usize,
@@ -163,7 +163,7 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         "max_uncompressed_data_size_bitmask",
         &self.max_uncompressed_data_size_bitmask,
       )
-      .field("dat183_IS_CONST_8162", &self.dat183_IS_CONST_8162)
+      // .field("dat183_IS_CONST_8162", &self.dat183_IS_CONST_8162)
       .field("array165_counter", &self.array165_counter)
       .field("bitwise_counter185", &self.bitwise_counter185)
       .field("array165_tmp_counter186", &self.array165_tmp_counter186)
@@ -238,7 +238,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat169: 0,
         dat173: 0,
         dat174: 0,
-        dat183_IS_CONST_8162: CONST_N155_IS_8192 as u16 - ((3 * 8) + 6),
+        // dat183_IS_CONST_8162: CONST_N155_IS_8192 as u16 - ((3 * 8) + 6),
         array165_counter: 0,
         bitwise_counter185: 0,
         array165_tmp_counter186: 0,

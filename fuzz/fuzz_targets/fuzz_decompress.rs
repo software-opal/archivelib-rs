@@ -3,5 +3,5 @@
 extern crate libfuzzer_sys;
 
 fuzz_target!(|data: &[u8]| {
-  let decompressed = archivelib::do_decompress(&data);
+  let _ = archivelib::do_decompress(&data);
 });

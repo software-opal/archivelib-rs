@@ -5,12 +5,12 @@ void fn207(RCompressData *data) {
   uint32_t run_start226, _289, _229, _454, _455;
   uint32_t _456 = 0;
   uint16_t _217[2 * CONST_N145_IS_19 - 1];
-  WRITE_DATA_SPARSE_ARRAY(std::cout, data, dat_arr191, uint16_t);
-  printf("\n");
+  // WRITE_DATA_SPARSE_ARRAY(std::cout, data, dat_arr191, uint16_t);
+  // printf("\n");
   _229 = fn211(data, CONST_N141_IS_511, data->dat_arr191, data->dat_arr180,
                data->dat_arr192);
   _455 = data->dat_arr191[_229];
-  WRITE_DATA_SPARSE_ARRAY(std::cout, data, dat_arr191, uint16_t);
+  // WRITE_DATA_SPARSE_ARRAY(std::cout, data, dat_arr191, uint16_t);
   write_bits_to_buffer(data, 16, (uint16_t)_455);
   if (_229 >= CONST_N141_IS_511) {
     fn216(data, _217);

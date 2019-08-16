@@ -8,7 +8,7 @@ macro_rules! adversarial {
         use crate::expand_new::expand;
         use crate::do_compress_level;
         use crate::CompressionLevel;
-        use crate::support::LookAheadBitwiseReader;
+        use crate::support::CorrectLookAheadBitwiseReader;
         use std::iter;
 
         let level = CompressionLevel::from_compression_level($level).unwrap();
@@ -25,7 +25,7 @@ macro_rules! adversarial {
         let input_data = iter::repeat(base).take(repeats).flatten().collect::<Vec<_>>();
         let compressed_data = do_compress_level(&input_data, level).unwrap();
 
-        let mut reader = LookAheadBitwiseReader::new(&compressed_data[..]);
+        let mut reader = CorrectLookAheadBitwiseReader::from_reader(&compressed_data[..]);
         let mut writer = Vec::with_capacity(input_data.len());
         expand(&mut reader, &mut writer, level).unwrap();
         assert_eq!(writer, input_data);
@@ -40,4 +40,12 @@ adversarial! {
   simple_really_long(0, (0..128), 1024);
   simple_really_really_long(0, (0..=255), 1024);
   repetitive(0, vec![1; 50], 1024);
+}
+
+match_sys_test_data! {
+  sample => (
+    // in=
+    hex!("00 03 20 04 3F F0 1A E7  C0 02")
+    // out=hex!("1A 1A")
+  ),
 }

@@ -51,7 +51,7 @@ macro_rules! _bytes_to_human_hex {
         format!(
           "{:01$X}",
           b,
-          (b.count_zeros() + b.count_ones()) as usize / 8
+          (b.count_zeros() + b.count_ones()) as usize / 4
         )
       })
       .collect::<Vec<_>>();

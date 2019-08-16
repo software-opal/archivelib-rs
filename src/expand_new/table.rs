@@ -1,5 +1,3 @@
-// [0x00, 0x03,
-//
 // // Bits lookup
 // self.dat_arr240
 // // consumed bits lookup(dat_arr180[dat_arr240[x]])
@@ -14,7 +12,8 @@
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
 use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
-use crate::support::LookAheadBitwiseRead;
+use crate::support::CorrectLookAheadBitwiseRead;
+// use crate::support::LookAheadBitwiseRead;
 use std::io;
 
 #[derive(Debug)]
@@ -57,7 +56,7 @@ impl LookupTables {
   }
   pub fn generate(
     &mut self,
-    reader: &mut impl LookAheadBitwiseRead,
+    reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
     self.generate_run_offset_lookup(reader, true)?;
     self.generate_bit_lookup(reader)?;
@@ -66,7 +65,7 @@ impl LookupTables {
   }
   pub fn generate_run_offset_lookup(
     &mut self,
-    reader: &mut impl LookAheadBitwiseRead,
+    reader: &mut impl CorrectLookAheadBitwiseRead,
     do_pad_length: bool,
   ) -> Result<(), LookupTableGenerationError> {
     let bits_to_load: usize = reader.consume(5)?;
@@ -122,7 +121,7 @@ impl LookupTables {
 
   pub fn generate_bit_lookup(
     &mut self,
-    reader: &mut impl LookAheadBitwiseRead,
+    reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
     let bits_to_load: usize = reader.consume(9)?;
     if bits_to_load == 0 {
@@ -184,12 +183,12 @@ impl LookupTables {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::LookAheadBitwiseReader;
+  use crate::support::CorrectLookAheadBitwiseReader;
 
   #[test]
   fn base_data_seperated_calls() {
     let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
-    let mut reader = LookAheadBitwiseReader::new(&data[..]);
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
     reader.consume_bits(16).unwrap();
     let mut tables = LookupTables::new();
     tables
@@ -206,7 +205,7 @@ mod tests {
   fn base_data() {
     // Uncompressed data is [0x1A, 0x1A]
     let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
-    let mut reader = LookAheadBitwiseReader::new(&data[..]);
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
     reader.consume_bits(16).unwrap();
     let mut tables = LookupTables::new();
     tables.generate(&mut reader).unwrap();
@@ -214,7 +213,7 @@ mod tests {
     // The generate functon should have read 9.5 bytes(76 bits)
 
     assert_eq!(
-      reader.look_ahead_bits(16).unwrap(),
+      reader.look_ahead_bits_nopad(16).unwrap(),
       vec![false, false, true, false]
     );
     assert_bytes_eq!(tables.bit_lookup, rvec![0x1A => 2048, 0x1FE => 2048]);
@@ -254,7 +253,7 @@ mod tests {
       0x54, 0xE2, 0x1A, 0xA6, 0xEB, 0xEA, 0xD3, 0x1D, 0x43, 0x8E, 0xD5, 0xC4, 0x5A, 0x7F, 0x85,
       0xFF, 0xB0,
     ];
-    let mut reader = LookAheadBitwiseReader::new(&data[..]);
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
     reader.consume_bits(16).unwrap();
     let mut tables = LookupTables::new();
     tables
@@ -308,7 +307,7 @@ mod tests {
       0x54, 0xE2, 0x1A, 0xA6, 0xEB, 0xEA, 0xD3, 0x1D, 0x43, 0x8E, 0xD5, 0xC4, 0x5A, 0x7F, 0x85,
       0xFF, 0xB0,
     ];
-    let mut reader = LookAheadBitwiseReader::new(&data[..]);
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
     reader.consume_bits(16).unwrap();
     let mut tables = LookupTables::new();
     tables.generate(&mut reader).unwrap();

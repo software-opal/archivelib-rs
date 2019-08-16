@@ -81,14 +81,6 @@ impl<I: ToBits> ToBits for &[I] {
   }
 }
 
-pub fn get_bitmask(bits: usize) -> u128 {
-  if bits == 128 {
-    u128::max_value()
-  } else {
-    (1u128 << bits) - 1
-  }
-}
-
 #[cfg(test)]
 mod tests {
   use super::*;

@@ -1,11 +1,11 @@
 use crate::compress::RCompressData;
-use crate::support::ExactCallWriter;
+use crate::support::ExpectedCallWriter;
 
 #[test]
 pub fn test_embroidermodder_hus_stitch_attrs() {
   use crate::test::fixed::real_world::embroidermodder_hus::stitch_attrs::get_uncompressed;
   let input = get_uncompressed();
-  let output = ExactCallWriter::from_vec(vec![
+  let output = ExpectedCallWriter::from_vec(vec![
     (24, 16),
     (8, 5),
     (0, 3),

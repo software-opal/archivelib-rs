@@ -65,19 +65,8 @@ fn main() {
     .define("AL_CUSTOM", None)
     .define("AL_SYMANTEC", None) // This is needed to compile on OSX
     .include("c-lib/")
-    .include("c-lib/include");
-  let mut c_build = base.clone();
-  let mut cpp_build = base.clone();
-
-  for file in files {
-    match file.extension().unwrap().to_str().unwrap() {
-      "c" => cpp_build.file(file),
-      "cpp" => cpp_build.file(file),
-      _ => unreachable!(),
-    };
-  }
-  c_build.compile("archivelib2_c");
-  cpp_build
+    .include("c-lib/include")
+    .files(files)
     .cpp(true)
     .file("c-lib/api.cpp")
     .file("c-lib/enum_rev.cpp")
