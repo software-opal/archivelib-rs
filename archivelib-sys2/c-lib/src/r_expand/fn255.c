@@ -8,6 +8,7 @@ void fn255(RExpandData *data) {
   int16_t run_start226, byte_or_run_length203, bits_to_load219;
   uint16_t _283;
   bits_to_load219 = get_bits(data, CONST_N143_IS_9);
+  printf("fn255 -- %i\n", bits_to_load219);
   if (bits_to_load219 == 0) {
     byte_or_run_length203 = get_bits(data, CONST_N143_IS_9);
     for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++) {

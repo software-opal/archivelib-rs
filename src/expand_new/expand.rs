@@ -17,7 +17,7 @@ pub enum ExpandError {
   IOError(io::Error),
   BinaryTreeError(BinaryTreeInvariantError),
   InvariantFailue,
-  FileExhausted,
+  // FileExhausted,
 }
 impl From<io::Error> for ExpandError {
   fn from(error: io::Error) -> Self {
@@ -68,7 +68,6 @@ impl ExpandData {
     if self.items_until_next_header == 0 {
       // Replicate the undefined behavior from the C version
       self.items_until_next_header = u16::max_value().try_into().unwrap();
-    // return Err(ExpandError::FileExhausted);
     } else {
       self.items_until_next_header -= 1;
     }

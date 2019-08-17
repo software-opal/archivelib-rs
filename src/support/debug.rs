@@ -45,10 +45,18 @@ macro_rules! check_rust_against_sys_decompress {
             Err(err) => {
               match msg.as_str() {
                 "BinaryTreeError(Type1)" => {
-                  assert_eq!(err, "Internal error: -101\0")
+                  if err.ends_with("Internal 1 error in Greenleaf Decompression routine\u{0}") {}
+                  else if err == "Internal error: -101\0" {}
+                  else {
+                    panic!("Rust library failed with {:?}; but system library failed with a different error {:?}", msg, err)
+                  }
                 },
                 "BinaryTreeError(Type2)" => {
-                  assert_eq!(err, "Internal error: -102\0")
+                  if err.ends_with("Internal 2 error in Greenleaf Decompression routine\u{0}") {}
+                  else if err == "Internal error: -102\0" {}
+                  else {
+                    panic!("Rust library failed with {:?}; but system library failed with a different error {:?}", msg, err)
+                  }
                 },
                 "FileExhausted" => {
                   unimplemented!("File exhausted!");

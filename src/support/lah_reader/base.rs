@@ -94,7 +94,6 @@ impl<R: std::io::Read> LookAheadBitwiseRead for LookAheadBitwiseReader<R> {
       ..self.buffer.len()
     };
     let data = self.buffer.drain(range).collect();
-    // println!("Consume {}: {:?}", bits, data);
     Ok(data)
   }
   fn look_ahead_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {

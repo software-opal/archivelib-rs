@@ -30,10 +30,7 @@ int32_t Expand(RExpandData *data) {
   read_bits(data, 2 * CHAR_BIT);
 
   while (data->error_counter243 < 5) {
-    printf("Counter = %i\n", data->error_counter243);
     byte_or_run_length203 = get_next_item(data);
-    printf("byte_or_run_length203 = %i / %i\n", byte_or_run_length203,
-           data->error_counter243);
     assert(byte_or_run_length203 <= 0x1FE);
     if (byte_or_run_length203 <= UCHAR_MAX) {
       // byte_or_run_length203 is the decompressed byte
@@ -80,8 +77,6 @@ int32_t Expand(RExpandData *data) {
         }
       }
     }
-    printf("byte_or_run_length203 = %i / %i\n", byte_or_run_length203,
-           data->error_counter243);
   }
   DE;
   if (buffer_pos != 0) {

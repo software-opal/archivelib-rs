@@ -1,4 +1,5 @@
 [package]
+# name = "archivelib-sys_a"
 name = "archivelib-sys"
 build = "build.rs"
 version = "0.1.0"

@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 archivelib = { version = "0.1.2", path = "../" , features=["new_impl"]}
+# archivelib-sys = { version = "0.1.0", path = "../archivelib-sys" }
 archivelib-sys = { version = "0.1.0", path = "../archivelib-sys2" }
 
 afl = { version = "*", optional = true }

@@ -1,4 +1,6 @@
 #[macro_use]
+mod int_conv;
+#[macro_use]
 mod debug;
 
 mod bit_iter;

@@ -15,6 +15,7 @@ features = ["new_impl"]
 git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
 
 [dependencies.archivelib-sys]
+# path = "../archivelib-sys"
 path = "../archivelib-sys2"
 
 [[bin]]

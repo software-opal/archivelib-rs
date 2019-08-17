@@ -11,7 +11,7 @@
 // // Binary tree(ish) pair. No test cases. No worries.
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::io;
 
 use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
@@ -59,6 +59,7 @@ impl LookupTables {
     &mut self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
+    // get_next_item
     self.generate_run_offset_lookup(reader, true)?;
     self.generate_bit_lookup(reader)?;
     self.generate_run_offset_lookup(reader, false)?;
@@ -70,6 +71,7 @@ impl LookupTables {
     reader: &mut impl CorrectLookAheadBitwiseRead,
     do_pad_length: bool,
   ) -> Result<(), LookupTableGenerationError> {
+    // fn253
     let bits_to_load: usize = reader.consume(5)?;
     if bits_to_load == 0 {
       let offset_const = reader.consume(5)?;
@@ -110,6 +112,7 @@ impl LookupTables {
         i += 1;
       }
       // let limit = if do_pad_length { 19 } else { 15 };
+      println!("Generate Tree ROL");
       generate_binary_tree(
         8,
         &mut self.run_offset_lookup,
@@ -124,7 +127,9 @@ impl LookupTables {
     &mut self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
+    // fn255
     let bits_to_load: usize = reader.consume(9)?;
+    println!("BL -- {:?}", bits_to_load);
     if bits_to_load == 0 {
       let offset_const = reader.consume(9)?;
       for e in self.bit_lookup.iter_mut() {
@@ -170,6 +175,7 @@ impl LookupTables {
       for v in self.bit_lookup_len[i..].iter_mut() {
         *v = 0;
       }
+      println!("Generate Tree BL");
       generate_binary_tree(
         12,
         &mut self.bit_lookup,

@@ -12,15 +12,24 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
 
   memset(_277, 0, 17 * sizeof(uint16_t));
   memset(lookup_table287, 0, 17 * sizeof(uint16_t));
-  memset(lookup_table288, 0, 17 * sizeof(uint16_t));
+  memset(lookup_table288, 0, 18 * sizeof(uint16_t));
 
+  std::cout << "arg_arr260: ";
+  WRITE_ARRAY_CONTENT(std::cout, arg_arr260, arg_arr260_len);
+  std::cout << "\n";
   for (i = 0; i < arg_arr260_len; i++) {
     _277[arg_arr260[i]]++;
   }
+  std::cout << "_277: ";
+  WRITE_ARRAY_CONTENT(std::cout, _277, 17);
+  std::cout << "\n";
   for (i = 1; i < 17; i++) {
     // This wraps around to 0.
     lookup_table288[i + 1] = lookup_table288[i] + (_277[i] << (16 - i));
   }
+  std::cout << "lookup_table287: ";
+  WRITE_ARRAY_CONTENT(std::cout, lookup_table287, 17);
+  std::cout << "\n";
   if (lookup_table288[17] != 0) {
     printf("Lookup table wrong\n");
     data->error = -101;
