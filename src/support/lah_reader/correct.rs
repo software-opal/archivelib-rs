@@ -2,12 +2,13 @@ use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
   fn is_eof(&self) -> bool;
+  fn eof_bits(&self) -> usize;
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
   fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
 }
 pub struct CorrectLookAheadBitwiseReader<R: LookAheadBitwiseRead> {
   reader: R,
-  is_eof: bool,
+  eof_bits: usize,
   buffer: [bool; 16],
 }
 
@@ -15,7 +16,7 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
   pub fn new(reader: R) -> Self {
     CorrectLookAheadBitwiseReader {
       reader,
-      is_eof: false,
+      eof_bits: 0,
       buffer: [false; 16],
     }
   }
@@ -43,11 +44,7 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
 
 impl<I: std::io::Read> CorrectLookAheadBitwiseReader<LookAheadBitwiseReader<I>> {
   pub fn from_reader(reader: I) -> Self {
-    CorrectLookAheadBitwiseReader {
-      reader: LookAheadBitwiseReader::new(reader),
-      is_eof: false,
-      buffer: [false; 16],
-    }
+    CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(reader))
   }
 }
 
@@ -59,7 +56,10 @@ impl<R: LookAheadBitwiseRead> From<R> for CorrectLookAheadBitwiseReader<R> {
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
   fn is_eof(&self) -> bool {
-    self.is_eof
+    self.eof_bits > 0
+  }
+  fn eof_bits(&self) -> usize {
+    self.eof_bits
   }
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     if bits == 0 {
@@ -84,8 +84,9 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
 impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
   fn consume_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     let mut consumed = self.consume_bits_nopad(bits)?;
+    assert!(consumed.len() <= bits);
     if bits != consumed.len() {
-      self.is_eof = true;
+      self.eof_bits += bits - consumed.len();
       let to_shift = self.pad_buffer(bits, &mut consumed);
       self.buffer.rotate_left(to_shift);
     }
@@ -152,7 +153,7 @@ mod tests {
         counter <= 256 * 8,
         "Counter: {:#X}; EOF: {:?}",
         counter,
-        reader.is_eof
+        reader.eof_bits()
       );
       assert_eq!(
         reader.look_ahead::<bool>(1).unwrap(),
@@ -160,7 +161,8 @@ mod tests {
       );
       counter += 1;
     }
-    assert!(counter == (256 * 8) + 1);
+    assert_eq!(counter, (256 * 8) + 1);
+    assert_eq!(reader.eof_bits(), 1);
     assert_eq!(reader.look_ahead::<u16>(15).unwrap(), 0b111_1110__1111_1111);
   }
 }

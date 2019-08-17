@@ -1,9 +1,10 @@
-use super::bish_tree::BinaryTreeInvariantError;
-use super::table::{LookupTableGenerationError, LookupTables};
-use crate::support::CorrectLookAheadBitwiseRead;
+use std::convert::TryInto;
 use std::io;
 
+use super::bish_tree::BinaryTreeInvariantError;
+use super::table::{LookupTableGenerationError, LookupTables};
 use crate::level::CompressionLevel;
+use crate::support::CorrectLookAheadBitwiseRead;
 
 const EOF_FLAG: u16 = 0x1FE;
 const U8_MAX: u16 = 0xFF;
@@ -63,9 +64,12 @@ impl ExpandData {
       None => unreachable!(),
     };
     if self.items_until_next_header == 0 {
-      return Err(ExpandError::FileExhausted);
+      // Replicate the undefined behavior from the C version
+      self.items_until_next_header = u16::max_value().try_into().unwrap();
+    // return Err(ExpandError::FileExhausted);
+    } else {
+      self.items_until_next_header -= 1;
     }
-    self.items_until_next_header -= 1;
     let mut run_length = table.bit_lookup[reader.look_ahead::<usize>(12)?];
     // run_length <= 0xFF are the uncompressed bits.
     // 0x100 <= run_length < 0x1FE are runs (run_length - 0x100 + 3) bits long.
@@ -122,15 +126,6 @@ impl ExpandData {
   }
 }
 
-// pub fn do_expand_level(data: &[u8], level: CompressionLevel) -> Result<Box<[u8]>, ExpandError> {
-//   use crate::support::CorrectLookAheadBitwiseReader;
-//
-//   let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
-//   let mut writer = Vec::with_capacity(level.buffer_size());
-//   expand(&mut reader, &mut writer, level)?;
-//   Ok(writer.into_boxed_slice())
-// }
-
 pub fn expand(
   reader: &mut impl CorrectLookAheadBitwiseRead,
   writer: &mut impl io::Write,
@@ -141,7 +136,7 @@ pub fn expand(
   let mut expand_data = ExpandData::new();
 
   // While we have something to read; or we are expecting more items.
-  while !reader.look_ahead_bits(1)?.is_empty() || expand_data.items_until_next_header > 0 {
+  while reader.eof_bits() < (5 * 8) {
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;
