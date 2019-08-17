@@ -11,6 +11,7 @@ void fn224(RCompressData *data, uint16_t _204) {
   }
   write_bits_to_buffer(data, data->dat_arr181[byte_or_run_length203],
                        data->dat_arr194[byte_or_run_length203]);
-  if (byte_or_run_length203 > 1)
+  if (byte_or_run_length203 > 1) {
     write_bits_to_buffer(data, byte_or_run_length203 - 1, _204);
+  }
 }

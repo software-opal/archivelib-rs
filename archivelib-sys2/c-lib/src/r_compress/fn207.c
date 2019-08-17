@@ -39,23 +39,28 @@ void fn207(RCompressData *data) {
   }
   _454 = 0;
   for (run_start226 = 0; run_start226 < _455; run_start226++) {
-    if (run_start226 % CHAR_BIT == 0)
+    if (run_start226 % CHAR_BIT == 0) {
       _456 = data->dat_arr165[_454++];
-    else
+    } else {
       _456 <<= 1;
+    }
     if (_456 & (1U << (CHAR_BIT - 1))) {
       write_stored_bits_to_buffer(
           data, (int16_t)(data->dat_arr165[_454++] + (1U << CHAR_BIT)));
       _289 = data->dat_arr165[_454++];
       _289 += data->dat_arr165[_454++] << CHAR_BIT;
       fn224(data, (int16_t)_289);
-    } else
+    } else {
       write_stored_bits_to_buffer(data, data->dat_arr165[_454++]);
-    if (data->uncompressible)
+    }
+    if (data->uncompressible) {
       return;
+    }
   }
-  for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++)
+  for (run_start226 = 0; run_start226 < CONST_N141_IS_511; run_start226++) {
     data->dat_arr191[run_start226] = 0;
-  for (run_start226 = 0; run_start226 < CONST_N142_IS_15; run_start226++)
+  }
+  for (run_start226 = 0; run_start226 < CONST_N142_IS_15; run_start226++) {
     data->dat_arr193[run_start226] = 0;
+  }
 }

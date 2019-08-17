@@ -54,8 +54,9 @@ void write_bits_to_buffer(RCompressData *data, int32_t bit_count209,
 }
 
 void finalise_compresson197(RCompressData *data) {
-  if (!data->uncompressible)
+  if (!data->uncompressible) {
     fn207(data);
+  }
   finalize_buffer206(data);
   data->dat183_IS_CONST_8162 = 0;
   data->array165_counter = 0;

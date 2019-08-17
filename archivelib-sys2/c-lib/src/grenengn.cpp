@@ -58,16 +58,18 @@ SimpleStatus al_compress(ALGreenleafCompressionLevels compression_level,
 
   RCompress rc(input, output, compression_level, fail_uncompressible);
 
-  if (rc.mStatus < 0)
+  if (rc.mStatus < 0) {
     return rc.mStatus.copyToSimple();
+  }
 
   Compress(rc.data);
-  if (rc.mStatus < 0)
+  if (rc.mStatus < 0) {
     return rc.mStatus.copyToSimple();
-  else if (input.mStatus < 0)
+  } else if (input.mStatus < 0) {
     return input.mStatus.copyToSimple();
-  else if (output.mStatus < 0)
+  } else if (output.mStatus < 0) {
     return output.mStatus.copyToSimple();
+  }
   return SIMPLE_STATUS_SUCCESS();
 }
 
@@ -125,8 +127,9 @@ SimpleStatus al_decompress(ALGreenleafCompressionLevels compression_level,
 
   RExpand re(input, output, compressed_length, compression_level + 10);
 
-  if (re.mStatus < 0)
+  if (re.mStatus < 0) {
     return re.mStatus.copyToSimple();
+  }
   Expand(re.data);
   if (re.data->error != 0) {
     re.mStatus.SetError(AL_INTERNAL_ERROR, "Internal error: %i",

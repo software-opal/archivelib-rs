@@ -87,8 +87,9 @@ ALStorage::ALStorage(size_t size) : muBufferSize(size) {
 //
 
 ALStorage::~ALStorage() {
-  if (mpcBuffer)
+  if (mpcBuffer) {
     Close();
+  }
 }
 
 //
@@ -123,17 +124,20 @@ ALStorage::~ALStorage() {
 //
 
 int ALStorage::Open() {
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
-  if (muBufferSize != 0)
+  }
+  if (muBufferSize != 0) {
     mpcBuffer = new uint8_t[muBufferSize];
+  }
   muBufferValidData = 0;
   muWriteIndex = 0;
   muReadIndex = 0;
   mlFilePointer = 0;
-  if (mpcBuffer == 0)
+  if (mpcBuffer == 0) {
     return mStatus.SetError(AL_CANT_OPEN_BUFFER,
                             "Allocation of buffer failed in Open()");
+  }
   return AL_SUCCESS;
 }
 
@@ -178,17 +182,19 @@ int ALStorage::Open() {
 //                         file.
 //
 int ALStorage::Create() {
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
+  }
   mpcBuffer = new uint8_t[muBufferSize];
   muBufferValidData = 0;
   muWriteIndex = 0;
   muReadIndex = 0;
   mlFilePointer = 0;
   mlSize = 0; // If the file has been opened previous, mlSize might be non-zero
-  if (mpcBuffer == 0)
+  if (mpcBuffer == 0) {
     return mStatus.SetError(AL_CANT_OPEN_BUFFER,
                             "Allocation of buffer failed in Open()");
+  }
   return AL_SUCCESS;
 }
 
@@ -260,8 +266,9 @@ size_t ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
   while (bytes_left_to_read) {
     buffer_bytes_available = muBufferValidData - muReadIndex;
     if (buffer_bytes_available == 0) {
-      if (LoadBuffer(mlFilePointer) < 0)
+      if (LoadBuffer(mlFilePointer) < 0) {
         return length - bytes_left_to_read;
+      }
       buffer_bytes_available = muBufferValidData;
     }
     if (bytes_left_to_read <= buffer_bytes_available) {
@@ -273,8 +280,9 @@ size_t ALStorage::ReadBuffer(uint8_t *buf, size_t length) {
       buf += buffer_bytes_available;
       bytes_left_to_read -= buffer_bytes_available;
       muReadIndex += buffer_bytes_available;
-      if (LoadBuffer(mlFilePointer) < 0)
+      if (LoadBuffer(mlFilePointer) < 0) {
         return length - bytes_left_to_read;
+      }
     }
   }
   return length;
@@ -316,13 +324,15 @@ size_t ALStorage::WriteBuffer(uint8_t *buf, size_t length) {
   size_t buffer_bytes_free;
   size_t write_bytes_left = length;
 
-  if (mStatus < 0)
+  if (mStatus < 0) {
     return 0;
+  }
   while (write_bytes_left > 0) {
     buffer_bytes_free = muBufferSize - muWriteIndex;
     if (buffer_bytes_free == 0) {
-      if (FlushBuffer() < 0)
+      if (FlushBuffer() < 0) {
         return length - write_bytes_left;
+      }
       buffer_bytes_free = muBufferSize;
     }
     if (write_bytes_left <= buffer_bytes_free) {
@@ -334,8 +344,9 @@ size_t ALStorage::WriteBuffer(uint8_t *buf, size_t length) {
       muWriteIndex += buffer_bytes_free;
       buf += buffer_bytes_free;
       write_bytes_left -= buffer_bytes_free;
-      if (FlushBuffer() < 0)
+      if (FlushBuffer() < 0) {
         return length - write_bytes_left;
+      }
     }
   }
   return length;
@@ -368,8 +379,9 @@ size_t ALStorage::WriteBuffer(uint8_t *buf, size_t length) {
 //
 
 long ALStorage::Tell() {
-  if (muWriteIndex)
+  if (muWriteIndex) {
     return mlFilePointer + muWriteIndex;
-  else
+  } else {
     return mlFilePointer - muBufferValidData + muReadIndex;
+  }
 }

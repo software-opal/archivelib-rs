@@ -17,8 +17,9 @@ uint16_t get_next_item(RExpandData *data) {
     fn255(data);
     fn253(data, CONST_N142_IS_15, CONST_N540_IS_5, -1);
     DE;
-    if (data->error)
+    if (data->error) {
       return 0;
+    }
   }
   if (data->items_until_next_header == 0) {
     // printf("No items until next header!? -- %i\n", (uint16_t)
@@ -35,10 +36,11 @@ uint16_t get_next_item(RExpandData *data) {
     // No test cases exercise this condition.
     _283 = 1U << 3;
     do {
-      if (data->bits182 & _283)
+      if (data->bits182 & _283) {
         run_length276 = data->dat_arr190[run_length276];
-      else
+      } else {
         run_length276 = data->dat_arr189[run_length276];
+      }
       _283 >>= 1;
     } while (run_length276 >= CONST_N141_IS_511);
   }

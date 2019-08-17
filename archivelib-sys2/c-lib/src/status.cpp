@@ -54,8 +54,9 @@ ALStatus::ALStatus() : miStatusDetailLength(129) {
 //
 
 ALStatus::~ALStatus() {
-  if (mszStatusDetail)
+  if (mszStatusDetail) {
     delete[] mszStatusDetail;
+  }
 }
 
 //
@@ -102,15 +103,17 @@ int ALStatus::SetError(int error, const char *fmt, ...) {
 
   miStatus = error;
   if (fmt == 0) {
-    if (mszStatusDetail)
+    if (mszStatusDetail) {
       delete[] mszStatusDetail;
+    }
     mszStatusDetail = 0;
   } else {
     va_start(argptr, fmt);
     vsprintf(detail, fmt, argptr);
     va_end(argptr);
-    if (mszStatusDetail == 0)
+    if (mszStatusDetail == 0) {
       mszStatusDetail = new char[miStatusDetailLength];
+    }
     if (mszStatusDetail) {
       strncpy(mszStatusDetail, detail, miStatusDetailLength - 1);
       mszStatusDetail[miStatusDetailLength - 1] = '\0';
@@ -241,12 +244,13 @@ const char *ALStatus::GetStatusString() {
 //
 
 const char *ALStatus::GetStatusDetail() const {
-  if (mszStatusDetail)
+  if (mszStatusDetail) {
     return mszStatusDetail;
-  else if (miStatus == AL_SUCCESS)
+  } else if (miStatus == AL_SUCCESS) {
     return "No errors";
-  else
+  } else {
     return "Unable to allocate memory for error detail message";
+  }
 }
 
 //
@@ -279,10 +283,12 @@ ALStatus &ALStatus::operator=(ALStatus &rhs) {
       mszStatusDetail = 0;
     }
   } else {
-    if (mszStatusDetail == 0)
+    if (mszStatusDetail == 0) {
       mszStatusDetail = new char[miStatusDetailLength];
-    if (mszStatusDetail)
+    }
+    if (mszStatusDetail) {
       strcpy(mszStatusDetail, rhs.mszStatusDetail);
+    }
   }
   miStatus = rhs.miStatus;
   return *this;

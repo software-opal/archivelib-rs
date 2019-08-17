@@ -39,8 +39,9 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
   i = lookup_table288[bit_size261 + 1] >> rem_bit_size291;
   if (i != (uint16_t)(1U << 16)) {
     _289 = 1U << bit_size261;
-    while (i != _289)
+    while (i != _289) {
       output_table262[i++] = 0;
+    }
   }
   _292 = arg_arr260_len;
   _283 = 1U << (15 - bit_size261);
@@ -59,8 +60,9 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
         data->error_counter243 = 10;
         return;
       }
-      for (i = lookup_table288[item209]; i < tmp293; i++)
+      for (i = lookup_table288[item209]; i < tmp293; i++) {
         output_table262[i] = (uint16_t)j;
+      }
     } else {
       _289 = lookup_table288[item209];
       _204 = &output_table262[_289 >> rem_bit_size291];
@@ -70,10 +72,11 @@ void fn258(RExpandData *data, int32_t arg_arr260_len, uint8_t *arg_arr260,
           data->dat_arr190[_292] = data->dat_arr189[_292] = 0;
           *_204 = (uint16_t)_292++;
         }
-        if (_289 & _283)
+        if (_289 & _283) {
           _204 = &data->dat_arr190[*_204];
-        else
+        } else {
           _204 = &data->dat_arr189[*_204];
+        }
         _289 <<= 1;
         i--;
       }

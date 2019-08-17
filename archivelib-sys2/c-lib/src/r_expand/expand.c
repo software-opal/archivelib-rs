@@ -41,8 +41,9 @@ int32_t Expand(RExpandData *data) {
       if (((size_t)++buffer_pos) >= max_size279) {
         buffer_pos = 0;
         if (ALStorage_WriteBuffer(data->output_store, l_uncompressed_buffer278,
-                                  max_size279) != max_size279)
+                                  max_size279) != max_size279) {
           return false;
+        }
       }
     } else {
       // Copy the run of `run_length276` bytes from earlier in the output.
@@ -71,8 +72,9 @@ int32_t Expand(RExpandData *data) {
             buffer_pos = 0;
             if (ALStorage_WriteBuffer(data->output_store,
                                       l_uncompressed_buffer278,
-                                      max_size279) != max_size279)
+                                      max_size279) != max_size279) {
               return false;
+            }
           }
           run_start226 = (int16_t)((run_start226 + 1) & size_bitmask280);
         }
@@ -82,9 +84,10 @@ int32_t Expand(RExpandData *data) {
            data->error_counter243);
   }
   DE;
-  if (buffer_pos != 0)
+  if (buffer_pos != 0) {
     ALStorage_WriteBuffer(data->output_store, l_uncompressed_buffer278,
                           buffer_pos);
+  }
 
   return true;
 }

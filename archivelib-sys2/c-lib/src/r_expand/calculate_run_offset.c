@@ -6,10 +6,11 @@ uint16_t calculate_run_offset(RExpandData *data) {
   if (run_length276 >= CONST_N142_IS_15) {
     _283 = 1U << 7;
     do {
-      if (data->bits182 & _283)
+      if (data->bits182 & _283) {
         run_length276 = data->dat_arr190[run_length276];
-      else
+      } else {
         run_length276 = data->dat_arr189[run_length276];
+      }
       _283 >>= 1;
     } while (run_length276 >= CONST_N142_IS_15);
   }

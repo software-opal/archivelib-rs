@@ -133,18 +133,21 @@ ALMemory::~ALMemory() {
 //                          muValidData was 0 and muReadIndex was > 0.
 
 int ALMemory::LoadBuffer(long address) {
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
+  }
   if (mlFilePointer != address) {
-    if (mlFilePointer > (long)muUserBufferSize)
+    if (mlFilePointer > (long)muUserBufferSize) {
       return mStatus.SetError(AL_SEEK_ERROR, "Attempt to read past end of the "
                                              "buffer in ALMemory");
+    }
   }
   long load = muUserBufferSize - address;
-  if (load > (long)muBufferSize)
+  if (load > (long)muBufferSize) {
     muBufferValidData = muBufferSize;
-  else
+  } else {
     muBufferValidData = (size_t)load;
+  }
   if (muBufferValidData <= 0) {
     muReadIndex = 0;
     return AL_END_OF_FILE;
@@ -216,13 +219,15 @@ int ALMemory::Delete() {
 
 int ALMemory::Seek(long address) {
   FlushBuffer();
-  if (mStatus < 0)
+  if (mStatus < 0) {
     return mStatus;
+  }
 
   if (mlFilePointer != address) {
-    if (address > (long)muUserBufferSize)
+    if (address > (long)muUserBufferSize) {
       return mStatus.SetError(AL_SEEK_ERROR, "Attempt to seek past end of the "
                                              "buffer in ALMemory");
+    }
   }
   mlFilePointer = address;
   return AL_SUCCESS;
@@ -264,20 +269,24 @@ int ALMemory::Seek(long address) {
 //
 
 int ALMemory::GrowUserBuffer(long minimum_new_size) {
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
-  if (mfUserOwnsBuffer)
+  }
+  if (mfUserOwnsBuffer) {
     return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
                             "Attempt to write past the end of a "
                             "user owned buffer for ALMemory");
-  if (minimum_new_size >= 65535L)
+  }
+  if (minimum_new_size >= 65535L) {
     return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
                             "Attempt to allocate a huge buffer "
                             "of %ld bytes for ALMemory",
                             minimum_new_size);
+  }
   long trial_size = muUserBufferSize + MEMORY_BLOCK_BYTES;
-  if (trial_size >= 65000U)
+  if (trial_size >= 65000U) {
     trial_size = 65000U;
+  }
   if (trial_size >= minimum_new_size) {
     uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)trial_size);
     if (new_buf) {
@@ -332,21 +341,25 @@ int ALMemory::GrowUserBuffer(long minimum_new_size) {
 //                          change only.
 //
 int ALMemory::FlushBuffer() {
-  if (mStatus < 0)
+  if (mStatus < 0) {
     return mStatus;
+  }
   //
   // If the write index is 0, we can skip all this stuff, because there
   // is nothing in the buffer to flush out.
   //
   if (muWriteIndex != 0) {
-    if ((long)(muWriteIndex + mlFilePointer) > (long)muUserBufferSize)
-      if (GrowUserBuffer(muWriteIndex + mlFilePointer) < 0)
+    if ((long)(muWriteIndex + mlFilePointer) > (long)muUserBufferSize) {
+      if (GrowUserBuffer(muWriteIndex + mlFilePointer) < 0) {
         return mStatus;
+      }
+    }
     memcpy(mpcUserBuffer + (size_t)mlFilePointer, mpcBuffer, muWriteIndex);
     mlFilePointer += muWriteIndex;
     muWriteIndex = 0;
-    if (mlSize < mlFilePointer)
+    if (mlSize < mlFilePointer) {
       mlSize = mlFilePointer;
+    }
   }
   muReadIndex = 0;
   muBufferValidData = 0;
@@ -386,8 +399,9 @@ int ALMemory::FlushBuffer() {
 //
 
 int ALMemory::Close() {
-  if (mpcBuffer == 0)
+  if (mpcBuffer == 0) {
     return mStatus;
+  }
   FlushBuffer();
   ALStorage::Close();
   //
@@ -400,8 +414,9 @@ int ALMemory::Close() {
       muUserBufferSize = 0;
     } else {
       uint8_t *new_buf = (uint8_t *)realloc(mpcUserBuffer, (size_t)mlSize);
-      if (new_buf)
+      if (new_buf) {
         mpcUserBuffer = new_buf;
+      }
       muUserBufferSize = (size_t)mlSize;
     }
   }
@@ -436,23 +451,27 @@ int ALMemory::Close() {
 
 int ALMemory::Create() {
   ALStorage::Create();
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
-  if (mfUserOwnsBuffer)
+  }
+  if (mfUserOwnsBuffer) {
     return AL_SUCCESS; // If the user supplied the buffer, we take what's
-                       // available
-  if (mpcUserBuffer)
+  }
+  // available
+  if (mpcUserBuffer) {
     return AL_SUCCESS; // If a buffer was already created somewhere down the
-                       // line, we won't do it again.
+  }
+  // line, we won't do it again.
   mpcUserBuffer = (uint8_t *)calloc(MEMORY_BLOCK_BYTES, sizeof(uint8_t));
   muUserBufferSize = MEMORY_BLOCK_BYTES;
-  if (mpcUserBuffer == 0)
+  if (mpcUserBuffer == 0) {
     return mStatus.SetError(AL_CANT_ALLOCATE_MEMORY,
                             "Allocation failure when attempting to "
                             "create a buffer "
                             "of %ld bytes for ALMemory "
                             "in Create()",
                             MEMORY_BLOCK_BYTES);
+  }
   return AL_SUCCESS;
 }
 
@@ -480,12 +499,14 @@ int ALMemory::Create() {
 
 int ALMemory::Open() {
   ALStorage::Open();
-  if (mStatus < AL_SUCCESS)
+  if (mStatus < AL_SUCCESS) {
     return mStatus;
-  if (mpcUserBuffer == 0)
+  }
+  if (mpcUserBuffer == 0) {
     return mStatus.SetError(AL_CANT_OPEN_FILE, "Attempt to open ALMemory "
                                                "with no buffer allocated");
-  else
+  } else {
     mlSize = (long)muUserBufferSize;
+  }
   return AL_SUCCESS;
 }

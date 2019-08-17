@@ -246,15 +246,17 @@ inline int16_t ALStorage::ReadChar() {
       "ReadChar(): Attempt to read while in write mode"); /*Can't read if I've
                                                              done a write!*/
   result = muBufferValidData - muReadIndex;
-  if (result <= 0)
+  if (result <= 0) {
     result = LoadBuffer(mlFilePointer);
+  }
   AL_ASSERT(
       mpcBuffer != 0,
       "ReadChar(): Attempt to read from closed file"); /*Potential disaster*/
-  if (result < 0)
+  if (result < 0) {
     return result;
-  else
+  } else {
     return mpcBuffer[muReadIndex++] & 0xff;
+  }
 }
 
 /*
@@ -292,12 +294,14 @@ inline int ALStorage::WriteChar(uint8_t c) {
   AL_ASSERT(mpcBuffer != 0,
             "WriteChar(): Attempt to write to closed file"); /* Disaster! */
   result = muBufferSize - muWriteIndex;
-  if (result <= 0)
+  if (result <= 0) {
     result = FlushBuffer();
-  if (result < 0)
+  }
+  if (result < 0) {
     return mStatus;
-  else
+  } else {
     return mpcBuffer[muWriteIndex++] = c;
+  }
 }
 
 #endif

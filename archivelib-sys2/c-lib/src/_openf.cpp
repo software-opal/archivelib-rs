@@ -28,8 +28,9 @@
 ALOpenInputFile::ALOpenInputFile(ALStorage &file) {
   mpFile = &file;
   miFileWasOpen = file.IsOpen();
-  if (!miFileWasOpen)
+  if (!miFileWasOpen) {
     file.Open();
+  }
 }
 
 //
@@ -54,8 +55,9 @@ ALOpenInputFile::ALOpenInputFile(ALStorage &file) {
 //
 
 ALOpenInputFile::~ALOpenInputFile() {
-  if (!miFileWasOpen)
+  if (!miFileWasOpen) {
     mpFile->Close();
+  }
 }
 
 //
@@ -84,8 +86,9 @@ ALOpenInputFile::~ALOpenInputFile() {
 ALOpenOutputFile::ALOpenOutputFile(ALStorage &file) {
   mpFile = &file;
   miFileWasOpen = file.IsOpen();
-  if (!miFileWasOpen)
+  if (!miFileWasOpen) {
     file.Create();
+  }
 }
 
 //
@@ -110,8 +113,9 @@ ALOpenOutputFile::ALOpenOutputFile(ALStorage &file) {
 //
 
 ALOpenOutputFile::~ALOpenOutputFile() {
-  if (!miFileWasOpen)
+  if (!miFileWasOpen) {
     mpFile->Close();
+  }
 }
 
 //
