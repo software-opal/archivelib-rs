@@ -7,17 +7,17 @@ use std::io::Write;
 impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn253(&mut self, var254: i16, var220: i16, var221: i16) -> Result<()> {
     let mut var283: u16;
-    let bits_to_load219: i16 = self.get_bits(var220 as i16)? as i16;
+    let bits_to_load219: i16 = self.get_bits(i16::try_from(var220).unwrap())? as i16;
     if bits_to_load219 == 0 {
-      let byte_or_run_length203: i16 = self.get_bits(var220 as i16)? as i16;
+      let byte_or_run_length203: i16 = self.get_bits(i16::try_from(var220).unwrap())? as i16;
       let mut run_start226: i16 = 0;
       while (run_start226) < var254 {
-        self.dat_arr181[run_start226 as usize] = 0 as u8;
+        self.dat_arr181[usize::try_from(run_start226).unwrap()] = 0 as u8;
         run_start226 += 1
       }
       run_start226 = 0 as i16;
       while (run_start226) < 256 {
-        self.dat_arr241[run_start226 as usize] = byte_or_run_length203 as u16;
+        self.dat_arr241[usize::try_from(run_start226).unwrap()] = u16::try_from(byte_or_run_length203).unwrap();
         run_start226 += 1
       }
     } else {
@@ -37,7 +37,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         } else {
           self.read_bits(3)?;
         }
-        self.dat_arr181[run_start226 as usize] = byte_or_run_length203 as u8;
+        self.dat_arr181[usize::try_from(run_start226).unwrap()] = u8::try_from(byte_or_run_length203).unwrap();
         run_start226 += 1;
         if run_start226 != var221 {
           continue;
@@ -46,19 +46,19 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         while byte_or_run_length203 > 0 {
           let fresh1 = run_start226;
           run_start226 += 1;
-          self.dat_arr181[fresh1 as usize] = 0 as u8;
+          self.dat_arr181[usize::try_from(fresh1).unwrap()] = 0 as u8;
           byte_or_run_length203 -= 1
         }
       }
       while (run_start226) < var254 {
-        self.dat_arr181[run_start226 as usize] = 0 as u8;
+        self.dat_arr181[usize::try_from(run_start226).unwrap()] = 0 as u8;
         run_start226 += 1;
       }
       self.fn258(
         Fn258Mode::Fn253,
-        var254 as usize,
+        usize::try_from(var254).unwrap(),
         8,
-        CONST_N149_IS_256 as u16,
+        u16::try_from(CONST_N149_IS_256).unwrap(),
       )?;
     };
     Ok(())
@@ -85,7 +85,7 @@ mod tests {
     test.get_bits(16).unwrap();
 
     test
-      .fn253(CONST_N145_IS_19 as i16, CONST_N147_IS_5 as i16, 3)
+      .fn253(i16::try_from(CONST_N145_IS_19).unwrap(), i16::try_from(CONST_N147_IS_5).unwrap(), 3)
       .unwrap();
 
     let expected_array181 = [

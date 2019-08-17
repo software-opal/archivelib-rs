@@ -3,6 +3,7 @@ mod array_alias;
 
 mod base;
 mod buffer;
+#[allow(clippy::module_inception)]
 mod compress;
 mod fn199;
 mod fn202;

@@ -1,4 +1,5 @@
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
+
 use std::io;
 
 use super::bish_tree::BinaryTreeInvariantError;
@@ -11,6 +12,7 @@ const U8_MAX: u16 = 0xFF;
 const MIN_RUN_LENGTH: u16 = 3;
 
 #[derive(Debug)]
+
 pub enum ExpandError {
   IOError(io::Error),
   BinaryTreeError(BinaryTreeInvariantError),
@@ -19,15 +21,15 @@ pub enum ExpandError {
 }
 impl From<io::Error> for ExpandError {
   fn from(error: io::Error) -> Self {
-    ExpandError::IOError(error)
+    Self::IOError(error)
   }
 }
 impl From<LookupTableGenerationError> for ExpandError {
   fn from(error: LookupTableGenerationError) -> Self {
     match error {
-      LookupTableGenerationError::IOError(e) => ExpandError::IOError(e),
-      LookupTableGenerationError::BinaryTreeError(e) => ExpandError::BinaryTreeError(e),
-      LookupTableGenerationError::InvariantFailue => ExpandError::InvariantFailue,
+      LookupTableGenerationError::IOError(e) => Self::IOError(e),
+      LookupTableGenerationError::BinaryTreeError(e) => Self::BinaryTreeError(e),
+      LookupTableGenerationError::InvariantFailue => Self::InvariantFailue,
     }
   }
 }
@@ -37,7 +39,7 @@ struct ExpandData {
 }
 impl ExpandData {
   pub fn new() -> Self {
-    ExpandData {
+    Self {
       items_until_next_header: 0,
       table: None,
     }
@@ -80,9 +82,9 @@ impl ExpandData {
       let mut skip = 12;
       loop {
         if skip < 16 && reader.look_ahead_skip(skip, 1)? {
-          run_length = table.tree.right[run_length as usize];
+          run_length = table.tree.right[usize::try_from(run_length).unwrap()];
         } else {
-          run_length = table.tree.left[run_length as usize];
+          run_length = table.tree.left[usize::try_from(run_length).unwrap()];
         }
         skip += 1;
         if run_length <= EOF_FLAG {
@@ -90,7 +92,7 @@ impl ExpandData {
         }
       }
     }
-    reader.consume_bits(table.bit_lookup_len[run_length as usize])?;
+    reader.consume_bits(table.bit_lookup_len[usize::try_from(run_length).unwrap()])?;
     Ok(run_length)
   }
   pub fn run_offset(
@@ -104,15 +106,15 @@ impl ExpandData {
     let run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
     // let mut var283 = (1 << 7) as u16;
     // let mut read_offset = 7;
-    while run_length >= 15 {
-      // run_length = if reader.look_ahead_skip(read_offset, 1)? {
-      //   table.tree.right[run_length]
-      // } else {
-      //   table.tree.left[run_length]
-      // } as usize;
-      // read_offset += 1;
-      pending_test!();
-    }
+    // while run_length >= 15 {
+    //   run_length = if reader.look_ahead_skip(read_offset, 1)? {
+    //     table.tree.right[run_length]
+    //   } else {
+    //     table.tree.left[run_length]
+    //   } as usize;
+    //   read_offset += 1;
+    //   pending_test!();
+    // }
     if run_length >= 15 {
       pending_test!("This case is never tested; however it exists in the original code.");
     }
@@ -131,7 +133,7 @@ pub fn expand(
   writer: &mut impl io::Write,
   level: CompressionLevel,
 ) -> Result<(), ExpandError> {
-  let mut buffer = vec![0u8; level.buffer_size()];
+  let mut buffer = vec![0_u8; level.buffer_size()];
   let mut buffer_idx = 0;
   let mut expand_data = ExpandData::new();
 
@@ -141,7 +143,7 @@ pub fn expand(
     if item == EOF_FLAG {
       break;
     } else if item <= U8_MAX {
-      buffer[buffer_idx] = item as u8;
+      buffer[buffer_idx] = item.try_into().unwrap();
       buffer_idx += 1;
       if buffer_idx >= buffer.len() {
         writer.write_all(&buffer[..buffer_idx])?;
@@ -231,7 +233,7 @@ mod tests {
       // Setup initial state
       reader.consume_bits(7).unwrap();
       assert_eq!(
-        0xFF_DCu16,
+        0xFF_DC_u16,
         reader.look_ahead(16).unwrap(),
         "bytes: {:#b}",
         reader.look_ahead::<u16>(16).unwrap()

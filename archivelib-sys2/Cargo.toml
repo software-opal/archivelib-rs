@@ -5,9 +5,14 @@ version = "0.1.0"
 authors = ["Opal Symes <leesdolphin@gmail.com>"]
 edition = "2018"
 
+homepage = "https://github.com/software-opal/archivelib-rs"
+license = "GPL-2.0-only"
+
+include = ["src/**/*", "c-lib/**/*", "Cargo.toml", "build.rs"]
+
 [build-dependencies]
-cc = { version = "1.0", features = ["parallel"] }
-bindgen = "*"
+cc = { version = "1.0.40", features = ["parallel"] }
+bindgen = "0.51.0"
 
 [dev-dependencies]
-rand = "0.5.5"
+rand = "0.7.0"

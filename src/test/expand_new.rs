@@ -35,8 +35,8 @@ macro_rules! adversarial {
 }
 
 adversarial! {
-  simple(0, [0x00u8, 0x00, 0x01, 0x01], 1);
-  simple_long(0, [0x00u8, 0x00, 0x01, 0x01], 1024);
+  simple(0, [0x00_u8, 0x00, 0x01, 0x01], 1);
+  simple_long(0, [0x00_u8, 0x00, 0x01, 0x01], 1024);
   simple_really_long(0, (0..128), 1024);
   simple_really_really_long(0, (0..=255), 1024);
   repetitive(0, vec![1; 50], 1024);

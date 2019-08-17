@@ -11,9 +11,11 @@
 // // Binary tree(ish) pair. No test cases. No worries.
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
+use std::convert::{TryFrom};
+use std::io;
+
 use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
 use crate::support::CorrectLookAheadBitwiseRead;
-use std::io;
 
 #[derive(Debug)]
 pub enum LookupTableGenerationError {
@@ -24,12 +26,12 @@ pub enum LookupTableGenerationError {
 
 impl From<io::Error> for LookupTableGenerationError {
   fn from(error: io::Error) -> Self {
-    LookupTableGenerationError::IOError(error)
+    Self::IOError(error)
   }
 }
 impl From<BinaryTreeInvariantError> for LookupTableGenerationError {
   fn from(error: BinaryTreeInvariantError) -> Self {
-    LookupTableGenerationError::BinaryTreeError(error)
+    Self::BinaryTreeError(error)
   }
 }
 
@@ -62,6 +64,7 @@ impl LookupTables {
     self.generate_run_offset_lookup(reader, false)?;
     Ok(())
   }
+  #[allow(clippy::explicit_iter_loop)]
   pub fn generate_run_offset_lookup(
     &mut self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
@@ -138,16 +141,16 @@ impl LookupTables {
         if idx >= 19 {
           for skip in 8.. {
             idx = if reader.look_ahead_skip(skip, 1)? {
-              self.tree.right[idx as usize]
+              self.tree.right[usize::try_from(idx).unwrap()]
             } else {
-              self.tree.left[idx as usize]
+              self.tree.left[usize::try_from(idx).unwrap()]
             };
             if idx < 19 {
               break;
             }
           }
         }
-        reader.consume_bits(self.run_offset_lookup_len[idx as usize])?;
+        reader.consume_bits(self.run_offset_lookup_len[usize::try_from(idx).unwrap()])?;
         if idx <= 2 {
           idx = match idx {
             0 => 1,
@@ -160,7 +163,7 @@ impl LookupTables {
             i += 1;
           }
         } else {
-          self.bit_lookup_len[i] = (idx as usize) - 2;
+          self.bit_lookup_len[i] = (usize::try_from(idx).unwrap()) - 2;
           i += 1;
         }
       }

@@ -1,3 +1,18 @@
+#![deny(clippy::cargo)]
+#![deny(clippy::fallible_impl_from)]
+#![deny(clippy::restriction::wrong_pub_self_convention)]
+#![deny(clippy::style::assertions_on_constants)]
+#![deny(clippy::style::wrong_self_convention)]
+#![deny(clippy::unseparated_literal_suffix)]
+#![warn(clippy::pedantic)]
+#![allow(clippy::cargo_common_metadata)]
+#![allow(clippy::cognitive_complexity)]
+#![allow(clippy::module_name_repetitions)]
+#![allow(clippy::needless_pass_by_value)]
+#![allow(clippy::non_ascii_literal)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::too_many_lines)]
+
 #[macro_use]
 extern crate failure_derive;
 use failure;
@@ -19,7 +34,6 @@ mod expand_new;
 
 mod compress;
 mod consts;
-
 
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)

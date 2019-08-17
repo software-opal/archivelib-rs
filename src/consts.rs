@@ -11,7 +11,8 @@ pub const CONST_N145_IS_19: usize = (u16::max_value().count_ones() as usize + 3)
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 
 pub const CONST_N153_IS_4096: usize = 4096;
-pub const CONST_N142_IS_15: usize = MAX_COMPRESSION_FACTOR as usize + 1;
+pub const CONST_N153_SUB_1_IS_4095: u16 = 4095; // CONST_N153_IS_4096 - 1
+pub const CONST_N142_IS_15: usize = (MAX_COMPRESSION_FACTOR as usize) + 1;
 pub const CONST_N143_IS_9: usize = 9;
 pub const CONST_N147_IS_5: usize = 5;
 pub const CONST_N154_IS_4: usize = 4;

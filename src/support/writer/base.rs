@@ -1,12 +1,13 @@
+use std::convert::TryInto;
+use std::fmt::Debug;
+
 use crate::support::bit_iter::ToBits;
-use num::ToPrimitive;
 
 pub trait BitwiseWrite {
-  fn write_bits(
-    &mut self,
-    bits: impl ToPrimitive,
-    bit_count: impl ToPrimitive,
-  ) -> std::io::Result<usize>;
+  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<usize>
+  where
+    B: TryInto<u128> + Debug + Copy,
+    L: TryInto<usize> + Debug + Copy;
   fn finalise(&mut self) -> std::io::Result<()>;
 }
 
@@ -17,7 +18,7 @@ pub struct BitwiseWriter<W: std::io::Write> {
 
 impl<W: std::io::Write> BitwiseWriter<W> {
   pub fn new(w: W) -> Self {
-    BitwiseWriter {
+    Self {
       inner: w,
       buffer: Vec::with_capacity(8),
     }
@@ -47,13 +48,19 @@ impl<W: std::io::Write> BitwiseWriter<W> {
 }
 
 impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
-  fn write_bits(
-    &mut self,
-    bits_: impl ToPrimitive,
-    bit_count_: impl ToPrimitive,
-  ) -> std::io::Result<usize> {
-    let bits = bits_.to_u128().unwrap();
-    let bit_count = bit_count_.to_usize().unwrap();
+  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<usize>
+  where
+    B: TryInto<u128> + Debug + Copy,
+    L: TryInto<usize> + Debug + Copy,
+  {
+    let bits = bits
+      .try_into()
+      .map_err(|_| format!("Cannot convert bits({:#X?}) to u128", bits))
+      .unwrap();
+    let bit_count = bit_count
+      .try_into()
+      .map_err(|_| format!("Cannot convert bit_count({:#X?}) to usize", bits))
+      .unwrap();
     if bit_count > 0 {
       let bit_array = bits.to_bits();
       self

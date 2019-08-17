@@ -1,11 +1,13 @@
+use std::convert::{TryFrom};
+use std::fmt;
+use std::io::{Read, Write};
+
 use super::array_alias::ArrayAlias;
 use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096, CONST_N155_IS_8192,
   MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
 };
 use crate::support::{BitwiseWrite, BitwiseWriter};
-use std::fmt;
-use std::io::{Read, Write};
 
 #[allow(dead_code)]
 #[derive(Fail, Debug)]
@@ -31,12 +33,12 @@ pub type Result<R> = std::result::Result<R, CompressError>;
 
 impl From<std::num::TryFromIntError> for CompressError {
   fn from(v: std::num::TryFromIntError) -> Self {
-    CompressError::InvalidIntegerConversion { error: v }
+    Self::InvalidIntegerConversion { error: v }
   }
 }
 impl From<std::io::Error> for CompressError {
   fn from(v: std::io::Error) -> Self {
-    CompressError::IOError { error: v }
+    Self::IOError { error: v }
   }
 }
 array_alias_enum! {
@@ -208,7 +210,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         *v = -1;
       }
 
-      Ok(RCompressData {
+      Ok(Self {
         input_store: reader,
         output_store: writer,
         fail_uncompressible,
@@ -238,7 +240,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat169: 0,
         dat173: 0,
         dat174: 0,
-        // dat183_IS_CONST_8162: CONST_N155_IS_8192 as u16 - ((3 * 8) + 6),
+        // dat183_IS_CONST_8162: u16::try_from(CONST_N155_IS_8192).unwrap() - ((3 * 8) + 6),
         array165_counter: 0,
         bitwise_counter185: 0,
         array165_tmp_counter186: 0,

@@ -129,7 +129,7 @@ mod tests {
   use super::*;
   #[test]
   fn test_bit_reader_correctness() {
-    let input: Vec<u8> = vec![0b11001010, 0b01100110, 0b01111011];
+    let input: Vec<u8> = vec![0b1100_1010, 0b0110_0110, 0b0111_1011];
     let mut reader = BitReader::from(&input[..]);
     assert_eq!(0x00_00, reader.current_bits());
     reader.read_bits(10).unwrap();

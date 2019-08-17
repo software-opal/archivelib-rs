@@ -1,3 +1,5 @@
+
+
 pub trait ArrayAlias<P> {
   type Item;
 
@@ -45,9 +47,9 @@ macro_rules! array_alias_enum {
         fn shift(&mut self, parent: &$parent, delta:isize) -> usize {
             let new_offset = match self {
             $(
-              $name::$key(ref mut idx) => ((*idx as isize) + delta) as usize,
+              $name::$key(ref mut idx) => ((isize::try_from(*idx).unwrap()) + delta) as usize,
             )*
-            $name::Custom(ref mut idx, _) => ((*idx as isize) + delta) as usize,
+            $name::Custom(ref mut idx, _) => ((isize::try_from(*idx).unwrap()) + delta) as usize,
           }
           ; self.set_offset(parent, new_offset)
         }

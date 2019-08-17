@@ -56,7 +56,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     let var283: u32;
     let mut i: usize;
     let mut ij: usize;
-    for i in 0..(arg_arr260_len as usize) {
+    for i in 0..(usize::try_from(arg_arr260_len).unwrap()) {
       var277[arg_arr260[i] as usize] = var277[arg_arr260[i] as usize].wrapping_add(1);
     }
     for i in 1..17 {
@@ -83,12 +83,12 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       while i != var289 {
         let fresh0 = i;
         i = i.wrapping_add(1);
-        output_table262[fresh0 as usize] = 0 as u16
+        output_table262[usize::try_from(fresh0).unwrap()] = 0 as u16
       }
     } else {
       unreachable!("This, in theory, is not a reachable case!");
     }
-    var292 = arg_arr260_len as u32;
+    var292 = u32::try_from(arg_arr260_len).unwrap();
     var283 = 1 << (15 - bit_size261);
     ij = 0;
     while ij < arg_arr260_len {
@@ -97,24 +97,24 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         let tmp293: usize =
           (lookup_table288[item209] as usize) + (lookup_table287[item209] as usize);
         if item209 <= bit_size261 {
-          if tmp293 > max_internal263 as usize {
+          if tmp293 > usize::try_from(max_internal263).unwrap() {
             return Err(InternalError(2));
           } else {
-            i = lookup_table288[item209 as usize] as usize;
+            i = lookup_table288[usize::try_from(item209).unwrap()] as usize;
             while i < tmp293 {
-              output_table262[i] = ij as u16;
+              output_table262[i] = u16::try_from(ij).unwrap();
               i = i.wrapping_add(1)
             }
           }
         } else {
-          let mut var289 = u32::from(lookup_table288[item209 as usize]);
+          let mut var289 = u32::from(lookup_table288[usize::try_from(item209).unwrap()]);
           let mut current_table = Fn258DataTable::OutputTable((var289 >> rem_bit_size291) as usize);
           i = item209.wrapping_sub(bit_size261);
           while i != 0 {
             if data_table!(current_table, output_table262, self) == 0 {
-              self.dat_arr189[var292 as usize] = 0;
-              self.dat_arr190[var292 as usize] = 0;
-              data_table!((current_table, output_table262, self) = var292 as u16);
+              self.dat_arr189[usize::try_from(var292).unwrap()] = 0;
+              self.dat_arr190[usize::try_from(var292).unwrap()] = 0;
+              data_table!((current_table, output_table262, self) = u16::try_from(var292).unwrap());
               var292 = var292.wrapping_add(1);
             }
             if 0 != var289 & var283 {
@@ -127,9 +127,9 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             var289 <<= 1;
             i = i.wrapping_sub(1)
           }
-          data_table!((current_table, output_table262, self) = ij as u16)
+          data_table!((current_table, output_table262, self) = u16::try_from(ij).unwrap())
         }
-        lookup_table288[item209 as usize] = tmp293 as u16
+        lookup_table288[usize::try_from(item209).unwrap()] = u16::try_from(tmp293).unwrap()
       }
       ij = ij.wrapping_add(1)
     }

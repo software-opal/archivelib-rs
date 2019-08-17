@@ -1,29 +1,33 @@
+use std::convert::{TryFrom, TryInto};
+use std::io::Read;
+
 use crate::compress::{RCompressData, Result};
 use crate::consts::{
-  CONST_N153_IS_4096, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3,
+  CONST_N153_SUB_1_IS_4095, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140,
+  MIN_RUN_LENGTH135_IS_3,
 };
 use crate::support::BitwiseWrite;
-use std::io::Read;
 
 const UCHAR_MAX: usize = 255;
 
 fn fn445(arg278: &[u8], buff_pos: usize, arg446: i16) -> i16 {
-  ((arg446 << CONST_N154_IS_4) ^ i16::from(arg278[buff_pos + 2])) & (CONST_N153_IS_4096 as i16 - 1)
+  ((arg446 << CONST_N154_IS_4) ^ i16::from(arg278[buff_pos + 2]))
+    & i16::try_from(CONST_N153_SUB_1_IS_4095).unwrap()
 }
 fn fn447(arg163: &mut [i16], arg164: &mut [i16], buff_pos: usize, arg201: i16) {
-  let local204 = arg163[arg201 as usize];
+  let local204 = arg163[usize::try_from(arg201).unwrap()];
   if local204 != -1 {
-    arg164[local204 as usize] = buff_pos as i16;
+    arg164[usize::try_from(local204).unwrap()] = i16::try_from(buff_pos).unwrap();
   }
-  arg164[buff_pos as usize] = arg201;
-  arg163[buff_pos as usize] = local204;
-  arg163[arg201 as usize] = buff_pos as i16;
+  arg164[usize::try_from(buff_pos).unwrap()] = arg201;
+  arg163[usize::try_from(buff_pos).unwrap()] = local204;
+  arg163[usize::try_from(arg201).unwrap()] = i16::try_from(buff_pos).unwrap();
 }
 fn fn448(arg163: &mut [i16], arg164: &mut [i16], s: usize) {
   let local204 = arg164[s];
   if local204 != -1 {
     arg164[s] = -1;
-    arg163[local204 as usize] = -1;
+    arg163[usize::try_from(local204).unwrap()] = -1;
   }
 }
 
@@ -59,15 +63,19 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     )?;
     let mut s = (var209 & size_bitmask280) as usize;
 
-    self.dat169 = 0 as i16;
-    self.dat168 = 0 as i16;
-    let mut var201 = (((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
-      ^ u16::from(self.uncompressed_buffer[buffer_pos + 1]))
-      & (CONST_N153_IS_4096 as u16 - 1)) as i16;
-    var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+    self.dat169 = i16::try_from(0).unwrap();
+    self.dat168 = i16::try_from(0).unwrap();
+    let mut var201 = i16::try_from(
+      ((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
+        ^ u16::from(self.uncompressed_buffer[buffer_pos + 1]))
+        & CONST_N153_SUB_1_IS_4095,
+    )
+    .unwrap();
+    var201 =
+      fn445(&self.uncompressed_buffer, buffer_pos, var201) + (i16::try_from(max_size279).unwrap());
 
     while var209 > MAX_RUN_LENGTH140 + 4 {
-      self.fn199(buffer_pos as i16, var201);
+      self.fn199(i16::try_from(buffer_pos).unwrap(), var201);
       if (self.dat168) < 3 {
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0)?;
@@ -78,12 +86,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           var201,
         );
         buffer_pos += 1;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201)
+          + (i16::try_from(max_size279).unwrap());
         var209 -= 1;
       } else {
-        var209 -= self.dat168 as usize;
-        let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
-        let a2 = self.dat169 as u16;
+        var209 -= usize::try_from(self.dat168).unwrap();
+        let a1 = (self.dat168 + (i16::try_from(UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3).unwrap()))
+          .try_into()
+          .unwrap();
+        let a2 = self.dat169.try_into().unwrap();
         self.fn202(a1, a2)?;
         loop {
           self.dat168 -= 1;
@@ -97,7 +108,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
             var201,
           );
           buffer_pos += 1;
-          var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
+          var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201)
+            + (i16::try_from(max_size279).unwrap())
         }
       }
     }
@@ -116,17 +128,20 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       var209 += 1
     }
     while var209 > 0 {
-      self.fn199(buffer_pos as i16, var201);
-      if self.dat168 > var209 as i16 {
-        self.dat168 = var209 as i16
+      self.fn199(i16::try_from(buffer_pos).unwrap(), var201);
+      if self.dat168 > i16::try_from(var209).unwrap() {
+        self.dat168 = i16::try_from(var209).unwrap()
       }
       if (self.dat168) < 3 {
-        self.dat168 = 1 as i16;
+        self.dat168 = i16::try_from(1).unwrap();
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0 as u16)?;
       } else {
-        let a1 = (self.dat168 + ((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16;
-        let a2 = self.dat169 as u16;
+        let a1 = u16::try_from(
+          self.dat168 + (i16::try_from(UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3).unwrap()),
+        )
+        .unwrap();
+        let a2 = u16::try_from(self.dat169).unwrap();
         self.fn202(a1, a2)?;
       }
       loop {
@@ -151,7 +166,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           var201,
         );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16)
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201)
+          + (i16::try_from(max_size279).unwrap())
       }
       loop {
         if self.dat168 < 0 {
@@ -165,12 +181,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           var201,
         );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (max_size279 as i16);
+        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201)
+          + (i16::try_from(max_size279).unwrap());
         var209 -= 1;
       }
     }
     self.fn202(
-      (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)) as u16,
+      (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3))
+        .try_into()
+        .unwrap(),
       0,
     )?;
     self.finalise_compresson197()

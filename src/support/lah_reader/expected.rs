@@ -14,7 +14,7 @@ impl ExpectedCallLookAheadBitwiseReader {
     data: impl ToBits,
     consume_calls: &[usize],
   ) -> CorrectLookAheadBitwiseReader<Self> {
-    CorrectLookAheadBitwiseReader::new(ExpectedCallLookAheadBitwiseReader {
+    CorrectLookAheadBitwiseReader::new(Self {
       data: data.to_bits().into_vec(),
       index: 0,
       consume_calls: consume_calls.to_vec(),

@@ -4,7 +4,7 @@ use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn read_bits(&mut self, bits_to_load219: i16) -> Result<()> {
-    self.input_store.read_bits(bits_to_load219 as u8)?;
+    self.input_store.read_bits(u8::try_from(bits_to_load219).unwrap())?;
     self.bits182 = self.input_store.current_bits();
     if self.input_store.is_eof() {
       self.error_counter243 += 1;

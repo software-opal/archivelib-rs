@@ -1,5 +1,7 @@
+use std::convert::TryInto;
+use std::fmt::Debug;
+
 use super::base::BitwiseWrite;
-use num::ToPrimitive;
 
 pub struct ExpectedCallWriter {
   calls: Vec<(u128, usize)>,
@@ -20,13 +22,19 @@ impl ExpectedCallWriter {
   }
 }
 impl BitwiseWrite for ExpectedCallWriter {
-  fn write_bits(
-    &mut self,
-    bits_: impl ToPrimitive,
-    bit_count_: impl ToPrimitive,
-  ) -> std::io::Result<usize> {
-    let bits = bits_.to_u128().unwrap();
-    let bit_count = bit_count_.to_usize().unwrap();
+  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<usize>
+  where
+    B: TryInto<u128> + Debug + Copy,
+    L: TryInto<usize> + Debug + Copy,
+  {
+    let bits = bits
+      .try_into()
+      .map_err(|_| format!("Cannot convert bits({:#X?}) to u128", bits))
+      .unwrap();
+    let bit_count = bit_count
+      .try_into()
+      .map_err(|_| format!("Cannot convert bit_count({:#X?}) to usize", bits))
+      .unwrap();
     assert!(
       !self.calls.is_empty(),
       "Attempting to call write_bits({:X}, {}) when it wasn't expected; Calls expended",

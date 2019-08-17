@@ -9,7 +9,7 @@ pub trait FromBits {
 }
 
 macro_rules! implBitwise {
-  ($type:path) => {
+  ($type:ty) => {
     impl ToBits for $type {
       fn to_bits(&self) -> Box<[bool]> {
         let size = Self::size();
@@ -20,19 +20,34 @@ macro_rules! implBitwise {
         v.into_boxed_slice()
       }
     }
+    #[allow(clippy::use_self)]
     impl FromBits for $type {
       fn size() -> usize {
-        <($type)>::max_value().count_ones() as usize
+        <(Self)>::max_value().count_ones() as usize
       }
       fn from_bits<I>(bits: I) -> Self
       where
         I: IntoIterator<Item = bool>,
       {
-        let mut data: $type = 0;
+        let mut data: Self = 0;
         for bit in bits.into_iter() {
           data = (data << 1) | (if bit { 1 } else { 0 })
         }
         data
+      }
+    }
+  };
+}
+macro_rules! implBitwiseIter {
+  ($type:ty) => {
+    #[allow(clippy::use_self)]
+    impl<I: ToBits> ToBits for $type {
+      fn to_bits(&self) -> Box<[bool]> {
+        self
+          .iter()
+          .flat_map(|v| v.to_bits().into_vec())
+          .collect::<Vec<bool>>()
+          .into_boxed_slice()
       }
     }
   };
@@ -60,26 +75,9 @@ impl FromBits for bool {
     bits.into_iter().next().unwrap_or(false)
   }
 }
-
-impl<I: ToBits> ToBits for Vec<I> {
-  fn to_bits(&self) -> Box<[bool]> {
-    self
-      .iter()
-      .flat_map(|v| v.to_bits().into_vec())
-      .collect::<Vec<_>>()
-      .into_boxed_slice()
-  }
-}
-
-impl<I: ToBits> ToBits for &[I] {
-  fn to_bits(&self) -> Box<[bool]> {
-    self
-      .iter()
-      .flat_map(|v| v.to_bits().into_vec())
-      .collect::<Vec<_>>()
-      .into_boxed_slice()
-  }
-}
+implBitwiseIter!(Vec<I>);
+implBitwiseIter!(&[I]);
+implBitwiseIter!([I]);
 
 #[cfg(test)]
 mod tests {
@@ -88,16 +86,16 @@ mod tests {
   #[test]
   fn test_to_bits() {
     assert_eq!(
-      &0x1u8.to_bits()[..],
+      &0x1_u8.to_bits()[..],
       &[false, false, false, false, false, false, false, true]
     );
-    assert_eq!(&0x0u128.to_bits()[..], &[false; 128][..]);
+    assert_eq!(&0x0_u128.to_bits()[..], &[false; 128][..]);
     assert_eq!(
-      &0xffu8.to_bits()[..],
+      &0xff_u8.to_bits()[..],
       &[true, true, true, true, true, true, true, true]
     );
     assert_eq!(
-      &0xf0u8.to_bits()[..],
+      &0xf0_u8.to_bits()[..],
       &[true, true, true, true, false, false, false, false]
     );
   }

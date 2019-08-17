@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
@@ -14,7 +16,7 @@ pub struct CorrectLookAheadBitwiseReader<R: LookAheadBitwiseRead> {
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
   pub fn new(reader: R) -> Self {
-    CorrectLookAheadBitwiseReader {
+    Self {
       reader,
       eof_bits: 0,
       buffer: [false; 16],
@@ -35,21 +37,22 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
     if buffer.len() < bits {
       let remaining = bits - buffer.len();
       buffer.extend_from_slice(&self.buffer[..remaining]);
-      return remaining;
+      remaining
+    } else {
+      assert_eq!(buffer.len(), bits);
+      0
     }
-    assert_eq!(buffer.len(), bits);
-    return 0;
   }
 }
 
 impl<I: std::io::Read> CorrectLookAheadBitwiseReader<LookAheadBitwiseReader<I>> {
   pub fn from_reader(reader: I) -> Self {
-    CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(reader))
+    Self::new(LookAheadBitwiseReader::new(reader))
   }
 }
 
 impl<R: LookAheadBitwiseRead> From<R> for CorrectLookAheadBitwiseReader<R> {
-  fn from(reader: R) -> CorrectLookAheadBitwiseReader<R> {
+  fn from(reader: R) -> Self {
     Self::new(reader)
   }
 }
@@ -70,7 +73,7 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
     if consumed.len() >= self.buffer.len() {
       let start = consumed.len() - self.buffer.len();
       self.buffer.copy_from_slice(&consumed[start..]);
-    } else if consumed.len() > 0 {
+    } else if !consumed.is_empty() {
       let start = self.buffer.len() - consumed.len();
       self.buffer.rotate_left(consumed.len());
       self.buffer[start..].copy_from_slice(&consumed[..]);
@@ -127,27 +130,27 @@ mod tests {
     let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
 
     assert_eq!(reader.consume_bits(0).unwrap(), vec![]);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000__0011_0000);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000_0011__0011_0000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000_0);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b011__00);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000_0011_0000);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000_0011_0011_0000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_1100);
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b11_000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0__0000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0011__0);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b011_00);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b00__000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0000);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0110);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_1100);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0000);
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0011);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000__0000_0011);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000_0000_0011);
     assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0011_0000);
-    assert_eq!(reader.consume::<u8>(7).unwrap(), 0b0011_000);
-    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0__0000_001);
+    assert_eq!(reader.consume::<u8>(7).unwrap(), 0b001_1000);
+    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0000_0001);
   }
   #[test]
   fn test_eof() {
-    let data = (0..=255u8).collect::<Vec<_>>();
+    let data = (0..=255_u8).collect::<Vec<_>>();
     let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
 
-    let mut counter = 0usize;
+    let mut counter = 0_usize;
     while !reader.is_eof() {
       assert!(
         counter <= 256 * 8,
@@ -163,6 +166,6 @@ mod tests {
     }
     assert_eq!(counter, (256 * 8) + 1);
     assert_eq!(reader.eof_bits(), 1);
-    assert_eq!(reader.look_ahead::<u16>(15).unwrap(), 0b111_1110__1111_1111);
+    assert_eq!(reader.look_ahead::<u16>(15).unwrap(), 0b111_1110_1111_1111);
   }
 }

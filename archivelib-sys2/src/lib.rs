@@ -54,7 +54,7 @@ pub fn do_compress_level(
   unsafe { compress2(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
-    .map_err(|o| o.unwrap_or("".to_string()))
+    .map_err(|o| o.unwrap_or_else(|| "".to_string()))
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
@@ -75,5 +75,5 @@ pub fn do_decompress_level(
   unsafe { decompress2(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
-    .map_err(|o| o.unwrap_or("".to_string()))
+    .map_err(|o| o.unwrap_or_else(|| "".to_string()))
 }

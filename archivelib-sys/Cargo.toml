@@ -12,8 +12,8 @@ license = "GPL-2.0-only"
 include = ["src/**/*", "c-lib/**/*", "Cargo.toml", "build.rs"]
 
 [build-dependencies]
-cc = { version = "1.0", features = ["parallel"] }
-bindgen = "0.47.0"
+cc = { version = "1.0.40", features = ["parallel"] }
+bindgen = "0.51.0"
 
 [dev-dependencies]
-rand = "0.6.1"
+rand = "0.7.0"

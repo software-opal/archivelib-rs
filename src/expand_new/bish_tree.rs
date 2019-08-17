@@ -1,3 +1,5 @@
+use std::convert::{TryFrom, TryInto};
+
 #[derive(Debug)]
 pub enum BinaryTreeInvariantError {
   Type1,
@@ -12,7 +14,7 @@ pub struct BinaryTree {
 
 impl BinaryTree {
   pub fn new(size: usize) -> Self {
-    BinaryTree {
+    Self {
       left: vec![0; size],
       right: vec![0; size],
     }
@@ -84,7 +86,7 @@ pub fn generate_binary_tree(
         .take(temp)
         .skip(lookup_tables.table1[bit_len])
       {
-        *v = i as u16;
+        *v = i.try_into().unwrap();
       }
     } else {
       let mut bit_tmp = lookup_tables.table1[bit_len];
@@ -99,7 +101,7 @@ pub fn generate_binary_tree(
         if out_val == 0 {
           tree.left[tree_index] = 0;
           tree.right[tree_index] = 0;
-          out_val = tree_index as u16;
+          out_val = tree_index.try_into().unwrap();
           match output_is_left {
             None => output[output_index] = out_val,
             Some(true) => tree.left[output_index] = out_val,
@@ -107,7 +109,7 @@ pub fn generate_binary_tree(
           }
           tree_index += 1;
         }
-        output_index = out_val as usize;
+        output_index = usize::try_from(out_val).unwrap();
         if bit_tmp & (1 << (15 - bit_size)) == 0 {
           output_is_left = Some(true);
         } else {
@@ -116,9 +118,9 @@ pub fn generate_binary_tree(
         bit_tmp <<= 1;
       }
       match output_is_left {
-        None => output[output_index] = i as u16,
-        Some(true) => tree.left[output_index] = i as u16,
-        Some(false) => tree.right[output_index] = i as u16,
+        None => output[output_index] = i.try_into().unwrap(),
+        Some(true) => tree.left[output_index] = i.try_into().unwrap(),
+        Some(false) => tree.right[output_index] = i.try_into().unwrap(),
       }
     }
     lookup_tables.table1[bit_len] += lookup_tables.table2[bit_len]

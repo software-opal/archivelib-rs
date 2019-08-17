@@ -58,7 +58,7 @@ pub struct LookAheadBitwiseReader<R: std::io::Read> {
 
 impl<R: std::io::Read> LookAheadBitwiseReader<R> {
   pub fn new(reader: R) -> Self {
-    LookAheadBitwiseReader {
+    Self {
       inner: reader,
       buffer: vec![],
     }
@@ -67,7 +67,7 @@ impl<R: std::io::Read> LookAheadBitwiseReader<R> {
     while self.buffer.len() < min_buffer_size {
       let bytes_to_read = 1 + (min_buffer_size - self.buffer.len()) / 8;
       self.buffer.reserve(bytes_to_read * 8);
-      let mut block = vec![0u8; bytes_to_read];
+      let mut block = vec![0_u8; bytes_to_read];
       match self.inner.read(&mut block) {
         Err(e) => match e.kind() {
           std::io::ErrorKind::Interrupted => continue,
@@ -117,19 +117,16 @@ mod tests {
     let data: Vec<u8> = vec![0x00, 0x03, 0x20, 0x04, 0x3F, 0xF0, 0x1A, 0xE7, 0xC0, 0x02];
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000000000000011);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000000000000100);
+    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0000_0000_0000_0011);
+    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0000_0000_0000_0100);
   }
 
   #[test]
   fn reader_matches_c_implementation_testing() {
-    let data: Vec<u8> = vec![0b11001110, 0b00011010, 0b11001001];
+    let data: Vec<u8> = vec![0b1100_1110, 0b0001_1010, 0b1100_1001];
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
-    assert_eq!(
-      reader.look_ahead::<u16>(16).unwrap(),
-      0b1100_1110__0001_1010
-    )
+    assert_eq!(reader.look_ahead::<u16>(16).unwrap(), 0b1100_1110_0001_1010)
   }
 
   #[test]
@@ -139,6 +136,6 @@ mod tests {
     let mut reader = LookAheadBitwiseReader::new(&data[..]);
 
     let _ = reader.consume::<u8>(420);
-    assert!(false, "Test failed as consume did not panic")
+    panic!("Test failed as consume did not panic")
   }
 }

@@ -106,7 +106,7 @@ macro_rules! assert_bytes_eq {
         expected_r
           .chars()
           .zip(actual_r.chars())
-          .map(|(e, r)| if e == r { "─" } else { "┴" })
+          .map(|(e, r)| if e == r { "\u{2500}" } else { "\u{2534}" })
           .collect(),
       );
     }

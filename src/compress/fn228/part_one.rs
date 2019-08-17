@@ -5,7 +5,7 @@ pub fn pure_fn228_part_one(
   initial_index: usize,
 ) -> [u16; 17] {
   #![allow(unreachable_code)]
-  let mut dat_arr167 = [0u16; 17];
+  let mut dat_arr167 = [0_u16; 17];
   calculate_pointer_depths(
     dat_arr189,
     dat_arr190,
@@ -23,12 +23,12 @@ pub fn pure_fn228_part_one(
     dat_arr167[16] -= 1;
     let mut run_start226 = 15;
     while run_start226 > 0 {
-      if dat_arr167[run_start226] != 0 {
+      if dat_arr167[run_start226] == 0 {
+        run_start226 -= 1;
+      } else {
         dat_arr167[run_start226] -= 1;
         dat_arr167[run_start226 + 1] += 2;
         break;
-      } else {
-        run_start226 -= 1;
       }
     }
     var458 -= 1;
