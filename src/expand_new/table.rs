@@ -23,7 +23,23 @@ pub enum LookupTableGenerationError {
   BinaryTreeError(BinaryTreeInvariantError),
   InvariantFailue,
 }
-
+impl LookupTableGenerationError {
+  pub fn is_invariant_error(&self) -> bool {
+    match self {
+      Self::InvariantFailue => true,
+      _ => false,
+    }
+  }
+  pub fn propagate_invariant(
+    self,
+  ) -> Result<Result<(), LookupTableGenerationError>, LookupTableGenerationError> {
+    if self.is_invariant_error() {
+      return Err(self);
+    } else {
+      return Ok(Err(self));
+    }
+  }
+}
 impl From<io::Error> for LookupTableGenerationError {
   fn from(error: io::Error) -> Self {
     Self::IOError(error)
@@ -60,10 +76,25 @@ impl LookupTables {
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
     // get_next_item
-    self.generate_run_offset_lookup(reader, true)?;
-    self.generate_bit_lookup(reader)?;
-    self.generate_run_offset_lookup(reader, false)?;
-    Ok(())
+
+    // Match the C implementation overwriting previous errors
+    // instead of eagarly checking them. Except when the error
+    // type is an InvariantFailue(I.E. array out of bounds etc.)
+
+    // Sorry, this is the only nice-ish way to get an error of a certain type returned here,
+    // whilst allowing other errors to be checked at the end.
+    let err1 = self
+      .generate_run_offset_lookup(reader, true)
+      .map(|_| Ok(()))
+      .or_else(|e| e.propagate_invariant())?;
+    let err2 = self
+      .generate_bit_lookup(reader)
+      .map(|_| Ok(()))
+      .or_else(|e| e.propagate_invariant())?;
+    self
+      .generate_run_offset_lookup(reader, false)
+      .and(err2)
+      .and(err1)
   }
   #[allow(clippy::explicit_iter_loop)]
   pub fn generate_run_offset_lookup(
