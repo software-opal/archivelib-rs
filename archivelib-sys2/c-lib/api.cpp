@@ -75,11 +75,13 @@ AllocatedMemory2 build_output(ALStorage *out) {
   };
 }
 
-extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
+extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,
+                                      uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_compress((ALGreenleafCompressionLevels) compression_level, *in, *out);
+  SimpleStatus status =
+      al_compress((ALGreenleafCompressionLevels)compression_level, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }
@@ -89,11 +91,13 @@ extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length, uint
 
   return build_output(out);
 }
-extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length, uint8_t compression_level) {
+extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length,
+                                        uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
 
-  SimpleStatus status = al_decompress((ALGreenleafCompressionLevels) compression_level, *in, *out);
+  SimpleStatus status =
+      al_decompress((ALGreenleafCompressionLevels)compression_level, *in, *out);
   if (status.status != AL_SUCCESS) {
     return status;
   }

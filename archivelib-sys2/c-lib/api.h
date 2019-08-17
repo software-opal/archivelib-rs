@@ -22,7 +22,9 @@
 
 typedef SimpleStatus AllocatedMemory2;
 
-extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length, uint8_t compression_level);
-extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length, uint8_t compression_level);
+extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,
+                                      uint8_t compression_level);
+extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length,
+                                        uint8_t compression_level);
 
 extern "C" void clean2(AllocatedMemory2 *memory);

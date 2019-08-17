@@ -20,7 +20,13 @@ uint16_t get_next_item(RExpandData *data) {
     if (data->error)
       return 0;
   }
+  if (data->items_until_next_header == 0) {
+    // printf("No items until next header!? -- %i\n", (uint16_t)
+    // (data->items_until_next_header - 1));
+  }
+  // printf("!%i!\n", data->items_until_next_header);
   data->items_until_next_header--;
+
   run_length276 = data->dat_arr240[data->bits182 >> 4];
   // run_length276 <= 0xFF are the uncompressed bits.
   // 0x100 <= run_length276 <= 0x1FE are runs (run_length276 - 0x100 + 3) bits
@@ -36,6 +42,9 @@ uint16_t get_next_item(RExpandData *data) {
       _283 >>= 1;
     } while (run_length276 >= CONST_N141_IS_511);
   }
+  // printf("!%i! --- %x / %i / %i / %i\n", data->items_until_next_header,
+  // data->bits182, data->dat_arr240[data->bits182 >> 4], run_length276,
+  // data->dat_arr180[run_length276]);
   read_bits(data, data->dat_arr180[run_length276]);
   return run_length276;
 }

@@ -34,8 +34,12 @@ void expand_read_bits(RExpandData *data, uint8_t bits_to_load219) {
         data->loaded_compressed_data_length246 = ALStorage_ReadBuffer(
             data->input_store, data->compressed_data_buffer242, BUFFER_SIZE);
       }
-      if (data->loaded_compressed_data_length246 <= 0)
+      if (data->loaded_compressed_data_length246 <= 0) {
+        // printf("Incrementing error counter %i /
+        // %i\n",data->loaded_compressed_data_length246,
+        // data->compressed_data_length248);
         data->error_counter243++;
+      }
     }
     data->tmp_bit_buffer245 =
         data->compressed_data_buffer242[data->compressed_data_index];

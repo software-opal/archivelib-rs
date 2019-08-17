@@ -1,8 +1,8 @@
 #ifndef _SIMPLE_STATUS_H
 #define _SIMPLE_STATUS_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct SimpleStatus {
   int status;
