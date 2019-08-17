@@ -294,15 +294,6 @@ mod tests {
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0011_0);
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b000__00);
     assert_eq!(reader.consume::<u16>(5).unwrap(), 0b11_000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0__0000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0110);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_1100);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0000);
-    assert_eq!(reader.consume::<u16>(5).unwrap(), 0b0_0011);
-    assert_eq!(reader.consume::<u16>(16).unwrap(), 0b0011_0000_0000_0011);
-    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0011_0000);
-    assert_eq!(reader.consume::<u8>(7).unwrap(), 0b001_1000);
-    assert_eq!(reader.look_ahead::<u8>(8).unwrap(), 0b0000_0001);
   }
 
   #[test]
