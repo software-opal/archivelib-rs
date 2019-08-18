@@ -17,7 +17,6 @@ void write_bits_to_buffer(RCompressData *data, int32_t bit_count209,
 
   `data->bits_buffer_used172` Number of bits in use in `data->bits_buffer182`.
   */
-  // printf("Write: %x, (%d, %d)\n", (intptr_t) data, bits203, bit_count209);
 
   // Move the assigned bits into the highest bits of `bits203`
   bits203 = bits203 << (UINT16_BIT - bit_count209);
