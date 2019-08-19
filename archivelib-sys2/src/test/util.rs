@@ -33,7 +33,7 @@ pub fn get_data(max_len: usize, average_run_len: usize, show: bool) -> Box<[u8]>
     data.extend(iter::repeat(val).take(run_len));
   }
   if show {
-    println!(",{}]", data.len());
+    // println!(",{}]", data.len());
   }
   data.into_boxed_slice()
 }

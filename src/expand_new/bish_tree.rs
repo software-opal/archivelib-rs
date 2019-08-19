@@ -32,11 +32,11 @@ impl BinaryTreeLengthLookupTables {
     let remaining_bit_size = 16 - bit_size;
     let mut length_occurance = [0; 17];
     let mut lookup_table1 = [0; 18];
-    println!("Lengths: {:?}", bit_lengths);
+    // println!("Lengths: {:?}", bit_lengths);
     for &len in bit_lengths {
       length_occurance[len.min(16)] += 1;
     }
-    println!("Something 277: {:?}", length_occurance);
+    // println!("Something 277: {:?}", length_occurance);
     for (i, &len_count) in length_occurance.iter().enumerate().skip(1) {
       // Originally a 16-bit unsigned integer with wrapping addition.
       lookup_table1[i + 1] = (lookup_table1[i] + (len_count << (16 - i))) % 0x10000;

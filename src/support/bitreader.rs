@@ -51,7 +51,7 @@ impl<R: Read> BitRead for BitReader<R> {
     /*
     Reads `bits_to_load` bits into the LSB side of `data->bits`.
     */
-    println!("Read bits: {}, state: {:?}", bits_to_load, self);
+    // println!("Read bits: {}, state: {:?}", bits_to_load, self);
     while bits_to_load > self.tmp_bits_size {
       // This loop loads 1 new byte into `data->tmp_bits`(the temporary
       // buffer)
@@ -76,7 +76,7 @@ impl<R: Read> BitRead for BitReader<R> {
     self.tmp_bits_size -= bits_to_load;
     self.bits = (self.bits << bits_to_load) + (u16::from(self.tmp_bits) >> (8 - bits_to_load));
     self.tmp_bits = self.tmp_bits.wrapping_shl(u32::from(bits_to_load));
-    println!("new state: {:?}", self);
+    // println!("new state: {:?}", self);
     Ok(())
   }
 }
