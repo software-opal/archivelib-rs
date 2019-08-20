@@ -1,6 +1,7 @@
 #![allow(clippy::module_name_repetitions)]
 
 use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
+use crate::consts::BUFFER_BIT_SIZE;
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
   fn is_eof(&self) -> bool;
@@ -11,6 +12,7 @@ pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
 pub struct CorrectLookAheadBitwiseReader<R: LookAheadBitwiseRead> {
   reader: R,
   eof_bits: usize,
+  read_bits: usize,
   file_start: Vec<bool>,
 }
 
@@ -19,6 +21,7 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
     Self {
       reader,
       eof_bits: 0,
+      read_bits: 0,
       file_start: Vec::with_capacity(8),
     }
   }
@@ -75,26 +78,31 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
       return Ok(vec![]);
     }
     let consumed = self.reader.consume_bits(bits)?;
-    assert!(consumed.len() <= bits);
-    if !consumed.is_empty() && self.file_start.len() < 8 {
+    if consumed.is_empty() {
+      Ok(consumed)
+    } else {
       // The C library uses the first byte of the *buffer* once it runs out.
       // I don't think it is actually used in normal operation; but I want to
       // replicate the implementation(warts and all)
-      assert_eq!(
-        self.eof_bits, 0,
-        "File start buffer shouldn't be extended after end of file"
-      );
-      let remainder = 8 - self.file_start.len();
-      self
-        .file_start
-        .extend_from_slice(&consumed[..usize::min(remainder, consumed.len())])
+      assert!(self.read_bits <= BUFFER_BIT_SIZE, "{}", self.read_bits);
+      let start;
+      if (self.read_bits + consumed.len()) > BUFFER_BIT_SIZE {
+        start = BUFFER_BIT_SIZE - self.read_bits;
+        self.read_bits = consumed.len() - start;
+        self.file_start.clear();
+      } else {
+        self.read_bits += consumed.len();
+        start = 0;
+      }
+      if self.file_start.len() < 8 {
+        let size = usize::min(8 - self.file_start.len(), consumed.len() - start);
+        let end = start + size;
+        self.file_start.extend_from_slice(&consumed[start..end]);
+      }
+      assert!(self.file_start.len() <= 8, "{}", self.file_start.len());
+      assert!(self.read_bits <= BUFFER_BIT_SIZE, "{}", self.read_bits);
+      Ok(consumed)
     }
-    assert!(
-      self.file_start.len() <= 8,
-      "File start buffer is too long: {}",
-      self.file_start.len()
-    );
-    Ok(consumed)
   }
   fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     self.reader.look_ahead_bits(bits)
@@ -125,6 +133,7 @@ impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseRe
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::consts::{BUFFER_BIT_SIZE, BUFFER_SIZE};
   use crate::support::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 
   #[test]
@@ -179,108 +188,104 @@ mod tests {
       "Expected: {:b}",
       385
     );
-    // assert_eq!(
-    //   reader.consume_bits(5).unwrap(),
-    //   vec![true, false, false, false, false],
-    //   "Expected: {:b}",
-    //   16
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false, false, true],
-    //   "Expected: {:b}",
-    //   1
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![true, false, false],
-    //   "Expected: {:b}",
-    //   4
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false, true, true],
-    //   "Expected: {:b}",
-    //   3
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![true, true, false],
-    //   "Expected: {:b}",
-    //   6
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false, false, true],
-    //   "Expected: {:b}",
-    //   1
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![true, false, false],
-    //   "Expected: {:b}",
-    //   4
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false, true, true],
-    //   "Expected: {:b}",
-    //   3
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   6
-    // );
-    // assert_eq!(
-    //   reader.consume_bits(3).unwrap(),
-    //   vec![false; 3],
-    //   "Expected: {:b}",
-    //   0
-    // );
+  }
+
+  #[test]
+  fn test_buffer_size() {
+    let mut data = vec![0xff; BUFFER_SIZE];
+    data.resize(BUFFER_SIZE * 2, 0x00);
+    data.push(0x96);
+    data.push(0x55);
+    let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
+
+    assert_eq!(reader.file_start, vec![]);
+    assert_eq!(reader.consume_bits_nopad(8).unwrap(), vec![true; 8]);
+    assert_eq!(reader.file_start, vec![true; 8]);
+    assert_eq!(reader.consume_bits_nopad(8).unwrap(), vec![true; 8]);
+    assert_eq!(reader.file_start, vec![true; 8]);
+    for i in 2..BUFFER_SIZE {
+      assert_eq!(
+        reader.consume_bits_nopad(8).unwrap(),
+        vec![true; 8],
+        "Byte {}",
+        i
+      );
+      assert_eq!(reader.file_start, vec![true; 8]);
+      assert_eq!(reader.read_bits, (i + 1) * 8);
+    }
+    // Buffer is reset in this call
+    assert_eq!(reader.consume_bits_nopad(1).unwrap(), vec![false]);
+    assert_eq!(reader.file_start, vec![false]);
+    assert_eq!(reader.consume_bits_nopad(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.file_start, vec![false; 6]);
+    assert_eq!(reader.consume_bits_nopad(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.file_start, vec![false; 8]);
+    assert_eq!(reader.consume_bits_nopad(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.file_start, vec![false; 8]);
+    for i in 2..(BUFFER_SIZE - 1) {
+      assert_eq!(
+        reader.consume_bits_nopad(8).unwrap(),
+        vec![false; 8],
+        "Byte {}",
+        i
+      );
+      assert_eq!(reader.file_start, vec![false; 8]);
+      assert_eq!(reader.read_bits, (i + 1) * 8);
+    }
+    assert_eq!(reader.read_bits, BUFFER_BIT_SIZE - 8);
+    // 1 byte short of buffer reset
+    // Buffer is reset in this call
+    assert_eq!(
+      reader.consume_bits_nopad(10).unwrap(),
+      vec![
+        false, false, false, false, false, false, false, false, // Buffer resets here
+        true, false
+      ]
+    );
+    assert_eq!(reader.read_bits, 2);
+    assert_eq!(reader.file_start, vec![true, false]);
+    assert_eq!(
+      reader.consume_bits_nopad(3).unwrap(),
+      vec![false, true, false]
+    );
+    assert_eq!(reader.file_start, vec![true, false, false, true, false]);
+    assert_eq!(reader.consume_bits_nopad(1).unwrap(), vec![true]);
+    assert_eq!(
+      reader.file_start,
+      vec![true, false, false, true, false, true]
+    );
+    assert_eq!(
+      reader.consume_bits_nopad(8).unwrap(),
+      vec![
+        true, false, // End of 0x96 / Start of 0x55
+        false, true, false, true, false, true
+      ]
+    );
+    assert_eq!(
+      reader.file_start,
+      vec![true, false, false, true, false, true, true, false]
+    );
+    assert_eq!(
+      reader.consume_bits(4).unwrap(),
+      vec![false, true, true, false]
+    );
+    assert_eq!(reader.read_bits, 16);
+    assert_eq!(reader.eof_bits, 2);
+    assert_eq!(
+      reader.file_start,
+      // Rotated 2 bits off the front
+      vec![false, true, false, true, true, false, true, false]
+    );
+    assert_eq!(
+      reader.consume_bits(4).unwrap(),
+      vec![false, true, false, true]
+    );
+    assert_eq!(reader.eof_bits, 6);
+    assert_eq!(
+      reader.file_start,
+      // Rotated 4 bits off the front
+      vec![true, false, true, false, false, true, false, true]
+    );
   }
 
   #[test]

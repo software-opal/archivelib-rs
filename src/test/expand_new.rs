@@ -41,7 +41,3 @@ adversarial! {
   simple_really_really_long(0, (0..=255), 1024);
   repetitive(0, vec![1; 50], 1024);
 }
-
-match_sys_test_data! {
-  sample => hex!("00 03 20 04 3F F0 1A E7  C0 02"),
-}

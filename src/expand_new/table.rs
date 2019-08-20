@@ -129,10 +129,10 @@ impl LookupTables {
         i += 1;
         if do_pad_length && i == 3 {
           let pad_length: usize = reader.consume(2)?;
+          if (i + cast!(pad_length as usize)) > self.run_offset_lookup_len.len() {
+            return Err(LookupTableGenerationError::InvariantFailue);
+          }
           for _ in 0..pad_length {
-            if i > self.run_offset_lookup_len.len() {
-              return Err(LookupTableGenerationError::InvariantFailue);
-            }
             self.run_offset_lookup_len[i] = 0;
             i += 1;
           }
@@ -194,6 +194,9 @@ impl LookupTables {
             2 => reader.consume::<u16>(9)? + 20,
             _ => unreachable!(),
           };
+          if (i + cast!(idx as usize)) > self.run_offset_lookup_len.len() {
+            return Err(LookupTableGenerationError::InvariantFailue);
+          }
           for _ in 0..idx {
             self.bit_lookup_len[i] = 0;
             i += 1;
@@ -223,6 +226,17 @@ mod tests {
   use super::*;
   use crate::support::CorrectLookAheadBitwiseReader;
   use crate::support::LookAheadBitwiseRead;
+  #[macro_export]
+  #[cfg(test)]
+  macro_rules! rvec {
+    ($($val: expr => $count: expr),+) => {{
+        let mut v = Vec::new();
+        $(
+          v.resize(v.len() + $count, $val);
+        )+
+        v}
+    };
+  }
 
   #[test]
   fn base_data_seperated_calls() {
