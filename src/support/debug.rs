@@ -172,18 +172,17 @@ macro_rules! _bytes_to_human_hex {
   ($expected: expr, $len: expr) => {{
     let expected = $expected.clone();
     let len: usize = $len;
+    let test = expected.get(0).unwrap_or(&&0);
+    let bitsize = (test.count_zeros() + test.count_ones()) as usize / 4;
     let mut b = expected
       .iter()
-      .map(|&b| {
-        format!(
-          "{:01$X}",
-          b,
-          (b.count_zeros() + b.count_ones()) as usize / 4
-        )
-      })
+      .map(|&b| format!("{:01$X}", b, bitsize,))
       .collect::<Vec<_>>();
-    while b.len() < len {
-      b.push("~~".to_string());
+    if b.len() < len {
+      let pad_string = "~".chars().cycle().take(bitsize).collect::<String>();
+      while b.len() < len {
+        b.push(pad_string.clone());
+      }
     }
     b.chunks(32)
       .map(|s| {
