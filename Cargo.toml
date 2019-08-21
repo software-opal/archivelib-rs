@@ -21,6 +21,7 @@ failure = "0.1.3"
 failure_derive = "0.1.3"
 
 [dev-dependencies]
+lazy_static = "1.3.0"
 rand = "0.7.0"
 archivelib-sys = { version = "0.1.0", path = "archivelib-sys" }
 # archivelib-sys = { version = "0.1.0", path = "archivelib-sys2" }

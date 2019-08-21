@@ -3,10 +3,32 @@ macro_rules! test_match_sys_decompress {
   ($($name: ident => $compressed_data:expr,)*) => {
     $(
       pub mod $name {
+        lazy_static::lazy_static! {
+          static ref DATA: Vec<u8> = {
+            let data = $compressed_data;
+            data.to_vec()
+          };
+        }
+
         #[test]
-        fn test_decompress() {
-          let compressed = $compressed_data;
-          check_rust_against_sys_decompress!(compressed);
+        fn test_decompress_level_0() {
+          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level0);
+        }
+        #[test]
+        fn test_decompress_level_1() {
+          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level1);
+        }
+        #[test]
+        fn test_decompress_level_2() {
+          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level2);
+        }
+        #[test]
+        fn test_decompress_level_3() {
+          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level3);
+        }
+        #[test]
+        fn test_decompress_level_4() {
+          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level4);
         }
       }
     )*
@@ -22,7 +44,6 @@ macro_rules! hex {
       .chunks(2)
       .map(|dat| ((dat[0] << 4) + dat[1]) as u8)
       .collect::<std::vec::Vec<_>>()
-      .into_boxed_slice()
   }};
 }
 
@@ -32,21 +53,28 @@ macro_rules! test_data {
     $(
       pub mod $name {
         use archivelib::{do_compress, do_decompress};
-
-        pub fn get_uncompressed() -> Box<[u8]> { $uncompressed_data }
-        pub fn get_compressed() -> Box<[u8]> { $compressed_data }
+        lazy_static::lazy_static! {
+          static ref COMPRESSED: Vec<u8> = {
+            let data = $compressed_data;
+            data.to_vec()
+          };
+          static ref UNCOMPRESSED: Vec<u8> = {
+            let data =$uncompressed_data;
+            data.to_vec()
+          };
+        }
 
         #[test]
         fn test_compress() {
-          let uncompressed = get_uncompressed();
-          let compressed = get_compressed();
+          let uncompressed = UNCOMPRESSED;
+          let compressed = COMPRESSED;
           let compress_output = do_compress(&uncompressed[..]).unwrap();
           assert_bytes_eq!(&compressed[..], &compress_output);
         }
         #[test]
         fn test_decompress() {
-          let uncompressed = get_uncompressed();
-          let compressed = get_compressed();
+          let uncompressed = UNCOMPRESSED;
+          let compressed = COMPRESSED;
           let decompress_output = do_decompress(&compressed[..]).unwrap();
           assert_bytes_eq!(&uncompressed[..], &decompress_output);
         }

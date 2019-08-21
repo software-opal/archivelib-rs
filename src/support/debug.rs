@@ -24,10 +24,15 @@ macro_rules! pending_test {
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
   ($compressed: ident) => {{
+    check_rust_against_sys_decompress!($compressed, CompressionLevel::Level0);
+  }};
+  ($compressed: ident, $level: expr) => {{
+    use $crate::CompressionLevel;
     let compressed = $compressed;
-    match $crate::do_decompress(&compressed[..]) {
+    let level: CompressionLevel = $level;
+    match $crate::do_decompress_level(&compressed[..], level) {
       Ok(decompress_output) => {
-        match archivelib_sys::do_decompress(&compressed[..]) {
+        match archivelib_sys::do_decompress_level(&compressed[..], level.compression_level()) {
           Ok(sys_output) => {
             $crate::assert_bytes_eq!(&sys_output, &decompress_output[..]);
           }
@@ -38,7 +43,7 @@ macro_rules! check_rust_against_sys_decompress {
       }
       Err(msg) => {
         if msg == "BinaryTreeError(Type1)" || msg == "BinaryTreeError(Type2)" ||msg == "FileExhausted" {
-          match archivelib_sys::do_decompress(&compressed[..]) {
+          match archivelib_sys::do_decompress_level(&compressed[..], level.compression_level()) {
             Ok(_sys_output) => {
               panic!("archivelib::do_decompress failed with a binary tree error({}); but the system library succeeded!", msg)
             }
