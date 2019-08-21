@@ -22,3 +22,4 @@ pub const CONST_N540_IS_5: usize = 5;
 
 pub const BUFFER_SIZE: usize = 512;
 pub const BUFFER_BIT_SIZE: usize = 8 * BUFFER_SIZE;
+pub const EOF_LIMIT: usize = (5 * 8);

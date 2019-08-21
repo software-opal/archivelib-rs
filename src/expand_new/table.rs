@@ -11,6 +11,7 @@
 // // Binary tree(ish) pair. No test cases. No worries.
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
+use crate::consts::EOF_LIMIT;
 use std::convert::TryFrom;
 use std::io;
 
@@ -119,6 +120,10 @@ impl LookupTables {
         let mut bit_length = reader.consume(3)?;
         if bit_length == 7 {
           while reader.consume(1)? {
+            if reader.eof_bits() > EOF_LIMIT {
+              // This loop can become infinite, prevent that by checking for EOF
+              break;
+            }
             bit_length += 1;
           }
         }
@@ -129,18 +134,14 @@ impl LookupTables {
         i += 1;
         if do_pad_length && i == 3 {
           let pad_length: usize = reader.consume(2)?;
-          if (i + cast!(pad_length as usize)) > self.run_offset_lookup_len.len() {
-            return Err(LookupTableGenerationError::InvariantFailue);
-          }
           for _ in 0..pad_length {
             self.run_offset_lookup_len[i] = 0;
             i += 1;
           }
         }
       }
-      while i < self.run_offset_lookup_len.len() {
-        self.run_offset_lookup_len[i] = 0;
-        i += 1;
+      for v in self.run_offset_lookup_len[i..].iter_mut() {
+        *v = 0;
       }
       // let limit = if do_pad_length { 19 } else { 15 };
       // println!("Generate Tree ROL");
@@ -177,9 +178,9 @@ impl LookupTables {
         if idx >= 19 {
           for skip in 8.. {
             idx = if reader.look_ahead_skip(skip, 1)? {
-              self.tree.right[usize::try_from(idx).unwrap()]
+              self.tree.right[cast!(idx as usize)]
             } else {
-              self.tree.left[usize::try_from(idx).unwrap()]
+              self.tree.left[cast!(idx as usize)]
             };
             if idx < 19 {
               break;
@@ -194,7 +195,8 @@ impl LookupTables {
             2 => reader.consume::<u16>(9)? + 20,
             _ => unreachable!(),
           };
-          if (i + cast!(idx as usize)) > self.run_offset_lookup_len.len() {
+          if (cast!(idx as usize) + i - 1) >= self.bit_lookup_len.len() {
+            // Subtracting one accounts for the post-increment in the loop
             return Err(LookupTableGenerationError::InvariantFailue);
           }
           for _ in 0..idx {
@@ -202,7 +204,7 @@ impl LookupTables {
             i += 1;
           }
         } else {
-          self.bit_lookup_len[i] = (usize::try_from(idx).unwrap()) - 2;
+          self.bit_lookup_len[i] = cast!(idx as usize) - 2;
           i += 1;
         }
       }

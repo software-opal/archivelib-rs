@@ -5,7 +5,6 @@ import hashlib
 import subprocess
 import tempfile
 
-offset = [20, 24, 28]
 
 ROOT = pathlib.Path(__file__).parent
 FUZZ_DIR = ROOT / "fuzz"
@@ -13,7 +12,7 @@ FUZZ_CRASHES_DIR = FUZZ_DIR / "artifacts"
 AFL_OUTPUT_DIR = FUZZ_DIR / "afl_out"
 KNOWN_INPUTS = FUZZ_DIR / "known_inputs"
 MINIFIED_OUTPUTS = FUZZ_DIR / "minified_data"
-MINIFIED_TEST_OUTPUTS = ROOT / "src/test/minified_data"
+MINIFIED_TEST_OUTPUTS = ROOT / "tests/minified_data"
 NON_ALPHA = re.compile("(^[0-9]|[^a-zA-Z0-9_])")
 
 
@@ -43,9 +42,9 @@ def bytes_to_test_hex(data):
 
 def write_test(data, desc):
     sha1 = hashlib.sha1(data).hexdigest()
-    (MINIFIED_OUTPUTS / sha1).write_bytes(data)
+    (KNOWN_INPUTS / sha1).write_bytes(data)
     (MINIFIED_TEST_OUTPUTS / f"test_{sha1.lower()}.rs").write_text(
-        "match_sys_test_data! {\n"
+        "test_match_sys_decompress! {\n"
         + f"  // {desc}\n"
         + f'  data => hex!("\n'
         + bytes_to_test_hex(data)
@@ -102,6 +101,7 @@ def graph_fuzz(fuzz_out, graph_out):
 
 
 def run_test_case_minifier(test_case, test_type):
+    write_test(test_case.read_bytes(), f"From {test_type}: {test_case.name}")
     with tempfile.NamedTemporaryFile() as out:
         res = subprocess.run(
             [
@@ -126,9 +126,9 @@ def run_test_case_minifier(test_case, test_type):
 def main():
     MINIFIED_OUTPUTS.mkdir(exist_ok=True, parents=True)
     MINIFIED_TEST_OUTPUTS.mkdir(exist_ok=True, parents=True)
-    # run_build()
-    # run_fuzz(AFL_OUTPUT_DIR)
-    # graph_fuzz(AFL_OUTPUT_DIR, FUZZ_DIR / "graph/")
+    run_build()
+    run_fuzz(AFL_OUTPUT_DIR)
+    graph_fuzz(AFL_OUTPUT_DIR, FUZZ_DIR / "graph/")
     bad_files = [
         (type, file)
         for type in ["crashes", "hangs"]
@@ -142,10 +142,8 @@ def main():
 
     # with tempfile.NamedTemporaryFile() as f:
     #     subprocess.call([*target, bad_files[0][1], f.name], cwd=ROOT)
-    # for (type, crash) in bad_files:
-    #     run_test_case_minifier(crash, type)
     for (type, crash) in bad_files:
-        write_test(crash.read_bytes(), f"Minified from {type}: {crash.name}")
+        run_test_case_minifier(crash, type)
 
 if __name__ == "__main__":
     main()

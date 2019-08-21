@@ -57,7 +57,7 @@ def main():
         data = get_hus_vip_parts(p.read_bytes())
 
         with (out_folder / f"{name}.rs").open("w") as f:
-            f.write("match_sys_test_data! {\n")
+            f.write("test_match_sys_decompress! {\n")
             for (name, compressed_data) in sorted(data.items()):
                 f.write(
                     f"  // SHA1 of data: {hashlib.sha1(compressed_data).hexdigest()}\n"

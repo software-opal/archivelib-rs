@@ -1,5 +1,4 @@
 test_match_sys_decompress! {
-  // From crashes: id:000000,sig:06,src:000001,op:flip1,pos:0
   data => hex!("
       45 DC 8C BA C2 2B 63 92  3F FF F2 48 1D E8 00 01  32 1E 4A A9 5D DA BB 4A  BB E5 79 77 99 91 AF 5B
       38 9B 16 94 5D D6 B7 C8  7F 07 DF C1 57 1B 0E 1C  36 92 A7 79 C0 CD E0 11  0B 5E 6B E0 65 2A EF AA
