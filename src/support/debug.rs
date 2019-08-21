@@ -23,10 +23,10 @@ macro_rules! pending_test {
 
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
-  ($compressed: ident) => {{
+  ($compressed: expr) => {{
     check_rust_against_sys_decompress!($compressed, CompressionLevel::Level0);
   }};
-  ($compressed: ident, $level: expr) => {{
+  ($compressed: expr, $level: expr) => {{
     use $crate::CompressionLevel;
     let compressed = $compressed;
     let level: CompressionLevel = $level;

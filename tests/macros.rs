@@ -12,23 +12,23 @@ macro_rules! test_match_sys_decompress {
 
         #[test]
         fn test_decompress_level_0() {
-          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level0);
+          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level0);
         }
         #[test]
         fn test_decompress_level_1() {
-          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level1);
+          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level1);
         }
         #[test]
         fn test_decompress_level_2() {
-          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level2);
+          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level2);
         }
         #[test]
         fn test_decompress_level_3() {
-          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level3);
+          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level3);
         }
         #[test]
         fn test_decompress_level_4() {
-          check_rust_against_sys_decompress!(DATA, CompressionLevel::Level4);
+          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level4);
         }
       }
     )*
@@ -66,17 +66,13 @@ macro_rules! test_data {
 
         #[test]
         fn test_compress() {
-          let uncompressed = UNCOMPRESSED;
-          let compressed = COMPRESSED;
-          let compress_output = do_compress(&uncompressed[..]).unwrap();
-          assert_bytes_eq!(&compressed[..], &compress_output);
+          let compress_output = do_compress(&UNCOMPRESSED[..]).unwrap();
+          assert_bytes_eq!(&COMPRESSED[..], &compress_output);
         }
         #[test]
         fn test_decompress() {
-          let uncompressed = UNCOMPRESSED;
-          let compressed = COMPRESSED;
-          let decompress_output = do_decompress(&compressed[..]).unwrap();
-          assert_bytes_eq!(&uncompressed[..], &decompress_output);
+          let decompress_output = do_decompress(&COMPRESSED[..]).unwrap();
+          assert_bytes_eq!(&UNCOMPRESSED[..], &decompress_output);
         }
       }
     )*
