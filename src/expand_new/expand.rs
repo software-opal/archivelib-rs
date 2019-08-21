@@ -1,3 +1,4 @@
+use crate::consts::EOF_LIMIT;
 use std::convert::{TryFrom, TryInto};
 
 use std::io;
@@ -137,7 +138,7 @@ pub fn expand(
   let mut expand_data = ExpandData::new();
 
   // While we have something to read; or we are expecting more items.
-  while reader.eof_bits() < (5 * 8) {
+  while reader.eof_bits() < EOF_LIMIT {
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;

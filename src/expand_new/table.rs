@@ -11,7 +11,6 @@
 // // Binary tree(ish) pair. No test cases. No worries.
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
-use crate::consts::EOF_LIMIT;
 use std::convert::TryFrom;
 use std::io;
 
@@ -120,10 +119,10 @@ impl LookupTables {
         let mut bit_length = reader.consume(3)?;
         if bit_length == 7 {
           while reader.consume(1)? {
-            if reader.eof_bits() > EOF_LIMIT {
-              // This loop can become infinite, prevent that by checking for EOF
-              break;
-            }
+            // if reader.eof_bits() > EOF_LIMIT {
+            //   // This loop can become infinite, prevent that by checking for EOF
+            //   break;
+            // }
             bit_length += 1;
           }
         }
