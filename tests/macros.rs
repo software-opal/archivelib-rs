@@ -12,23 +12,23 @@ macro_rules! test_match_sys_decompress {
 
         #[test]
         fn test_decompress_level_0() {
-          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level0);
+          let _ = check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level0);
         }
         #[test]
         fn test_decompress_level_1() {
-          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level1);
+          let _ = check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level1);
         }
         #[test]
         fn test_decompress_level_2() {
-          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level2);
+          let _ = check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level2);
         }
         #[test]
         fn test_decompress_level_3() {
-          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level3);
+          let _ = check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level3);
         }
         #[test]
         fn test_decompress_level_4() {
-          check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level4);
+          let _ = check_rust_against_sys_decompress!(&DATA[..], CompressionLevel::Level4);
         }
       }
     )*

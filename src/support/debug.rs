@@ -40,6 +40,7 @@ macro_rules! check_rust_against_sys_decompress {
             assert!(false, "System library failed with error; but rust library succeeded. Error: {}", err);
           }
         }
+        Ok(decompress_output)
       }
       Err(msg) => {
         if msg == "BinaryTreeError(Type1)" || msg == "BinaryTreeError(Type2)" ||msg == "FileExhausted" {
@@ -75,6 +76,7 @@ macro_rules! check_rust_against_sys_decompress {
         } else {
           panic!("archivelib::do_decompress failed with an unexpected error: {}", msg);
         }
+        Err(msg)
       }
     }
   }};
@@ -89,79 +91,79 @@ macro_rules! assert_bytes_eq {
     let actual = orig_actual.iter().collect::<Vec<_>>();
     if expected == actual {
       assert_eq!(expected, actual, "Sanity check failed");
-      return;
-    }
-    let len = expected.len().max(actual.len());
-    let expected_bytes = $crate::_bytes_to_human_hex!(expected, len);
-    let actual_bytes = $crate::_bytes_to_human_hex!(actual, len);
-    let mut data: Vec<String> = Vec::with_capacity(len);
-    let mut diffs = Vec::new();
-    let mut has_more = false;
-    for (idx, (ref expected_r, ref actual_r)) in
-      expected_bytes.iter().zip(actual_bytes.iter()).enumerate()
-    {
-      if expected_r != actual_r {
-        if diffs.len() < 10 {
-          diffs.push(idx);
-          if idx > 0 {
-            diffs.push(idx - 1);
+    } else {
+      let len = expected.len().max(actual.len());
+      let expected_bytes = $crate::_bytes_to_human_hex!(expected, len);
+      let actual_bytes = $crate::_bytes_to_human_hex!(actual, len);
+      let mut data: Vec<String> = Vec::with_capacity(len);
+      let mut diffs = Vec::new();
+      let mut has_more = false;
+      for (idx, (ref expected_r, ref actual_r)) in
+        expected_bytes.iter().zip(actual_bytes.iter()).enumerate()
+      {
+        if expected_r != actual_r {
+          if diffs.len() < 10 {
+            diffs.push(idx);
+            if idx > 0 {
+              diffs.push(idx - 1);
+            }
+            if idx + 1 < data.len() {
+              diffs.push(idx + 1);
+            }
+            diffs.sort();
+            diffs.dedup();
+          } else {
+            has_more = true;
           }
-          if idx + 1 < data.len() {
-            diffs.push(idx + 1);
-          }
-          diffs.sort();
-          diffs.dedup();
-        } else {
-          has_more = true;
         }
+        data.push(
+          expected_r
+            .chars()
+            .zip(actual_r.chars())
+            .map(|(e, r)| if e == r { "\u{2500}" } else { "\u{2534}" })
+            .collect(),
+        );
       }
-      data.push(
-        expected_r
-          .chars()
-          .zip(actual_r.chars())
-          .map(|(e, r)| if e == r { "\u{2500}" } else { "\u{2534}" })
-          .collect(),
-      );
-    }
-    diffs.sort();
-    diffs.dedup();
-    let mut out = "\n".to_string();
-    let mut last = 0;
-    for row in diffs {
-      let expected_r = &expected_bytes[row];
-      let actual_r = &actual_bytes[row];
-      let note_r = &data[row];
-      if row > 0 && last != row - 1 {
+      diffs.sort();
+      diffs.dedup();
+      let mut out = "\n".to_string();
+      let mut last = 0;
+      for row in diffs {
+        let expected_r = &expected_bytes[row];
+        let actual_r = &actual_bytes[row];
+        let note_r = &data[row];
+        if row > 0 && last != row - 1 {
+          out.push_str(&format!(
+            " ... {} equal rows skipped ...\n",
+            (row - last - 1)
+          ));
+        }
+        out.push_str(&format!("      ╭╴Expected: {}\n", expected_r));
+        out.push_str(&format!("{:>5}╺┽──╴Actual: {}\n", row, actual_r));
+        out.push_str(&format!("      ╰───────────{}\n", note_r));
+        last = row;
+      }
+      if has_more {
+        out.push_str(&format!(
+          " ... {} more rows not shown ...\n",
+          expected_bytes.len() - last - 1,
+        ));
+      } else if last + 1 != expected_bytes.len() {
         out.push_str(&format!(
           " ... {} equal rows skipped ...\n",
-          (row - last - 1)
+          expected_bytes.len() - last - 1,
         ));
       }
-      out.push_str(&format!("      ╭╴Expected: {}\n", expected_r));
-      out.push_str(&format!("{:>5}╺┽──╴Actual: {}\n", row, actual_r));
-      out.push_str(&format!("      ╰───────────{}\n", note_r));
-      last = row;
-    }
-    if has_more {
-      out.push_str(&format!(
-        " ... {} more rows not shown ...\n",
-        expected_bytes.len() - last - 1,
-      ));
-    } else if last + 1 != expected_bytes.len() {
-      out.push_str(&format!(
-        " ... {} equal rows skipped ...\n",
-        expected_bytes.len() - last - 1,
-      ));
-    }
 
-    assert_eq!(
-      expected,
-      actual,
-      "Expected length: {}, Actual length: {}{}",
-      expected.len(),
-      actual.len(),
-      out
-    );
+      assert_eq!(
+        expected,
+        actual,
+        "Expected length: {}, Actual length: {}{}",
+        expected.len(),
+        actual.len(),
+        out
+      );
+    }
   }};
 }
 

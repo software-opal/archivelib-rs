@@ -1,5 +1,5 @@
 test_match_sys_decompress! {
-  // Minified from fuzz_crash_fuzz_decompress: crash-527d0a9f076f6596861612d0306776351653d590
+  // From fuzz_crash_fuzz_decompress: crash-527d0a9f076f6596861612d0306776351653d590
   data => hex!("
       04 FB 77 76 F5 2A 4B BF  E0 08 51 52 AA B3 8C DF  15 BB AE 66 55 15 00 04  3D F7 82 CD DD DF B7 F7
       DF C3 BD F1 AB D5 DA E4  6E 36 CE 3C E3 AE 42 28  A3 88 7D F5 8A 37 AB E5  8A B3 CE DC AC 2D 0E D9
