@@ -1,4 +1,5 @@
 use std::convert::{TryFrom, TryInto};
+use std::fmt;
 
 #[derive(Debug)]
 pub enum BinaryTreeInvariantError {
@@ -8,16 +9,26 @@ pub enum BinaryTreeInvariantError {
 
 // Was dat_arr189/dat_arr190
 pub struct BinaryTree {
-  pub left: Vec<u16>,
-  pub right: Vec<u16>,
+  pub left: [u16; 1021],
+  pub right: [u16; 1021],
 }
 
 impl BinaryTree {
-  pub fn new(size: usize) -> Self {
+  pub fn new() -> Self {
     Self {
-      left: vec![0; size],
-      right: vec![0; size],
+      left: [0; 1021],
+      right: [0; 1021],
     }
+  }
+}
+
+impl fmt::Debug for BinaryTree {
+  fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    formatter
+      .debug_struct("BinaryTree")
+      .field("left", &&self.left[..])
+      .field("right", &&self.right[..])
+      .finish()
   }
 }
 

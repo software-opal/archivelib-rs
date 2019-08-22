@@ -16,7 +16,7 @@ bool diff_expand_data(RExpandData *old_data, RExpandData *new_data);
 
 #define EXPAND_ABORT(data)                                                     \
   std::cerr << __FILE__ << ":" << __LINE__ << "\n";                            \
-  DEBUG_COMPRESS_DATA(std::cerr, data);                                        \
+  DEBUG_EXPAND_DATA(std::cerr, data);                                        \
   abort();
 
 #define DEBUG_EXPAND_DATA(stream, data)                                        \
