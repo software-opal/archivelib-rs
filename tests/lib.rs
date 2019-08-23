@@ -8,4 +8,4 @@ mod macros;
 mod fixed;
 // mod fuzzed;
 mod match_sys;
-mod minified_data;
+// mod minified_data;
