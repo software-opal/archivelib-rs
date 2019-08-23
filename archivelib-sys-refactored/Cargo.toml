@@ -11,6 +11,14 @@ license = "GPL-2.0-only"
 
 include = ["src/**/*", "c-lib/**/*", "Cargo.toml", "build.rs"]
 
+[[bin]]
+name = "unalszip"
+path = "src/executables/decompress.rs"
+
+[[bin]]
+name = "alszip"
+path = "src/executables/compress.rs"
+
 [build-dependencies]
 cc = { version = "1.0.40", features = ["parallel"] }
 bindgen = "0.51.0"
