@@ -1,4 +1,4 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::io::Read;
 
 use crate::compress::{RCompressData, Result};
@@ -11,9 +11,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     pure_fn218(
       &mut self.output_store,
       &self.dat_arr181,
-      usize::try_from(bits_to_write).unwrap(),
-      usize::try_from(bit_length).unwrap(),
-      i8::try_from(run_start_check).unwrap(),
+      cast!(bits_to_write as usize),
+      cast!(bit_length as usize),
+      cast!(run_start_check as i8),
     )
   }
 }

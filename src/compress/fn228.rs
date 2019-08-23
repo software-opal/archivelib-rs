@@ -1,4 +1,4 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::io::Read;
 
 use super::array_alias::ArrayAlias;
@@ -17,8 +17,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let new_arr167 = part_one::pure_fn228_part_one(
       &self.dat_arr189,
       &self.dat_arr190,
-      usize::try_from(self.dat174).unwrap(),
-      usize::try_from(var229).unwrap(),
+      cast!((self.dat174) as usize),
+      cast!(var229 as usize),
     );
     for (i, &val) in new_arr167.iter().enumerate() {
       self.dat_arr167[i] = val;
@@ -30,7 +30,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat_arr_cursor178.set(
           self,
           dat_arr_cursor188.get(self, offset) as usize,
-          u8::try_from(run_start226).unwrap(),
+          cast!(run_start226 as u8),
         );
         offset += 1;
       }

@@ -186,7 +186,7 @@ impl LookupTables {
             }
           }
         }
-        reader.consume_bits(self.run_offset_lookup_len[usize::try_from(idx).unwrap()])?;
+        reader.consume_bits(self.run_offset_lookup_len[cast!(idx as usize)])?;
         if idx <= 2 {
           idx = match idx {
             0 => 1,

@@ -16,7 +16,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       let byte_or_run_length203 = self.get_next_item()? as usize;
       if byte_or_run_length203 <= UCHAR_MAX {
         // byte_or_run_length203 is the decompressed byte
-        self.uncompressed_buffer[buffer_pos] = u8::try_from(byte_or_run_length203).unwrap();
+        self.uncompressed_buffer[buffer_pos] = cast!(byte_or_run_length203 as u8);
         buffer_pos += 1;
         if buffer_pos >= max_size279 {
           self
@@ -48,10 +48,10 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
           } else {
             for _ in 0..run_length276 {
-              self.uncompressed_buffer[usize::try_from(buffer_pos).unwrap()] =
-                self.uncompressed_buffer[usize::try_from(run_start226).unwrap()];
+              self.uncompressed_buffer[cast!(buffer_pos as usize)] =
+                self.uncompressed_buffer[cast!(run_start226 as usize)];
               buffer_pos += 1;
-              if usize::try_from(buffer_pos).unwrap() >= max_size279 {
+              if cast!(buffer_pos as usize) >= max_size279 {
                 self
                   .output_store
                   .write_all(&self.uncompressed_buffer[..buffer_pos])?;

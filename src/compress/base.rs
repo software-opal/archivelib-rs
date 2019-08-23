@@ -1,4 +1,4 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::fmt;
 use std::io::{Read, Write};
 
@@ -240,7 +240,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat169: 0,
         dat173: 0,
         dat174: 0,
-        // dat183_IS_CONST_8162: u16::try_from(CONST_N155_IS_8192).unwrap() - ((3 * 8) + 6),
+        // dat183_IS_CONST_8162: cast!(CONST_N155_IS_8192 as u16) - ((3 * 8) + 6),
         array165_counter: 0,
         bitwise_counter185: 0,
         array165_tmp_counter186: 0,

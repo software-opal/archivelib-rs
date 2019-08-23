@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! cast_trunc {
   ($e:ident as $t:ty) => {
@@ -12,7 +11,15 @@ macro_rules! cast_trunc {
     match <$t>::try_from(a & b) {
       Ok(v) => v,
       Err(_) => {
-        unreachable!("Conversion of {}(=={}) to {} failed at {}:{}:{}", stringify!($e), a, stringify!($t), file!(), line!(), column!());
+        unreachable!(
+          "Conversion of {}(=={}) to {} failed at {}:{}:{}",
+          stringify!($e),
+          a,
+          stringify!($t),
+          file!(),
+          line!(),
+          column!()
+        );
       }
     }
   }};
@@ -28,7 +35,15 @@ macro_rules! cast {
     match <$t>::try_from(a) {
       Ok(v) => v,
       Err(_) => {
-        panic!("Conversion of {}(=={}) to {} failed at {}:{}:{}", stringify!($e), a, stringify!($t), file!(), line!(), column!());
+        panic!(
+          "Conversion of {}(=={}) to {} failed at {}:{}:{}",
+          stringify!($e),
+          a,
+          stringify!($t),
+          file!(),
+          line!(),
+          column!()
+        );
       }
     }
   }};

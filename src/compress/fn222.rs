@@ -1,4 +1,3 @@
-
 use std::io::Read;
 
 use crate::compress::{RCompressData, Result};

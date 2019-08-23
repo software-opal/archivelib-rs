@@ -19,7 +19,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     // (CONST_N142_IS_15, dat_arr181, dat_arr194)
     let item209_cpy = item209.slice_copy(self);
     let result = pure_fn230(
-      usize::try_from(bits_to_load219).unwrap(),
+      cast!(bits_to_load219 as usize),
       &self.dat_arr167,
       &item209_cpy,
     );
@@ -36,8 +36,8 @@ fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
     lookup_table288[(i + 1)] = ((lookup_table288[i] + dat_arr167[i]) << 1) as u16;
   }
   for (i, &lookup_offset) in item209.iter().take(length).enumerate() {
-    var231[i] = lookup_table288[usize::try_from(lookup_offset).unwrap()];
-    lookup_table288[usize::try_from(lookup_offset).unwrap()] += 1;
+    var231[i] = lookup_table288[cast!(lookup_offset as usize)];
+    lookup_table288[cast!(lookup_offset as usize)] += 1;
   }
   var231
 }

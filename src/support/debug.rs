@@ -140,7 +140,10 @@ macro_rules! assert_bytes_eq {
         }
         out.push_str(&format!("      ╭╴Expected: {}\n", expected_r));
         out.push_str(&format!("{:>5}╺┽──╴Actual: {}\n", row, actual_r));
-        out.push_str(&format!("      ╰───────────{}\n", note_r));
+        out.push_str(&format!(
+          "      ╰───────────{}\n",
+          note_r
+        ));
         last = row;
       }
       if has_more {

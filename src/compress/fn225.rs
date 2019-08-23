@@ -1,4 +1,4 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::io::Read;
 
 use super::array_alias::ArrayAlias;
@@ -8,10 +8,10 @@ use crate::support::BitwiseWrite;
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn225(&mut self, run_start226: i32, var187: &CompressU16ArrayAlias<'_>, var227: i16) {
     pure_fn225(
-      usize::try_from(run_start226).unwrap(),
+      cast!(run_start226 as usize),
       &var187.slice_copy(self),
       &mut self.dat_arr177,
-      usize::try_from(var227).unwrap(),
+      cast!(var227 as usize),
     )
   }
 }
@@ -24,14 +24,12 @@ pub fn pure_fn225(mut run_start226: usize, var187: &[u16], var177: &mut [i16], u
       break;
     }
     if run_length276 < upper_bound
-      && var187[usize::try_from(var177[run_length276]).unwrap()]
-        > var187[usize::try_from(var177[run_length276 + 1]).unwrap()]
+      && var187[cast!((var177[run_length276]) as usize)]
+        > var187[cast!((var177[run_length276 + 1]) as usize)]
     {
       run_length276 += 1
     }
-    if var187[usize::try_from(var289).unwrap()]
-      <= var187[usize::try_from(var177[run_length276]).unwrap()]
-    {
+    if var187[cast!(var289 as usize)] <= var187[cast!((var177[run_length276]) as usize)] {
       break;
     }
     var177[run_start226] = var177[run_length276];

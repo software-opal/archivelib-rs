@@ -1,4 +1,4 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::io::Read;
 
 use crate::compress::RCompressData;
@@ -11,8 +11,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       *v = 0;
     }
     let mut bits_to_load219: usize = CONST_N141_IS_511;
-    while bits_to_load219 > 0 && self.dat_arr180[usize::try_from(bits_to_load219).unwrap() - 1] == 0
-    {
+    while bits_to_load219 > 0 && self.dat_arr180[cast!(bits_to_load219 as usize) - 1] == 0 {
       bits_to_load219 -= 1
     }
     let mut run_start226: usize = 0;
@@ -26,7 +25,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           var277 += 1
         }
         if var277 <= 2 {
-          var217[0] += u16::try_from(var277).unwrap();
+          var217[0] += cast!(var277 as u16);
         } else if var277 <= 18 {
           var217[1] += 1;
         } else if var277 == 19 {

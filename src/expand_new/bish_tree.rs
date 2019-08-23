@@ -122,7 +122,7 @@ pub fn generate_binary_tree(
           }
           tree_index += 1;
         }
-        output_index = usize::try_from(out_val).unwrap();
+        output_index = cast!(out_val as usize);
         if bit_tmp & (1 << (15 - bit_size)) == 0 {
           output_is_left = Some(true);
         } else {

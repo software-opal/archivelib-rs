@@ -16,11 +16,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let dat_arr_cursor178_offset = dat_arr_cursor178.offset(self);
     let dat_arr_cursor188_offset = dat_arr_cursor188.offset(self);
 
-    self.dat174 = i16::try_from(var212).unwrap();
-    let mut var292 = u32::try_from(var212).unwrap();
+    self.dat174 = cast!(var212 as i16);
+    let mut var292 = cast!(var212 as u32);
     let mut var227 = 0;
     self.dat_arr177[1] = 0;
-    for i in 0..(usize::try_from(self.dat174).unwrap()) {
+    for i in 0..cast!((self.dat174) as usize) {
       dat_arr_cursor178.set(self, i, 0);
       if 0 != dat_arr_cursor187.get(self, i) {
         var227 += 1;
@@ -36,7 +36,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         self.fn225(
           i32::from(run_start226),
           dat_arr_cursor187,
-          i16::try_from(var227).unwrap(),
+          cast!(var227 as i16),
         );
         run_start226 -= 1
       }
@@ -44,39 +44,35 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       loop {
         run_start226 = self.dat_arr177[1];
         if run_start226 < self.dat174 {
-          dat_arr_cursor188.set(self, 0, u16::try_from(run_start226).unwrap());
+          dat_arr_cursor188.set(self, 0, cast!(run_start226 as u16));
           dat_arr_cursor188.shift(self, 1);
         }
         self.dat_arr177[1] = self.dat_arr177[var227];
         var227 -= 1;
-        self.fn225(1, dat_arr_cursor187, i16::try_from(var227).unwrap());
+        self.fn225(1, dat_arr_cursor187, cast!(var227 as i16));
         let run_length276 = self.dat_arr177[1];
         if run_length276 < self.dat174 {
-          dat_arr_cursor188.set(self, 0, u16::try_from(run_length276).unwrap());
+          dat_arr_cursor188.set(self, 0, cast!(run_length276 as u16));
           dat_arr_cursor188.shift(self, 1);
         }
         var289 = var292;
         var292 += 1;
         dat_arr_cursor187.set(
           self,
-          usize::try_from(var289).unwrap(),
-          dat_arr_cursor187.get(self, usize::try_from(run_start226).unwrap())
-            + dat_arr_cursor187.get(self, usize::try_from(run_length276).unwrap()),
+          cast!(var289 as usize),
+          dat_arr_cursor187.get(self, cast!(run_start226 as usize))
+            + dat_arr_cursor187.get(self, cast!(run_length276 as usize)),
         );
-        self.dat_arr177[1] = i16::try_from(var289).unwrap();
-        self.fn225(1, dat_arr_cursor187, i16::try_from(var227).unwrap());
-        self.dat_arr189[usize::try_from(var289).unwrap()] = u16::try_from(run_start226).unwrap();
-        self.dat_arr190[usize::try_from(var289).unwrap()] = u16::try_from(run_length276).unwrap();
+        self.dat_arr177[1] = cast!(var289 as i16);
+        self.fn225(1, dat_arr_cursor187, cast!(var227 as i16));
+        self.dat_arr189[cast!(var289 as usize)] = cast!(run_start226 as u16);
+        self.dat_arr190[cast!(var289 as usize)] = cast!(run_length276 as u16);
         if var227 <= 1 {
           break;
         }
       }
       dat_arr_cursor188.set_offset(self, dat_arr_cursor188_offset);
-      self.fn228(
-        i32::try_from(var289).unwrap(),
-        dat_arr_cursor178,
-        dat_arr_cursor188,
-      );
+      self.fn228(cast!(var289 as i32), dat_arr_cursor178, dat_arr_cursor188);
       dat_arr_cursor188.set_offset(self, dat_arr_cursor188_offset);
       dat_arr_cursor178.set_offset(self, dat_arr_cursor178_offset);
       self.fn230(var212, dat_arr_cursor178, dat_arr_cursor188);

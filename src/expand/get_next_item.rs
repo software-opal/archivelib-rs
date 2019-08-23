@@ -12,9 +12,17 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       // calls that this header can handle. It's not exactly the number of bytes
       // because we read a variable number of bits per call.
       self.items_until_next_header = self.get_bits(16)? as usize;
-      self.fn253(i16::try_from(CONST_N145_IS_19).unwrap(), i16::try_from(CONST_N147_IS_5).unwrap(), 3)?;
+      self.fn253(
+        cast!(CONST_N145_IS_19 as i16),
+        cast!(CONST_N147_IS_5 as i16),
+        3,
+      )?;
       self.fn255()?;
-      self.fn253(i16::try_from(CONST_N142_IS_15).unwrap(), i16::try_from(CONST_N540_IS_5).unwrap(), -1)?;
+      self.fn253(
+        cast!(CONST_N142_IS_15 as i16),
+        cast!(CONST_N540_IS_5 as i16),
+        -1,
+      )?;
       // println!("dat_arr180: {:X?}", self.dat_arr180);
       // println!("dat_arr181: {:X?}", self.dat_arr181);
       // println!("dat_arr189: {:X?}", self.dat_arr189);
@@ -27,22 +35,22 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     // run_length276 <= 0xFF are the uncompressed bits.
     // 0x100 <= run_length276 <= 0x1FE are runs (run_length276 - 0x100 + 3) bits
     // long
-    if usize::try_from(run_length276).unwrap() >= CONST_N141_IS_511 {
+    if cast!(run_length276 as usize) >= CONST_N141_IS_511 {
       // No test cases exercise this condition.
       let mut var283 = 1_u16 << 3;
       loop {
         if 0 != self.bits182 & var283 {
-          run_length276 = self.dat_arr190[usize::try_from(run_length276).unwrap()]
+          run_length276 = self.dat_arr190[cast!(run_length276 as usize)]
         } else {
-          run_length276 = self.dat_arr189[usize::try_from(run_length276).unwrap()]
+          run_length276 = self.dat_arr189[cast!(run_length276 as usize)]
         }
         var283 >>= 1;
-        if (usize::try_from(run_length276).unwrap()) < CONST_N141_IS_511 {
+        if (cast!(run_length276 as usize)) < CONST_N141_IS_511 {
           break;
         }
       }
     }
-    let bits = i16::from(self.dat_arr180[usize::try_from(run_length276).unwrap()]);
+    let bits = i16::from(self.dat_arr180[cast!(run_length276 as usize)]);
     self.read_bits(bits)?;
     Ok(run_length276)
   }

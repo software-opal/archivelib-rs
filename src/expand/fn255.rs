@@ -7,38 +7,38 @@ use std::io::Write;
 impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn fn255(&mut self) -> Result<()> {
     let mut var283: u16;
-    let bits_to_load219: i16 = self.get_bits(i16::try_from(CONST_N143_IS_9).unwrap())? as i16;
+    let bits_to_load219: i16 = self.get_bits(cast!(CONST_N143_IS_9 as i16))? as i16;
     if bits_to_load219 == 0 {
-      let byte_or_run_length203: i16 = self.get_bits(i16::try_from(CONST_N143_IS_9).unwrap())? as i16;
+      let byte_or_run_length203: i16 = self.get_bits(cast!(CONST_N143_IS_9 as i16))? as i16;
       let mut run_start226: i16 = 0 as i16;
-      while (run_start226) < i16::try_from(CONST_N141_IS_511).unwrap() {
-        self.dat_arr180[usize::try_from(run_start226).unwrap()] = 0 as u8;
+      while (run_start226) < cast!(CONST_N141_IS_511 as i16) {
+        self.dat_arr180[cast!(run_start226 as usize)] = 0 as u8;
         run_start226 += 1
       }
       run_start226 = 0 as i16;
-      while (run_start226) < i16::try_from(CONST_N148_IS_4096).unwrap() {
-        self.dat_arr240[usize::try_from(run_start226).unwrap()] = u16::try_from(byte_or_run_length203).unwrap();
+      while (run_start226) < cast!(CONST_N148_IS_4096 as i16) {
+        self.dat_arr240[cast!(run_start226 as usize)] = cast!(byte_or_run_length203 as u16);
         run_start226 += 1
       }
     } else {
       let mut run_start226: i16 = 0 as i16;
       while (run_start226) < bits_to_load219 {
         let mut byte_or_run_length203: i16 = self.dat_arr241[(self.bits182 >> 8) as usize] as i16;
-        if byte_or_run_length203 >= i16::try_from(CONST_N145_IS_19).unwrap() {
+        if byte_or_run_length203 >= cast!(CONST_N145_IS_19 as i16) {
           var283 = (1 << 7) as u16;
           loop {
             if 0 != self.bits182 & var283 {
-              byte_or_run_length203 = self.dat_arr190[usize::try_from(byte_or_run_length203).unwrap()] as i16
+              byte_or_run_length203 = self.dat_arr190[cast!(byte_or_run_length203 as usize)] as i16
             } else {
-              byte_or_run_length203 = self.dat_arr189[usize::try_from(byte_or_run_length203).unwrap()] as i16
+              byte_or_run_length203 = self.dat_arr189[cast!(byte_or_run_length203 as usize)] as i16
             }
             var283 = (var283 >> 1) as u16;
-            if byte_or_run_length203 < i16::try_from(CONST_N145_IS_19).unwrap() {
+            if byte_or_run_length203 < cast!(CONST_N145_IS_19 as i16) {
               break;
             }
           }
         }
-        let bits = i16::from(self.dat_arr181[usize::try_from(byte_or_run_length203).unwrap()]);
+        let bits = i16::from(self.dat_arr181[cast!(byte_or_run_length203 as usize)]);
         self.read_bits(bits)?;
         if byte_or_run_length203 <= 2 {
           if byte_or_run_length203 == 0 {
@@ -46,7 +46,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           } else if byte_or_run_length203 == 1 {
             byte_or_run_length203 = (self.get_bits(4)? + 3) as i16
           } else {
-            byte_or_run_length203 = (self.get_bits(i16::try_from(CONST_N143_IS_9).unwrap())? + 20) as i16
+            byte_or_run_length203 = (self.get_bits(cast!(CONST_N143_IS_9 as i16))? + 20) as i16
           }
           let mut count = 0;
           loop {
@@ -56,25 +56,25 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
             let fresh0 = run_start226;
             run_start226 += 1;
-            self.dat_arr180[usize::try_from(fresh0).unwrap()] = 0 as u8;
+            self.dat_arr180[cast!(fresh0 as usize)] = 0 as u8;
             count += 1;
           }
         } else {
           let fresh1 = run_start226;
           run_start226 += 1;
-          self.dat_arr180[usize::try_from(fresh1).unwrap()] = (byte_or_run_length203 - 2) as u8
+          self.dat_arr180[cast!(fresh1 as usize)] = (byte_or_run_length203 - 2) as u8
         }
       }
-      while (run_start226) < (i16::try_from(CONST_N141_IS_511).unwrap()) {
+      while (run_start226) < (cast!(CONST_N141_IS_511 as i16)) {
         let fresh2 = run_start226;
         run_start226 += 1;
-        self.dat_arr180[usize::try_from(fresh2).unwrap()] = 0 as u8
+        self.dat_arr180[cast!(fresh2 as usize)] = 0 as u8
       }
       self.fn258(
         Fn258Mode::Fn255,
         CONST_N141_IS_511,
         12,
-        u16::try_from(CONST_N148_IS_4096).unwrap(),
+        cast!(CONST_N148_IS_4096 as u16),
       )?;
     };
     Ok(())

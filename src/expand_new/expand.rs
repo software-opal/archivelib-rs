@@ -82,9 +82,9 @@ impl ExpandData {
       let mut skip = 12;
       loop {
         if skip < 16 && reader.look_ahead_skip(skip, 1)? {
-          run_length = table.tree.right[usize::try_from(run_length).unwrap()];
+          run_length = table.tree.right[cast!(run_length as usize)];
         } else {
-          run_length = table.tree.left[usize::try_from(run_length).unwrap()];
+          run_length = table.tree.left[cast!(run_length as usize)];
         }
         skip += 1;
         if run_length <= EOF_FLAG {
@@ -92,7 +92,7 @@ impl ExpandData {
         }
       }
     }
-    reader.consume_bits(table.bit_lookup_len[usize::try_from(run_length).unwrap()])?;
+    reader.consume_bits(table.bit_lookup_len[cast!(run_length as usize)])?;
     Ok(run_length)
   }
   pub fn run_offset(

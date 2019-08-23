@@ -11,12 +11,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       &self.dat_arr163,
       &self.uncompressed_buffer,
       self.max_uncompressed_data_size,
-      usize::try_from(uncompressed_buffer_index200).unwrap(),
-      usize::try_from(var201).unwrap(),
+      cast!(uncompressed_buffer_index200 as usize),
+      cast!(var201 as usize),
     );
-    self.dat168 = i16::try_from(dat168).unwrap();
+    self.dat168 = cast!(dat168 as i16);
     if let Some(val) = dat169 {
-      self.dat169 = i16::try_from(val).unwrap();
+      self.dat169 = cast!(val as i16);
     }
   }
 }
