@@ -6,10 +6,18 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "alfuzz_afl"
+path = "src/executables/fuzz_afl.rs"
+required-features = ["fuzz-afl"]
+
+[[bin]]
+name = "alfuzz_hongg"
+path = "src/executables/fuzz_hongg.rs"
+required-features = ["fuzz-hongg"]
+
 [dependencies]
-archivelib = { version = "0.1.2", path = "../" , features=["new_impl"]}
-archivelib-sys = { version = "0.1.0", path = "../archivelib-sys" }
-# archivelib-sys = { version = "0.1.0", path = "../archivelib-sys2" }
+archivelib = { version = "0.1.2", path = "../" , features=["new_impl", "sys"]}
 
 afl = { version = "*", optional = true }
 honggfuzz = { version = "*", optional = true }

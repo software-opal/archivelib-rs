@@ -38,6 +38,6 @@ archivelib-sys = { version = "0.1.0", path = "archivelib-sys-refactored" }
 members = [
   # "archivelib-sys-orig",
   "archivelib-sys-refactored",
-  # "cli",
+  "cli",
   # "fuzz",
 ]

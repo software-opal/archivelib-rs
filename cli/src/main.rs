@@ -1,11 +1,3 @@
-#[cfg(all(not(feature = "fuzz-afl"), feature = "fuzz-hfuzz"))]
-#[macro_use]
-extern crate honggfuzz;
-
-#[cfg(all(feature = "fuzz-afl", not(feature = "fuzz-hfuzz")))]
-#[macro_use]
-extern crate afl;
-
 use archivelib::CompressionLevel;
 use std::error::Error;
 use std::io::Read;
@@ -130,7 +122,7 @@ fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, B
   match mode {
     Mode::COMPRESS => {
       let result = archivelib::do_compress_level(&input, level)?;
-      let sys_result = archivelib_sys::do_compress_level(&input, level.compression_level());
+      let sys_result = archivelib::sys::do_compress_level(&input, level.compression_level());
       assert_eq!(sys_result.unwrap(), result);
       Ok(result)
     }
@@ -141,7 +133,6 @@ fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, B
   }
 }
 
-#[cfg(all(not(feature = "fuzz-afl"), not(feature = "fuzz-hfuzz")))]
 fn main() -> Result<(), Box<dyn Error>> {
   let args = match Args::from_arg_array(env::args().skip(1).collect()) {
     Ok(a) => a,
@@ -161,51 +152,4 @@ fn main() -> Result<(), Box<dyn Error>> {
     run(&input, args.mode, args.level)?
   };
   args.output_data(&output)
-}
-
-#[cfg(all(feature = "fuzz-afl", not(feature = "fuzz-hfuzz")))]
-fn main() -> Result<(), Box<dyn Error>> {
-  let args = match Args::from_arg_array(env::args().skip(1).collect()) {
-    Ok(a) => a,
-    Err(msg) => {
-      help();
-      return Err(msg);
-    }
-  };
-  afl::fuzz!(|input| {
-    match std::panic::catch_unwind(|| run(&input, args.mode, args.level)) {
-      Ok(Ok(v)) => {}
-      Ok(Err(_)) => {}
-      Err(_) => {
-        if args.abort_on_panic {
-          std::process::abort()
-        } else {
-        }
-      }
-    };
-  });
-  Ok(())
-}
-
-#[cfg(all(not(feature = "fuzz-afl"), feature = "fuzz-hfuzz"))]
-fn main() -> Result<(), Box<dyn Error>> {
-  let args = match Args::from_arg_array(env::args().skip(1).collect()) {
-    Ok(a) => a,
-    Err(msg) => {
-      help();
-      return Err(msg);
-    }
-  };
-  loop {
-    honggfuzz::fuzz!(|input| {
-      if args.abort_on_panic {
-        match std::panic::catch_unwind(|| run(&input, args.mode, args.level)) {
-          Ok(v) => v?,
-          Err(_) => std::process::abort(),
-        }
-      } else {
-        run(&input, args.mode, args.level)?
-      };
-    })
-  }
 }
