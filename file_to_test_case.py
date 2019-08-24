@@ -1,10 +1,9 @@
-import sys
+import hashlib
 import pathlib
 import re
-import hashlib
 import subprocess
+import sys
 import tempfile
-
 
 ROOT = pathlib.Path(__file__).parent
 FUZZ_DIR = ROOT / "fuzz"
@@ -34,7 +33,6 @@ def bytes_to_test_hex(data):
     return out
 
 
-
 def write_test(data):
     sha1 = hashlib.sha1(data).hexdigest()
     (KNOWN_INPUTS / sha1).write_bytes(data)
@@ -54,10 +52,10 @@ def write_test(data):
     mod_file.write_text("\n".join(sorted(lines)) + "\n")
 
 
-
 def main():
     for file in map(pathlib.Path, sys.argv[1:]):
         write_test(file.read_bytes())
+
 
 if __name__ == "__main__":
     main()

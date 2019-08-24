@@ -2,6 +2,9 @@
 **/*.rs.bk
 vgcore.*
 
+data.pickle
+gen_test_cases
+
 Cargo.lock
 
 .afl*

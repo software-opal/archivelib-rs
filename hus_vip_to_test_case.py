@@ -1,7 +1,7 @@
-import sys
+import hashlib
 import pathlib
 import re
-import hashlib
+import sys
 
 offset = [20, 24, 28]
 

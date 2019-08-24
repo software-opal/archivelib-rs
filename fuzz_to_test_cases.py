@@ -1,10 +1,9 @@
-import sys
+import hashlib
 import pathlib
 import re
-import hashlib
 import subprocess
+import sys
 import tempfile
-
 
 ROOT = pathlib.Path(__file__).parent
 FUZZ_DIR = ROOT / "fuzz"
@@ -135,7 +134,7 @@ def main():
         for file in (AFL_OUTPUT_DIR / type).iterdir()
         if file.name != "README.txt"
     ] + [
-        (f'fuzz_crash_{dir.name}', file)
+        (f"fuzz_crash_{dir.name}", file)
         for dir in filter(pathlib.Path.is_dir, FUZZ_CRASHES_DIR.iterdir())
         for file in dir.iterdir()
     ]
@@ -144,6 +143,7 @@ def main():
     #     subprocess.call([*target, bad_files[0][1], f.name], cwd=ROOT)
     for (type, crash) in bad_files:
         run_test_case_minifier(crash, type)
+
 
 if __name__ == "__main__":
     main()
