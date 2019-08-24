@@ -1,4 +1,4 @@
-import hashlib
+import ast
 import multiprocessing
 import os
 import pathlib
@@ -10,7 +10,15 @@ import subprocess
 import sys
 import typing as typ
 
-HEX_MACRO_RE = re.compile(r'hex!([\s\n]*"([\s\n0-9A-Fa-f]+)"[\s\n]*)', re.MULTILINE)
+HEX_MACRO_RE = re.compile(r'hex!\([\s\n]*"([\s\n0-9A-Fa-f]+)"[\s\n]*\)', re.MULTILINE)
+U8_ARRAY_RE = re.compile(
+    r"\[((?:(?:[1-9][0-9]*|0x[0-9A-F]{1,2}|0)(?:_?u8)?,?[\s\n]*)+)\]",
+    re.MULTILINE | re.IGNORECASE,
+)
+U8_REPEAT_RE = re.compile(
+    r"\[([1-9][0-9]*|0x[0-9A-F]{1,2}|0)(?:_?u8); ([1-9][0-9]*|0x[0-9A-F]{1,2}|0)\]",
+    re.MULTILINE,
+)
 ROOT = pathlib.Path(__file__).resolve().parent
 
 CRASH_STATUS_CODES = {
@@ -56,12 +64,15 @@ TEST_OUTPUT_DIRS = {
 
 ERROR_MAPPING = {
     rb'Error: "BinaryTreeError(Type1)"': "BTE1",
+    rb'Error: "Binary tree error: Type1"': "BTE1",
     rb'Error: "Internal error: -101\u{0}"': "BTE1",
     rb'Error: "BinaryTreeError(Type2)"': "BTE2",
+    rb'Error: "Binary tree error: Type2"': "BTE2",
     rb'Error: "Internal error: -102\u{0}"': "BTE2",
     rb'Error: "IOError: failed to write whole buffer"': "OOM",
     rb'Error: "Attempt to allocate a huge buffer of 65536 bytes for ALMemory\u{0}"': "OOM",
-    rb'Error: "InvariantFailue"': "INV",
+    rb'Error: "InvariantFailure"': "INV",
+    rb'Error: "Invariant Failure"': "INV",
 }
 
 
@@ -78,9 +89,12 @@ def get_all_inputs() -> typ.Set[bytes]:
             inputs = inputs.union(pickle.load(f))
     except:
         inputs = inputs | get_fuzz_inputs()
-        inputs = inputs | get_test_case_inputs()
-        with PICKLED_INPUTS.open("wb") as f:
-            pickle.dump(inputs, f, protocol=pickle.HIGHEST_PROTOCOL)
+        for folder in ["tests", "src", "old_tests", "archivelib-sys-refactored/src"]:
+            inputs = inputs | get_test_case_inputs(ROOT / folder)
+    inputs = {i for i in inputs if i is not None}
+    with PICKLED_INPUTS.open("wb") as f:
+        pickle.dump(inputs, f, protocol=pickle.HIGHEST_PROTOCOL)
+
     return inputs
 
 
@@ -101,15 +115,21 @@ def get_fuzz_inputs() -> typ.Set[bytes]:
 
 
 def get_test_case_inputs(folder=ROOT / "tests") -> typ.Set[bytes]:
-    inputs = frozenset()
+    inputs = set()
     for file in folder.iterdir():
         if file.is_dir():
             inputs = inputs | get_test_case_inputs(file)
         elif file.is_file():
-            inputs = inputs | {
-                bytes.fromhex(match.group(1))
-                for match in HEX_MACRO_RE.findall(file.read_text())
-            }
+            for match in HEX_MACRO_RE.finditer(file.read_text()):
+                inputs.add(bytes.fromhex(match.group(1).replace("\n", "")))
+            for match in U8_ARRAY_RE.finditer(file.read_text()):
+                l = ast.literal_eval(match.group(0).replace("_u8", "").replace("_", ""))
+                if all(i <= 255 for i in l):
+                    inputs.add(bytes(l))
+            for match in U8_REPEAT_RE.finditer(file.read_text()):
+                v = int(match.group(1))
+                if v <= 255:
+                    inputs.add(bytes([v]) * int(match.group(2)))
     return inputs
 
 
@@ -140,6 +160,12 @@ def run_exec(input, kcov_base, exec, level="4"):
     return (rc, out, err, known_err)
 
 
+def test_case_name(input):
+    import hashlib
+    sha = hashlib.sha1(input).hexdigest()
+    size = len(input) if len(input) < 10000 else 9999
+    return f'{size:04}~{sha}'
+
 def bytes_to_test_hex(data):
     aparts = []
     bparts = []
@@ -162,23 +188,27 @@ def bytes_to_test_hex(data):
 def output_test_case(
     input,
     *,
-    output=None,
     sys_out=None,
     new_out=None,
+    sys_err=None,
+    new_err=None,
     sys_cov=None,
     new_cov=None,
     fail_type,
 ):
-    sha1 = hashlib.sha1(input).hexdigest()
-    out = TEST_OUTPUT_DIRS[fail_type] / sha1
+    name = test_case_name(input)
+    out = TEST_OUTPUT_DIRS[fail_type] / name
     sp_run(["rm", "-rf", out], check=True)
     out.mkdir(parents=True)
     (out / "input.dat").write_bytes(input)
     (out / "input.txt").write_text(bytes_to_test_hex(input))
-    for (o, name) in [(output, "output"), (sys_out, "sys_"), (new_out, "new_")]:
+    for (o, name) in [(sys_out, "sys_"), (new_out, "new_")]:
         if o is not None:
             (out / f"{name}output.dat").write_bytes(o)
             (out / f"{name}output.txt").write_text(bytes_to_test_hex(o))
+    for (o, name) in [(sys_err, "sys_"), (new_err, "new_")]:
+        if o is not None:
+            (out / f"{name}err.txt").write_bytes(o)
 
     for (orig, exec, target) in [
         (sys_cov, UNZIP_EXEC_SYS, "sys"),
@@ -194,17 +224,13 @@ def output_test_case(
 
 
 def run(input: bytes):
-    sha1 = hashlib.sha1(input).hexdigest()
-    if any(
-        map(
-            pathlib.Path.is_dir,
-            [TEST_OUTPUT_DIRS[i] / sha1 for i in ["match", "match_err", "match_crash"]],
-        )
-    ):
+    name =test_case_name(input)
+    to_rm ={k: o / name for k, o in TEST_OUTPUT_DIRS.items()}
+    if any(            to_rm[k].is_dir()            for k in ["match", "match_err", "match_crash"]    ):
         # print(f"{sha1}: {len(input)} byte(s); Existing match")
         return
-    base = TEST_OUTPUT_DIRS["wip"] / sha1
-    sp_run(["rm", "-rf", base], check=True)
+    base = TEST_OUTPUT_DIRS["wip"] / name
+    sp_run(["rm", "-rf", *to_rm.values()], check=True)
     sys_base = base / "sys"
     new_base = base / "new"
     sys_base.mkdir(parents=True)
@@ -217,18 +243,27 @@ def run(input: bytes):
     (new_rc, new_out, new_err, new_known_err) = run_exec(
         input, new_base, UNZIP_EXEC_NEW
     )
+    if not sys_known_err:
+        print("Unknown error: ", sys_err)
+    if not new_known_err:
+        print("Unknown error: ", new_err)
 
     if sys_rc == 0:
         if new_rc != 0:
             output_test_case(
-                input, output=sys_out, sys_cov=sys_base, fail_type="difference_err"
+                input,
+                sys_out=sys_out,
+                sys_err=sys_err,
+                new_out=new_out,
+                new_err=new_err, sys_cov=sys_base, fail_type="difference_err"
             )
         elif sys_out != new_out:
             output_test_case(
                 input,
                 sys_out=sys_out,
+                sys_err=sys_err,
                 new_out=new_out,
-                output=sys_out,
+                new_err=new_err,
                 sys_cov=sys_base,
                 fail_type="difference_out",
             )
@@ -236,8 +271,9 @@ def run(input: bytes):
             output_test_case(
                 input,
                 sys_out=sys_out,
+                sys_err=sys_err,
                 new_out=new_out,
-                output=sys_out,
+                new_err=new_err,
                 sys_cov=sys_base,
                 new_cov=new_base,
                 fail_type="match",
@@ -247,7 +283,9 @@ def run(input: bytes):
             output_test_case(
                 input,
                 sys_out=sys_out,
+                sys_err=sys_err,
                 new_out=new_out,
+                new_err=new_err,
                 sys_cov=sys_base,
                 new_cov=new_base,
                 fail_type="match_err",
@@ -256,7 +294,9 @@ def run(input: bytes):
             output_test_case(
                 input,
                 sys_out=sys_out,
+                sys_err=sys_err,
                 new_out=new_out,
+                new_err=new_err,
                 sys_cov=sys_base,
                 fail_type="difference_err",
             )
@@ -264,23 +304,34 @@ def run(input: bytes):
         output_test_case(
             input,
             sys_out=sys_out,
+            sys_err=sys_err,
             new_out=new_out,
+            new_err=new_err,
             new_cov=new_base,
             fail_type="match_crash",
         )
     elif {sys_rc, new_rc} & set(CRASH_STATUS_CODES):
         # Rust crash, Segfault/Abort, Timeout.
-        output_test_case(input, sys_out=sys_out, new_out=new_out, fail_type="crash")
+        output_test_case(
+            input,
+            sys_out=sys_out,
+            sys_err=sys_err,
+            new_out=new_out,
+            new_err=new_err,
+            fail_type="crash",
+        )
     else:
         output_test_case(
             input,
             sys_out=sys_out,
+            sys_err=sys_err,
             new_out=new_out,
+            new_err=new_err,
             sys_cov=sys_base,
             new_cov=new_base,
             fail_type="unknown",
         )
-        print("Unknown data: ", len(input), sha1)
+        print("Unknown data: ", len(input), name)
         print(
             " sys:",
             repr(
