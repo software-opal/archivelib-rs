@@ -1,6 +1,5 @@
 [package]
-# name = "archivelib-sys"
-name = "archivelib-sys_a"
+name = "archivelib-sys"
 description = "An implementaton(in C++) of the Greenleaf ArchiveLib compression/decompression algorithm"
 build = "build.rs"
 version = "0.1.1"
@@ -11,6 +10,14 @@ homepage = "https://github.com/software-opal/archivelib-rs"
 license = "GPL-2.0-only"
 
 include = ["src/**/*", "c-lib/**/*", "Cargo.toml", "build.rs"]
+
+[[bin]]
+name = "unalszip"
+path = "src/executables/decompress.rs"
+
+[[bin]]
+name = "alszip"
+path = "src/executables/compress.rs"
 
 [build-dependencies]
 cc = { version = "1.0.40", features = ["parallel"] }
