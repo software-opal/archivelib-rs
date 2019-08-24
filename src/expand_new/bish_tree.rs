@@ -1,11 +1,7 @@
 use std::convert::{TryFrom, TryInto};
 use std::fmt;
 
-#[derive(Debug)]
-pub enum BinaryTreeInvariantError {
-  Type1,
-  Type2,
-}
+use crate::errors::BinaryTreeInvariantError;
 
 // Was dat_arr189/dat_arr190
 pub struct BinaryTree {

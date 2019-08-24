@@ -53,8 +53,7 @@ mod tests {
     // Placed back into the compress data, as well as the functionality
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
-    let mut cd =
-      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
     cd.dat_arr167 = vec![0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr181 = [0, 3, 2, 3, 0, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr194 = [3, 5, 6, 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

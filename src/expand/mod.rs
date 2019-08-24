@@ -7,4 +7,4 @@ mod fn255;
 mod fn258;
 mod get_next_item;
 
-pub use self::base::{ExpandError, RExpandData, Result};
+pub use self::base::{DecompressError, RExpandData, Result};

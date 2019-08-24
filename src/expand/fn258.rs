@@ -1,4 +1,4 @@
-use crate::expand::base::ExpandError::InternalError;
+use crate::expand::base::DecompressError::InternalError;
 use crate::expand::{RExpandData, Result};
 use crate::support::BitRead;
 use std::io::Write;

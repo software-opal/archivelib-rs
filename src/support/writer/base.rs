@@ -23,13 +23,6 @@ impl<W: std::io::Write> BitwiseWriter<W> {
       buffer: Vec::with_capacity(8),
     }
   }
-  pub fn checked_into_inner(self) -> W {
-    assert_eq!(self.buffer, vec![]);
-    self.into_inner()
-  }
-  pub fn into_inner(self) -> W {
-    self.inner
-  }
   pub fn commit_buffer(&mut self) -> std::io::Result<usize> {
     if self.buffer.len() >= 8 {
       let mut to_write = Vec::with_capacity(self.buffer.len() / 8);

@@ -25,7 +25,6 @@ mod support;
 mod test;
 
 mod level;
-pub use self::level::CompressionLevel;
 
 #[cfg(not(feature = "new_impl"))]
 mod expand;
@@ -33,76 +32,46 @@ mod expand;
 mod expand_new;
 
 mod compress;
+mod config;
 mod consts;
+mod errors;
+
+pub use self::config::ArchivelibConfig;
+pub use self::errors::*;
+pub use self::level::CompressionLevel;
 
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-  do_compress_level(input, CompressionLevel::Level0)
+  ArchivelibConfig::default()
+    .compress(input)
+    .map_err(|err| format!("{}", err))
 }
 
 pub fn do_compress_level(
   input: &[u8],
   compression_level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
-  let reader = input;
-  let writer = Vec::with_capacity(1024);
-  let mut res = match compress::RCompressData::new_with_io_writer(
-    reader,
-    writer,
-    input.len(),
-    compression_level.compression_factor(),
-    false,
-  ) {
-    Ok(res) => res,
-    Err(err) => return Err(format!("{}", err)),
-  };
-
-  match res.compress() {
-    Ok(()) => (),
-    Err(err) => return Err(format!("{}", err)),
-  };
-
-  Ok(res.into_writer().checked_into_inner().into_boxed_slice())
+  (ArchivelibConfig {
+    level: compression_level,
+    ..ArchivelibConfig::default()
+  })
+  .compress(input)
+  .map_err(|err| format!("{}", err))
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-  do_decompress_level(input, CompressionLevel::Level0)
+  ArchivelibConfig::default()
+    .decompress(input)
+    .map_err(|err| format!("{}", err))
 }
 
-#[cfg(not(feature = "new_impl"))]
 pub fn do_decompress_level(
   input: &[u8],
   compression_level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
-  let reader = support::BitReader::from(input);
-  let writer = Vec::with_capacity(1024);
-
-  let mut res = match expand::RExpandData::new(
-    reader,
-    writer,
-    input.len(),
-    compression_level.compression_factor(),
-  ) {
-    Ok(res) => res,
-    Err(err) => return Err(format!("{}", err)),
-  };
-
-  match res.expand() {
-    Ok(()) => {}
-    Err(err) => return Err(format!("{}", err)),
-  };
-
-  Ok(res.into_writer().into_boxed_slice())
-}
-
-#[cfg(feature = "new_impl")]
-pub fn do_decompress_level(
-  input: &[u8],
-  level: CompressionLevel,
-) -> Result<Box<[u8]>, std::string::String> {
-  let mut reader = support::CorrectLookAheadBitwiseReader::from_reader(input);
-  let mut writer = Vec::with_capacity(1024);
-  match expand_new::expand(&mut reader, &mut writer, level) {
-    Ok(_) => Ok(writer.into_boxed_slice()),
-    Err(err) => Err(format!("{:?}", err)),
-  }
+  (ArchivelibConfig {
+    level: compression_level,
+    ..ArchivelibConfig::default()
+  })
+  .decompress(input)
+  .map_err(|err| format!("{}", err))
 }

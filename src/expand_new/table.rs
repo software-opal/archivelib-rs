@@ -14,7 +14,8 @@
 use std::convert::TryFrom;
 use std::io;
 
-use super::bish_tree::{generate_binary_tree, BinaryTree, BinaryTreeInvariantError};
+use super::bish_tree::{generate_binary_tree, BinaryTree};
+use crate::errors::BinaryTreeInvariantError;
 use crate::support::CorrectLookAheadBitwiseRead;
 
 #[derive(Debug)]

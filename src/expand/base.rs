@@ -2,51 +2,10 @@ use crate::consts::{
   CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
+pub use crate::errors::DecompressError;
 use crate::support::BitRead;
 use std::io::Write;
-
-#[derive(Fail, Debug)]
-pub enum ExpandError {
-  #[fail(display = "Illegal Compression level: {}", _0)]
-  IllegalCompressionLevel(u8),
-  #[fail(display = "Internal Error: {}", _0)]
-  InternalError(u8),
-  // #[fail(display = "Unexpected EoF")]
-  // UnexpectedEndOfFile {
-  //   #[cause]
-  //   error: ReadError,
-  // },
-  #[fail(display = "Invalid conversion: {}", error)]
-  InvalidIntegerConversion {
-    #[cause]
-    error: std::num::TryFromIntError,
-  },
-  #[fail(display = "IOError: {}", error)]
-  IOError {
-    #[cause]
-    error: std::io::Error,
-  },
-}
-pub type Result<R> = std::result::Result<R, ExpandError>;
-
-impl From<std::num::TryFromIntError> for ExpandError {
-  fn from(v: std::num::TryFromIntError) -> Self {
-    ExpandError::InvalidIntegerConversion { error: v }
-  }
-}
-impl From<std::io::Error> for ExpandError {
-  fn from(v: std::io::Error) -> Self {
-    ExpandError::IOError { error: v }
-  }
-}
-// impl From<ReadError> for ExpandError {
-//   fn from(e: ReadError) -> Self {
-//     match e {
-//       ReadError::EndOfFile() => ExpandError::UnexpectedEndOfFile { error: e },
-//       ReadError::IoError { error } => ExpandError::IOError { error },
-//     }
-//   }
-// }
+pub type Result<R> = std::result::Result<R, DecompressError>;
 
 #[derive(Clone)]
 #[repr(C)]
@@ -73,7 +32,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
   pub fn new(reader: R, writer: W, _in_length: usize, compression_level: u8) -> Result<Self> {
     assert_eq!(CONST_N141_IS_511, 511);
     if compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR {
-      Err(ExpandError::IllegalCompressionLevel(compression_level))
+      Err(DecompressError::IllegalCompressionLevel(compression_level))
     } else {
       let max_size = 1 << compression_level;
       Ok(RExpandData {

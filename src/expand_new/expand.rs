@@ -3,8 +3,8 @@ use std::convert::{TryFrom, TryInto};
 
 use std::io;
 
-use super::bish_tree::BinaryTreeInvariantError;
 use super::table::{LookupTableGenerationError, LookupTables};
+pub use crate::errors::{BinaryTreeInvariantError, DecompressError};
 use crate::level::CompressionLevel;
 use crate::support::CorrectLookAheadBitwiseRead;
 
@@ -12,20 +12,7 @@ const EOF_FLAG: u16 = 0x1FE;
 const U8_MAX: u16 = 0xFF;
 const MIN_RUN_LENGTH: u16 = 3;
 
-#[derive(Debug)]
-
-pub enum ExpandError {
-  IOError(io::Error),
-  BinaryTreeError(BinaryTreeInvariantError),
-  InvariantFailue,
-  // FileExhausted,
-}
-impl From<io::Error> for ExpandError {
-  fn from(error: io::Error) -> Self {
-    Self::IOError(error)
-  }
-}
-impl From<LookupTableGenerationError> for ExpandError {
+impl From<LookupTableGenerationError> for DecompressError {
   fn from(error: LookupTableGenerationError) -> Self {
     match error {
       LookupTableGenerationError::IOError(e) => Self::IOError(e),
@@ -48,7 +35,7 @@ impl ExpandData {
   pub fn next_item(
     &mut self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
-  ) -> Result<u16, ExpandError> {
+  ) -> Result<u16, DecompressError> {
     // println!("Gimme some sweet sweet next_item");
     if self.table.is_none() || self.items_until_next_header == 0 {
       self.items_until_next_header = reader.consume(16)?;
@@ -98,7 +85,7 @@ impl ExpandData {
   pub fn run_offset(
     &self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
-  ) -> Result<usize, ExpandError> {
+  ) -> Result<usize, DecompressError> {
     let table = match &self.table {
       Some(t) => t,
       None => unreachable!(),
@@ -132,7 +119,7 @@ pub fn expand(
   reader: &mut impl CorrectLookAheadBitwiseRead,
   writer: &mut impl io::Write,
   level: CompressionLevel,
-) -> Result<(), ExpandError> {
+) -> Result<(), DecompressError> {
   let mut buffer = vec![0_u8; level.buffer_size()];
   let mut buffer_idx = 0;
   let mut expand_data = ExpandData::new();
