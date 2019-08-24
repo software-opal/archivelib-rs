@@ -106,17 +106,21 @@ def get_all_inputs() -> typ.Set[bytes]:
 
 def get_fuzz_inputs() -> typ.Set[bytes]:
     folders = []
+    folders += [(ROOT / "fuzz/afl_out/crashes"), (ROOT / "fuzz/afl_out/hangs")]
     # folders += [f for f in (ROOT / "fuzz/corpus").iterdir() if f.is_dir()]
     folders += [
         f / subdir
         for f in (ROOT / "fuzz/").iterdir()
-        for subdir in ["crashes", "hangs", "queue"]
+        for subdir in ["crashes", "hangs"]
         if f.is_dir() and f.name.startswith("afl_out")
     ]
     # folders.append(ROOT / "fuzz/known_inputs")
     folders.append(ROOT / "_known_inputs")
     return {
-        f.read_bytes() for folder in folders for f in folder.iterdir() if f.is_file()
+        f.read_bytes()
+        for folder in [f for f in folders if f.is_dir()]
+        for f in folder.iterdir()
+        if f.is_file()
     }
 
 
@@ -240,12 +244,13 @@ def run(input: bytes):
             # print(f"{sha1}: {len(input)} byte(s); Existing match")
             return {
                 "name": name,
-                "input": input,
+                # "input": input,
+                "len": len(input),
                 "input_rs": ", ".join(f"0x{i:02X}" for i in input),
-                "input_16": " ".join(f"{i:02X}" for i in input),
+                # "input_16": " ".join(f"{i:02X}" for i in input),
                 "fail_type": k,
-                "sys": {"ok": True, "err": '', "code": True},
-                "new": {"ok": True, "err": '', "code": True},
+                "sys": {"ok": True, "err": "", "code": True},
+                "new": {"ok": True, "err": "", "code": True},
             }
     base = TEST_OUTPUT_DIRS["wip"] / name
     sp_run(["rm", "-rf", *to_rm.values()], check=True)
@@ -323,9 +328,10 @@ def run(input: bytes):
     sp_run(["rm", "-rf", base])
     return {
         "name": name,
-        "input": input,
+        # "input": input,
+        "len": len(input),
         "input_rs": ", ".join(f"0x{i:02X}" for i in input),
-        "input_16": " ".join(f"{i:02X}" for i in input),
+        # "input_16": " ".join(f"{i:02X}" for i in input),
         "fail_type": fail_type,
         "sys": {"ok": sys_rc == 0, "err": str(sys_err), "code": sys_known_err},
         "new": {"ok": new_rc == 0, "err": str(new_err), "code": new_known_err},
@@ -333,19 +339,22 @@ def run(input: bytes):
 
 
 def main():
-    sp_run(["cargo", "+nightly", "build"], check=True, cwd=ROOT)
-    sp_run(
-        ["cargo", "+nightly", "build"],
-        check=True,
-        # cwd=(ROOT / "archivelib-sys-orig"),
-        cwd=(ROOT / "archivelib-sys-refactored"),
-    )
     data = sorted(get_all_inputs(), key=len)
     lens = list(map(len, data))
     print(f"Total test cases: {len(data)}")
     print(f"Average length: {statistics.mean(lens):0.1f}")
     print(f"Median length:  {statistics.median(lens):0.1f}")
 
+    sp_run(["cargo", "build"], check=True, cwd=ROOT)
+    sp_run(
+        ["cargo", "build"],
+        check=True,
+        # cwd=(ROOT / "archivelib-sys-orig"),
+        cwd=(ROOT / "archivelib-sys-refactored"),
+    )
+    (ROOT / "_corpus").mkdir(exist_ok=True)
+    for item in data:
+        (ROOT / "_corpus" / test_case_name(item)).write_bytes(item)
     test_cases = {}
     with multiprocessing.Pool(5) as p:
         for out in p.imap_unordered(run, data):
@@ -357,8 +366,10 @@ def main():
             test_cases.setdefault(key, []).append(out)
     data = []
     for key, cases in test_cases.items():
-        cases.sort(key=lambda k: (len(k["input"]), k["input"]))
-        data.append({"key": dict(zip(['fail_type', 'sys', 'new'], key)), "cases": cases[:5]})
+        cases.sort(key=lambda k: (k["len"], k["input_rs"]))
+        data.append(
+            {"key": dict(zip(["fail_type", "sys", "new"], key)), "cases": cases[:5]}
+        )
     with (TEST_OUTPUT_ROOT_DIR / "interesting.json").open("w") as f:
         json.dump(data, f, sort_keys=True, default=repr, indent=2)
 

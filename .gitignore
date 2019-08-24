@@ -5,6 +5,7 @@ vgcore.*
 data.pickle
 gen_test_cases
 _known_inputs
+_corpus
 old_tests
 
 Cargo.lock
