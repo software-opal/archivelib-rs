@@ -1,4 +1,5 @@
 import ast
+import json
 import multiprocessing
 import os
 import pathlib
@@ -62,14 +63,18 @@ TEST_OUTPUT_DIRS = {
     ]
 }
 
+RAW_SYS_RE = re.compile(rb'".*? \(0x[0-9a-f]{4,}\) ')
 ERROR_MAPPING = {
     rb'Error: "BinaryTreeError(Type1)"': "BTE1",
     rb'Error: "Binary tree error: Type1"': "BTE1",
     rb'Error: "Internal error: -101\u{0}"': "BTE1",
+    rb'Error: "Internal 1 error in Greenleaf Decompression routine\u{0}"': "BTE1",
     rb'Error: "BinaryTreeError(Type2)"': "BTE2",
     rb'Error: "Binary tree error: Type2"': "BTE2",
     rb'Error: "Internal error: -102\u{0}"': "BTE2",
+    rb'Error: "Internal 2 error in Greenleaf Decompression routine\u{0}"': "BTE1",
     rb'Error: "IOError: failed to write whole buffer"': "OOM",
+    rb'Error: "Attempt to allocate a huge buffer of 65536 bytes for ALMemory decompress\u{0}"': "OOM",
     rb'Error: "Attempt to allocate a huge buffer of 65536 bytes for ALMemory\u{0}"': "OOM",
     rb'Error: "InvariantFailure"': "INV",
     rb'Error: "Invariant Failure"': "INV",
@@ -86,11 +91,12 @@ def get_all_inputs() -> typ.Set[bytes]:
     inputs = frozenset()
     try:
         with PICKLED_INPUTS.open("rb") as f:
-            inputs = inputs.union(pickle.load(f))
+            inputs = inputs | inputs.union(pickle.load(f))
     except:
-        inputs = inputs | get_fuzz_inputs()
-        for folder in ["tests", "src", "old_tests", "archivelib-sys-refactored/src"]:
-            inputs = inputs | get_test_case_inputs(ROOT / folder)
+        pass
+    inputs = inputs | get_fuzz_inputs()
+    for folder in ["tests", "src", "old_tests", "archivelib-sys-refactored/src"]:
+        inputs = inputs | get_test_case_inputs(ROOT / folder)
     inputs = {i for i in inputs if i is not None}
     with PICKLED_INPUTS.open("wb") as f:
         pickle.dump(inputs, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -100,15 +106,15 @@ def get_all_inputs() -> typ.Set[bytes]:
 
 def get_fuzz_inputs() -> typ.Set[bytes]:
     folders = []
-    folders += [f for f in (ROOT / "fuzz/corpus").iterdir() if f.is_dir()]
+    # folders += [f for f in (ROOT / "fuzz/corpus").iterdir() if f.is_dir()]
     folders += [
         f / subdir
         for f in (ROOT / "fuzz/").iterdir()
         for subdir in ["crashes", "hangs", "queue"]
         if f.is_dir() and f.name.startswith("afl_out")
     ]
-    folders.append(ROOT / "fuzz/known_inputs")
-    folders.append(ROOT / "fuzz/known_inputs")
+    # folders.append(ROOT / "fuzz/known_inputs")
+    folders.append(ROOT / "_known_inputs")
     return {
         f.read_bytes() for folder in folders for f in folder.iterdir() if f.is_file()
     }
@@ -149,22 +155,25 @@ def run_exec(input, kcov_base, exec, level="4"):
         rc = 999
         out = e.stdout
         err = e.stderr.strip()
+    match_err = RAW_SYS_RE.sub(b'"', err)
     if not err:
         known_err = True
-    elif err in ERROR_MAPPING:
-        known_err = ERROR_MAPPING[err]
+    elif match_err in ERROR_MAPPING:
+        known_err = ERROR_MAPPING[match_err]
     else:
         known_err = None
     if rc == 0:
         assert known_err is True
-    return (rc, out, err, known_err)
+    return (rc, out, match_err, known_err)
 
 
 def test_case_name(input):
     import hashlib
+
     sha = hashlib.sha1(input).hexdigest()
-    size = len(input) if len(input) < 10000 else 9999
-    return f'{size:04}~{sha}'
+    size = len(input) if len(input) < 100000 else 99999
+    return f"{size:05}~{sha}"
+
 
 def bytes_to_test_hex(data):
     aparts = []
@@ -224,11 +233,20 @@ def output_test_case(
 
 
 def run(input: bytes):
-    name =test_case_name(input)
-    to_rm ={k: o / name for k, o in TEST_OUTPUT_DIRS.items()}
-    if any(            to_rm[k].is_dir()            for k in ["match", "match_err", "match_crash"]    ):
-        # print(f"{sha1}: {len(input)} byte(s); Existing match")
-        return
+    name = test_case_name(input)
+    to_rm = {k: o / name for k, o in TEST_OUTPUT_DIRS.items()}
+    for k in ["match"]:
+        if to_rm[k].is_dir():
+            # print(f"{sha1}: {len(input)} byte(s); Existing match")
+            return {
+                "name": name,
+                "input": input,
+                "input_rs": ", ".join(f"0x{i:02X}" for i in input),
+                "input_16": " ".join(f"{i:02X}" for i in input),
+                "fail_type": k,
+                "sys": {"ok": True, "err": '', "code": True},
+                "new": {"ok": True, "err": '', "code": True},
+            }
     base = TEST_OUTPUT_DIRS["wip"] / name
     sp_run(["rm", "-rf", *to_rm.values()], check=True)
     sys_base = base / "sys"
@@ -250,87 +268,23 @@ def run(input: bytes):
 
     if sys_rc == 0:
         if new_rc != 0:
-            output_test_case(
-                input,
-                sys_out=sys_out,
-                sys_err=sys_err,
-                new_out=new_out,
-                new_err=new_err, sys_cov=sys_base, fail_type="difference_err"
-            )
+            fail_type = "difference_err"
         elif sys_out != new_out:
-            output_test_case(
-                input,
-                sys_out=sys_out,
-                sys_err=sys_err,
-                new_out=new_out,
-                new_err=new_err,
-                sys_cov=sys_base,
-                fail_type="difference_out",
-            )
+            fail_type = "difference_out"
         else:
-            output_test_case(
-                input,
-                sys_out=sys_out,
-                sys_err=sys_err,
-                new_out=new_out,
-                new_err=new_err,
-                sys_cov=sys_base,
-                new_cov=new_base,
-                fail_type="match",
-            )
+            fail_type = "match"
     elif sys_known_err:
         if new_known_err == sys_known_err:
-            output_test_case(
-                input,
-                sys_out=sys_out,
-                sys_err=sys_err,
-                new_out=new_out,
-                new_err=new_err,
-                sys_cov=sys_base,
-                new_cov=new_base,
-                fail_type="match_err",
-            )
+            fail_type = "match_err"
         else:
-            output_test_case(
-                input,
-                sys_out=sys_out,
-                sys_err=sys_err,
-                new_out=new_out,
-                new_err=new_err,
-                sys_cov=sys_base,
-                fail_type="difference_err",
-            )
+            fail_type = "difference_err"
     elif new_known_err == "INV" and sys_rc in CRASH_STATUS_CODES:
-        output_test_case(
-            input,
-            sys_out=sys_out,
-            sys_err=sys_err,
-            new_out=new_out,
-            new_err=new_err,
-            new_cov=new_base,
-            fail_type="match_crash",
-        )
+        fail_type = "match_crash"
     elif {sys_rc, new_rc} & set(CRASH_STATUS_CODES):
         # Rust crash, Segfault/Abort, Timeout.
-        output_test_case(
-            input,
-            sys_out=sys_out,
-            sys_err=sys_err,
-            new_out=new_out,
-            new_err=new_err,
-            fail_type="crash",
-        )
+        fail_type = "crash"
     else:
-        output_test_case(
-            input,
-            sys_out=sys_out,
-            sys_err=sys_err,
-            new_out=new_out,
-            new_err=new_err,
-            sys_cov=sys_base,
-            new_cov=new_base,
-            fail_type="unknown",
-        )
+        fail_type = "unknown"
         print("Unknown data: ", len(input), name)
         print(
             " sys:",
@@ -356,7 +310,26 @@ def run(input: bytes):
                 )
             ),
         )
+    output_test_case(
+        input,
+        sys_out=sys_out,
+        sys_err=sys_err,
+        sys_cov=sys_base,
+        new_out=new_out,
+        new_err=new_err,
+        new_cov=new_base,
+        fail_type=fail_type,
+    )
     sp_run(["rm", "-rf", base])
+    return {
+        "name": name,
+        "input": input,
+        "input_rs": ", ".join(f"0x{i:02X}" for i in input),
+        "input_16": " ".join(f"{i:02X}" for i in input),
+        "fail_type": fail_type,
+        "sys": {"ok": sys_rc == 0, "err": str(sys_err), "code": sys_known_err},
+        "new": {"ok": new_rc == 0, "err": str(new_err), "code": new_known_err},
+    }
 
 
 def main():
@@ -364,6 +337,7 @@ def main():
     sp_run(
         ["cargo", "+nightly", "build"],
         check=True,
+        # cwd=(ROOT / "archivelib-sys-orig"),
         cwd=(ROOT / "archivelib-sys-refactored"),
     )
     data = sorted(get_all_inputs(), key=len)
@@ -372,9 +346,21 @@ def main():
     print(f"Average length: {statistics.mean(lens):0.1f}")
     print(f"Median length:  {statistics.median(lens):0.1f}")
 
+    test_cases = {}
     with multiprocessing.Pool(5) as p:
-        for _ in p.imap_unordered(run, data):
-            pass
+        for out in p.imap_unordered(run, data):
+            key = (
+                out["fail_type"],
+                out["sys"]["code"] or out["sys"]["err"],
+                out["new"]["code"] or out["new"]["err"],
+            )
+            test_cases.setdefault(key, []).append(out)
+    data = []
+    for key, cases in test_cases.items():
+        cases.sort(key=lambda k: (len(k["input"]), k["input"]))
+        data.append({"key": dict(zip(['fail_type', 'sys', 'new'], key)), "cases": cases[:5]})
+    with (TEST_OUTPUT_ROOT_DIR / "interesting.json").open("w") as f:
+        json.dump(data, f, sort_keys=True, default=repr, indent=2)
 
 
 if __name__ == "__main__":

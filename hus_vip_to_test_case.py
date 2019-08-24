@@ -49,11 +49,11 @@ def get_hus_vip_parts(data):
 def main():
     out_folder = ROOT / "old_tests/"
     out_folder.mkdir(exist_ok=True)
-    fuzz_inputs = ROOT / "fuzz/known_inputs"
+    fuzz_inputs = ROOT / "_known_inputs"
     fuzz_inputs.mkdir(exist_ok=True)
     for p in sys.argv[1:]:
         p = pathlib.Path(p)
-        name = NON_ALPHA.sub("_", f'{p.parent.name}__{p.name}')
+        name = NON_ALPHA.sub("_", f"{p.parent.name}__{p.name}")
         data = get_hus_vip_parts(p.read_bytes())
 
         with (out_folder / f"{name}.rs").open("w") as f:

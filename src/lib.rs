@@ -40,6 +40,11 @@ pub use self::config::ArchivelibConfig;
 pub use self::errors::*;
 pub use self::level::CompressionLevel;
 
+#[cfg(feature = "sys")]
+pub mod sys {
+  pub use archivelib_sys::{do_compress, do_compress_level, do_decompress, do_decompress_level};
+}
+
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   ArchivelibConfig::default()
     .compress(input)
