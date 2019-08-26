@@ -4,3 +4,6 @@ corpus
 artifacts
 afl_out*
 graph
+
+syncdir
+alfuzz_*

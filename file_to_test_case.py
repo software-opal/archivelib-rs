@@ -36,6 +36,7 @@ def bytes_to_test_hex(data):
 def write_test(data):
     sha1 = hashlib.sha1(data).hexdigest()
     (KNOWN_INPUTS / sha1).write_bytes(data)
+    MINIFIED_TEST_OUTPUTS.mkdir(exist_ok=True)
     (MINIFIED_TEST_OUTPUTS / f"test_{sha1.lower()}.rs").write_text(
         "test_match_sys_decompress! {\n"
         + f'  data => hex!("\n'

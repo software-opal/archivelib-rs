@@ -183,7 +183,7 @@ def main():
     MINIFIED_TEST_OUTPUTS.mkdir(exist_ok=True, parents=True)
     run_build()
     preseed(KNOWN_INPUTS)
-    run_fuzz(AFL_OUTPUT_DIR)
+    # run_fuzz(AFL_OUTPUT_DIR)
     graph_fuzz(AFL_OUTPUT_DIR, FUZZ_DIR / "graph/")
     bad_files = [
         (type, file)

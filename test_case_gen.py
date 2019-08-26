@@ -1,4 +1,4 @@
-import ast
+import ast, functools
 import json
 import multiprocessing
 import os
@@ -9,6 +9,7 @@ import shlex
 import statistics
 import subprocess
 import sys
+import tempfile
 import typing as typ
 
 HEX_MACRO_RE = re.compile(r'hex!\([\s\n]*"([\s\n0-9A-Fa-f]+)"[\s\n]*\)', re.MULTILINE)
@@ -94,33 +95,30 @@ def get_all_inputs() -> typ.Set[bytes]:
             inputs = inputs | inputs.union(pickle.load(f))
     except:
         pass
-    inputs = inputs | get_fuzz_inputs()
+    for folder in ["_known_inputs", "fuzz/known_inputs", "fuzz/corpus"]:
+        if (ROOT / folder).is_dir():
+            inputs = inputs | get_inputs_in_folder(ROOT / folder)
+    for folder in ROOT.iterdir():
+        if folder.name.endswith("_corpus"):
+            inputs = inputs | get_inputs_in_folder(folder)
+    for folder in (ROOT / "fuzz").iterdir():
+        if "afl_out" in folder.name:
+            for f in ["hangs", "crashes"]:
+                if (folder / f).is_dir():
+                    inputs = inputs | get_inputs_in_folder(folder / f)
     for folder in ["tests", "src", "old_tests", "archivelib-sys-refactored/src"]:
         inputs = inputs | get_test_case_inputs(ROOT / folder)
     inputs = {i for i in inputs if i is not None}
     with PICKLED_INPUTS.open("wb") as f:
         pickle.dump(inputs, f, protocol=pickle.HIGHEST_PROTOCOL)
-
     return inputs
 
 
-def get_fuzz_inputs() -> typ.Set[bytes]:
-    folders = []
-    folders += [(ROOT / "fuzz/afl_out/crashes"), (ROOT / "fuzz/afl_out/hangs")]
-    # folders += [f for f in (ROOT / "fuzz/corpus").iterdir() if f.is_dir()]
-    folders += [
-        f / subdir
-        for f in (ROOT / "fuzz/").iterdir()
-        for subdir in ["crashes", "hangs"]
-        if f.is_dir() and f.name.startswith("afl_out")
-    ]
-    # folders.append(ROOT / "fuzz/known_inputs")
-    folders.append(ROOT / "_known_inputs")
+def get_inputs_in_folder(folder) -> typ.Set[bytes]:
     return {
         f.read_bytes()
-        for folder in [f for f in folders if f.is_dir()]
-        for f in folder.iterdir()
-        if f.is_file()
+        for f in pathlib.Path(folder).iterdir()
+        if f.is_file() and f.name != "README.txt"
     }
 
 
@@ -197,7 +195,17 @@ def bytes_to_test_hex(data):
         out += f'{"  ".join(bparts)}\n'
     return out
 
-
+def bytes_to_rust_array(data):
+    aparts = []
+    out = ""
+    for b in data:
+        aparts.append(f"0x{b:02X},")
+        if len(aparts) >= 16:
+            out += f'{"  ".join(aparts)}\n'
+            aparts = []
+    if aparts:
+        out += f'{"  ".join(aparts)}\n'
+    return f"[\n{out}]\n"
 def output_test_case(
     input,
     *,
@@ -215,10 +223,12 @@ def output_test_case(
     out.mkdir(parents=True)
     (out / "input.dat").write_bytes(input)
     (out / "input.txt").write_text(bytes_to_test_hex(input))
+    (out / "input.txt").write_text(bytes_to_rust_array(input))
     for (o, name) in [(sys_out, "sys_"), (new_out, "new_")]:
         if o is not None:
             (out / f"{name}output.dat").write_bytes(o)
             (out / f"{name}output.txt").write_text(bytes_to_test_hex(o))
+            (out / f"{name}output.txt").write_text(bytes_to_rust_array(o))
     for (o, name) in [(sys_err, "sys_"), (new_err, "new_")]:
         if o is not None:
             (out / f"{name}err.txt").write_bytes(o)
@@ -293,26 +303,22 @@ def run(input: bytes):
         print("Unknown data: ", len(input), name)
         print(
             " sys:",
-            repr(
-                (
-                    sys_rc,
-                    CRASH_STATUS_CODES.get(sys_rc, "Non-crash"),
-                    len(sys_out),
-                    sys_err,
-                    sys_known_err,
-                )
+            (
+                sys_rc,
+                CRASH_STATUS_CODES.get(sys_rc, "Non-crash"),
+                len(sys_out),
+                sys_err,
+                sys_known_err,
             ),
         )
         print(
             " new:",
-            repr(
-                (
-                    new_rc,
-                    CRASH_STATUS_CODES.get(new_rc, "Non-crash"),
-                    len(new_out),
-                    new_err,
-                    new_known_err,
-                )
+            (
+                new_rc,
+                CRASH_STATUS_CODES.get(new_rc, "Non-crash"),
+                len(new_out),
+                new_err,
+                new_known_err,
             ),
         )
     output_test_case(
@@ -338,8 +344,73 @@ def run(input: bytes):
     }
 
 
+def tmin_test_case(cout,tmin_out,item):
+    if not item or len(item) > (2 ** 14):
+        # tmin doesn't like the empty file
+        return b''
+    with tempfile.NamedTemporaryFile("rb") as tout:
+        sp_run(
+            [
+                "cargo",
+                "afl",
+                "tmin",
+                "-i",
+                out,
+                "-o",
+                tout.name,
+                "-t5000",
+                "-m250",
+                "--",
+                "target/debug/alfuzz_afl",
+            ]
+        )
+        tmin_data = pathlib.Path(tout.name).read_bytes()
+    (tmin_out / test_case_name(tmin_data)).write_bytes(tmin_data)
+    return tmin_data
+
+
+def minimise_test_case_corpus(tmin_out):
+    cmin_out = ROOT / "_cmin_corpus"
+    cmin_edge_out = ROOT / "_cmin_edge_corpus"
+    sp_run(["rm", "-rf", cmin_out
+,cmin_edge_out], check=True)
+
+    sp_run(
+        [
+            "cargo",
+            "afl",
+            "cmin",
+            "-i",
+            tmin_out,
+            "-o",
+            cmin_out,
+            "-t5000",
+            "-m250",
+            "--",
+            "target/debug/alfuzz_afl",
+        ]
+    )
+    sp_run(
+        [
+            "cargo",
+            "afl",
+            "cmin",
+            "-i",
+            tmin_out,
+            "-o",
+            cmin_edge_out,
+            "-e",
+            "-t5000",
+            "-m250",
+            "--",
+            "target/debug/alfuzz_afl",
+        ]
+    )
+    return (cmin_out, cmin_edge_out)
+
+
 def main():
-    data = sorted(get_all_inputs(), key=len)
+    data = sorted(get_all_inputs(), key=len, reverse=True)
     lens = list(map(len, data))
     print(f"Total test cases: {len(data)}")
     print(f"Average length: {statistics.mean(lens):0.1f}")
@@ -352,18 +423,44 @@ def main():
         # cwd=(ROOT / "archivelib-sys-orig"),
         cwd=(ROOT / "archivelib-sys-refactored"),
     )
-    (ROOT / "_corpus").mkdir(exist_ok=True)
-    for item in data:
-        (ROOT / "_corpus" / test_case_name(item)).write_bytes(item)
+    sp_run(
+        ["cargo", "afl", "build", "--features=fuzz-afl"], check=True, cwd=(ROOT / "cli")
+    )
+    cout = ROOT / "_corpus"
+    tmin_out = ROOT / "_tmin_corpus"
+    sp_run(["rm", "-rf", tmin_out], check=True)
+    tmin_out.mkdir(exist_ok=True)
+    cout.mkdir(exist_ok=True)
+
+
     test_cases = {}
-    with multiprocessing.Pool(5) as p:
-        for out in p.imap_unordered(run, data):
-            key = (
-                out["fail_type"],
-                out["sys"]["code"] or out["sys"]["err"],
-                out["new"]["code"] or out["new"]["err"],
-            )
-            test_cases.setdefault(key, []).append(out)
+    changed_data = data
+    with multiprocessing.Pool(16) as p:
+        while changed_data:
+            for item in changed_data:
+                out = cout / test_case_name(item)
+                out.write_bytes(item)
+            case_min = p.apply_async(minimise_test_case_corpus, args=(cout,))
+            for out in p.imap_unordered(run, changed_data):
+                key = (
+                    out["fail_type"],
+                    out["sys"]["code"] or out["sys"]["err"],
+                    out["new"]["code"] or out["new"]["err"],
+                )
+                test_cases.setdefault(key, []).append(out)
+            (a_dir, b_dir) = case_min.get()
+            minimal_cases = {
+                file.read_bytes()
+                for folder in [a_dir, b_dir]
+                for file in folder.iterdir()
+            }
+            p.map(functools.partial(tmin_test_case, cout, tmin_out), data)
+
+            old_data = set(data)
+            new_data = get_all_inputs()
+            changed_data = new_data - old_data
+
+
     data = []
     for key, cases in test_cases.items():
         cases.sort(key=lambda k: (k["len"], k["input_rs"]))
