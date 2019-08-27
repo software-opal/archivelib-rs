@@ -20,13 +20,14 @@ void fn253(RExpandData *data, int16_t _254, int16_t _220, int16_t _221) {
     while (run_start226 < bits_to_load219) {
       byte_or_run_length203 = (int16_t)(data->bits182 >> 13);
       if (byte_or_run_length203 == 7) {
-        size_t bytes_read = 3;
+        size_t bytes_read = 0;
         _283 = 1U << 12;
         while (_283 & data->bits182) {
           _283 >>= 1;
           byte_or_run_length203++;
           bytes_read++;
         }
+        read_bits(data, 3);
         // +1 for the final bit that was zero
         read_bits(data, bytes_read + 1);
       } else {
