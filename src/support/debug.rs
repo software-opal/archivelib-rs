@@ -24,15 +24,21 @@ macro_rules! pending_test {
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
   ($compressed: expr) => {{
-    check_rust_against_sys_decompress!($compressed, CompressionLevel::Level0);
+    $crate::check_rust_against_sys_decompress!($crate::sys::do_decompress_level; $compressed, CompressionLevel::Level0)
+  }};
+  ($sys_decompress: path; $compressed: expr) => {{
+    $crate::check_rust_against_sys_decompress!($sys_crate; $compressed, CompressionLevel::Level0)
   }};
   ($compressed: expr, $level: expr) => {{
+    $crate::check_rust_against_sys_decompress!($crate::sys::do_decompress_level; $compressed, $level)
+  }};
+  ($sys_decompress: path; $compressed: expr, $level: expr) => {{
     use $crate::CompressionLevel;
     let compressed = $compressed;
     let level: CompressionLevel = $level;
     match $crate::do_decompress_level(&compressed[..], level) {
       Ok(decompress_output) => {
-        match $crate::sys::do_decompress_level(&compressed[..], level.compression_level()) {
+        match $sys_decompress(&compressed[..], level.compression_level()) {
           Ok(sys_output) => {
             $crate::assert_bytes_eq!(&sys_output, &decompress_output[..]);
           }
@@ -43,35 +49,35 @@ macro_rules! check_rust_against_sys_decompress {
         Ok(decompress_output)
       }
       Err(msg) => {
-        if msg == "BinaryTreeError(Type1)" || msg == "BinaryTreeError(Type2)" ||msg == "FileExhausted" {
-          match $crate::sys::do_decompress_level(&compressed[..], level.compression_level()) {
+        if msg == "Binary tree error: Type1" || msg == "Binary tree error: Type1" ||msg == "File Exhausted" {
+          match $sys_decompress(&compressed[..], level.compression_level()) {
             Ok(_sys_output) => {
               panic!("archivelib::do_decompress failed with a binary tree error({}); but the system library succeeded!", msg)
             }
             Err(err) => {
               match msg.as_str() {
-                "BinaryTreeError(Type1)" => {
+                "Binary tree error: Type1" => {
                   if err.ends_with("Internal 1 error in Greenleaf Decompression routine\u{0}") {}
                   else if err == "Internal error: -101\0" {}
                   else {
                     panic!("Rust library failed with {:?}; but system library failed with a different error {:?}", msg, err)
                   }
                 },
-                "BinaryTreeError(Type2)" => {
+                "Binary tree error: Type2" => {
                   if err.ends_with("Internal 2 error in Greenleaf Decompression routine\u{0}") {}
                   else if err == "Internal error: -102\0" {}
                   else {
                     panic!("Rust library failed with {:?}; but system library failed with a different error {:?}", msg, err)
                   }
                 },
-                "FileExhausted" => {
+                "File Exhausted" => {
                   unimplemented!("File exhausted!");
                 }
-                _ => unreachable!()
+                _ =>{ unreachable!("Message was not recognised: {}", msg)}
               }
             }
           }
-        } else if msg == "InvariantFailue" {
+        } else if msg == "Invariant Failure" {
           // These usually crash the system library; so just *assume* the input is fine
         } else {
           panic!("archivelib::do_decompress failed with an unexpected error: {}", msg);

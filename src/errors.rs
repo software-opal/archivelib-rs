@@ -42,7 +42,7 @@ pub enum DecompressError {
   #[fail(display = "Binary tree error: {:?}", _0)]
   BinaryTreeError(BinaryTreeInvariantError),
   #[fail(display = "Invariant Failure")]
-  InvariantFailue,
+  InvariantFailure,
 
   #[fail(display = "Internal Error: {}", _0)]
   InternalError(u8),

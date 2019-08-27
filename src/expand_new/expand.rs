@@ -1,4 +1,4 @@
-use crate::consts::EOF_LIMIT;
+use crate::consts::EOF_ERROR_LIMIT;
 use std::convert::{TryFrom, TryInto};
 
 use std::io;
@@ -17,7 +17,7 @@ impl From<LookupTableGenerationError> for DecompressError {
     match error {
       LookupTableGenerationError::IOError(e) => Self::IOError(e),
       LookupTableGenerationError::BinaryTreeError(e) => Self::BinaryTreeError(e),
-      LookupTableGenerationError::InvariantFailue => Self::InvariantFailue,
+      LookupTableGenerationError::InvariantFailure => Self::InvariantFailure,
     }
   }
 }
@@ -125,7 +125,7 @@ pub fn expand(
   let mut expand_data = ExpandData::new();
 
   // While we have something to read; or we are expecting more items.
-  while reader.eof_bits() < EOF_LIMIT {
+  while reader.al_eof_error_count() < EOF_ERROR_LIMIT {
     let item = expand_data.next_item(reader)?;
     if item == EOF_FLAG {
       break;

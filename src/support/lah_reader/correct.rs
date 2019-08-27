@@ -4,25 +4,24 @@ use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 use crate::consts::BUFFER_BIT_SIZE;
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
-  fn is_eof(&self) -> bool;
-  fn eof_bits(&self) -> usize;
+  fn al_eof_error_count(&self) -> usize;
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
   fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
 }
 pub struct CorrectLookAheadBitwiseReader<R: LookAheadBitwiseRead> {
   reader: R,
-  eof_bits: usize,
   read_bits: usize,
   file_start: Vec<bool>,
+  eof_calls: Vec<usize>,
 }
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseReader<R> {
   pub fn new(reader: R) -> Self {
     Self {
       reader,
-      eof_bits: 0,
       read_bits: 0,
       file_start: Vec::with_capacity(8),
+      eof_calls: Vec::with_capacity(6),
     }
   }
   fn pad_buffer(&self, bits: usize, buffer: &mut Vec<bool>) -> usize {
@@ -67,12 +66,18 @@ impl<R: LookAheadBitwiseRead> From<R> for CorrectLookAheadBitwiseReader<R> {
 }
 
 impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBitwiseReader<R> {
-  fn is_eof(&self) -> bool {
-    self.eof_bits > 0
+  fn al_eof_error_count(&self) -> usize {
+    if self.eof_calls.is_empty() {
+      return 0;
+    }
+    let count = self.eof_calls.iter().fold(0, |a, b| a + b);
+    if count == 0 {
+      return 2;
+    } else {
+      return 2 + ((count + 7) / 8);
+    }
   }
-  fn eof_bits(&self) -> usize {
-    self.eof_bits
-  }
+
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     if bits == 0 {
       return Ok(vec![]);
@@ -116,9 +121,11 @@ impl<R: LookAheadBitwiseRead> LookAheadBitwiseRead for CorrectLookAheadBitwiseRe
     let mut consumed = self.consume_bits_nopad(bits)?;
     assert!(consumed.len() <= bits);
     if bits != consumed.len() {
-      self.eof_bits += bits - consumed.len();
+      self.eof_calls.push(bits - consumed.len());
       let to_shift = self.pad_buffer(bits, &mut consumed);
       self.file_start.rotate_left(to_shift);
+    } else if self.look_ahead_bits_nopad(1)?.is_empty() {
+      self.eof_calls.push(0);
     }
     assert_eq!(consumed.len(), bits);
     Ok(consumed)
@@ -177,7 +184,7 @@ mod tests {
       "Expected: {:b}",
       0
     );
-    assert_eq!(reader.eof_bits(), 2);
+    assert_eq!(reader.al_eof_error_count(), 3);
     assert_eq!(
       reader.file_start,
       vec![true, true, false, false, false, false, false, false]
@@ -270,7 +277,7 @@ mod tests {
       vec![false, true, true, false]
     );
     assert_eq!(reader.read_bits, 16);
-    assert_eq!(reader.eof_bits, 2);
+    assert_eq!(reader.al_eof_error_count(), 3);
     assert_eq!(
       reader.file_start,
       // Rotated 2 bits off the front
@@ -280,7 +287,7 @@ mod tests {
       reader.consume_bits(4).unwrap(),
       vec![false, true, false, true]
     );
-    assert_eq!(reader.eof_bits, 6);
+    assert_eq!(reader.al_eof_error_count(), 3);
     assert_eq!(
       reader.file_start,
       // Rotated 4 bits off the front
@@ -308,21 +315,96 @@ mod tests {
     let mut reader = CorrectLookAheadBitwiseReader::new(LookAheadBitwiseReader::new(&data[..]));
 
     let mut counter = 0_usize;
-    while !reader.is_eof() {
+    while reader.al_eof_error_count() <= 2 {
       assert!(
         counter <= 256 * 8,
         "Counter: {:#X}; EOF: {:?}",
         counter,
-        reader.eof_bits()
+        reader.al_eof_error_count()
       );
       assert_eq!(
         reader.look_ahead::<bool>(1).unwrap(),
         reader.consume(1).unwrap()
       );
+      if counter < (256 * 8) - 1 {
+        assert_eq!(reader.al_eof_error_count(), 0);
+      } else if counter == (256 * 8) - 1 {
+        assert_eq!(reader.al_eof_error_count(), 2);
+      } else {
+        assert_eq!(reader.al_eof_error_count(), 3);
+      }
       counter += 1;
     }
     assert_eq!(counter, (256 * 8) + 1);
-    assert_eq!(reader.eof_bits(), 1);
+    assert_eq!(reader.al_eof_error_count(), 3);
     assert_eq!(reader.look_ahead::<u8>(7).unwrap(), 0b111_1111);
+  }
+
+  #[test]
+  fn test_eof_semantics_with_short_file_00_03() {
+    let data = [0x00, 0x03];
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
+    assert_eq!(
+      reader.consume_bits(16).unwrap(),
+      vec![
+        false, false, false, false, false, false, false, false, false, false, false, false, false,
+        false, true, true
+      ]
+    );
+    assert_eq!(reader.al_eof_error_count(), 2);
+    assert_eq!(reader.consume_bits(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.al_eof_error_count(), 3);
+    assert_eq!(reader.consume_bits(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.al_eof_error_count(), 4);
+    assert_eq!(reader.consume_bits(9).unwrap(), vec![false; 9]);
+    assert_eq!(reader.al_eof_error_count(), 5);
+    assert_eq!(reader.consume_bits(9).unwrap(), vec![false; 9]);
+    assert_eq!(reader.al_eof_error_count(), 6);
+    assert_eq!(reader.consume_bits(5).unwrap(), vec![false; 5]);
+    assert_eq!(reader.al_eof_error_count(), 7);
+  }
+
+  #[test]
+  fn test_eof_semantics_with_short_file_05() {
+    let data = [0x05];
+    let mut reader = CorrectLookAheadBitwiseReader::from_reader(&data[..]);
+    assert_eq!(
+      reader.consume_bits(16).unwrap(),
+      vec![
+        false, false, false, false, false, true, false, true, false, false, false, false, false,
+        true, false, true,
+      ]
+    );
+    assert_eq!(reader.al_eof_error_count(), 3,);
+    assert_eq!(
+      reader.consume_bits(5).unwrap(),
+      vec![false, false, false, false, false]
+    );
+    assert_eq!(reader.al_eof_error_count(), 4,);
+    assert_eq!(
+      reader.consume_bits(5).unwrap(),
+      vec![true, false, true, false, false]
+    );
+    assert_eq!(reader.al_eof_error_count(), 5,);
+    assert_eq!(
+      reader.consume_bits(9).unwrap(),
+      vec![false, false, false, true, false, true, false, false, false]
+    );
+    assert_eq!(reader.al_eof_error_count(), 6,);
+    assert_eq!(
+      reader.consume_bits(5).unwrap(),
+      vec![false, false, true, false, true]
+    );
+    assert_eq!(reader.al_eof_error_count(), 6,);
+    assert_eq!(reader.consume_bits(3).unwrap(), vec![false, false, false]);
+    assert_eq!(reader.al_eof_error_count(), 7,);
+    assert_eq!(reader.consume_bits(3).unwrap(), vec![false, false, true]);
+    assert_eq!(reader.al_eof_error_count(), 7,);
+    assert_eq!(reader.consume_bits(3).unwrap(), vec![false, true, false]);
+    assert_eq!(reader.al_eof_error_count(), 8,);
+    assert_eq!(reader.consume_bits(3).unwrap(), vec![false, false, false]);
+    assert_eq!(reader.al_eof_error_count(), 8,);
+    assert_eq!(reader.consume_bits(3).unwrap(), vec![false, true, false]);
+    assert_eq!(reader.al_eof_error_count(), 8,);
   }
 }

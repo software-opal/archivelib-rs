@@ -22,12 +22,12 @@ use crate::support::CorrectLookAheadBitwiseRead;
 pub enum LookupTableGenerationError {
   IOError(io::Error),
   BinaryTreeError(BinaryTreeInvariantError),
-  InvariantFailue,
+  InvariantFailure,
 }
 impl LookupTableGenerationError {
   pub fn is_invariant_error(&self) -> bool {
     match self {
-      Self::InvariantFailue => true,
+      Self::InvariantFailure => true,
       _ => false,
     }
   }
@@ -80,7 +80,7 @@ impl LookupTables {
 
     // Match the C implementation overwriting previous errors
     // instead of eagarly checking them. Except when the error
-    // type is an InvariantFailue(I.E. array out of bounds etc.)
+    // type is an InvariantFailure(I.E. array out of bounds etc.)
 
     // Sorry, this is the only nice-ish way to get an error of a certain type returned here,
     // whilst allowing other errors to be checked at the end.
@@ -128,7 +128,7 @@ impl LookupTables {
           }
         }
         if i >= self.run_offset_lookup_len.len() {
-          return Err(LookupTableGenerationError::InvariantFailue);
+          return Err(LookupTableGenerationError::InvariantFailure);
         }
         self.run_offset_lookup_len[i] = bit_length;
         i += 1;
@@ -197,7 +197,7 @@ impl LookupTables {
           };
           if (cast!(idx as usize) + i - 1) >= self.bit_lookup_len.len() {
             // Subtracting one accounts for the post-increment in the loop
-            return Err(LookupTableGenerationError::InvariantFailue);
+            return Err(LookupTableGenerationError::InvariantFailure);
           }
           for _ in 0..idx {
             self.bit_lookup_len[i] = 0;

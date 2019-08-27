@@ -2,7 +2,7 @@
 extern crate archivelib;
 
 #[macro_use]
-mod macros;
+mod utils;
 
 test_match_sys_decompress! {
   short_sample => hex!("1a 1a"),
