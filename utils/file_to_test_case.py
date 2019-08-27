@@ -5,7 +5,7 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = pathlib.Path(__file__).parent
+ROOT = pathlib.Path(__file__).parent.parent
 FUZZ_DIR = ROOT / "fuzz"
 FUZZ_CRASHES_DIR = FUZZ_DIR / "artifacts"
 AFL_OUTPUT_DIR = FUZZ_DIR / "afl_out"

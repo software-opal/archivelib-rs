@@ -5,7 +5,7 @@ import sys
 
 offset = [20, 24, 28]
 
-ROOT = pathlib.Path(__file__).parent
+ROOT = pathlib.Path(__file__).parent.parent
 NON_ALPHA = re.compile("(^[0-9]|[^a-zA-Z0-9_])")
 
 
@@ -47,7 +47,7 @@ def get_hus_vip_parts(data):
 
 
 def main():
-    out_folder = ROOT / "old_tests/"
+    out_folder = ROOT / "tests/"
     out_folder.mkdir(exist_ok=True)
     fuzz_inputs = ROOT / "_known_inputs"
     fuzz_inputs.mkdir(exist_ok=True)
@@ -57,6 +57,7 @@ def main():
         data = get_hus_vip_parts(p.read_bytes())
 
         with (out_folder / f"{name}.rs").open("w") as f:
+            f.write("#[macro_use]\nmod macros;\n\n")
             f.write("test_match_sys_decompress! {\n")
             for (name, compressed_data) in sorted(data.items()):
                 f.write(

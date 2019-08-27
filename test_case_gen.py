@@ -27,7 +27,7 @@ CRASH_STATUS_CODES = {
     101: "Rust Panic",
     134: "C Abort",
     -6: "C Abort",
-    999: "Python Timeout",
+    # 999: "Python Timeout",
 }
 
 KCOV_COMMON_OPTS = []
@@ -53,12 +53,13 @@ TEST_OUTPUT_ROOT_DIR = ROOT / "gen_test_cases"
 TEST_OUTPUT_DIRS = {
     name: TEST_OUTPUT_ROOT_DIR / name
     for name in [
-        "match",
-        "match_err",
-        "match_crash",
+        'timeout',
         "crash",
-        "difference_out",
         "difference_err",
+        "difference_out",
+        "match_crash",
+        "match_err",
+        "match",
         "unknown",
         "wip",
     ]
@@ -201,10 +202,10 @@ def bytes_to_rust_array(data):
     for b in data:
         aparts.append(f"0x{b:02X},")
         if len(aparts) >= 16:
-            out += f'{"  ".join(aparts)}\n'
+            out += f'{" ".join(aparts)}\n'
             aparts = []
     if aparts:
-        out += f'{"  ".join(aparts)}\n'
+        out += f'{" ".join(aparts)}\n'
     return f"[\n{out}]\n"
 def output_test_case(
     input,
@@ -218,17 +219,20 @@ def output_test_case(
     fail_type,
 ):
     name = test_case_name(input)
+    if fail_type not in TEST_OUTPUT_DIRS:
+        print(f"You forgot a fail_type({fail_type!r}). I got you fam")
+        TEST_OUTPUT_DIRS[fail_type] = TEST_OUTPUT_ROOT_DIR / fail_type
     out = TEST_OUTPUT_DIRS[fail_type] / name
     sp_run(["rm", "-rf", out], check=True)
     out.mkdir(parents=True)
     (out / "input.dat").write_bytes(input)
     (out / "input.txt").write_text(bytes_to_test_hex(input))
-    (out / "input.txt").write_text(bytes_to_rust_array(input))
+    (out / "input.rs").write_text(bytes_to_rust_array(input))
     for (o, name) in [(sys_out, "sys_"), (new_out, "new_")]:
         if o is not None:
             (out / f"{name}output.dat").write_bytes(o)
             (out / f"{name}output.txt").write_text(bytes_to_test_hex(o))
-            (out / f"{name}output.txt").write_text(bytes_to_rust_array(o))
+            (out / f"{name}output.rs").write_text(bytes_to_rust_array(o))
     for (o, name) in [(sys_err, "sys_"), (new_err, "new_")]:
         if o is not None:
             (out / f"{name}err.txt").write_bytes(o)
@@ -281,7 +285,9 @@ def run(input: bytes):
     if not new_known_err:
         print("Unknown error: ", new_err)
 
-    if sys_rc == 0:
+    if new_rc == 999:
+        fail_type = 'timeout'
+    elif sys_rc == 0:
         if new_rc != 0:
             fail_type = "difference_err"
         elif sys_out != new_out:
