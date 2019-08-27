@@ -722,9 +722,18 @@ int AL_PROTO ALMemory::Close()
         mpcUserBuffer = (char AL_HUGE *) GlobalLock( (HGLOBAL) mhUserMemoryHandle );
         muUserBufferSize = mlSize;
 #else
+        if (mlSize == 0) {
+          // 2019 -- Added this if/else block to prevent double free.
+          //         Passing `0` into realloc will free the memory, then return
+          //         null. This won't clear the reference to the buffer meaning
+          //         ALMemory's deconstructor tries to free it again.
+          free(mpcUserBuffer);
+          mpcUserBuffer = NULL;
+        } else {
         char *new_buf = (char *) realloc( mpcUserBuffer, (size_t) mlSize );
         if ( new_buf )
             mpcUserBuffer = new_buf;
+        }
         muUserBufferSize = (size_t) mlSize;
 #endif
     }
