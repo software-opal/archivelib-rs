@@ -119,11 +119,9 @@ impl LookupTables {
       while i < bits_to_load {
         let mut bit_length = reader.consume(3)?;
         if bit_length == 7 {
-          while reader.consume(1)? {
-            // if reader.eof_bits() > EOF_LIMIT {
-            //   // This loop can become infinite, prevent that by checking for EOF
-            //   break;
-            // }
+          let mut reads = 0;
+          while reader.consume(1)? && reads <= 12 {
+            reads += 1;
             bit_length += 1;
           }
         }

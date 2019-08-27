@@ -18,7 +18,6 @@ pub const CONST_N147_IS_5: usize = 5;
 pub const CONST_N154_IS_4: usize = 4;
 pub const CONST_N155_IS_8192: usize = 8192;
 pub const CONST_N540_IS_5: usize = 5;
-// #define TRUE157 (-1)
 
 pub const BUFFER_SIZE: usize = 512;
 pub const BUFFER_BIT_SIZE: usize = 8 * BUFFER_SIZE;

@@ -67,12 +67,12 @@ macro_rules! test_data {
         #[test]
         fn test_compress() {
           let compress_output = do_compress(&UNCOMPRESSED[..]).unwrap();
-          assert_bytes_eq!(&COMPRESSED[..], &compress_output);
+          archivelib::assert_bytes_eq!(&COMPRESSED[..], &compress_output);
         }
         #[test]
         fn test_decompress() {
           let decompress_output = do_decompress(&COMPRESSED[..]).unwrap();
-          assert_bytes_eq!(&UNCOMPRESSED[..], &decompress_output);
+          archivelib::assert_bytes_eq!(&UNCOMPRESSED[..], &decompress_output);
         }
       }
     )*

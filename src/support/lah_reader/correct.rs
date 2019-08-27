@@ -2,9 +2,11 @@
 
 use super::base::{LookAheadBitwiseRead, LookAheadBitwiseReader};
 use crate::consts::BUFFER_BIT_SIZE;
+use crate::consts::EOF_ERROR_LIMIT;
 
 pub trait CorrectLookAheadBitwiseRead: LookAheadBitwiseRead {
   fn al_eof_error_count(&self) -> usize;
+  fn is_al_eof(&self) -> bool;
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
   fn look_ahead_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>>;
 }
@@ -76,6 +78,9 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
     } else {
       return 2 + ((count + 7) / 8);
     }
+  }
+  fn is_al_eof(&self) -> bool {
+    self.al_eof_error_count() < EOF_ERROR_LIMIT
   }
 
   fn consume_bits_nopad(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {

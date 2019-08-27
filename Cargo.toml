@@ -31,6 +31,8 @@ archivelib-sys = { version = "0.1.0", path = "archivelib-sys-refactored", option
 [dev-dependencies]
 lazy_static = "1.3.0"
 rand = "0.7.0"
+# We use threads for the 'hangs' tests to prevent the tests runnin forever
+humthreads = '0.1.4'
 # archivelib-sys = { version = "0.1.0", path = "archivelib-sys-orig" }
 archivelib-sys = { version = "0.1.0", path = "archivelib-sys-refactored" }
 
