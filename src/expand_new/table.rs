@@ -9,9 +9,8 @@
 // self.dat_arr181
 //
 // // Binary tree(ish) pair. No test cases. No worries.
-// self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
-use std::convert::TryFrom;
+// self.dat_arr190 -> tree.right
 use std::{fmt, io};
 
 use super::bish_tree::{generate_binary_tree, BinaryTree};

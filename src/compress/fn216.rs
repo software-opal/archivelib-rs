@@ -1,4 +1,3 @@
-use std::convert::TryFrom;
 use std::io::Read;
 
 use crate::compress::RCompressData;

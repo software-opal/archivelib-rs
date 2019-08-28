@@ -1,4 +1,4 @@
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryInto;
 use std::fmt;
 
 use crate::errors::BinaryTreeInvariantError;

@@ -4,6 +4,7 @@ macro_rules! cast_trunc {
     $crate::cast_trunc!(($e) as $t)
   };
   (($e:expr) as $t:ty) => {{
+    use std::convert::TryFrom;
     let a = $e;
     #[allow(unused_assignments)]
     let mut b = a;
@@ -31,6 +32,7 @@ macro_rules! cast {
     $crate::cast!(($e) as $t)
   };
   (($e:expr) as $t:ty) => {{
+    use std::convert::TryFrom;
     let a = $e;
     match <$t>::try_from(a) {
       Ok(v) => v,
