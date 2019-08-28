@@ -14,9 +14,9 @@ import tempfile
 ROOT = pathlib.Path(__file__).parent
 
 
-def list_files_in_folder(*folders):
-    folders = [folder for folder in folders if folder.is_dir()]
-    return {f for folder in folders for f in folder.iterdir() if f.is_file()}
+def list_files_in_folder(*files):
+    folders = [folder for folder in files if folder.is_dir()]
+    return ( {file for file in files if file.is_file()} |  {f for folder in folders for f in folder.iterdir() if f.is_file()})
 
 
 def load_files_in_folder(*folders):
@@ -28,7 +28,7 @@ def minimise_inputs(executable, out_folder, items):
         td = pathlib.Path(_td)
         assert td.is_dir()
         for i, item in enumerate(sorted(items, key=lambda d: (len(d), d))):
-            if 0 < len(item) <= 4096:
+            if 0 < len(item):# <= 4096:
                 (td / f"input_{i}").write_bytes(item)
         subprocess.run(
             ["afl-cmin", "-i", td, "-o", out_folder, "--", executable], check=True
@@ -43,8 +43,9 @@ def minimise_input(executable, out_folder, file):
 def main():
     executable = pathlib.Path(sys.argv[1])
     assert executable.is_file()
-    folders = [f for f in map(pathlib.Path, sys.argv[2:]) if f.is_dir()]
+    folders = [f for f in map(pathlib.Path, sys.argv[2:])]
     new_corpus = load_files_in_folder(*folders)
+    print(f"Inspecting {len(new_corpus)} files")
     count = 0
     cmin_out = ROOT / f"_cmin_{count}_corpus"
     tmin_out = ROOT / f"_tmin_{count}_corpus"

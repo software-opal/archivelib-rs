@@ -260,7 +260,7 @@ def run(input: bytes):
                 "name": name,
                 # "input": input,
                 "len": len(input),
-                "input_rs": ", ".join(f"0x{i:02X}" for i in input),
+                # "input_rs": ", ".join(f"0x{i:02X}" for i in input),
                 # "input_16": " ".join(f"{i:02X}" for i in input),
                 "fail_type": k,
                 "sys": {"ok": True, "err": "", "code": True},
@@ -342,7 +342,7 @@ def run(input: bytes):
         "name": name,
         # "input": input,
         "len": len(input),
-        "input_rs": ", ".join(f"0x{i:02X}" for i in input),
+        # "input_rs": ", ".join(f"0x{i:02X}" for i in input),
         # "input_16": " ".join(f"{i:02X}" for i in input),
         "fail_type": fail_type,
         "sys": {"ok": sys_rc == 0, "err": str(sys_err), "code": sys_known_err},
@@ -422,13 +422,7 @@ def main():
     print(f"Average length: {statistics.mean(lens):0.1f}")
     print(f"Median length:  {statistics.median(lens):0.1f}")
 
-    sp_run(["cargo", "build"], check=True, cwd=ROOT)
-    sp_run(
-        ["cargo", "build"],
-        check=True,
-        # cwd=(ROOT / "archivelib-sys-orig"),
-        cwd=(ROOT / "archivelib-sys-refactored"),
-    )
+    sp_run(["cargo", "build", '--all', '--bins'], check=True, cwd=ROOT)
     sp_run(
         ["cargo", "afl", "build", "--features=fuzz-afl"], check=True, cwd=(ROOT / "cli")
     )
@@ -446,7 +440,7 @@ def main():
             for item in changed_data:
                 out = cout / test_case_name(item)
                 out.write_bytes(item)
-            case_min = p.apply_async(minimise_test_case_corpus, args=(cout,))
+            # case_min = p.apply_async(minimise_test_case_corpus, args=(cout,))
             for out in p.imap_unordered(run, changed_data):
                 key = (
                     out["fail_type"],
@@ -454,13 +448,13 @@ def main():
                     out["new"]["code"] or out["new"]["err"],
                 )
                 test_cases.setdefault(key, []).append(out)
-            (a_dir, b_dir) = case_min.get()
-            minimal_cases = {
-                file.read_bytes()
-                for folder in [a_dir, b_dir]
-                for file in folder.iterdir()
-            }
-            p.map(functools.partial(tmin_test_case, cout, tmin_out), data)
+            # (a_dir, b_dir) = case_min.get()
+            # minimal_cases = {
+            #     file.read_bytes()
+            #     for folder in [a_dir, b_dir]
+            #     for file in folder.iterdir()
+            # }
+            # p.map(functools.partial(tmin_test_case, cout, tmin_out), data)
 
             old_data = set(data)
             new_data = get_all_inputs()
@@ -469,7 +463,7 @@ def main():
 
     data = []
     for key, cases in test_cases.items():
-        cases.sort(key=lambda k: (k["len"], k["input_rs"]))
+        cases.sort(key=lambda k: (k["len"], k["name"]))
         data.append(
             {"key": dict(zip(["fail_type", "sys", "new"], key)), "cases": cases[:5]}
         )
