@@ -1,7 +1,6 @@
 use super::table::LookupTables;
 use crate::support::{
-  CorrectLookAheadBitwiseRead, CorrectLookAheadBitwiseReader, ExpectedCallLookAheadBitwiseReader,
-  LookAheadBitwiseRead,
+  CorrectLookAheadBitwiseReader, ExpectedCallLookAheadBitwiseReader, LookAheadBitwiseRead,
 };
 
 #[test]

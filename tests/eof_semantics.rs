@@ -30,4 +30,5 @@ check_decompress_matches! {
       v
     }
   );
+  short_file_05_05([0x05, 0x05], [0x00]);
 }

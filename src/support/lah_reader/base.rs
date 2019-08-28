@@ -74,12 +74,9 @@ impl<R: std::io::Read> LookAheadBitwiseReader<R> {
           _ => return Err(e),
         },
         Ok(0) => break,
-        Ok(count) => {
-          // println!("Read: {:X?}", &block[..count]);
-          self
-            .buffer
-            .extend(block[..count].iter().flat_map(|&v| v.to_bits().into_vec()))
-        }
+        Ok(count) => self
+          .buffer
+          .extend(block[..count].iter().flat_map(|&v| v.to_bits().into_vec())),
       }
     }
     Ok(self.buffer.len() >= min_buffer_size)

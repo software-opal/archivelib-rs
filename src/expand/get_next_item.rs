@@ -23,12 +23,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         cast!(CONST_N540_IS_5 as i16),
         -1,
       )?;
-      // println!("dat_arr180: {:X?}", self.dat_arr180);
-      // println!("dat_arr181: {:X?}", self.dat_arr181);
-      // println!("dat_arr189: {:X?}", self.dat_arr189);
-      // println!("dat_arr190: {:X?}", self.dat_arr190);
-      // println!("dat_arr240: {:X?}", self.dat_arr240);
-      // println!("dat_arr241: {:X?}", self.dat_arr241);
     }
     self.items_until_next_header -= 1;
     let mut run_length276 = self.dat_arr240[(self.bits182 >> 4) as usize];

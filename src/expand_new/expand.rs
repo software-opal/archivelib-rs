@@ -35,10 +35,8 @@ impl ExpandData {
     &mut self,
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<u16, DecompressError> {
-    // println!("Gimme some sweet sweet next_item");
     let table = if self.table.is_none() || self.items_until_next_header == 0 {
       self.items_until_next_header = reader.consume(16)?;
-      println!("New table! {:?}", self.items_until_next_header);
       let table = self.table.get_or_insert_with(LookupTables::new);
       table.generate(reader)?;
       table

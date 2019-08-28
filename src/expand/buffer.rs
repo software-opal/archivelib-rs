@@ -9,10 +9,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
     if self.input_store.is_eof() {
       self.error_counter243 += 1;
     }
-    // println!(
-    //   "BITS: {:#b}({:#X}) / {}",
-    //   self.bits182, self.bits182, bits_to_load219
-    // );
     Ok(())
   }
 

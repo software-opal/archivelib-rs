@@ -160,8 +160,6 @@ impl LookupTables {
       for v in self.run_offset_lookup_len[i..fill_limit].iter_mut() {
         *v = 0;
       }
-      // let limit = if do_pad_length { 19 } else { 15 };
-      // println!("Generate Tree ROL");
       generate_binary_tree(
         8,
         &mut self.run_offset_lookup,
@@ -178,7 +176,6 @@ impl LookupTables {
   ) -> Result<(), LookupTableGenerationError> {
     // fn255
     let bits_to_load: usize = reader.consume(9)?;
-    // println!("BL -- {:?}", bits_to_load);
     if bits_to_load == 0 {
       let offset_const = reader.consume(9)?;
       for e in self.bit_lookup.iter_mut() {
@@ -228,7 +225,6 @@ impl LookupTables {
       for v in self.bit_lookup_len[i..].iter_mut() {
         *v = 0;
       }
-      // println!("Generate Tree BL");
       generate_binary_tree(
         12,
         &mut self.bit_lookup,
