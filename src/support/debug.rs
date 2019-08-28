@@ -161,9 +161,10 @@ macro_rules! assert_bytes_eq {
         ));
       }
 
-      assert_eq!(
-        expected,
-        actual,
+      // assert_eq!(
+      //   expected,
+      //   actual,
+      panic!(
         "Expected length: {}, Actual length: {}{}",
         expected.len(),
         actual.len(),
@@ -189,10 +190,13 @@ macro_rules! _bytes_to_human_hex {
       while b.len() < len {
         b.push(pad_string.clone());
       }
-    }
-    b.chunks(32)
+    };
+    // u8 -> 32; u16 -> 32; u32 -> 16; u64/usize -> 8;
+    let chunk_size = (128 / bitsize).min(32);
+    let spacer_size = if bitsize > 8 { 4 } else { 8 };
+    b.chunks(chunk_size)
       .map(|s| {
-        s.chunks(8)
+        s.chunks(spacer_size)
           .map(|s| s.join(" "))
           .collect::<Vec<_>>()
           .join("  ")

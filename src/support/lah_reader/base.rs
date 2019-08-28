@@ -98,10 +98,8 @@ impl<R: std::io::Read> LookAheadBitwiseRead for LookAheadBitwiseReader<R> {
   }
   fn look_ahead_bits(&mut self, bits: usize) -> std::io::Result<Vec<bool>> {
     if self.ensure_buffer(bits)? {
-      // println!("Look ahead {}: {:X?}", bits, &self.buffer[..bits]);
       Ok(self.buffer[..bits].to_vec())
     } else {
-      // println!("Look ahead {}: {:X?}", bits, &self.buffer[..]);
       Ok(self.buffer[..].to_vec())
     }
   }

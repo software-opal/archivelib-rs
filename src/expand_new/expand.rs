@@ -36,21 +36,14 @@ impl ExpandData {
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<u16, DecompressError> {
     // println!("Gimme some sweet sweet next_item");
-    if self.table.is_none() || self.items_until_next_header == 0 {
+    let table = if self.table.is_none() || self.items_until_next_header == 0 {
       self.items_until_next_header = reader.consume(16)?;
-      match &mut self.table {
-        Some(t) => t.generate(reader)?,
-        None => {
-          let mut t = LookupTables::new();
-          t.generate(reader)?;
-          self.table = Some(t);
-        }
-      }
-      // panic!();
-    }
-    let table = match &self.table {
-      Some(t) => t,
-      None => unreachable!(),
+      println!("New table! {:?}", self.items_until_next_header);
+      let table = self.table.get_or_insert_with(LookupTables::new);
+      table.generate(reader)?;
+      table
+    } else {
+      self.table.as_ref().unwrap()
     };
     if self.items_until_next_header == 0 {
       // Replicate the undefined behavior from the C version
@@ -89,20 +82,16 @@ impl ExpandData {
       Some(t) => t,
       None => unreachable!(),
     };
-    let run_length = table.run_offset_lookup[reader.look_ahead::<usize>(8)?] as usize;
+    let mut run_length = cast!((table.run_offset_lookup[reader.look_ahead::<usize>(8)?]) as usize);
     // let mut var283 = (1 << 7) as u16;
-    // let mut read_offset = 7;
-    // while run_length >= 15 {
-    //   run_length = if reader.look_ahead_skip(read_offset, 1)? {
-    //     table.tree.right[run_length]
-    //   } else {
-    //     table.tree.left[run_length]
-    //   } as usize;
-    //   read_offset += 1;
-    //   pending_test!();
-    // }
-    if run_length >= 15 {
-      pending_test!("This case is never tested; however it exists in the original code.");
+    let mut read_offset = 7;
+    while run_length >= 15 {
+      run_length = if reader.look_ahead_skip(read_offset, 1)? {
+        cast!((table.tree.right[run_length]) as usize)
+      } else {
+        cast!((table.tree.left[run_length]) as usize)
+      };
+      read_offset += 1;
     }
     reader.consume_bits(table.run_offset_lookup_len[run_length])?;
     if run_length == 0 {

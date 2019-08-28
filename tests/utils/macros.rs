@@ -78,3 +78,28 @@ macro_rules! test_data {
     )*
   };
 }
+
+#[macro_export]
+macro_rules! check_decompress_matches {
+  ($($name: ident($input: expr, $output: expr);)+ )=> {
+    $(
+      #[test]
+      fn $name() {
+        let input: &[u8] = &$input;
+        let expected = $output;
+
+        // Sanity check the input and output;
+        assert_eq!(
+        &expected[..],
+          &archivelib_sys::do_decompress(&input[..]).unwrap()[..]
+          // "System library doesn't match expected result."
+        );
+        archivelib::assert_bytes_eq!(
+          &expected[..],          &archivelib::do_decompress(&input[..]).unwrap()[..]
+          // "Rust library fails for input: {:?}",
+          // input
+        );
+      }
+    )+
+  };
+}

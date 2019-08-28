@@ -1,7 +1,4 @@
 #[macro_use]
-extern crate archivelib;
-
-#[macro_use]
 mod utils;
 
 test_match_sys_decompress! {

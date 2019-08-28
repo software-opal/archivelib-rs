@@ -12,7 +12,7 @@
 // self.dat_arr190 -> tree.right
 // self.dat_arr189 -> tree.left
 use std::convert::TryFrom;
-use std::io;
+use std::{fmt, io};
 
 use super::bish_tree::{generate_binary_tree, BinaryTree};
 use crate::errors::BinaryTreeInvariantError;
@@ -28,6 +28,7 @@ impl LookupTableGenerationError {
   pub fn is_invariant_error(&self) -> bool {
     match self {
       Self::InvariantFailure => true,
+      Self::IOError(_) => true,
       _ => false,
     }
   }
@@ -52,7 +53,6 @@ impl From<BinaryTreeInvariantError> for LookupTableGenerationError {
   }
 }
 
-#[allow(dead_code)]
 pub struct LookupTables {
   pub bit_lookup: [u16; 4096],
   pub bit_lookup_len: [usize; 511],
@@ -60,6 +60,19 @@ pub struct LookupTables {
   pub run_offset_lookup: [u16; 256],
   pub run_offset_lookup_len: [usize; 19],
   pub tree: BinaryTree,
+}
+
+impl fmt::Debug for LookupTables {
+  fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    formatter
+      .debug_struct("BinaryTree")
+      .field("bit_lookup", &&self.bit_lookup[..])
+      .field("bit_lookup_len", &&self.bit_lookup_len[..])
+      .field("run_offset_lookup", &&self.run_offset_lookup[..])
+      .field("run_offset_lookup_len", &&self.run_offset_lookup_len[..])
+      .field("tree", &self.tree)
+      .finish()
+  }
 }
 
 impl LookupTables {
@@ -77,6 +90,12 @@ impl LookupTables {
     reader: &mut impl CorrectLookAheadBitwiseRead,
   ) -> Result<(), LookupTableGenerationError> {
     // get_next_item
+
+    // Clear these tables; as the functions do not properly clear them before starting again.
+    // This is the cause of the corner_case::single_byte_wrong error.
+    self.bit_lookup.iter_mut().for_each(|i| *i = 0);
+    self.tree.left.iter_mut().for_each(|i| *i = 0);
+    self.tree.right.iter_mut().for_each(|i| *i = 0);
 
     // Match the C implementation overwriting previous errors
     // instead of eagarly checking them. Except when the error
@@ -104,13 +123,14 @@ impl LookupTables {
     do_pad_length: bool,
   ) -> Result<(), LookupTableGenerationError> {
     // fn253
+    let fill_limit = if do_pad_length { 19 } else { 15 };
     let bits_to_load: usize = reader.consume(5)?;
     if bits_to_load == 0 {
       let offset_const = reader.consume(5)?;
       for e in self.run_offset_lookup.iter_mut() {
         *e = offset_const;
       }
-      for e in self.run_offset_lookup_len.iter_mut() {
+      for e in self.run_offset_lookup_len[..fill_limit].iter_mut() {
         *e = 0;
       }
       Ok(())
@@ -138,7 +158,7 @@ impl LookupTables {
           }
         }
       }
-      for v in self.run_offset_lookup_len[i..].iter_mut() {
+      for v in self.run_offset_lookup_len[i..fill_limit].iter_mut() {
         *v = 0;
       }
       // let limit = if do_pad_length { 19 } else { 15 };
@@ -224,8 +244,9 @@ impl LookupTables {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::CorrectLookAheadBitwiseReader;
-  use crate::support::LookAheadBitwiseRead;
+  use crate::support::{
+    CorrectLookAheadBitwiseReader, ExpectedCallLookAheadBitwiseReader, LookAheadBitwiseRead,
+  };
   #[macro_export]
   #[cfg(test)]
   macro_rules! rvec {
@@ -236,6 +257,36 @@ mod tests {
         )+
         v}
     };
+  }
+
+  #[test]
+  fn test_generate_run_offset_lookup_respects_do_pad_length_parameter() {
+    // `do_pad_length` is a replacement for passing either 15 or 19; and limits the effect of certain 'fill' operations
+    let mut reader =
+      CorrectLookAheadBitwiseReader::new(ExpectedCallLookAheadBitwiseReader::new_correct(
+        &[
+          false, false, false, false, false, true, true, true, true, true,
+        ][..],
+        &[5, 5],
+      ));
+    let mut tables = LookupTables::new();
+    tables.run_offset_lookup.iter_mut().for_each(|i| *i = 255);
+    tables
+      .run_offset_lookup_len
+      .iter_mut()
+      .for_each(|i| *i = 255);
+    tables
+      .generate_run_offset_lookup(&mut reader, false)
+      .unwrap();
+    assert_eq!(vec![0x1f; 256], &tables.run_offset_lookup[..]);
+    assert_eq!(
+      {
+        let mut v = vec![0x00; 15];
+        v.extend(vec![0xff; 4]);
+        v
+      },
+      &tables.run_offset_lookup_len[..]
+    );
   }
 
   #[test]
