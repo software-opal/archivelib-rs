@@ -129,7 +129,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
           }
           data_table!((current_table, output_table262, self) = cast!(ij as u16))
         }
-        lookup_table288[cast!(item209 as usize)] = cast!(tmp293 as u16)
+        lookup_table288[cast!(item209 as usize)] = cast_trunc!(tmp293 as u16)
       }
       ij = ij.wrapping_add(1)
     }

@@ -51,9 +51,10 @@ impl ArchivelibConfig {
     W: Write,
   {
     use crate::expand;
+    use crate::support::BitReader;
 
-    let mut expander =
-      expand::RExpandData::new(reader, writer, input.len(), self.level.compression_factor())?;
+    let mut reader = BitReader::from(input);
+    let mut expander = expand::RExpandData::new(reader, output, self.level.compression_factor())?;
     expander.expand()
   }
   #[cfg(feature = "new_impl")]

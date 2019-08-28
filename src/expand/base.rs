@@ -29,7 +29,7 @@ pub struct RExpandData<R: BitRead, W: Write> {
 }
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
-  pub fn new(reader: R, writer: W, _in_length: usize, compression_level: u8) -> Result<Self> {
+  pub fn new(reader: R, writer: W, compression_level: u8) -> Result<Self> {
     assert_eq!(CONST_N141_IS_511, 511);
     if compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR {
       Err(DecompressError::IllegalCompressionLevel(compression_level))
