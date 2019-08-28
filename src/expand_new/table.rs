@@ -157,8 +157,10 @@ impl LookupTables {
           }
         }
       }
-      for v in self.run_offset_lookup_len[i..fill_limit].iter_mut() {
-        *v = 0;
+      if i < fill_limit {
+        for v in self.run_offset_lookup_len[i..fill_limit].iter_mut() {
+          *v = 0;
+        }
       }
       generate_binary_tree(
         8,

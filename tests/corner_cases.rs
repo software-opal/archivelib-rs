@@ -18,3 +18,13 @@ check_decompress_matches! {
     *include_bytes!("data/corner_cases/single_byte_wrong.out")
   );
 }
+
+#[test]
+fn slice_index_starts_after_ends() {
+  let input = [0x27, 0x27, 0x30, 0x48];
+
+  match archivelib::do_decompress(&input) {
+    Err(e) => assert_eq!("Binary tree error: Type1", e),
+    Ok(v) => panic!("Should have failed with BTE1; instead got {:?}", v),
+  }
+}
