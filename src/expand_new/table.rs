@@ -17,6 +17,25 @@ use super::bish_tree::{generate_binary_tree, BinaryTree};
 use crate::errors::BinaryTreeInvariantError;
 use crate::support::CorrectLookAheadBitwiseRead;
 
+macro_rules! invariant_failure {
+  () => (invariant_failure!("Unknown"));
+  ($($arg:tt)+) => (
+    if cfg!(debug_assertions) {
+      eprintln!("Invariant failure at {}:{}: {}", file!(), line!(), format_args!($($arg)+));
+    }
+    return Err(LookupTableGenerationError::InvariantFailure.into());
+  );
+}
+macro_rules! invariant_assert {
+  ($cond:expr) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
+  ($cond:expr,) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
+  ($cond:expr, $($arg:tt)+) => (
+    if !$cond {
+      invariant_failure!($($arg)+);
+    }
+  );
+}
+
 #[derive(Debug)]
 pub enum LookupTableGenerationError {
   IOError(io::Error),
@@ -144,9 +163,12 @@ impl LookupTables {
             bit_length += 1;
           }
         }
-        if i >= self.run_offset_lookup_len.len() {
-          return Err(LookupTableGenerationError::InvariantFailure);
-        }
+        invariant_assert!(
+          i < self.run_offset_lookup_len.len(),
+          "array index out of bounds: Accessing index {} in an array of length {}",
+          i,
+          self.run_offset_lookup_len.len(),
+        );
         self.run_offset_lookup_len[i] = bit_length;
         i += 1;
         if do_pad_length && i == 3 {
@@ -211,10 +233,13 @@ impl LookupTables {
             2 => reader.consume::<u16>(9)? + 20,
             _ => unreachable!(),
           };
-          if (cast!(idx as usize) + i - 1) >= self.bit_lookup_len.len() {
-            // Subtracting one accounts for the post-increment in the loop
-            return Err(LookupTableGenerationError::InvariantFailure);
-          }
+          // Subtracting one accounts for the post-increment in the loop
+          invariant_assert!(
+            (cast!(idx as usize) + i - 1) < self.bit_lookup_len.len(),
+            "Accessing index out of bounds: {} in an array of length {}",
+            (cast!(idx as usize) + i - 1),
+            self.bit_lookup_len.len(),
+          );
           for _ in 0..idx {
             self.bit_lookup_len[i] = 0;
             i += 1;

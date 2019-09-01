@@ -28,3 +28,15 @@ fn slice_index_starts_after_ends() {
     Ok(v) => panic!("Should have failed with BTE1; instead got {:?}", v),
   }
 }
+
+#[test]
+fn short_file_a2_errors_when_trying_to_write_out_of_array_bounds() {
+  // SHA1: 10687feb9716c9502d9a40fdfe3bb339055c8651
+  // This test case doesn't error in the system library the same way because the system library
+  // happily writes out of bounds without aborting.
+  let input = [0xA2];
+  match archivelib::do_decompress(&input) {
+    Err(e) => assert_eq!("Invariant Failure", e),
+    Ok(v) => panic!("Should have failed with BTE1; instead got {:?}", v),
+  }
+}

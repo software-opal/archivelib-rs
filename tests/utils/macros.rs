@@ -90,12 +90,13 @@ macro_rules! check_decompress_matches {
 
         // Sanity check the input and output;
         assert_eq!(
-        &expected[..],
+          &expected[..],
           &archivelib_sys::do_decompress(&input[..]).unwrap()[..]
           // "System library doesn't match expected result."
         );
         archivelib::assert_bytes_eq!(
-          &expected[..],          &archivelib::do_decompress(&input[..]).unwrap()[..]
+          &expected[..],
+          &archivelib::do_decompress(&input[..]).unwrap()[..]
           // "Rust library fails for input: {:?}",
           // input
         );
