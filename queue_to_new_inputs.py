@@ -1,10 +1,10 @@
+import functools
 import hashlib
 import multiprocessing
 import os
 import pathlib
 import subprocess
 import sys
-import functools
 import tempfile
 
 # Workflow taken from this blog post on how to fuzz effectively
@@ -16,7 +16,9 @@ ROOT = pathlib.Path(__file__).parent
 
 def list_files_in_folder(*files):
     folders = [folder for folder in files if folder.is_dir()]
-    return ( {file for file in files if file.is_file()} |  {f for folder in folders for f in folder.iterdir() if f.is_file()})
+    return {file for file in files if file.is_file()} | {
+        f for folder in folders for f in folder.iterdir() if f.is_file()
+    }
 
 
 def load_files_in_folder(*folders):
@@ -28,7 +30,7 @@ def minimise_inputs(executable, out_folder, items):
         td = pathlib.Path(_td)
         assert td.is_dir()
         for i, item in enumerate(sorted(items, key=lambda d: (len(d), d))):
-            if 0 < len(item):# <= 4096:
+            if 0 < len(item):  # <= 4096:
                 (td / f"input_{i}").write_bytes(item)
         subprocess.run(
             ["afl-cmin", "-i", td, "-o", out_folder, "--", executable], check=True

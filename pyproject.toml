@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "archivelib"
+version = "0.1.0"
+description = ""
+authors = ["Opal Symes <code@opal.codes>"]
+license = "GPL-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.1"
+toml = "^0.10.0"
+black = {version = "^18.3-alpha.0",allows-prereleases = true}
+isort = "^4.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

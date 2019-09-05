@@ -38,6 +38,7 @@ fn main() {
   let bindings = bindgen::Builder::default()
     .clang_arg("-xc++")
     .clang_arg("-fsanitize=undefined")
+    .clang_arg("-fsanitize=address")
     .clang_arg("-fno-omit-frame-pointer")
     .header("c-lib/wrapper.h")
     .whitelist_function("compress2")
@@ -57,6 +58,12 @@ fn main() {
   files.sort();
   let mut base = cc::Build::new();
   base.warnings(false);
+  // base.flag_if_supported("-fsanitize=undefined");
+  // base.flag_if_supported("-fsanitize=address");
+  // base.flag_if_supported("-fsanitize=bounds");
+  base.flag_if_supported("-fstack-protector");
+  // base.flag_if_supported("-fsanitize-memory-track-origins");
+  base.flag_if_supported("-fsanitize=memory");
   if !cfg!(windows) {
     base.define("AL_UNIX", None);
     base.define("AL_SUN4", None);

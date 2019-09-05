@@ -3,9 +3,6 @@
 #![allow(non_snake_case)]
 
 #[cfg(test)]
-extern crate rand;
-
-#[cfg(test)]
 mod test;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

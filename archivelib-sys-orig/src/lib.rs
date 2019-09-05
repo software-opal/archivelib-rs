@@ -2,12 +2,6 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-#[cfg(test)]
-extern crate rand;
-
-#[cfg(test)]
-mod test;
-
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl AllocatedMemory {

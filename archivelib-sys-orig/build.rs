@@ -42,6 +42,12 @@ fn main() {
   let mut builder = cc::Build::new();
   builder.cpp(true); // Switch to C++ library compilation.
   builder.warnings(false);
+  // builder.flag_if_supported("-fsanitize=undefined");
+  // builder.flag_if_supported("-fsanitize=address");
+  // builder.flag_if_supported("-fsanitize=bounds");
+  builder.flag_if_supported("-fstack-protector");
+  // builder.flag_if_supported("-fsanitize-memory-track-origins");
+  builder.flag_if_supported("-fsanitize=memory");
   if !cfg!(windows) {
     builder.define("AL_UNIX", None);
     builder.define("AL_SUN4", None);

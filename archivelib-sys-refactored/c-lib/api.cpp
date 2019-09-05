@@ -23,11 +23,11 @@ AllocatedMemory2 _build_error(int status, std::string data) {
     raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data.c_str(), len);
   }
-  return AllocatedMemory2{
-      .status = status,
-      .data = raw_data,
-      .length = len,
-  };
+  AllocatedMemory2 re;
+  re.status = status;
+  re.data = raw_data;
+  re.length = len;
+  return re;
 }
 
 AllocatedMemory2 build_error_from_status_code(int status) {
@@ -68,11 +68,11 @@ AllocatedMemory2 build_output(ALStorage *out) {
     }
   }
 
-  return AllocatedMemory2{
-      .status = 0,
-      .data = data,
-      .length = actual_len,
-  };
+  AllocatedMemory2 re;
+  re.status = 0;
+  re.data = data;
+  re.length = actual_len;
+  return re;
 }
 
 extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,

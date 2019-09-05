@@ -302,5 +302,5 @@ SimpleStatus ALStatus::copyToSimple() {
     raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data, len);
   }
-  return SimpleStatus{miStatus, raw_data, len};
+  return {miStatus, raw_data, len};
 }

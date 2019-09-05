@@ -11,6 +11,6 @@ typedef struct SimpleStatus {
 } SimpleStatus;
 
 #define SIMPLE_STATUS_SUCCESS()                                                \
-  SimpleStatus { AL_SUCCESS, NULL, 0 }
+  { AL_SUCCESS, NULL, 0 }
 
 #endif

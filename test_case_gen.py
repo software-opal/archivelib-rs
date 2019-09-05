@@ -1,4 +1,5 @@
-import ast, functools
+import ast
+import functools
 import json
 import multiprocessing
 import os
@@ -39,7 +40,8 @@ def kcov_report(dir):
 
 
 def kcov_collect(dir):
-    return []
+    # return []
+    return ["valgrind", "--leak-check=no", "--redzone-size=64"]
     # return ["kcov", *KCOV_OPTS, "--collect-only", dir]
 
 
@@ -53,19 +55,19 @@ TEST_OUTPUT_ROOT_DIR = ROOT / "gen_test_cases"
 TEST_OUTPUT_DIRS = {
     name: TEST_OUTPUT_ROOT_DIR / name
     for name in [
-        'timeout',
         "crash",
         "difference_err",
         "difference_out",
         "match_crash",
         "match_err",
         "match",
+        "should_succeed",
+        "timeout",
         "unknown",
         "wip",
     ]
 }
 
-RAW_SYS_RE = re.compile(rb'".*? \(0x[0-9a-f]{4,}\) ')
 ERROR_MAPPING = {
     rb'Error: "BinaryTreeError(Type1)"': "BTE1",
     rb'Error: "Binary tree error: Type1"': "BTE1",
@@ -74,7 +76,7 @@ ERROR_MAPPING = {
     rb'Error: "BinaryTreeError(Type2)"': "BTE2",
     rb'Error: "Binary tree error: Type2"': "BTE2",
     rb'Error: "Internal error: -102\u{0}"': "BTE2",
-    rb'Error: "Internal 2 error in Greenleaf Decompression routine\u{0}"': "BTE1",
+    rb'Error: "Internal 2 error in Greenleaf Decompression routine\u{0}"': "BTE2",
     rb'Error: "IOError: failed to write whole buffer"': "OOM",
     rb'Error: "Attempt to allocate a huge buffer of 65536 bytes for ALMemory decompress\u{0}"': "OOM",
     rb'Error: "Attempt to allocate a huge buffer of 65536 bytes for ALMemory\u{0}"': "OOM",
@@ -102,6 +104,9 @@ def get_all_inputs() -> typ.Set[bytes]:
     for folder in ROOT.iterdir():
         if folder.name.endswith("_corpus"):
             inputs = inputs | get_inputs_in_folder(folder)
+    for folder in (ROOT / "tests/data/").iterdir():
+        if folder.is_dir():
+            inputs = inputs | get_inputs_in_folder(folder)
     for folder in (ROOT / "fuzz").iterdir():
         if "afl_out" in folder.name:
             for f in ["hangs", "crashes"]:
@@ -128,14 +133,15 @@ def get_test_case_inputs(folder=ROOT / "tests") -> typ.Set[bytes]:
     for file in folder.iterdir():
         if file.is_dir():
             inputs = inputs | get_test_case_inputs(file)
-        elif file.is_file():
-            for match in HEX_MACRO_RE.finditer(file.read_text()):
+        elif file.is_file() and file.name.endswith(".rs"):
+            file_text = file.read_text()
+            for match in HEX_MACRO_RE.finditer(file_text):
                 inputs.add(bytes.fromhex(match.group(1).replace("\n", "")))
-            for match in U8_ARRAY_RE.finditer(file.read_text()):
+            for match in U8_ARRAY_RE.finditer(file_text):
                 l = ast.literal_eval(match.group(0).replace("_u8", "").replace("_", ""))
                 if all(i <= 255 for i in l):
                     inputs.add(bytes(l))
-            for match in U8_REPEAT_RE.finditer(file.read_text()):
+            for match in U8_REPEAT_RE.finditer(file_text):
                 v = int(match.group(1))
                 if v <= 255:
                     inputs.add(bytes([v]) * int(match.group(2)))
@@ -149,7 +155,7 @@ def run_exec(input, kcov_base, exec, level="4"):
             input=input,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            timeout=30,
+            timeout=60,
         )
         rc = result.returncode
         out = result.stdout
@@ -158,23 +164,32 @@ def run_exec(input, kcov_base, exec, level="4"):
         rc = 999
         out = e.stdout
         err = e.stderr.strip()
-    match_err = RAW_SYS_RE.sub(b'"', err)
-    if not err:
+
+    if not err or rc == 0:
+        match_err = err
         known_err = True
-    elif match_err in ERROR_MAPPING:
-        known_err = ERROR_MAPPING[match_err]
     else:
+        match_err = err
         known_err = None
-    if rc == 0:
-        assert known_err is True
-    return (rc, out, match_err, known_err)
+        if b"Invalid write of size" in err:
+            # Invariant error from Valgrind because we are writing out of bounds
+            known_err = "INV"
+            match_err = "Valgrind"
+        else:
+            for line in err.splitlines():
+                e = re.sub(rb'".*? \(0x[0-9a-f]{4,}\) ', b'"', line.strip())
+                if e in ERROR_MAPPING:
+                    known_err = ERROR_MAPPING[e]
+                    match_err = e
+                    break
+    return (rc, out, err, match_err, known_err)
 
 
 def test_case_name(input):
     import hashlib
 
     sha = hashlib.sha1(input).hexdigest()
-    size = len(input) if len(input) < 100000 else 99999
+    size = len(input) if len(input) < 100_000 else 99999
     return f"{size:05}~{sha}"
 
 
@@ -196,6 +211,7 @@ def bytes_to_test_hex(data):
         out += f'{"  ".join(bparts)}\n'
     return out
 
+
 def bytes_to_rust_array(data):
     aparts = []
     out = ""
@@ -207,6 +223,8 @@ def bytes_to_rust_array(data):
     if aparts:
         out += f'{" ".join(aparts)}\n'
     return f"[\n{out}]\n"
+
+
 def output_test_case(
     input,
     *,
@@ -274,22 +292,22 @@ def run(input: bytes):
     new_base.mkdir(parents=True)
     (base / "input.dat").write_bytes(input)
 
-    (sys_rc, sys_out, sys_err, sys_known_err) = run_exec(
+    (sys_rc, sys_out, sys_err, sys_err_msg, sys_known_err) = run_exec(
         input, sys_base, UNZIP_EXEC_SYS
     )
-    (new_rc, new_out, new_err, new_known_err) = run_exec(
+    (new_rc, new_out, new_err, new_err_msg, new_known_err) = run_exec(
         input, new_base, UNZIP_EXEC_NEW
     )
     if not sys_known_err:
-        print("Unknown error: ", sys_err)
+        print(name, "Unknown sys error: ", sys_err)
     if not new_known_err:
-        print("Unknown error: ", new_err)
+        print(name, "Unknown new error: ", new_err)
 
     if new_rc == 999:
-        fail_type = 'timeout'
+        fail_type = "timeout"
     elif sys_rc == 0:
         if new_rc != 0:
-            fail_type = "difference_err"
+            fail_type = "should_succeed"
         elif sys_out != new_out:
             fail_type = "difference_out"
         else:
@@ -345,15 +363,15 @@ def run(input: bytes):
         # "input_rs": ", ".join(f"0x{i:02X}" for i in input),
         # "input_16": " ".join(f"{i:02X}" for i in input),
         "fail_type": fail_type,
-        "sys": {"ok": sys_rc == 0, "err": str(sys_err), "code": sys_known_err},
-        "new": {"ok": new_rc == 0, "err": str(new_err), "code": new_known_err},
+        "sys": {"ok": sys_rc == 0, "err": str(sys_err_msg), "code": sys_known_err},
+        "new": {"ok": new_rc == 0, "err": str(new_err_msg), "code": new_known_err},
     }
 
 
-def tmin_test_case(cout,tmin_out,item):
+def tmin_test_case(cout, tmin_out, item):
     if not item or len(item) > (2 ** 14):
         # tmin doesn't like the empty file
-        return b''
+        return b""
     with tempfile.NamedTemporaryFile("rb") as tout:
         sp_run(
             [
@@ -378,8 +396,7 @@ def tmin_test_case(cout,tmin_out,item):
 def minimise_test_case_corpus(tmin_out):
     cmin_out = ROOT / "_cmin_corpus"
     cmin_edge_out = ROOT / "_cmin_edge_corpus"
-    sp_run(["rm", "-rf", cmin_out
-,cmin_edge_out], check=True)
+    sp_run(["rm", "-rf", cmin_out, cmin_edge_out], check=True)
 
     sp_run(
         [
@@ -422,16 +439,15 @@ def main():
     print(f"Average length: {statistics.mean(lens):0.1f}")
     print(f"Median length:  {statistics.median(lens):0.1f}")
 
-    sp_run(["cargo", "build", '--all', '--bins'], check=True, cwd=ROOT)
-    sp_run(
-        ["cargo", "afl", "build", "--features=fuzz-afl"], check=True, cwd=(ROOT / "cli")
-    )
+    sp_run(["cargo", "build", "--all", "--bins"], check=True, cwd=ROOT)
+    # sp_run(
+    #     ["cargo", "afl", "build", "--features=fuzz-afl"], check=True, cwd=(ROOT / "cli")
+    # )
     cout = ROOT / "_corpus"
     tmin_out = ROOT / "_tmin_corpus"
     sp_run(["rm", "-rf", tmin_out], check=True)
     tmin_out.mkdir(exist_ok=True)
     cout.mkdir(exist_ok=True)
-
 
     test_cases = {}
     changed_data = data
@@ -441,7 +457,9 @@ def main():
                 out = cout / test_case_name(item)
                 out.write_bytes(item)
             # case_min = p.apply_async(minimise_test_case_corpus, args=(cout,))
-            for out in p.imap_unordered(run, changed_data):
+            for out in p.imap_unordered(
+                run, filter(lambda item: len(item) < 10, changed_data)
+            ):
                 key = (
                     out["fail_type"],
                     out["sys"]["code"] or out["sys"]["err"],
@@ -460,12 +478,11 @@ def main():
             new_data = get_all_inputs()
             changed_data = new_data - old_data
 
-
     data = []
     for key, cases in test_cases.items():
         cases.sort(key=lambda k: (k["len"], k["name"]))
         data.append(
-            {"key": dict(zip(["fail_type", "sys", "new"], key)), "cases": cases[:5]}
+            {"key": dict(zip(["fail_type", "sys", "new"], key)), "cases": cases}
         )
     with (TEST_OUTPUT_ROOT_DIR / "interesting.json").open("w") as f:
         json.dump(data, f, sort_keys=True, default=repr, indent=2)
