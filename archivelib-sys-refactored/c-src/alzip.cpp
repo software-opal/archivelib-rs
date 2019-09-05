@@ -14,8 +14,6 @@ int main() {
 
   size_t input_size = fread(input_buffer, sizeof(uint8_t), 65535, stdin);
 
-  printf("# %i #", input_size);
-
   AllocatedMemory2 result = compress2(input_buffer, input_size, 4);
   free(input_buffer);
   int status = result.status;
@@ -25,8 +23,6 @@ int main() {
   } else {
     fwrite(result.data, sizeof(uint8_t), result.length, stdout);
   }
-
-  printf("| %i | %i |", result.length, status);
   clean2(&result);
 
   return status == 0 ? 0 : 1;

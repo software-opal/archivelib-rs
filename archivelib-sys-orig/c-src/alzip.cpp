@@ -25,7 +25,6 @@ int main() {
   } else {
     fwrite(result.data, sizeof(uint8_t), result.length, stdout);
   }
-  printf("| %i | %i |", result.length, status);
   clean(&result);
 
   return status == 0 ? 0 : 1;
