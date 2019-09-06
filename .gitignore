@@ -11,3 +11,5 @@ old_tests
 Cargo.lock
 
 .afl*
+
+__pycache__

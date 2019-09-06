@@ -14,7 +14,7 @@ int main() {
 
   size_t input_size = fread(input_buffer, sizeof(uint8_t), 65535, stdin);
 
-  AllocatedMemory2 result = compress2(input_buffer, input_size, 4);
+  AllocatedMemory2 result = decompress2(input_buffer, input_size, 4);
   free(input_buffer);
   int status = result.status;
 

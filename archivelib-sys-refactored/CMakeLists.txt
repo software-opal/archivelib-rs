@@ -21,10 +21,10 @@ endif ()
 
 if (NOT FUZZ)
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set ( FLAGS "${FLAGS} -fstack-protector -fsanitize-memory-track-origins -O3" )
+    set ( FLAGS "${FLAGS} -fstack-protector -fsanitize-memory-track-origins -O3 -fno-stack-arrays" )
     set ( SANITIZERS "undefined" "address" "bounds" )
   elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set ( FLAGS "${FLAGS} -fstack-protector-strong -fstack-protector-all --coverage -O3" )
+    set ( FLAGS "${FLAGS} -fstack-protector-strong -fstack-protector-all --coverage -O3 --param ssp-buffer-size=1 -fno-stack-arrays" )
     set ( SANITIZERS "undefined" "address" "bounds" )
   endif ()
 
