@@ -91,6 +91,8 @@ class Executor:
 class ErrorType(enum.Enum):
 
     INVARIANT = enum.auto()
+    BTREE_ERROR_1 = enum.auto()
+    BTREE_ERROR_2 = enum.auto()
 
 
 @attr.s()
@@ -106,7 +108,11 @@ class Error:
     def classify(cls, error):
         if not error:
             return False
-        errors = [cls.classify_invariant(error)]
+        errors = [
+            cls.classify_invariant(error),
+            cls.classify_btree_error_1(error),
+            cls.classify_btree_error_2(error),
+        ]
         for (etype, checks) in errors:
             if any(checks.values()):
                 return cls(etype, error)
@@ -116,8 +122,7 @@ class Error:
 
     @classmethod
     def classify_invariant(cls, error):
-        lines =[*map(bytes.strip, error.splitlines())]
-        print(lines)
+        lines = [*map(bytes.strip, error.splitlines())]
         return (
             ErrorType.INVARIANT,
             {
@@ -126,6 +131,43 @@ class Error:
                     b"*** stack smashing detected ***" in line for line in lines
                 ),
                 "ASAN": any(b"ERROR: AddressSanitizer:" in line for line in lines),
-                "munmap_chunk": any(b'munmap_chunk(): invalid pointer'in line for line in lines),
+                "munmap_chunk": any(
+                    b"munmap_chunk(): invalid pointer" in line for line in lines
+                ),
+                "double_free": any(
+                    b"double free or corruption (" in line for line in lines
+                ),
+                "free": b"free(): invalid size" in lines,
+                "corrupted": b"corrupted size vs. prev_size" in lines,
+            },
+        )
+
+    @classmethod
+    def classify_btree_error_1(cls, error):
+        lines = [*map(bytes.strip, error.splitlines())]
+        return (
+            ErrorType.BTREE_ERROR_1,
+            {
+                "Rust": b'Error: "Binary tree error: Type1"' in lines,
+                "Refactored": b"Internal error: -101\0" in lines,
+                "Orig": any(
+                    b"Internal 1 error in Greenleaf Decompression routine" in line
+                    for line in lines
+                ),
+            },
+        )
+
+    @classmethod
+    def classify_btree_error_2(cls, error):
+        lines = [*map(bytes.strip, error.splitlines())]
+        return (
+            ErrorType.BTREE_ERROR_2,
+            {
+                "Rust": b'Error: "Binary tree error: Type2"' in lines,
+                "Refactored": b"Internal error: -102\0" in lines,
+                "Orig": any(
+                    b"Internal 2 error in Greenleaf Decompression routine" in line
+                    for line in lines
+                ),
             },
         )

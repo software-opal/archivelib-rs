@@ -5,7 +5,7 @@ import pytest
 LEVEL_RANGE = [0, 1, 2, 3, 4]
 
 
-def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=LEVEL_RANGE):
+def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=[0,4]):
     for length in range(minlen, maxlen + 1):
         if length >= 4:
             return
@@ -24,7 +24,7 @@ def test_single_byte(al_runner, level):
 
 
 @pytest.mark.parametrize("level, input", gen_all_inputs_range(0, 1))
-def test_single_byte(al_runner, level,input):
+def test_single_byte(al_runner, level, input):
     out, err = al_runner.test_unzip(input, level=level)
 
 
