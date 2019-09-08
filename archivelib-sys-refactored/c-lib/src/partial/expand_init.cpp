@@ -2,7 +2,7 @@
 #include "r_expand.hpp"
 
 RExpand::RExpand(ALStorage &in_storage, ALStorage &out_storage,
-                 ssize_t in_length, int compression_level) {
+                 ptrdiff_t in_length, int compression_level) {
 
   data = (RExpandData *)calloc(1, sizeof(RExpandData));
   ALErrors res = create_expand_data(data, &in_storage, &out_storage, in_length,

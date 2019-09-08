@@ -53,8 +53,8 @@ int32_t Expand(RExpandData *data) {
         // byte_or_run_length203 == 0x1FE. End of file.
         break;
       }
-      run_start226 =
-          (buffer_pos - calculate_run_offset(data) - 1) & size_bitmask280;
+      int16_t ro = calculate_run_offset(data);
+      run_start226 = (buffer_pos - ro - 1) & size_bitmask280;
       if (((size_t)run_start226) < max_size279 - MAX_RUN_LENGTH140 - 1 &&
           ((size_t)buffer_pos) < max_size279 - MAX_RUN_LENGTH140 - 1) {
         while (--run_length276 >= 0) {

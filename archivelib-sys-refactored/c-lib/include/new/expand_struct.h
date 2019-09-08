@@ -40,7 +40,7 @@ typedef struct RExpandData {
   uint16_t items_until_next_header;
   uint8_t tmp_bit_buffer245;
   int16_t loaded_compressed_data_length246;
-  ssize_t compressed_data_length248;
+  ptrdiff_t compressed_data_length248;
 } RExpandData;
 
 #ifdef __cplusplus

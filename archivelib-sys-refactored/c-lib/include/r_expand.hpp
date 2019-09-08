@@ -37,7 +37,7 @@ class RExpand {
 public:
   RExpandData *data;
 
-  RExpand(ALStorage &_233, ALStorage &_202, ssize_t _264, int32_t _234);
+  RExpand(ALStorage &_233, ALStorage &_202, ptrdiff_t _264, int32_t _234);
   ~RExpand();
   ALStatus mStatus;
 

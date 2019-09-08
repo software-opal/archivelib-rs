@@ -129,7 +129,7 @@ void free_compress_data(RCompressData *data) {
 }
 
 void reset_compress_data(RCompressData *data) {
-  ssize_t i;
+  ptrdiff_t i;
   data->dat173 = 0;
   data->bits_buffer_used172 = 0;
   data->bits_buffer182 = 0;

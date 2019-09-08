@@ -11,7 +11,6 @@ typedef void ALStorage;
 typedef void ALStatus;
 typedef enum ALErrors ALErrors;
 typedef enum ALGreenleafCompressionLevels ALGreenleafCompressionLevels;
-typedef ptrdiff_t ssize_t;
 
 typedef int8_t bool;
 #define false 0

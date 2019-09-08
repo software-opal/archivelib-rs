@@ -58,6 +58,10 @@ uint16_t expand_get_bits(RExpandData *data, uint8_t bits_to_load219) {
   if (bits_to_load219 == 0) {
     return 0;
   }
+  while (bits_to_load219 > 16) {
+    expand_read_bits(data, 1);
+    bits_to_load219--;
+  }
   assert(bits_to_load219 <= 16);
   bits = (uint16_t)(data->bits182 >> (2 * CHAR_BIT - bits_to_load219));
   expand_read_bits(data, bits_to_load219);

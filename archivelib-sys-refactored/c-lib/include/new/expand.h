@@ -12,7 +12,7 @@ extern "C" {
 void __read_buffer(RExpandData *data, size_t length);
 
 ALErrors create_expand_data(RExpandData *data, ALStorage *in_storage,
-                            ALStorage *out_storage, ssize_t in_length,
+                            ALStorage *out_storage, ptrdiff_t in_length,
                             int compression_level);
 
 void free_expand_data(RExpandData *data);
