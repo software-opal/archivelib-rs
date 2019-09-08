@@ -125,8 +125,7 @@ pub fn expand(
     } else {
       let run_length = (item - (U8_MAX + 1) + MIN_RUN_LENGTH) as usize;
       let run_offset = expand_data.run_offset(reader)?;
-      assert!(run_offset < buffer.len());
-      let run_start = (buffer.len() + buffer_idx) - 1 - run_offset;
+      let run_start = buffer_idx.wrapping_sub(1).wrapping_sub(run_offset) % buffer.len();
       for i in 0..run_length {
         buffer[buffer_idx] = buffer[(run_start + i) % buffer.len()];
         buffer_idx += 1;

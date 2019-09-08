@@ -22,7 +22,7 @@ def run_make(system_folder):
     build_folder = system_folder / "build"
     if not os.environ.get("ALTEST_NO_BUILD"):
         build_folder.mkdir(exist_ok=True)
-        subprocess.run(["cmake", system_folder], cwd=build_folder, check=True)
+        subprocess.run(["cmake", str(system_folder)], cwd=build_folder, check=True)
         subprocess.run(["make"], cwd=build_folder, check=True)
     return build_folder
 

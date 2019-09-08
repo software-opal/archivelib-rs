@@ -30,7 +30,7 @@ class Executor:
 
     def exec(self, args, *, input=None, timeout=60, **kwargs):
         with subprocess.Popen(
-            args,
+            [str(a) for a in args],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
@@ -93,6 +93,7 @@ class ErrorType(enum.Enum):
     INVARIANT = enum.auto()
     BTREE_ERROR_1 = enum.auto()
     BTREE_ERROR_2 = enum.auto()
+    HUGE_BUFFER = enum.auto()
 
 
 @attr.s()
@@ -112,6 +113,7 @@ class Error:
             cls.classify_invariant(error),
             cls.classify_btree_error_1(error),
             cls.classify_btree_error_2(error),
+            cls.classify_huge_buffer(error),
         ]
         for (etype, checks) in errors:
             if any(checks.values()):
@@ -137,7 +139,8 @@ class Error:
                 "double_free": any(
                     b"double free or corruption (" in line for line in lines
                 ),
-                "free": b"free(): invalid size" in lines,
+                "free invalid size": b"free(): invalid size" in lines,
+                "free invalid pointer": b'free(): invalid pointer' in lines,
                 "corrupted": b"corrupted size vs. prev_size" in lines,
             },
         )
@@ -169,5 +172,20 @@ class Error:
                     b"Internal 2 error in Greenleaf Decompression routine" in line
                     for line in lines
                 ),
+            },
+        )
+
+    @classmethod
+    def classify_huge_buffer(cls, error):
+        lines = [*map(bytes.strip, error.splitlines())]
+        return (
+            ErrorType.HUGE_BUFFER,
+            {
+                "Rust": b'Error: "IOError: failed to write whole buffer"' in lines,
+                # "Refactored": b"Internal error: -102\0" in lines,
+                "Orig": any(
+                    b"Attempt to allocate a huge buffer of 65536 bytes for ALMemory" in line
+                    for line in lines
+                )
             },
         )

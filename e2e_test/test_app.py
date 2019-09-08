@@ -1,3 +1,4 @@
+import hashlib
 import itertools
 
 import pytest
@@ -5,13 +6,15 @@ import pytest
 LEVEL_RANGE = [0, 1, 2, 3, 4]
 
 
-def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=[0,4]):
+def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=[0, 4]):
     for length in range(minlen, maxlen + 1):
         if length >= 4:
             return
-        for input in itertools.product(range(0, 256), repeat=length):
+        for i in itertools.product(range(0, 256), repeat=length):
+            input = prefix + bytes(i)
+            hash = hashlib.sha1(input).hexdigest()
             for level in levels:
-                yield level, prefix + bytes(input)
+                yield pytest.param(level, input, id=f"level={level}; {hash}")
 
 
 def test_smoke(al_runner):
