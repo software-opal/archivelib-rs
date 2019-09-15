@@ -187,7 +187,7 @@ impl LookupTables {
       generate_binary_tree(
         8,
         &mut self.run_offset_lookup,
-        &self.run_offset_lookup_len,
+        &self.run_offset_lookup_len[..fill_limit],
         &mut self.tree,
       )?;
       Ok(())

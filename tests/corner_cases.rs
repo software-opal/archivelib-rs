@@ -17,6 +17,21 @@ check_decompress_matches! {
     *include_bytes!("data/corner_cases/single_byte_wrong.in"),
     *include_bytes!("data/corner_cases/single_byte_wrong.out")
   );
+  incorrect_btree1_error_1(
+    // cbf13d89be6fb3c9621e47f22f74ce69cdf73c63
+    *include_bytes!("data/corner_cases/pytest_failure_1.in"),
+    *include_bytes!("data/corner_cases/pytest_failure_1.out")
+  );
+  incorrect_btree1_error_2(
+    // e3d4875cdc9236dee2621e924a205b9dd3e8469d
+    *include_bytes!("data/corner_cases/pytest_failure_2.in"),
+    *include_bytes!("data/corner_cases/pytest_failure_2.out")
+  );
+  incorrect_btree1_error_3(
+    // 25f76ced735657189060713f36b314f35a033118
+    *include_bytes!("data/corner_cases/pytest_failure_3.in"),
+    *include_bytes!("data/corner_cases/pytest_failure_3.out")
+  );
   run_offset_assertion_failure(
     [
       0x30, 0x30, 0x7C, 0xEB, 0xFB, 0xC5, 0xDB, 0x1E, 0xFF, 0x88, 0x00, 0x00, 0x21, 0x24, 0x9D,
