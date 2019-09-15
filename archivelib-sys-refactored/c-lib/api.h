@@ -20,11 +20,11 @@
   }
 #define CHECK_AL_STATUS(status) _CHECK_AL_STATUS(status, __LINE__)
 
-typedef SimpleStatus AllocatedMemory2;
+typedef SimpleStatus AllocatedMemory;
 
-extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,
+extern "C" AllocatedMemory compress(uint8_t *input_buffer, size_t length,
                                       uint8_t compression_level);
-extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length,
+extern "C" AllocatedMemory decompress(uint8_t *input_buffer, size_t length,
                                         uint8_t compression_level);
 
-extern "C" void clean2(AllocatedMemory2 *memory);
+extern "C" void clean2(AllocatedMemory *memory);
