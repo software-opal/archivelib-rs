@@ -1,5 +1,9 @@
+#[macro_use]
+mod array_alias;
+
 mod base;
 mod buffer;
+#[allow(clippy::module_inception)]
 mod compress;
 mod fn199;
 mod fn202;
@@ -12,9 +16,6 @@ mod fn224;
 mod fn225;
 mod fn228;
 mod fn230;
-
-#[cfg(test)]
-mod test;
 
 pub use self::base::{
   CompressError, CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result,

@@ -1,20 +1,30 @@
-#[derive(Debug)]
-pub enum BinaryTreeInvariantError {
-  Type1,
-  Type2,
-}
+use std::convert::TryInto;
+use std::fmt;
 
+use crate::errors::BinaryTreeInvariantError;
+
+// Was dat_arr189/dat_arr190
 pub struct BinaryTree {
-  pub left: Vec<u16>,
-  pub right: Vec<u16>,
+  pub left: [u16; 1021],
+  pub right: [u16; 1021],
 }
 
 impl BinaryTree {
-  pub fn new(size: usize) -> Self {
-    BinaryTree {
-      left: vec![0; size],
-      right: vec![0; size],
+  pub fn new() -> Self {
+    Self {
+      left: [0; 1021],
+      right: [0; 1021],
     }
+  }
+}
+
+impl fmt::Debug for BinaryTree {
+  fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    formatter
+      .debug_struct("BinaryTree")
+      .field("left", &&self.left[..])
+      .field("right", &&self.right[..])
+      .finish()
   }
 }
 
@@ -83,7 +93,7 @@ pub fn generate_binary_tree(
         .take(temp)
         .skip(lookup_tables.table1[bit_len])
       {
-        *v = i as u16;
+        *v = i.try_into().unwrap();
       }
     } else {
       let mut bit_tmp = lookup_tables.table1[bit_len];
@@ -98,7 +108,7 @@ pub fn generate_binary_tree(
         if out_val == 0 {
           tree.left[tree_index] = 0;
           tree.right[tree_index] = 0;
-          out_val = tree_index as u16;
+          out_val = tree_index.try_into().unwrap();
           match output_is_left {
             None => output[output_index] = out_val,
             Some(true) => tree.left[output_index] = out_val,
@@ -106,7 +116,7 @@ pub fn generate_binary_tree(
           }
           tree_index += 1;
         }
-        output_index = out_val as usize;
+        output_index = cast!(out_val as usize);
         if bit_tmp & (1 << (15 - bit_size)) == 0 {
           output_is_left = Some(true);
         } else {
@@ -115,9 +125,9 @@ pub fn generate_binary_tree(
         bit_tmp <<= 1;
       }
       match output_is_left {
-        None => output[output_index] = i as u16,
-        Some(true) => tree.left[output_index] = i as u16,
-        Some(false) => tree.right[output_index] = i as u16,
+        None => output[output_index] = i.try_into().unwrap(),
+        Some(true) => tree.left[output_index] = i.try_into().unwrap(),
+        Some(false) => tree.right[output_index] = i.try_into().unwrap(),
       }
     }
     lookup_tables.table1[bit_len] += lookup_tables.table2[bit_len]
@@ -201,5 +211,4 @@ mod tests {
       [0, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 8, 4, 2, 1]
     );
   }
-
 }

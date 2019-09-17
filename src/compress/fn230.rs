@@ -1,7 +1,8 @@
-use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
-use crate::support::ArrayAlias;
-use crate::support::BitwiseWrite;
 use std::io::Read;
+
+use super::array_alias::ArrayAlias;
+use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
+use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn230(
@@ -16,7 +17,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     // (CONST_N145_IS_19, dat_arr181, dat_arr194)
     // (CONST_N142_IS_15, dat_arr181, dat_arr194)
     let item209_cpy = item209.slice_copy(self);
-    let result = pure_fn230(bits_to_load219 as usize, &self.dat_arr167, &item209_cpy);
+    let result = pure_fn230(
+      cast!(bits_to_load219 as usize),
+      &self.dat_arr167,
+      &item209_cpy,
+    );
     for (i, &val) in result.iter().enumerate() {
       var231.set(self, i, val);
     }
@@ -24,14 +29,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 }
 
 fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
-  let mut lookup_table288 = [0u16; 18];
-  let mut var231 = vec![0u16; length];
+  let mut lookup_table288 = [0_u16; 18];
+  let mut var231 = vec![0_u16; length];
   for i in 1..=16 {
     lookup_table288[(i + 1)] = ((lookup_table288[i] + dat_arr167[i]) << 1) as u16;
   }
   for (i, &lookup_offset) in item209.iter().take(length).enumerate() {
-    var231[i] = lookup_table288[lookup_offset as usize];
-    lookup_table288[lookup_offset as usize] += 1;
+    var231[i] = lookup_table288[cast!(lookup_offset as usize)];
+    lookup_table288[cast!(lookup_offset as usize)] += 1;
   }
   var231
 }
@@ -39,15 +44,15 @@ fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use std::convert::TryInto;
 
   #[test]
   fn test_using_embroidermodder_hus_stitch_attrs() {
     // This function uses the same data as the ones below, but checks that the data is correctly
     // Placed back into the compress data, as well as the functionality
-    let input = [0u8; 0];
-    let mut output = [0u8; 0];
-    let mut cd =
-      RCompressData::new_with_io_writer(&input[..], &mut output[..], 0, 10, true).unwrap();
+    let input = [0_u8; 0];
+    let mut output = [0_u8; 0];
+    let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
     cd.dat_arr167 = vec![0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr181 = [0, 3, 2, 3, 0, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr194 = [3, 5, 6, 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -56,7 +61,7 @@ mod tests {
     let output_dat_arr194 = vec![0, 4, 0, 5, 1, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
     cd.fn230(
-      input_dat_arr181.len() as i32,
+      input_dat_arr181.len().try_into().unwrap(),
       &CompressU8ArrayAlias::Custom(0, &mut input_dat_arr181),
       &mut CompressU16ArrayAlias::Custom(0, &mut input_dat_arr194),
     );

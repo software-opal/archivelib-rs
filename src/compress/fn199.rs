@@ -1,7 +1,9 @@
+use std::convert::TryInto;
+use std::io::Read;
+
 use crate::compress::RCompressData;
 use crate::consts::{MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::support::BitwiseWrite;
-use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn199(&mut self, uncompressed_buffer_index200: i16, var201: i16) {
@@ -9,12 +11,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       &self.dat_arr163,
       &self.uncompressed_buffer,
       self.max_uncompressed_data_size,
-      uncompressed_buffer_index200 as usize,
-      var201 as usize,
+      cast!(uncompressed_buffer_index200 as usize),
+      cast!(var201 as usize),
     );
-    self.dat168 = dat168 as i16;
+    self.dat168 = cast!(dat168 as i16);
     if let Some(val) = dat169 {
-      self.dat169 = val as i16;
+      self.dat169 = cast!(val as i16);
     }
   }
 }
@@ -33,7 +35,7 @@ fn pure_fn199(
     if dat_arr163[test_index] < 0 {
       break;
     }
-    test_index = dat_arr163[test_index] as usize;
+    test_index = dat_arr163[test_index].try_into().unwrap();
     let mut run_length = 0;
     while run_length < MAX_RUN_LENGTH140 {
       if uncompressed_buffer[start_index + run_length]
@@ -44,7 +46,7 @@ fn pure_fn199(
       run_length += 1;
     }
     if run_length < MIN_RUN_LENGTH135_IS_3 {
-      continue;
+      // continue;
     } else if run_length > largest_run {
       let offset;
       if start_index < (test_index + 1) {

@@ -1,6 +1,7 @@
+use std::io::Read;
+
 use crate::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
-use std::io::Read;
 
 const USHRT_MAX: u16 = u16::max_value();
 
@@ -9,9 +10,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     pure_fn218(
       &mut self.output_store,
       &self.dat_arr181,
-      bits_to_write as usize,
-      bit_length as usize,
-      run_start_check as i8,
+      cast!(bits_to_write as usize),
+      cast!(bit_length as usize),
+      cast!(run_start_check as i8),
     )
   }
 }
@@ -52,12 +53,12 @@ where
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::ExactCallWriter;
+  use crate::support::ExpectedCallWriter;
 
   #[test]
   fn test_fn218_0() {
     let dat_arr181 = vec![7, 7, 6, 0, 0, 0, 6, 5, 1, 2, 4, 4, 5, 6, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (14, 5),
       (65534, 4),
       (65534, 4),
@@ -79,7 +80,7 @@ mod tests {
   #[test]
   fn test_fn218_1() {
     let dat_arr181 = vec![5, 3, 4, 4, 4, 4, 5, 4, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (5, 3),
       (3, 3),
@@ -100,7 +101,7 @@ mod tests {
   #[test]
   fn test_fn218_2() {
     let dat_arr181 = vec![7, 3, 4, 5, 4, 6, 7, 4, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (65534, 4),
       (3, 3),
@@ -121,7 +122,7 @@ mod tests {
   #[test]
   fn test_fn218_3() {
     let dat_arr181 = vec![6, 0, 4, 0, 0, 0, 6, 3, 1, 3, 4, 4, 5, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (13, 5),
       (6, 3),
       (0, 3),
@@ -142,7 +143,7 @@ mod tests {
   #[test]
   fn test_fn218_4() {
     let dat_arr181 = vec![5, 5, 3, 4, 4, 3, 3, 4, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (5, 3),
       (5, 3),
@@ -163,7 +164,7 @@ mod tests {
   #[test]
   fn test_fn218_5() {
     let dat_arr181 = vec![4, 7, 5, 0, 0, 0, 8, 8, 1, 3, 5, 5, 4, 3, 6, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (15, 5),
       (4, 3),
       (65534, 4),
@@ -186,7 +187,7 @@ mod tests {
   #[test]
   fn test_fn218_6() {
     let dat_arr181 = vec![5, 2, 3, 4, 5, 5, 5, 4, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (5, 3),
       (2, 3),
@@ -207,7 +208,7 @@ mod tests {
   #[test]
   fn test_fn218_7() {
     let dat_arr181 = vec![0, 3, 2, 3, 0, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (8, 5),
       (0, 3),
       (3, 3),
@@ -226,7 +227,7 @@ mod tests {
   #[test]
   fn test_fn218_8() {
     let dat_arr181 = vec![0, 6, 5, 0, 0, 0, 6, 6, 1, 2, 5, 6, 3, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (13, 5),
       (0, 3),
       (6, 3),
@@ -247,7 +248,7 @@ mod tests {
   #[test]
   fn test_fn218_9() {
     let dat_arr181 = vec![1, 0, 0, 0, 0, 3, 3, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (10, 5),
       (1, 3),
       (0, 3),
@@ -267,7 +268,7 @@ mod tests {
   #[test]
   fn test_fn218_10() {
     let dat_arr181 = vec![0, 3, 2, 0, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (7, 5),
       (0, 3),
       (3, 3),
@@ -284,7 +285,7 @@ mod tests {
   #[test]
   fn test_fn218_11() {
     let dat_arr181 = vec![1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (1, 3),
       (0, 3),
@@ -306,7 +307,7 @@ mod tests {
   fn test_fn218_12() {
     let dat_arr181 = vec![0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut expected_calls =
-      ExactCallWriter::from_vec(vec![(4, 5), (0, 3), (0, 3), (1, 3), (0, 2), (1, 3)]);
+      ExpectedCallWriter::from_vec(vec![(4, 5), (0, 3), (0, 3), (1, 3), (0, 2), (1, 3)]);
     pure_fn218(&mut expected_calls, &dat_arr181, 19, 5, 3).unwrap();
     expected_calls.assert_drained();
   }
@@ -314,7 +315,7 @@ mod tests {
   #[test]
   fn test_fn218_13() {
     let dat_arr181 = vec![5, 3, 3, 5, 4, 3, 3, 3, 4, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (5, 3),
       (3, 3),
@@ -335,7 +336,7 @@ mod tests {
   #[test]
   fn test_fn218_14() {
     let dat_arr181 = vec![2, 3, 6, 0, 0, 6, 0, 5, 4, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (2, 3),
       (3, 3),
@@ -355,7 +356,7 @@ mod tests {
   #[test]
   fn test_fn218_15() {
     let dat_arr181 = vec![0, 5, 5, 0, 0, 0, 6, 3, 1, 3, 3, 5, 6, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (13, 5),
       (0, 3),
       (5, 3),
@@ -376,7 +377,7 @@ mod tests {
   #[test]
   fn test_fn218_16() {
     let dat_arr181 = vec![4, 5, 5, 0, 0, 0, 7, 7, 2, 2, 3, 5, 6, 3, 4, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (15, 5),
       (4, 3),
       (5, 3),
@@ -399,7 +400,7 @@ mod tests {
   #[test]
   fn test_fn218_17() {
     let dat_arr181 = vec![3, 4, 2, 4, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (8, 5),
       (3, 3),
       (4, 3),
@@ -418,7 +419,7 @@ mod tests {
   #[test]
   fn test_fn218_18() {
     let dat_arr181 = vec![1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (9, 5),
       (1, 3),
       (0, 3),
@@ -438,7 +439,7 @@ mod tests {
   fn test_fn218_19() {
     let dat_arr181 = vec![2, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut expected_calls =
-      ExactCallWriter::from_vec(vec![(4, 5), (2, 3), (0, 3), (2, 3), (0, 2), (1, 3)]);
+      ExpectedCallWriter::from_vec(vec![(4, 5), (2, 3), (0, 3), (2, 3), (0, 2), (1, 3)]);
     pure_fn218(&mut expected_calls, &dat_arr181, 19, 5, 3).unwrap();
     expected_calls.assert_drained();
   }
@@ -446,7 +447,7 @@ mod tests {
   #[test]
   fn test_fn218_20() {
     let dat_arr181 = vec![6, 3, 3, 4, 6, 5, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (11, 5),
       (6, 3),
       (3, 3),

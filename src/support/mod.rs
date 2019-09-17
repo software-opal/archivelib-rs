@@ -1,22 +1,23 @@
 #[macro_use]
-mod array_alias;
-pub mod bit_iter;
-mod bitreader;
-pub mod lookahead_reader;
-mod reader;
+mod int_conv;
+#[macro_use]
+mod debug;
+
+mod bit_iter;
+mod max_size_writer;
 mod writer;
 
-pub use self::array_alias::ArrayAlias;
-pub use self::bit_iter::{FromBits, ToBits};
-pub use self::bitreader::{BitRead, BitReader, ExactCallBitReader};
-pub use self::lookahead_reader::{LookAheadBitwiseRead, LookAheadBitwiseReader};
-pub use self::reader::{BitwiseRead, BitwiseReader, ReadError, VecReader};
-pub use self::writer::{BitwiseWrite, BitwiseWriter, ExactCallWriter, NullBitwiseWriter};
+#[cfg(feature = "new_impl")]
+mod lah_reader;
+#[cfg(feature = "new_impl")]
+pub use self::lah_reader::*;
 
-pub fn get_bitmask(bits: usize) -> u128 {
-  if bits == 128 {
-    u128::max_value()
-  } else {
-    (1u128 << bits) - 1
-  }
-}
+pub use self::max_size_writer::*;
+pub use self::writer::*;
+
+#[cfg(not(feature = "new_impl"))]
+mod bitreader;
+#[cfg(all(test, not(feature = "new_impl")))]
+pub use self::bitreader::ExactCallBitReader;
+#[cfg(not(feature = "new_impl"))]
+pub use self::bitreader::{BitRead, BitReader};

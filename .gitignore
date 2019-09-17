@@ -2,4 +2,14 @@
 **/*.rs.bk
 vgcore.*
 
+data.pickle
+gen_test_cases
+_known_inputs
+/*_corpus
+old_tests
+/tmp*
 Cargo.lock
+
+.afl*
+
+__pycache__

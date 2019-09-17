@@ -1,7 +1,8 @@
+use std::io::Read;
+
 use crate::compress::{RCompressData, Result};
 use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9};
 use crate::support::BitwiseWrite;
-use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn222(&mut self) -> Result<()> {
@@ -57,7 +58,7 @@ where
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::ExactCallWriter;
+  use crate::support::ExpectedCallWriter;
   #[test]
   fn test_fn222_0() {
     let arr180 = vec![
@@ -84,7 +85,7 @@ mod tests {
       62, 31344, 12, 31345, 31346, 31347, 63, 4, 0, 5, 13, 14, 30, 31348, 31349, 31350, 31351,
       31352, 31353,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 1),
       (4, 3),
@@ -186,7 +187,7 @@ mod tests {
       39328, 4, 0, 5, 39329, 6, 7, 1, 39330, 39331, 39332, 39333, 39334, 39335, 39336, 39337,
       39338, 39339, 39340,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 2),
       (108, 9),
@@ -241,7 +242,7 @@ mod tests {
       28492, 28493, 28494, 28495, 28496,
     ];
     let mut expected_calls =
-      ExactCallWriter::from_vec(vec![(511, 9), (1, 1), (0, 1), (489, 9), (1, 1)]);
+      ExpectedCallWriter::from_vec(vec![(511, 9), (1, 1), (0, 1), (489, 9), (1, 1)]);
     pure_fn222(&mut expected_calls, &arr180, &arr181, &arr194).unwrap();
     expected_calls.assert_drained();
   }
@@ -272,7 +273,7 @@ mod tests {
       37408, 28, 29, 37409, 37410, 37411, 62, 4, 0, 5, 6, 30, 63, 37412, 37413, 37414, 37415,
       37416, 37417,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 1),
       (0, 1),
@@ -386,7 +387,7 @@ mod tests {
       20272, 6, 0, 20273, 7, 1, 2, 20274, 20275, 20276, 20277, 20278, 20279, 20280, 20281, 20282,
       20283, 20284, 20285,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 2),
       (108, 9),
@@ -441,7 +442,7 @@ mod tests {
       32668, 32669, 32670, 32671,
     ];
     let mut expected_calls =
-      ExactCallWriter::from_vec(vec![(511, 9), (2, 2), (0, 1), (3, 2), (488, 9), (0, 1)]);
+      ExpectedCallWriter::from_vec(vec![(511, 9), (2, 2), (0, 1), (3, 2), (488, 9), (0, 1)]);
     pure_fn222(&mut expected_calls, &arr180, &arr181, &arr194).unwrap();
     expected_calls.assert_drained();
   }
@@ -472,7 +473,7 @@ mod tests {
       0, 6, 60, 42736, 42737, 61, 62, 14, 1, 2, 63, 42738, 42739, 42740, 42741, 42742, 42743,
       42744, 42745,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (6, 3),
       (1, 4),
@@ -663,7 +664,7 @@ mod tests {
       4, 14, 0, 15, 39200, 5, 1, 6, 39201, 39202, 39203, 39204, 39205, 39206, 39207, 39208, 39209,
       39210, 39211,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 2),
       (108, 9),
@@ -719,7 +720,7 @@ mod tests {
       12, 126, 28, 41856, 41857, 41858, 254, 255, 0, 4, 29, 30, 13, 5, 62, 41859, 41860, 41861,
       41862,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 1),
       (0, 1),
@@ -871,7 +872,7 @@ mod tests {
     let arr194 = vec![
       12, 28, 29, 41712, 41713, 41714, 126, 127, 0, 1, 4, 30, 62, 5, 13, 41715, 41716, 41717, 41718,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 2),
       (0, 2),
@@ -1038,7 +1039,7 @@ mod tests {
       38816, 60, 28, 38817, 38818, 38819, 61, 62, 0, 2, 29, 63, 6, 38820, 38821, 38822, 38823,
       38824, 38825,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 1),
       (0, 1),
@@ -1165,7 +1166,7 @@ mod tests {
       126, 127, 60, 40672, 40673, 40674, 61, 28, 0, 2, 12, 13, 29, 62, 40675, 40676, 40677, 40678,
       40679,
     ];
-    let mut expected_calls = ExactCallWriter::from_vec(vec![
+    let mut expected_calls = ExpectedCallWriter::from_vec(vec![
       (511, 9),
       (0, 1),
       (0, 1),

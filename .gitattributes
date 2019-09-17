@@ -1,0 +1,2 @@
+tests/data/* binary
+fuzz/known_inputs binary
