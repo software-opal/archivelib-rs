@@ -15,12 +15,9 @@ jobs:
       - name: Check `cargo check`
         run: |
           cargo check --all --bins --lib --examples --tests --profile test
-          ls -alh target/*/build/archivelib*
-          ls -alh target/*/.fingerprint/archivelib*
-          ls -alh target/*/incremental
-          # rm -rf target/*/build/archivelib*
-          rm -rf target/*/.fingerprint/archivelib*
-          # rm -rf target/*/incremental
+          # rm -rfv target/*/build/archivelib*
+          # rm -rfv target/*/.fingerprint/archivelib*
+          rm -rfv target/*/incremental
       - name: Check `cargo clippy`
         run: cargo clippy --all --bins --lib --examples --tests --profile test
   cargo-fmt:
