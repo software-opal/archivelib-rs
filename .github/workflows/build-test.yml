@@ -20,7 +20,7 @@ jobs:
       - name: Run `cargo check`
         run: cargo check --all
       - name: Build
-        run: cargo build --verbose --all --bins --lib
+        run: cargo build --all --bins --lib
       - uses: actions/upload-artifact@v1
         with:
           name: rust-build-${{ matrix.os }}
@@ -76,7 +76,7 @@ jobs:
         run: rustc --version
       - name: Cargo Version
         run: cargo --version
-      - name: Build
+      - name: Test
         run: cargo test --all
   e2e-test:
     runs-on: ubuntu-latest
@@ -98,6 +98,10 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: '3.x'
+      - name: Check
+        run: |
+          ls -alh archivelib-sys-{orig,refactored}/build/{un,}alzip
+          ls -alh target/debug/{un,}alzip
       - name: install deps
         run: |
           pip install poetry
