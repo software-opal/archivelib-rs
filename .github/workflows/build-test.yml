@@ -11,6 +11,8 @@ jobs:
         run: |
           rustc --version
           cargo --version
+      - name: Check cargo check
+        run: cargo check --all
       - name: Build
         run: cargo build --verbose --all
       - uses: actions/upload-artifact@v1
