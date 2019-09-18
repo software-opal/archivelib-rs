@@ -11,7 +11,7 @@ jobs:
         run: |
           rustc --version
           cargo --version
-      - name: Check cargo check
+      - name: Run `cargo check`
         run: cargo check --all
       - name: Build
         run: cargo build --verbose --all
@@ -73,6 +73,7 @@ jobs:
       - build-c-orig
       - build-c-refactored
     steps:
+      - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
         with:
           python-version: '3.x'

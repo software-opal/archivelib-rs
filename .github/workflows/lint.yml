@@ -12,11 +12,16 @@ jobs:
           rustc --version
           cargo --version
           cargo clippy -- --version
-      - name: Check cargo check
+      - name: Check `cargo check`
         run: |
           cargo check --all --bins --lib --examples --tests --profile test
-          rm -rf target/*/{{build,.fingerprint}/archivelib*,incremental}
-      - name: Check cargo clippy
+          ls -alh target/*/build/archivelib*
+          ls -alh target/*/.fingerprint/archivelib*
+          ls -alh target/*/incremental
+          # rm -rf target/*/build/archivelib*
+          rm -rf target/*/.fingerprint/archivelib*
+          # rm -rf target/*/incremental
+      - name: Check `cargo clippy`
         run: cargo clippy --all --bins --lib --examples --tests --profile test
   cargo-fmt:
     runs-on: ubuntu-latest
@@ -27,7 +32,7 @@ jobs:
           rustc --version
           cargo --version
           cargo fmt -- --version
-      - name: Check cargo format
+      - name: Check `cargo format`
         run: cargo fmt --all -- --check
   black:
     runs-on: ubuntu-latest
