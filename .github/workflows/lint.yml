@@ -1,4 +1,4 @@
-name: Build & Test
+name: Lint
 
 on: [push]
 
@@ -7,13 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Build
+      - name: Versions
+        run: |
+          rustc --version
+          cargo --version
+          cargo clippy -- --version
+      - name: Check cargo clippy
         run: cargo clippy
   cargo-fmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Build
+      - name: Versions
+        run: |
+          rustc --version
+          cargo --version
+          cargo fmt -- --version
+      - name: Check cargo format
         run: cargo fmt --all -- --check
   black:
     runs-on: ubuntu-latest
@@ -26,6 +36,7 @@ jobs:
         run: |
           pip install poetry
           poetry install
+          poetry run pip freeze
       - name: black
         run: poetry run black --py36 --check --diff .
   isort:
@@ -39,5 +50,6 @@ jobs:
         run: |
           pip install poetry
           poetry install
+          poetry run pip freeze
       - name: black
         run: poetry run isort --check-only --recursive --diff .

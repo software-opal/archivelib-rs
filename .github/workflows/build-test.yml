@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Versions
+        run: |
+          rustc --version
+          cargo --version
       - name: Build
         run: cargo build --verbose --all
       - uses: actions/upload-artifact@v1
@@ -54,6 +58,10 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: rust-build
+      - name: Versions
+        run: |
+          rustc --version
+          cargo --version
       - name: Build
         run: cargo test --all
   e2e-test:
@@ -69,6 +77,7 @@ jobs:
       run: |
         pip install poetry
         poetry install
+        poetry run pip freeze
     - name: check pytest
       env:
         ALTEST_NO_BUILD: 1

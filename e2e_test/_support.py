@@ -140,7 +140,7 @@ class Error:
                     b"double free or corruption (" in line for line in lines
                 ),
                 "free invalid size": b"free(): invalid size" in lines,
-                "free invalid pointer": b'free(): invalid pointer' in lines,
+                "free invalid pointer": b"free(): invalid pointer" in lines,
                 "corrupted": b"corrupted size vs. prev_size" in lines,
             },
         )
@@ -184,8 +184,9 @@ class Error:
                 "Rust": b'Error: "IOError: failed to write whole buffer"' in lines,
                 # "Refactored": b"Internal error: -102\0" in lines,
                 "Orig": any(
-                    b"Attempt to allocate a huge buffer of 65536 bytes for ALMemory" in line
+                    b"Attempt to allocate a huge buffer of 65536 bytes for ALMemory"
+                    in line
                     for line in lines
-                )
+                ),
             },
         )
