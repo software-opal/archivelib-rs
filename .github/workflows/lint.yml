@@ -1,0 +1,43 @@
+name: Build & Test
+
+on: [push]
+
+jobs:
+  cargo-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo clippy
+  cargo-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo fmt --all -- --check
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+      - name: install deps
+        run: |
+          pip install poetry
+          poetry install
+      - name: black
+        run: poetry run black --py36 --check --diff .
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+      - name: install deps
+        run: |
+          pip install poetry
+          poetry install
+      - name: black
+        run: poetry run isort --check-only --recursive --diff .

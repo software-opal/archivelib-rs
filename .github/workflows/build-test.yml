@@ -1,0 +1,79 @@
+name: Build & Test
+
+on: [push]
+
+jobs:
+  build-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build --verbose --all
+      - uses: actions/upload-artifact@v1
+        with:
+          name: rust-build
+          path: target
+  build-c-orig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        working-directory: ./archivelib-sys-orig
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          rm -r CMakeFiles
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: ./archivelib-sys-orig/build
+  build-c-refactored:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        working-directory: ./archivelib-sys-refactored
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          rm -r CMakeFiles
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: ./archivelib-sys-refactored/build
+  cargo-test:
+    runs-on: ubuntu-latest
+    needs:
+      - build-rust
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/download-artifact@master
+        with:
+          name: rust-build
+      - name: Build
+        run: cargo test --all
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - build-rust
+      - build-c-orig
+      - build-c-refactored
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: install deps
+      run: |
+        pip install poetry
+        poetry install
+    - name: check pytest
+      env:
+        ALTEST_NO_BUILD: 1
+      run: poetry run pytest --setup-only --verbose ./e2e_test/
+    - name: run e2e tests
+      env:
+        ALTEST_NO_BUILD: 1
+      run: poetry run pytest --verbose ./e2e_test/
