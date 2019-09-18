@@ -16,34 +16,34 @@
   CHECK_AL_STATUS(buf_name->mStatus);
 #endif
 
-AllocatedMemory2 _build_error(int status, std::string data) {
+AllocatedMemory _build_error(int status, std::string data) {
   size_t len = data.length() + 1;
   uint8_t *raw_data = NULL;
   if (len > 1) {
     raw_data = (uint8_t *)calloc(len, sizeof(char));
     memcpy(raw_data, data.c_str(), len);
   }
-  AllocatedMemory2 re;
+  AllocatedMemory re;
   re.status = status;
   re.data = raw_data;
   re.length = len;
   return re;
 }
 
-AllocatedMemory2 build_error_from_status_code(int status) {
+AllocatedMemory build_error_from_status_code(int status) {
   std::stringstream stream;
   stream << reverseALErrors(status) << " (" << status << ")";
   return _build_error(status, stream.str());
 }
 
-AllocatedMemory2 build_error_from_status_obj(ALStatus *status) {
+AllocatedMemory build_error_from_status_obj(ALStatus *status) {
   std::stringstream stream;
   stream << reverseALErrors(status->GetStatusCode()) << " (" << status << ") ";
   stream << status->GetStatusDetail();
   return _build_error(status->GetStatusCode(), stream.str());
 }
 
-AllocatedMemory2 build_output(ALStorage *out) {
+AllocatedMemory build_output(ALStorage *out) {
   out->FlushBuffer();
   CHECK_AL_STATUS(out->mStatus);
   out->Seek(0);
@@ -54,7 +54,7 @@ AllocatedMemory2 build_output(ALStorage *out) {
   size_t actual_len = out->ReadBuffer((uint8_t *)data, data_len);
   out->Close();
   if (out->mStatus.GetStatusCode() != AL_SUCCESS) {
-    AllocatedMemory2 status = build_error_from_status_obj(&out->mStatus);
+    AllocatedMemory status = build_error_from_status_obj(&out->mStatus);
     delete out;
     free(data);
     return status;
@@ -68,14 +68,14 @@ AllocatedMemory2 build_output(ALStorage *out) {
     }
   }
 
-  AllocatedMemory2 re;
+  AllocatedMemory re;
   re.status = 0;
   re.data = data;
   re.length = actual_len;
   return re;
 }
 
-extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,
+extern "C" AllocatedMemory compress(uint8_t *input_buffer, size_t length,
                                       uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
@@ -91,7 +91,7 @@ extern "C" AllocatedMemory2 compress2(uint8_t *input_buffer, size_t length,
 
   return build_output(out);
 }
-extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length,
+extern "C" AllocatedMemory decompress(uint8_t *input_buffer, size_t length,
                                         uint8_t compression_level) {
   CREATE_BUFFER(in, input_buffer, length)
   CREATE_BUFFER(out, NULL, 0)
@@ -107,7 +107,7 @@ extern "C" AllocatedMemory2 decompress2(uint8_t *input_buffer, size_t length,
 
   return build_output(out);
 }
-extern "C" void clean2(AllocatedMemory2 *memory) {
+extern "C" void clean2(AllocatedMemory *memory) {
   if (memory->data) {
     free(memory->data);
     memory->data = NULL;

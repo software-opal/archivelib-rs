@@ -7,7 +7,7 @@ mod test;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-impl AllocatedMemory2 {
+impl AllocatedMemory {
   pub fn to_err(mut self: Self) -> Result<Vec<u8>, Option<String>> {
     let raw = if self.data.is_null() {
       None
@@ -48,7 +48,7 @@ pub fn do_compress_level(
   };
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  unsafe { compress2(ptr, length, compression_level) }
+  unsafe { compress(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
     .map_err(|o| o.unwrap_or_else(|| "".to_string()))
@@ -69,7 +69,7 @@ pub fn do_decompress_level(
   };
   let length = data.len();
   let ptr = data.as_mut_ptr();
-  unsafe { decompress2(ptr, length, compression_level) }
+  unsafe { decompress(ptr, length, compression_level) }
     .to_err()
     .map(|v| v.into_boxed_slice())
     .map_err(|o| o.unwrap_or_else(|| "".to_string()))

@@ -45,7 +45,3 @@ include_directories(c-lib c-lib/include)
 
 add_executable(unalzip c-src/unalzip ${sources})
 add_executable(alzip c-src/alzip ${sources})
-
-if (FUZZ)
-  add_executable(al-sys-fuzz c-src/al-sys-fuzz ${sources})
-endif ()
