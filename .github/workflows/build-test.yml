@@ -4,20 +4,23 @@ on: [push]
 
 jobs:
   build-rust:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-latest, windows-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v1
-      - name: Versions
-        run: |
-          rustc --version
-          cargo --version
+      - name: RustC Version
+        run: rustc --version
+      - name: Cargo Version
+        run: cargo --version
       - name: Run `cargo check`
         run: cargo check --all
       - name: Build
         run: cargo build --verbose --all
       - uses: actions/upload-artifact@v1
         with:
-          name: rust-build
+          name: rust-build-${{ matrix.os }}
           path: target
   build-c-orig:
     runs-on: ubuntu-latest
@@ -33,7 +36,7 @@ jobs:
           rm -r CMakeFiles
       - uses: actions/upload-artifact@v1
         with:
-          name: dist
+          name: c-orig
           path: ./archivelib-sys-orig/build
   build-c-refactored:
     runs-on: ubuntu-latest
@@ -49,21 +52,24 @@ jobs:
           rm -r CMakeFiles
       - uses: actions/upload-artifact@v1
         with:
-          name: dist
+          name: c-refactored
           path: ./archivelib-sys-refactored/build
   cargo-test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-latest, windows-latest, ubuntu-latest]
     needs:
       - build-rust
     steps:
       - uses: actions/checkout@v1
       - uses: actions/download-artifact@master
         with:
-          name: rust-build
-      - name: Versions
-        run: |
-          rustc --version
-          cargo --version
+          name: rust-build-${{ matrix.os }}
+      - name: RustC Version
+        run: rustc --version
+      - name: Cargo Version
+        run: cargo --version
       - name: Build
         run: cargo test --all
   e2e-test:
@@ -74,6 +80,15 @@ jobs:
       - build-c-refactored
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/download-artifact@master
+        with:
+          name: rust-build-ubuntu-latest
+      - uses: actions/download-artifact@master
+        with:
+          name: c-orig
+      - uses: actions/download-artifact@master
+        with:
+          name: c-refactored
       - uses: actions/setup-python@v1
         with:
           python-version: '3.x'
@@ -82,11 +97,7 @@ jobs:
           pip install poetry
           poetry install
           poetry run pip freeze
-      - name: check pytest
-        env:
-          ALTEST_NO_BUILD: 1
-        run: poetry run pytest --setup-only --verbose ./e2e_test/
       - name: run e2e tests
         env:
           ALTEST_NO_BUILD: 1
-        run: poetry run pytest --verbose ./e2e_test/
+        run: poetry run pytest --maxfail=20 --verbose ./e2e_test/
