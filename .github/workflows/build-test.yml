@@ -20,7 +20,7 @@ jobs:
       - name: Run `cargo check`
         run: cargo check --all
       - name: Build
-        run: cargo build --verbose --all
+        run: cargo build --verbose --all --bins --lib
       - uses: actions/upload-artifact@v1
         with:
           name: rust-build-${{ matrix.os }}
