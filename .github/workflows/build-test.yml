@@ -70,19 +70,20 @@ jobs:
       - build-rust
       - build-c-orig
       - build-c-refactored
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-    - name: install deps
-      run: |
-        pip install poetry
-        poetry install
-        poetry run pip freeze
-    - name: check pytest
-      env:
-        ALTEST_NO_BUILD: 1
-      run: poetry run pytest --setup-only --verbose ./e2e_test/
-    - name: run e2e tests
-      env:
-        ALTEST_NO_BUILD: 1
-      run: poetry run pytest --verbose ./e2e_test/
+    steps:
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+      - name: install deps
+        run: |
+          pip install poetry
+          poetry install
+          poetry run pip freeze
+      - name: check pytest
+        env:
+          ALTEST_NO_BUILD: 1
+        run: poetry run pytest --setup-only --verbose ./e2e_test/
+      - name: run e2e tests
+        env:
+          ALTEST_NO_BUILD: 1
+        run: poetry run pytest --verbose ./e2e_test/
