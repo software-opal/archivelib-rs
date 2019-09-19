@@ -3,6 +3,7 @@ name = "cli"
 version = "0.1.0"
 authors = ["opal"]
 edition = "2018"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -17,7 +18,7 @@ path = "src/executables/fuzz_hongg.rs"
 required-features = ["fuzz-hongg"]
 
 [dependencies]
-archivelib = { version = "0.1.2", path = "../" , features=["new_impl", "sys"]}
+archivelib = { path = "../" , features=["new_impl", "sys"]}
 
 afl = { version = "*", optional = true }
 honggfuzz = { version = "*", optional = true }
