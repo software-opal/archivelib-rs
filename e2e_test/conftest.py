@@ -13,6 +13,7 @@ def make_path_executable(path):
     assert path.exists(), path
     if isinstance(path, pathlib.PosixPath):
         path.chmod(path.stat().st_mode | stat.S_IEXEC)
+    return path
 
 
 @pytest.fixture(scope="session")
