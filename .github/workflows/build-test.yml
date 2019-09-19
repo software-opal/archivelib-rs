@@ -40,7 +40,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: c-orig
-          path: ./archivelib-sys-orig/build
+          path: archivelib-sys-orig/build
   build-c-refactored:
     runs-on: ubuntu-latest
     steps:
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: c-refactored
-          path: ./archivelib-sys-refactored/build
+          path: archivelib-sys-refactored/build
   cargo-test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -89,12 +89,15 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: rust-build-ubuntu-latest
+          path: target
       - uses: actions/download-artifact@master
         with:
           name: c-orig
+          path: archivelib-sys-orig/build
       - uses: actions/download-artifact@master
         with:
           name: c-refactored
+          path: archivelib-sys-refactored/build
       - uses: actions/setup-python@v1
         with:
           python-version: '3.x'
