@@ -100,6 +100,7 @@ jobs:
           python-version: '3.x'
       - name: Check
         run: |
+          ls -alh */
           ls -alh archivelib-sys-{orig,refactored}/build/{un,}alzip
           ls -alh target/debug/{un,}alzip
       - name: install deps
