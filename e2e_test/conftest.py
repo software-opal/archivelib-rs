@@ -1,11 +1,18 @@
 import os
 import pathlib
+import stat
 import subprocess
 
 import pytest
 import toml
 
 from ._support import Executor
+
+
+def make_path_executable(path):
+    assert path.exists(), path
+    if isinstance(path, pathlib.PosixPath):
+        path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
 
 @pytest.fixture(scope="session")
@@ -34,12 +41,12 @@ def orig_sys_build(project_root):
 
 @pytest.fixture
 def orig_sys_zip(orig_sys_build):
-    return orig_sys_build / "alzip"
+    return make_path_executable(orig_sys_build / "alzip")
 
 
 @pytest.fixture
 def orig_sys_unzip(orig_sys_build):
-    return orig_sys_build / "unalzip"
+    return make_path_executable(orig_sys_build / "unalzip")
 
 
 @pytest.fixture(scope="session")
@@ -49,12 +56,12 @@ def refactored_sys_build(project_root):
 
 @pytest.fixture
 def refactored_sys_zip(refactored_sys_build):
-    return refactored_sys_build / "alzip"
+    return make_path_executable(refactored_sys_build / "alzip")
 
 
 @pytest.fixture
 def refactored_sys_unzip(refactored_sys_build):
-    return refactored_sys_build / "unalzip"
+    return make_path_executable(refactored_sys_build / "unalzip")
 
 
 @pytest.fixture(scope="session")
@@ -76,12 +83,12 @@ def rust_cli_build_folder(project_root):
 
 @pytest.fixture
 def rust_unzip(rust_cli_build_folder):
-    return rust_cli_build_folder / "unalzip"
+    return make_path_executable(rust_cli_build_folder / "unalzip")
 
 
 @pytest.fixture
 def rust_zip(rust_cli_build_folder):
-    return rust_cli_build_folder / "alzip"
+    return make_path_executable(rust_cli_build_folder / "alzip")
 
 
 @pytest.fixture

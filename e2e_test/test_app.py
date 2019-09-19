@@ -17,9 +17,6 @@ def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=[0, 4]):
                 yield pytest.param(level, input, id=f"level={level}; {hash}")
 
 
-def test_smoke(al_runner):
-    al_runner.smoketest()
-
 
 @pytest.mark.parametrize("level", LEVEL_RANGE)
 def test_single_byte(al_runner, level):

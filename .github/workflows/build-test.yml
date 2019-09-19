@@ -101,16 +101,15 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: '3.x'
-      - name: Check
-        run: |
-          ls -alh */
-          ls -alh archivelib-sys-{orig,refactored}/build/{un,}alzip
-          ls -alh target/debug/{un,}alzip
       - name: install deps
         run: |
           pip install poetry
           poetry install
           poetry run pip freeze
+      - name: Check PyTest setup
+        env:
+          ALTEST_NO_BUILD: 1
+        run: poetry run pytest --verbose ./e2e_test/test_system.py
       - name: run e2e tests
         env:
           ALTEST_NO_BUILD: 1
