@@ -17,7 +17,6 @@ def gen_all_inputs_range(minlen, maxlen, prefix=b"", levels=[0, 4]):
                 yield pytest.param(level, input, id=f"level={level}; {hash}")
 
 
-
 @pytest.mark.parametrize("level", LEVEL_RANGE)
 def test_single_byte(al_runner, level):
     out, err = al_runner.test_unzip(b"\xfe", level=level)
