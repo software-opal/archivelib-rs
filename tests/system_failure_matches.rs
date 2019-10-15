@@ -36,5 +36,5 @@ fn test_star_vip_incorrect_offset_causing_crash() {
     0x43, 0x68, 0x82, 0x27, 0xFF, 0x0D, 0x9B, 0xE4, 0x6C, 0x61, 0xB4, 0x81, 0x86, 0xBA,
   ];
   let result = archivelib::do_decompress(&input);
-  assert_eq!(result, Err("Invariant Failure".to_owned()))
+  assert_eq!(result, Err("Binary tree error: Type1".to_owned()))
 }
