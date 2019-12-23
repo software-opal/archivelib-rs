@@ -22,13 +22,13 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all --bins --lib --examples --tests --profile test
+          args: --workspace --bins --lib --examples --tests --profile test
       - run: rm -rfv target/*/incremental
       - name: Check `cargo clippy`
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --all --bins --lib --examples --tests --profile test
+          args: --workspace --bins --lib --examples --tests --profile test
   cargo-fmt:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +48,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --workspace -- --check
   black:
     runs-on: ubuntu-latest
     steps:
