@@ -7,30 +7,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add clippy
       - name: Versions
         run: |
           rustc --version
           cargo --version
           cargo clippy -- --version
       - name: Check `cargo check`
-        run: |
-          cargo check --all --bins --lib --examples --tests --profile test
-          # rm -rfv target/*/build/archivelib*
-          # rm -rfv target/*/.fingerprint/archivelib*
-          rm -rfv target/*/incremental
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --all --bins --lib --examples --tests --profile test
+      - run: rm -rfv target/*/incremental
       - name: Check `cargo clippy`
-        run: cargo clippy --all --bins --lib --examples --tests --profile test
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all --bins --lib --examples --tests --profile test
   cargo-fmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add rustfmt
       - name: Versions
         run: |
           rustc --version
           cargo --version
           cargo fmt -- --version
       - name: Check `cargo format`
-        run: cargo fmt --all -- --check
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
   black:
     runs-on: ubuntu-latest
     steps:
