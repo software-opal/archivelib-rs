@@ -29,15 +29,13 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          arguments: --release --all --bins --lib
+          arguments: --release --bins --lib
       - uses: actions-rs/cargo@v1
         with:
           command: test
-          arguments: --all
       - uses: actions/upload-artifact@v1
         with:
           name: rust-${{ matrix.rust }}-build-${{ matrix.os }}
