@@ -26,15 +26,11 @@ path = "src/executables/compress.rs"
 
 [features]
 new_impl = []
-sys = ['archivelib-sys']
-default=["new_impl"]
+default = ["new_impl"]
 
 [dependencies]
 failure = "0.1.5"
 failure_derive = "0.1.5"
-
-archivelib-sys = { version = "0.2.0", path = "archivelib-sys-orig", optional=true}
-# archivelib-sys = { version = "0.2.0", path = "archivelib-sys-refactored", optional=true}
 
 [dev-dependencies]
 lazy_static = "1.4.0"

@@ -122,12 +122,10 @@ fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, B
   match mode {
     Mode::COMPRESS => {
       let result = archivelib::do_compress_level(&input, level)?;
-      let sys_result = archivelib::sys::do_compress_level(&input, level.compression_level());
-      assert_eq!(sys_result.unwrap(), result);
       Ok(result)
     }
     Mode::DECOMPRESS => {
-      let result = archivelib::check_rust_against_sys_decompress!(input, level)?;
+      let result = archivelib::do_decompress_level(&input, level)?;
       Ok(result)
     }
   }
