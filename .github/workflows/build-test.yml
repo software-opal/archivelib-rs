@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/download-artifact@master
         with:
-          name: rust-build-${{ matrix.os }}
+          name: rust-${{ matrix.rust }}-build-${{ matrix.os }}
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
