@@ -37,7 +37,7 @@ lazy_static = "1.4.0"
 rand = "0.7.2"
 # We use threads for the 'hangs' tests to prevent the tests runnin forever
 humthreads = '0.1.4'
-# archivelib-sys = { version = "0.2.0", path = "archivelib-sys-orig" }
+archivelib-sys = { version = "0.2.0", path = "archivelib-sys-orig" }
 # archivelib-sys = { version = "0.2.0", path = "archivelib-sys-refactored" }
 
 [workspace]
