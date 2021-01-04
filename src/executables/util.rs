@@ -63,8 +63,7 @@ impl Args {
           format!(
             "Too many file arguments. You can specify up to 2 files: {:?}, {:?}, {:?}",
             input_filename, output_filename, arg
-          )
-          .into(),
+          ),
         );
       }
       (input_filename, output_filename)

@@ -12,7 +12,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       let byte_or_run_length203: i16 = self.get_bits(cast!(CONST_N143_IS_9 as i16))? as i16;
       let mut run_start226: i16 = 0 as i16;
       while (run_start226) < cast!(CONST_N141_IS_511 as i16) {
-        self.dat_arr180[cast!(run_start226 as usize)] = 0 as u8;
+        self.dat_arr180[cast!(run_start226 as usize)] = 0_u8;
         run_start226 += 1
       }
       run_start226 = 0 as i16;
@@ -56,7 +56,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             }
             let fresh0 = run_start226;
             run_start226 += 1;
-            self.dat_arr180[cast!(fresh0 as usize)] = 0 as u8;
+            self.dat_arr180[cast!(fresh0 as usize)] = 0_u8;
             count += 1;
           }
         } else {
@@ -68,7 +68,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       while (run_start226) < (cast!(CONST_N141_IS_511 as i16)) {
         let fresh2 = run_start226;
         run_start226 += 1;
-        self.dat_arr180[cast!(fresh2 as usize)] = 0 as u8
+        self.dat_arr180[cast!(fresh2 as usize)] = 0_u8
       }
       self.fn258(
         Fn258Mode::Fn255,

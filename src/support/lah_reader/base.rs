@@ -1,9 +1,7 @@
 use crate::support::bit_iter::{FromBits, ToBits};
 
 fn pad_bit_arr(mut bit_data: Vec<bool>, target_len: usize) -> Vec<bool> {
-  for _ in bit_data.len()..target_len {
-    bit_data.push(false);
-  }
+  bit_data.resize(target_len, false);
   bit_data
 }
 

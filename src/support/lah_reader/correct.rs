@@ -72,11 +72,11 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
     if self.eof_calls.is_empty() {
       return 0;
     }
-    let count = self.eof_calls.iter().fold(0, |a, b| a + b);
+    let count: usize = self.eof_calls.iter().sum();
     if count == 0 {
-      return 2;
+       2
     } else {
-      return 2 + ((count + 7) / 8);
+       2 + ((count + 7) / 8)
     }
   }
   fn is_al_eof(&self) -> bool {

@@ -83,7 +83,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       while i != var289 {
         let fresh0 = i;
         i = i.wrapping_add(1);
-        output_table262[cast!(fresh0 as usize)] = 0 as u16
+        output_table262[cast!(fresh0 as usize)] = 0_u16
       }
     } else {
       unreachable!("This, in theory, is not a reachable case!");

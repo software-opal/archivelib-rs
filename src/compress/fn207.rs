@@ -11,7 +11,7 @@ const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn207(&mut self) -> Result<()> {
-    let mut var456: u32 = 0 as u32;
+    let mut var456: u32 = 0_u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
     let mut var229 = self.fn211(
       cast!(CONST_N141_IS_511 as i32),
@@ -33,7 +33,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         self.fn218(
           cast!(CONST_N145_IS_19 as i16),
           cast!(CONST_N147_IS_5 as i16),
-          3 as i16,
+          3_i16,
         )?;
       } else {
         self
@@ -68,7 +68,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       self.fn218(
         cast!(CONST_N142_IS_15 as i16),
         cast!(CONST_N540_IS_5 as i16),
-        -1 as i16,
+        -1_i16,
       )?;
     } else {
       self
@@ -78,7 +78,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         .output_store
         .write_bits(cast!(var229 as u32), cast!(CONST_N540_IS_5 as usize))?;
     }
-    let mut var454 = 0 as u32;
+    let mut var454 = 0_u32;
     for run_start226 in 0..var455 {
       if run_start226 % 8 == 0 {
         var456 = u32::from(self.dat_arr165[cast!(var454 as usize)]);
@@ -104,10 +104,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       }
     }
     for i in 0..CONST_N141_IS_511 {
-      self.dat_arr191[i] = 0 as u16;
+      self.dat_arr191[i] = 0_u16;
     }
     for i in 0..CONST_N142_IS_15 {
-      self.dat_arr193[i] = 0 as u16;
+      self.dat_arr193[i] = 0_u16;
     }
     Ok(())
   }
