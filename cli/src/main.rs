@@ -8,7 +8,7 @@ fn help() {
   let exe = env::current_exe()
     .ok()
     .and_then(|p| p.to_str().map(|s| s.to_string()))
-    .unwrap_or("archivelib".to_string());
+    .unwrap_or_else( || "archivelib".to_string());
   eprintln!(
     "Summary:
   {} (-c|--compress|-d|--decompress) [-x] [-0|-1|-2|-3|-4] [INPUT [OUTPUT]]
@@ -87,7 +87,7 @@ impl Args {
     };
     let mode = match mode {
       None => {
-        return Err(format!("You must specify one of --compress or --decompress!").into());
+        return Err("You must specify one of --compress or --decompress!".into());
       }
       Some(m) => m,
     };

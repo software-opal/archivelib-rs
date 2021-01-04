@@ -4,7 +4,6 @@
 #![deny(clippy::style::assertions_on_constants)]
 #![deny(clippy::style::wrong_self_convention)]
 #![deny(clippy::unseparated_literal_suffix)]
-#![warn(clippy::pedantic)]
 // #![allow(clippy::cargo_common_metadata)]
 // #![allow(clippy::cognitive_complexity)]
 // #![allow(clippy::module_name_repetitions)]
@@ -15,7 +14,6 @@
 
 #[macro_use]
 extern crate failure_derive;
-use failure;
 
 #[macro_use]
 mod support;
