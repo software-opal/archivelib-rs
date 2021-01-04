@@ -7,7 +7,7 @@ pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140 + 1;
 
 pub const CONST_N141_IS_511: usize =
   (u8::max_value() as usize) + (MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3) + 3;
-pub const CONST_N145_IS_19: usize = (u16::max_value().count_ones() as usize + 3);
+pub const CONST_N145_IS_19: usize = u16::max_value().count_ones() as usize + 3;
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 
 #[cfg(not(feature = "new_impl"))]
