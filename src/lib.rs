@@ -1,4 +1,3 @@
-#![deny(clippy::cargo)]
 #![deny(clippy::fallible_impl_from)]
 #![deny(clippy::restriction::wrong_pub_self_convention)]
 #![deny(clippy::style::assertions_on_constants)]
