@@ -74,9 +74,9 @@ impl<R: LookAheadBitwiseRead> CorrectLookAheadBitwiseRead for CorrectLookAheadBi
     }
     let count: usize = self.eof_calls.iter().sum();
     if count == 0 {
-       2
+      2
     } else {
-       2 + ((count + 7) / 8)
+      2 + ((count + 7) / 8)
     }
   }
   fn is_al_eof(&self) -> bool {

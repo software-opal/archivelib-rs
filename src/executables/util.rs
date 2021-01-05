@@ -59,12 +59,10 @@ impl Args {
       let input_filename = f.next();
       let output_filename = f.next();
       if let Some(arg) = f.next() {
-        return Err(
-          format!(
-            "Too many file arguments. You can specify up to 2 files: {:?}, {:?}, {:?}",
-            input_filename, output_filename, arg
-          ),
-        );
+        return Err(format!(
+          "Too many file arguments. You can specify up to 2 files: {:?}, {:?}, {:?}",
+          input_filename, output_filename, arg
+        ));
       }
       (input_filename, output_filename)
     };
