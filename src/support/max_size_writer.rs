@@ -29,7 +29,7 @@ impl<W: io::Write> io::Write for MaxSizeWriter<W> {
     let written = self.writer.write(&buf[..to_write])?;
     assert!(written <= to_write);
     self.written += written;
-    return Ok(written);
+    Ok(written)
   }
   fn flush(&mut self) -> io::Result<()> {
     self.writer.flush()

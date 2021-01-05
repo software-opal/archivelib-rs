@@ -164,7 +164,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     compression_level: u8,
     fail_uncompressible: bool,
   ) -> Result<Self> {
-    if compression_level > MAX_COMPRESSION_FACTOR || compression_level < MIN_COMPRESSION_FACTOR {
+    if !(MIN_COMPRESSION_FACTOR..=MAX_COMPRESSION_FACTOR).contains(&compression_level) {
       Err(CompressError::IllegalCompressionLevel(compression_level))
     } else {
       let max_size = 1 << compression_level;

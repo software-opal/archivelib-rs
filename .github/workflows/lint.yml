@@ -7,30 +7,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
       - name: Versions
         run: |
           rustc --version
           cargo --version
           cargo clippy -- --version
-      - name: Check `cargo check`
-        run: |
-          cargo check --all --bins --lib --examples --tests --profile test
-          # rm -rfv target/*/build/archivelib*
-          # rm -rfv target/*/.fingerprint/archivelib*
-          rm -rfv target/*/incremental
-      - name: Check `cargo clippy`
-        run: cargo clippy --all --bins --lib --examples --tests --profile test
-  cargo-fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Versions
-        run: |
-          rustc --version
-          cargo --version
-          cargo fmt -- --version
+      - name: Annotate commit with clippy warnings
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all
       - name: Check `cargo format`
-        run: cargo fmt --all -- --check
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
   black:
     runs-on: ubuntu-latest
     steps:

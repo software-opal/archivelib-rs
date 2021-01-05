@@ -22,7 +22,7 @@ impl Default for ArchivelibConfig {
 impl From<CompressionLevel> for ArchivelibConfig {
   fn from(level: CompressionLevel) -> Self {
     Self {
-      level: level,
+      level,
       ..Self::default()
     }
   }

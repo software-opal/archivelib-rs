@@ -44,19 +44,15 @@ pub enum LookupTableGenerationError {
 }
 impl LookupTableGenerationError {
   pub fn is_invariant_error(&self) -> bool {
-    match self {
-      Self::InvariantFailure => true,
-      Self::IOError(_) => true,
-      _ => false,
-    }
+    matches!(self, Self::InvariantFailure | Self::IOError(_))
   }
   pub fn propagate_invariant(
     self,
   ) -> Result<Result<(), LookupTableGenerationError>, LookupTableGenerationError> {
     if self.is_invariant_error() {
-      return Err(self);
+      Err(self)
     } else {
-      return Ok(Err(self));
+      Ok(Err(self))
     }
   }
 }

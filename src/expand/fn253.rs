@@ -12,7 +12,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
       let byte_or_run_length203: i16 = self.get_bits(cast!(var220 as i16))? as i16;
       let mut run_start226: i16 = 0;
       while (run_start226) < var254 {
-        self.dat_arr181[cast!(run_start226 as usize)] = 0 as u8;
+        self.dat_arr181[cast!(run_start226 as usize)] = 0_u8;
         run_start226 += 1
       }
       run_start226 = 0 as i16;
@@ -46,12 +46,12 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         while byte_or_run_length203 > 0 {
           let fresh1 = run_start226;
           run_start226 += 1;
-          self.dat_arr181[cast!(fresh1 as usize)] = 0 as u8;
+          self.dat_arr181[cast!(fresh1 as usize)] = 0_u8;
           byte_or_run_length203 -= 1
         }
       }
       while (run_start226) < var254 {
-        self.dat_arr181[cast!(run_start226 as usize)] = 0 as u8;
+        self.dat_arr181[cast!(run_start226 as usize)] = 0_u8;
         run_start226 += 1;
       }
       self.fn258(
