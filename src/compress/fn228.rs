@@ -1,7 +1,7 @@
 use std::io::Read;
 
 use super::array_alias::ArrayAlias;
-use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData};
+use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData};
 use crate::support::BitwiseWrite;
 
 mod part_one;

@@ -2,7 +2,7 @@
 #![feature(concat_idents)]
 
 extern crate test;
-use archivelib::{do_compress_level, do_decompress_level, CompressionLevel};
+use archivelib::{CompressionLevel, do_compress_level, do_decompress_level};
 use test::Bencher;
 
 macro_rules! compress {

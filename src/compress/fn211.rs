@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use std::io::Read;
 
 use super::array_alias::ArrayAlias;
-use crate::compress::{CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result};
+use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {

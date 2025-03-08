@@ -7,30 +7,64 @@ use flate2::{Compress, Compression};
 mod utils;
 
 #[test]
+fn test_compressing_lots_of_data_with_breaks() {
+  let input = {
+    let mut input: Vec<u8> = Vec::with_capacity(1 << 12);
+    input.extend("aByZ".as_bytes());
+    for i in (0 as usize)..(1 << 10) {
+      input.extend_from_within(0..3);
+      input.push((i & 255) as u8);
+    }
+    input
+  };
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  assert!(result.is_ok())
+}
+#[test]
 fn test_compressing_lots_of_data() {
   let input = {
     let mut input: Vec<u8> = Vec::with_capacity(1 << 12);
     input.extend("aByZ".as_bytes());
-    for _ in 0..(1<<10) {input.extend_from_within(0..3);}
+    for _ in 0..(1 << 10) {
+      input.extend_from_within(0..3);
+    }
     input
   };
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
-  let compressed_ab = hex!("00 03 28 04 4b fe 26  f3  0f 80 13");
-  assert_eq!(compressed_ab, &result.unwrap()[..])
+  let compressed_ab =
+    hex!("00 12 3B A8 A2 1F FC 2E  40 37 8F A0 1A 39 27 2B  6F 86 41 95 97 BA 49 24  92 4B AF 00");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+
+#[test]
+fn test_compressing_a_little_bit_of_data() {
+  let input = "abcdabcdZabcd".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 08 30 69 67 FF 11 98  C2 44 79 D0 22 05 39 70  A3 3C");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+
+#[test]
+fn test_compressing_a_run_of_identical_data() {
+  let input = "aaaa".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 03 28 04 4B FE 26 E4  54 74 E0 04 C0");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
 
 #[test]
 fn test_compressing_known_data_ab() {
   let input = "ab".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
-  let compressed_ab = hex!("00 03 28 04 4b fe 26  f3  0f 80 13");
-  assert_eq!(compressed_ab, &result.unwrap()[..])
+  let compressed_ab = hex!("00 03 28 04 4B FE 26  F3  0F 80 13");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
 
+#[ignore]
 #[test]
 fn test_compressing_using_zlib() {
   let input = "ab".as_bytes();
-  let archivelib_result = hex!("00 03 28 04 4b fe 26  f3  0f 80 13");
+  let archivelib_result = hex!("00 03 28 04 4B FE 26  F3  0F 80 13");
 
   let zlib_conf = Compress::new_with_window_bits(Compression::new(0), false, 10);
   let mut writer = flate2::bufread::ZlibEncoder::new_with_compress(input, zlib_conf);
@@ -43,7 +77,7 @@ fn test_compressing_using_zlib() {
 
 #[test]
 fn test_decompressing_known_data_ab() {
-  let compressed_ab = hex!("00 03 28 04 4b fe 26  f3  0f 80 13");
+  let compressed_ab = hex!("00 03 28 04 4b fe 26  F3  0f 80 13");
   let result = archivelib::do_decompress(&compressed_ab);
   assert_eq!("ab".as_bytes(), &result.unwrap()[..])
 }

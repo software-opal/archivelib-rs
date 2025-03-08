@@ -3,7 +3,7 @@ use std::convert::TryInto;
 use std::io;
 
 use super::table::{LookupTableGenerationError, LookupTables};
-pub use crate::errors::{DecompressError};
+pub use crate::errors::DecompressError;
 use crate::level::CompressionLevel;
 use crate::support::CorrectLookAheadBitwiseRead;
 

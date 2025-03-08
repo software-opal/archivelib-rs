@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::compress::base::{CompressU16ArrayAlias, CompressU8ArrayAlias};
+use crate::compress::base::{CompressU8ArrayAlias, CompressU16ArrayAlias};
 use crate::compress::{CompressError, RCompressData, Result};
 use crate::consts::{
   CONST_N141_IS_511, CONST_N142_IS_15, CONST_N143_IS_9, CONST_N145_IS_19, CONST_N147_IS_5,

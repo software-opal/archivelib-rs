@@ -5,7 +5,7 @@ mod base;
 mod buffer;
 #[allow(clippy::module_inception)]
 mod compress;
-mod fn199;
+mod find_longest_run;
 mod fn202;
 mod fn207;
 mod fn211;
@@ -18,5 +18,5 @@ mod fn228;
 mod fn230;
 
 pub use self::base::{
-  CompressError, CompressU16ArrayAlias, CompressU8ArrayAlias, RCompressData, Result,
+  CompressError, CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result,
 };

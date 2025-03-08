@@ -13,7 +13,7 @@
 // self.dat_arr190 -> tree.right
 use std::{fmt, io};
 
-use super::bish_tree::{generate_binary_tree, BinaryTree};
+use super::bish_tree::{BinaryTree, generate_binary_tree};
 use crate::errors::BinaryTreeInvariantError;
 use crate::support::CorrectLookAheadBitwiseRead;
 

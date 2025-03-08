@@ -3,8 +3,8 @@ use std::io::{Read, Write};
 
 use super::array_alias::ArrayAlias;
 use crate::consts::{
-  CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N153_IS_4096, CONST_N155_IS_8192,
-  MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140, MIN_COMPRESSION_FACTOR,
+  BYTE_RUN_HASH_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N155_IS_8192,
+  MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140_IS_256, MIN_COMPRESSION_FACTOR,
 };
 pub use crate::errors::CompressError;
 use crate::support::{BitwiseWrite, BitwiseWriter};
@@ -35,7 +35,7 @@ array_alias_enum! {
 pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub input_store: R,
   pub output_store: W,
-  pub dat_arr163: Vec<i16>,
+  pub byte_run_hash_table: Vec<i16>,
   pub dat_arr164: Vec<i16>,
   pub dat_arr165: Vec<u8>,
   pub uncompressed_buffer: Vec<u8>,
@@ -55,8 +55,8 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub chars_written: usize,
   pub uncompressible: bool,
   pub fail_uncompressible: bool,
-  pub dat168: i16,
-  pub dat169: i16,
+  pub longest_run: i16,
+  pub longest_run_offset: i16,
   pub dat173: i16,
   pub dat174: i16,
   /// ZLib: `w_size`
@@ -103,7 +103,7 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
   fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
     formatter
       .debug_struct("RCompressData")
-      .field("dat_arr163", &vec_to_nice_debug(&self.dat_arr163))
+      .field("dat_arr163", &vec_to_nice_debug(&self.byte_run_hash_table))
       .field("dat_arr164", &vec_to_nice_debug(&self.dat_arr164))
       .field("dat_arr165", &vec_to_nice_debug(&self.dat_arr165))
       .field(
@@ -123,8 +123,8 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
       .field("chars_written", &self.chars_written)
       .field("uncompressible", &self.uncompressible)
       .field("fail_uncompressible", &self.fail_uncompressible)
-      .field("dat168", &self.dat168)
-      .field("dat169", &self.dat169)
+      .field("dat168", &self.longest_run)
+      .field("dat169", &self.longest_run_offset)
       .field("dat173", &self.dat173)
       .field("dat174", &self.dat174)
       .field(
@@ -171,25 +171,23 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     } else {
       // Compression Level is equivalent to MAX_WBITS in ZLib
       // Max Size is the window size in ZLib
+      // This increases the amount of data we have to search for matches.
       let max_size = 1 << compression_level;
-      // Add 4096 to acount for the size of the hash 
-      let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
-      // Not sure why we're setting the last 4096 bytes to -1
-      let mut dat_arr163 = vec![0; dat_arr163_len];
-      for v in dat_arr163.iter_mut().skip(max_size) {
-        *v = -1;
-      }
+      let mut byte_run_hash_table = vec![0; max_size];
+      // Setup the hash table's "hash" lookups with `-1` to indicate no value.
+      byte_run_hash_table.extend_from_slice(&[-1; BYTE_RUN_HASH_SIZE]);
+      debug_assert_eq!(byte_run_hash_table.len(), max_size + BYTE_RUN_HASH_SIZE);
 
       Ok(Self {
         input_store: reader,
         output_store: writer,
         fail_uncompressible,
 
-        dat_arr163,
+        byte_run_hash_table,
         dat_arr164: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
-        uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140 + 2],
+        uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140_IS_256 + 2],
         dat_arr167: vec![0; 17],
         dat_arr177: vec![0; CONST_N141_IS_511 + 1],
         dat_arr180: vec![0; CONST_N141_IS_511],
@@ -206,8 +204,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         chars_written: 0,
 
         uncompressible: false,
-        dat168: 0,
-        dat169: 0,
+        longest_run: 0,
+        longest_run_offset: 0,
         dat173: 0,
         dat174: 0,
         // dat183_IS_CONST_8162: cast!(CONST_N155_IS_8192 as u16) - ((3 * 8) + 6),

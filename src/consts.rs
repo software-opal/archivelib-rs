@@ -2,11 +2,11 @@ pub const MAX_COMPRESSION_FACTOR: u8 = 14;
 pub const MIN_COMPRESSION_FACTOR: u8 = 10;
 
 pub const MIN_RUN_LENGTH135_IS_3: usize = 3;
-pub const MAX_RUN_LENGTH140: usize = 256;
-pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140 + 1;
+pub const MAX_RUN_LENGTH140_IS_256: usize = 256;
+pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140_IS_256 + 1;
 
 pub const CONST_N141_IS_511: usize =
-  (u8::max_value() as usize) + (MAX_RUN_LENGTH140 - MIN_RUN_LENGTH135_IS_3) + 3;
+  (u8::max_value() as usize) + (MAX_RUN_LENGTH140_IS_256 - MIN_RUN_LENGTH135_IS_3) + 3;
 pub const CONST_N145_IS_19: usize = u16::max_value().count_ones() as usize + 3;
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 
@@ -15,8 +15,8 @@ pub const CONST_N148_IS_4096: usize = 4096;
 #[cfg(not(feature = "new_impl"))]
 pub const CONST_N149_IS_256: usize = 256;
 
-pub const CONST_N153_IS_4096: usize = 4096;
-pub const CONST_12_BIT_BITMASK: u16 = 4095; // CONST_N153_IS_4096 - 1
+pub const BYTE_RUN_HASH_SIZE: usize = 4096;
+pub const BYTE_RUN_HASH_BITMASK: u16 = (BYTE_RUN_HASH_SIZE as u16) - 1;
 pub const CONST_N142_IS_15: usize = (MAX_COMPRESSION_FACTOR as usize) + 1;
 pub const CONST_N143_IS_9: usize = 9;
 pub const CONST_N147_IS_5: usize = 5;
