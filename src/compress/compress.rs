@@ -3,16 +3,17 @@ use std::io::Read;
 
 use crate::compress::{RCompressData, Result};
 use crate::consts::{
-  CONST_N153_SUB_1_IS_4095, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140,
+  CONST_12_BIT_BITMASK, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH140,
   MIN_RUN_LENGTH135_IS_3,
 };
 use crate::support::BitwiseWrite;
 
 const UCHAR_MAX: usize = 255;
 
-fn fn445(arg278: &[u8], buff_pos: usize, arg446: i16) -> i16 {
-  ((arg446 << CONST_N154_IS_4) ^ i16::from(arg278[buff_pos + 2]))
-    & cast!(CONST_N153_SUB_1_IS_4095 as i16)
+// ZLib: UPDATE_HASH
+fn update_hash_with_next_byte(uncompressed_buffer: &[u8], buff_pos: usize, hash_last_3_bytes: i16) -> i16 {
+  ((hash_last_3_bytes << CONST_N154_IS_4) ^ i16::from(uncompressed_buffer[buff_pos + 2]))
+    & cast!(CONST_12_BIT_BITMASK as i16)
 }
 fn fn447(arg163: &mut [i16], arg164: &mut [i16], buff_pos: usize, arg201: i16) {
   let local204 = arg163[cast!(arg201 as usize)];
@@ -65,16 +66,20 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
     self.dat169 = 0;
     self.dat168 = 0;
-    let mut var201 = i16::try_from(
-      ((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
+    let mut hash_last_3_bytes = cast!(
+      (((u16::from(self.uncompressed_buffer[buffer_pos]) << CONST_N154_IS_4)
         ^ u16::from(self.uncompressed_buffer[buffer_pos + 1]))
-        & CONST_N153_SUB_1_IS_4095,
-    )
-    .unwrap();
-    var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (cast!(max_size279 as i16));
+        & CONST_12_BIT_BITMASK) as i16
+    );
+    hash_last_3_bytes = update_hash_with_next_byte(
+      &self.uncompressed_buffer,
+      buffer_pos,
+      hash_last_3_bytes,
+    ) + cast!(max_size279 as i16);
 
+    // This must be draining the buffer until there is less that 1 full run left
     while var209 > MAX_RUN_LENGTH140 + 4 {
-      self.fn199(cast!(buffer_pos as i16), var201);
+      self.fn199(cast!(buffer_pos as i16), hash_last_3_bytes);
       if (self.dat168) < 3 {
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0)?;
@@ -82,10 +87,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           &mut self.dat_arr163,
           &mut self.dat_arr164,
           buffer_pos,
-          var201,
+          hash_last_3_bytes,
         );
         buffer_pos += 1;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + (cast!(max_size279 as i16));
+        hash_last_3_bytes = update_hash_with_next_byte(
+          &self.uncompressed_buffer,
+          buffer_pos,
+          hash_last_3_bytes,
+        ) + cast!(max_size279 as i16);
         var209 -= 1;
       } else {
         var209 -= cast!((self.dat168) as usize);
@@ -103,11 +112,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
             &mut self.dat_arr163,
             &mut self.dat_arr164,
             buffer_pos,
-            var201,
+            hash_last_3_bytes,
           );
           buffer_pos += 1;
-          var201 =
-            fn445(&self.uncompressed_buffer, buffer_pos, var201) + (cast!(max_size279 as i16))
+          hash_last_3_bytes = update_hash_with_next_byte(
+            &self.uncompressed_buffer,
+            buffer_pos,
+            hash_last_3_bytes,
+          ) + cast!(max_size279 as i16)
         }
       }
     }
@@ -126,7 +138,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       var209 += 1
     }
     while var209 > 0 {
-      self.fn199(cast!(buffer_pos as i16), var201);
+      self.fn199(cast!(buffer_pos as i16), hash_last_3_bytes);
       if self.dat168 > cast!(var209 as i16) {
         self.dat168 = cast!(var209 as i16)
       }
@@ -160,10 +172,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           &mut self.dat_arr163,
           &mut self.dat_arr164,
           buffer_pos,
-          var201,
+          hash_last_3_bytes,
         );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + cast!(max_size279 as i16)
+        hash_last_3_bytes = update_hash_with_next_byte(
+          &self.uncompressed_buffer,
+          buffer_pos,
+          hash_last_3_bytes,
+        ) + cast!(max_size279 as i16)
       }
       loop {
         if self.dat168 < 0 {
@@ -174,10 +190,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           &mut self.dat_arr163,
           &mut self.dat_arr164,
           buffer_pos,
-          var201,
+          hash_last_3_bytes,
         );
         buffer_pos = (buffer_pos + 1) & size_bitmask280;
-        var201 = fn445(&self.uncompressed_buffer, buffer_pos, var201) + cast!(max_size279 as i16);
+        hash_last_3_bytes = update_hash_with_next_byte(
+          &self.uncompressed_buffer,
+          buffer_pos,
+          hash_last_3_bytes,
+        ) + cast!(max_size279 as i16);
         var209 -= 1;
       }
     }

@@ -172,9 +172,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       // Compression Level is equivalent to MAX_WBITS in ZLib
       // Max Size is the window size in ZLib
       let max_size = 1 << compression_level;
-      // Not sure why we add 4096 to the size!?
+      // Add 4096 to acount for the size of the hash 
       let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
+      // Not sure why we're setting the last 4096 bytes to -1
       let mut dat_arr163 = vec![0; dat_arr163_len];
       for v in dat_arr163.iter_mut().skip(max_size) {
         *v = -1;

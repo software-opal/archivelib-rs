@@ -16,7 +16,7 @@ pub const CONST_N148_IS_4096: usize = 4096;
 pub const CONST_N149_IS_256: usize = 256;
 
 pub const CONST_N153_IS_4096: usize = 4096;
-pub const CONST_N153_SUB_1_IS_4095: u16 = 4095; // CONST_N153_IS_4096 - 1
+pub const CONST_12_BIT_BITMASK: u16 = 4095; // CONST_N153_IS_4096 - 1
 pub const CONST_N142_IS_15: usize = (MAX_COMPRESSION_FACTOR as usize) + 1;
 pub const CONST_N143_IS_9: usize = 9;
 pub const CONST_N147_IS_5: usize = 5;

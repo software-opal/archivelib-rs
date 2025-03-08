@@ -5,6 +5,8 @@ use crate::compress::RCompressData;
 use crate::consts::{MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
 use crate::support::BitwiseWrite;
 
+// This file is responsible for creating a "Hash Chain". 
+// Possbily an implementation of Rabin-Karp algorithm
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn199(&mut self, uncompressed_buffer_index200: i16, var201: i16) {
     let (dat168, dat169) = pure_fn199(
