@@ -119,7 +119,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       };
       self.uncompressed_buffer[s] = byte_or_run_length203;
       if (s) < 256 - 1 {
-        self.uncompressed_buffer[(s + max_size279)] = self.uncompressed_buffer[(s)]
+        self.uncompressed_buffer[s + max_size279] = self.uncompressed_buffer[s]
       }
       fn448(&mut self.dat_arr163, &mut self.dat_arr164, s);
       s = (s + 1) & size_bitmask280;

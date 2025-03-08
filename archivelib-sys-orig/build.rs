@@ -11,10 +11,10 @@ fn main() {
   let bindings = bindgen::Builder::default()
     .clang_arg("-xc++")
     .header("c-lib/wrapper.h")
-    .whitelist_function("compress")
-    .whitelist_function("decompress")
-    .whitelist_function("clean")
-    .whitelist_function("reverse*")
+    .allowlist_function("compress")
+    .allowlist_function("decompress")
+    .allowlist_function("clean")
+    .allowlist_function("reverse*")
     .generate()
     .expect("Unable to generate bindings");
 

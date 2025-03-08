@@ -20,8 +20,8 @@ name = "alszip"
 path = "src/executables/compress.rs"
 
 [build-dependencies]
-cc = { version = "1.0.45", features = ["parallel"] }
-bindgen = "0.51.0"
+cc = { version = "1.2.16", features = ["parallel"] }
+bindgen = "0.71.1"
 
 [dev-dependencies]
-rand = "0.7.2"
+rand = "0.9.0"

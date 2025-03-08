@@ -41,10 +41,10 @@ fn main() {
     .clang_arg("-fsanitize=address")
     .clang_arg("-fno-omit-frame-pointer")
     .header("c-lib/wrapper.h")
-    .whitelist_function("compress")
-    .whitelist_function("decompress")
-    .whitelist_function("clean2")
-    .whitelist_function("reverse*")
+    .allowlist_function("compress")
+    .allowlist_function("decompress")
+    .allowlist_function("clean2")
+    .allowlist_function("reverse*")
     .generate()
     .expect("Unable to generate bindings");
 

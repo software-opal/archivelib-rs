@@ -27,11 +27,20 @@ impl<W: std::io::Write> BitwiseWriter<W> {
     if self.buffer.len() >= 8 {
       let mut to_write = Vec::with_capacity(self.buffer.len() / 8);
       while self.buffer.len() >= 8 {
-        let this_byte = self.buffer.drain(..8);
-        let mut byte = 0;
-        for bit in this_byte {
-          byte = (byte << 1) | (if bit { 1 } else { 0 })
-        }
+        // let this_byte = self.buffer.drain(..8);
+        // let mut byte = 0;
+        // for bit in this_byte {
+        //   byte = (byte << 1) | (if bit { 1 } else { 0 })
+        // }
+        let byte = ((self.buffer[0] as u8) << 7)
+          | ((self.buffer[1] as u8) << 6)
+          | ((self.buffer[2] as u8) << 5)
+          | ((self.buffer[3] as u8) << 4)
+          | ((self.buffer[4] as u8) << 3)
+          | ((self.buffer[5] as u8) << 2)
+          | ((self.buffer[6] as u8) << 1)
+          | (self.buffer[7] as u8);
+        self.buffer.drain(..8);
         to_write.push(byte);
       }
       self.inner.write_all(&to_write)?;
@@ -68,5 +77,47 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
       self.write_bits(0, 8 - unwritten)?;
     }
     Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_bool_to_u8() {
+    assert_eq!(true as u8, 1);
+  }
+
+  #[test]
+  fn test_write_bits() {
+    let mut buf = Vec::new();
+    let mut writer = BitwiseWriter::new(&mut buf);
+    assert_eq!(writer.write_bits(0xF0E1, 8).unwrap(), 0);
+    assert_eq!(buf, [0xE1]);
+  }
+
+  #[test]
+  fn test_write_odd_number_of_bits() {
+    let mut buf = Vec::new();
+    let mut writer = BitwiseWriter::new(&mut buf);
+    assert_eq!(writer.write_bits(0xF0E1D2C3_u32, 20).unwrap(), 4);
+    assert_bytes_eq!(buf, [0x1D, 0x2C]);
+  }
+  #[test]
+  fn test_finalise_pads_last_byte_with_zeros() {
+    let mut buf = Vec::new();
+    let mut writer = BitwiseWriter::new(&mut buf);
+    assert_eq!(writer.write_bits(0xF_u32, 2).unwrap(), 2);
+    writer.finalise().unwrap();
+    assert_bytes_eq!(buf, [0b1100_0000]);
+  }
+
+  #[test]
+  fn test_write_large_numbers_of_bits() {
+    let mut buf = Vec::new();
+    let mut writer = BitwiseWriter::new(&mut buf);
+    assert_eq!(writer.write_bits(!0_u128, 128).unwrap(), 0);
+    assert_bytes_eq!(buf, [0xFF; 16]);
   }
 }

@@ -1,32 +1,23 @@
-#[allow(dead_code)]
-#[derive(Fail, Debug)]
+use thiserror::Error;
+
+#[derive(Error, Debug)]
 pub enum CompressError {
-  #[fail(display = "Illegal Compression level: {}", _0)]
+  #[error("Illegal Compression level: {0}")]
   IllegalCompressionLevel(u8),
-  #[fail(display = "Uncompressable")]
+  #[error("Uncompressable")]
   InputUncompressable,
-  #[fail(display = "Cursor {} Invariant failed", _0)]
+  #[error("Cursor {0} Invariant failed")]
   InvalidCursor(String),
-  #[fail(display = "Invalid conversion: {}", error)]
+  #[error("Invalid conversion: {error}")]
   InvalidIntegerConversion {
-    #[cause]
+    #[from]
     error: std::num::TryFromIntError,
   },
-  #[fail(display = "IOError: {}", error)]
+  #[error("IOError: {error}")]
   IOError {
-    #[cause]
+    #[from]
     error: std::io::Error,
   },
-}
-impl From<std::num::TryFromIntError> for CompressError {
-  fn from(v: std::num::TryFromIntError) -> Self {
-    Self::InvalidIntegerConversion { error: v }
-  }
-}
-impl From<std::io::Error> for CompressError {
-  fn from(v: std::io::Error) -> Self {
-    Self::IOError { error: v }
-  }
 }
 
 #[derive(Debug)]
@@ -35,35 +26,24 @@ pub enum BinaryTreeInvariantError {
   Type2,
 }
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 pub enum DecompressError {
-  #[fail(display = "Illegal Compression level: {}", _0)]
+  #[error("Illegal Compression level: {0}")]
   IllegalCompressionLevel(u8),
-  #[fail(display = "Binary tree error: {:?}", _0)]
+  #[error("Binary tree error: {0:?}")]
   BinaryTreeError(BinaryTreeInvariantError),
-  #[fail(display = "Invariant Failure")]
+  #[error("Invariant Failure")]
   InvariantFailure,
 
-  #[fail(display = "Internal Error: {}", _0)]
+  #[error("Internal Error: {0}")]
   InternalError(u8),
-  // #[fail(display = "Unexpected EoF")]
+  // #[error("Unexpected EoF")]
   // UnexpectedEndOfFile {
   //   #[cause]
   //   error: ReadError,
   // },
-  #[fail(display = "Invalid conversion: {}", _0)]
-  InvalidIntegerConversion(#[cause] std::num::TryFromIntError),
-  #[fail(display = "IOError: {}", _0)]
-  IOError(#[cause] std::io::Error),
-}
-
-impl From<std::num::TryFromIntError> for DecompressError {
-  fn from(v: std::num::TryFromIntError) -> Self {
-    DecompressError::InvalidIntegerConversion(v)
-  }
-}
-impl From<std::io::Error> for DecompressError {
-  fn from(v: std::io::Error) -> Self {
-    DecompressError::IOError(v)
-  }
+  #[error("Invalid conversion: {0}")]
+  InvalidIntegerConversion(#[from] std::num::TryFromIntError),
+  #[error("IOError: {0}")]
+  IOError(#[from] std::io::Error),
 }

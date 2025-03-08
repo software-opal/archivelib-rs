@@ -15,7 +15,7 @@ required-features = ["fuzz-afl"]
 [[bin]]
 name = "alfuzz_hongg"
 path = "src/executables/fuzz_hongg.rs"
-required-features = ["fuzz-hongg"]
+required-features = ["fuzz-hfuzz"]
 
 [dependencies]
 archivelib = { path = "../", features=["new_impl"]}

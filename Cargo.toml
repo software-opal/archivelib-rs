@@ -28,20 +28,24 @@ name = "alzip"
 path = "src/executables/compress.rs"
 
 [features]
-new_impl = []
 default = ["new_impl"]
+new_impl = []
+sys = ["dep:archivelib-sys"]
+
+"fuzz-afl" = []
+"fuzz-hfuzz" = []
 
 [dependencies]
-failure = "0.1.5"
-failure_derive = "0.1.5"
+thiserror = "2"
+archivelib-sys = { version = "0.2.0", path = "archivelib-sys-orig", optional=true }
+# archivelib-sys = { version = "0.2.0", path = "archivelib-sys-refactored" , optional=true }
 
 [dev-dependencies]
-lazy_static = "1.4.0"
-rand = "0.7.2"
+lazy_static = "1.5.0"
+rand = "0.9.0"
 # We use threads for the 'hangs' tests to prevent the tests running forever
-humthreads = '0.1.4'
+humthreads = "0.2.1"
 archivelib-sys = { version = "0.2.0", path = "archivelib-sys-orig" }
-# archivelib-sys = { version = "0.2.0", path = "archivelib-sys-refactored" }
 
 [workspace]
 members = [

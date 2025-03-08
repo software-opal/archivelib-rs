@@ -16,6 +16,7 @@ fn help() {
 Arguments:
   -c, --compress:        Perform compression.
   -d, --decompress:      Perform decompression.
+  -V, --validate:        Validate the correctness of the algorithm by compressing, decompressing, and checking for equality.
   -x, --abort-on-panic:  Abort the process instead of unwinding the stack trace nicely. This is useful when fuzzing.
   -0, -1, -2, -3, -4:    Compress using the given level. Default: 0
   -?, -h, --help:        Show this help message.
@@ -28,6 +29,7 @@ Arguments:
 enum Mode {
   COMPRESS,
   DECOMPRESS,
+  VALIDATE,
 }
 
 struct Args {
@@ -47,11 +49,16 @@ impl Args {
     let mut level = None;
     let mut abort_on_panic = false;
     let mut file_args = Vec::with_capacity(2);
+    let mut has_seen_dash_dash = false;
     for arg in args {
-      if arg == "-c" || arg == "--compress" {
+      if has_seen_dash_dash {
+        file_args.push(arg);
+      } else if arg == "-c" || arg == "--compress" {
         mode = Some(Mode::COMPRESS)
       } else if arg == "-d" || arg == "--decompress" {
         mode = Some(Mode::DECOMPRESS)
+      } else if arg == "-V" || arg == "--validate" {
+        mode = Some(Mode::VALIDATE)
       } else if arg == "-x" && arg == "--abort-on-panic" {
         abort_on_panic = true;
       } else if arg == "-0" {
@@ -66,6 +73,8 @@ impl Args {
         level = Some(CompressionLevel::Level4);
       } else if arg == "-?" || arg == "-h" || arg == "--help" {
         return Err("".into());
+      } else if arg == "--" {
+        has_seen_dash_dash = true
       } else {
         file_args.push(arg)
       }
@@ -112,8 +121,15 @@ impl Args {
 
   fn output_data(&self, data: &[u8]) -> Result<(), Box<dyn Error>> {
     match &self.output_filename {
-      None => io::stdout().write_all(data)?,
-      Some(f) => fs::File::open(f)?.write_all(data)?,
+      None => {
+        io::stdout().write_all(data)?;
+        io::stdout().flush()?;
+      }
+      Some(f) => {
+        let mut file = fs::File::open(f)?;
+        file.write_all(data)?;
+        file.flush()?;
+      }
     };
     Ok(())
   }
@@ -127,6 +143,24 @@ fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, B
     Mode::DECOMPRESS => {
       let result = archivelib::do_decompress_level(&input, level)?;
       Ok(result)
+    }
+    Mode::VALIDATE => {
+      let compressed = archivelib::do_compress_level(&input, level)?;
+      let result = archivelib::do_decompress_level(&compressed, level)?;
+      if input == &result[..] {
+        Ok(result)
+      } else {
+        let input_len = input.len();
+        let output_len = input.len();
+
+        Err(
+          format!(
+            "Data mismatch between input({} characters) and output({} characters)",
+            input_len, output_len
+          )
+          .into(),
+        )
+      }
     }
   }
 }

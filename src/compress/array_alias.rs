@@ -7,15 +7,6 @@ pub trait ArrayAlias<P> {
   fn set_offset(&mut self, parent: &P, offset: usize) -> usize;
   fn offset(&mut self, parent: &P) -> usize;
   fn slice_copy(&self, parent: &P) -> Box<[Self::Item]>;
-
-  fn apply<F>(&mut self, parent: &mut P, index: usize, apply: F)
-  where
-    F: FnOnce(&mut P, Self::Item) -> Self::Item,
-  {
-    let val = self.get(parent, index);
-    let new_val = apply(parent, val);
-    self.set(parent, index, new_val);
-  }
 }
 
 #[macro_export]

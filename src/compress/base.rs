@@ -59,7 +59,9 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub dat169: i16,
   pub dat173: i16,
   pub dat174: i16,
+  /// ZLib: `w_size`
   pub max_uncompressed_data_size: usize,
+  /// ZLib: `w_mask`
   pub max_uncompressed_data_size_bitmask: usize,
   // pub dat183_IS_CONST_8162: u16,
   pub array165_counter: usize,
@@ -167,7 +169,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     if !(MIN_COMPRESSION_FACTOR..=MAX_COMPRESSION_FACTOR).contains(&compression_level) {
       Err(CompressError::IllegalCompressionLevel(compression_level))
     } else {
+      // Compression Level is equivalent to MAX_WBITS in ZLib
+      // Max Size is the window size in ZLib
       let max_size = 1 << compression_level;
+      // Not sure why we add 4096 to the size!?
       let dat_arr163_len = max_size + CONST_N153_IS_4096;
 
       let mut dat_arr163 = vec![0; dat_arr163_len];

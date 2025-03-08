@@ -32,7 +32,7 @@ fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
   let mut lookup_table288 = [0_u16; 18];
   let mut var231 = vec![0_u16; length];
   for i in 1..=16 {
-    lookup_table288[(i + 1)] = ((lookup_table288[i] + dat_arr167[i]) << 1) as u16;
+    lookup_table288[i + 1] = ((lookup_table288[i] + dat_arr167[i]) << 1) as u16;
   }
   for (i, &lookup_offset) in item209.iter().take(length).enumerate() {
     var231[i] = lookup_table288[cast!(lookup_offset as usize)];
