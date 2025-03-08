@@ -12,12 +12,9 @@ macro_rules! adversarial {
         use std::iter;
 
         let level = CompressionLevel::from_compression_level($level).unwrap();
-        let base_iter = $base.into_iter();
         let base = {
-          let mut b: Vec<u8> = Vec::with_capacity(base_iter.size_hint().0);
-          for i in base_iter {
-            b.push(i.clone());
-          }
+          let mut b: Vec<u8> = Vec::new();
+          b.extend($base);
           b
         };
         let repeats = $repeat;
@@ -37,7 +34,7 @@ macro_rules! adversarial {
 adversarial! {
   simple(0, [0x00_u8, 0x00, 0x01, 0x01], 1);
   simple_long(0, [0x00_u8, 0x00, 0x01, 0x01], 1024);
-  simple_really_long(0, (0..128), 1024);
-  simple_really_really_long(0, (0..=255), 1024);
+  simple_really_long(0, 0..128 , 1024);
+  simple_really_really_long(0, 0..=255 , 1024);
   repetitive(0, vec![1; 50], 1024);
 }
