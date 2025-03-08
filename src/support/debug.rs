@@ -2,7 +2,7 @@ macro_rules! pending_test {
   () => ({
     pending_test!("?")
   });
-  ($msg:expr) => ({
+  ($msg:expr_2021) => ({
     #[cfg(any(feature = "fuzz-afl", feature = "fuzz-hfuzz"))]
     {
       eprintln!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
@@ -13,26 +13,26 @@ macro_rules! pending_test {
       unimplemented!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
     }
   });
-  ($msg:expr,) => ({
+  ($msg:expr_2021,) => ({
     pending_test!($msg)
   });
-  ($fmt:expr, $($arg:tt)+) => ({
+  ($fmt:expr_2021, $($arg:tt)+) => ({
     pending_test!(&format_args!($fmt, $($arg)+))
   });
 }
 
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
-  ($compressed: expr) => {{
+  ($compressed: expr_2021) => {{
     $crate::check_rust_against_sys_decompress!($crate::sys::do_decompress_level; $compressed, CompressionLevel::Level0)
   }};
-  ($sys_decompress: path; $compressed: expr) => {{
+  ($sys_decompress: path; $compressed: expr_2021) => {{
     $crate::check_rust_against_sys_decompress!($sys_crate; $compressed, CompressionLevel::Level0)
   }};
-  ($compressed: expr, $level: expr) => {{
+  ($compressed: expr_2021, $level: expr_2021) => {{
     $crate::check_rust_against_sys_decompress!($crate::sys::do_decompress_level; $compressed, $level)
   }};
-  ($sys_decompress: path; $compressed: expr, $level: expr) => {{
+  ($sys_decompress: path; $compressed: expr_2021, $level: expr_2021) => {{
     use $crate::CompressionLevel;
     let compressed = $compressed;
     let level: CompressionLevel = $level;
@@ -90,7 +90,7 @@ macro_rules! check_rust_against_sys_decompress {
 
 #[macro_export]
 macro_rules! assert_bytes_eq {
-  ($expected: expr, $actual: expr) => {{
+  ($expected: expr_2021, $actual: expr_2021) => {{
     let orig_expected = $expected;
     let orig_actual = $actual;
     let expected = orig_expected.iter().collect::<Vec<_>>();
@@ -176,7 +176,7 @@ macro_rules! assert_bytes_eq {
 
 #[macro_export]
 macro_rules! _bytes_to_human_hex {
-  ($expected: expr, $len: expr) => {{
+  ($expected: expr_2021, $len: expr_2021) => {{
     let expected = $expected.clone();
     let len: usize = $len;
     let test = expected.get(0).unwrap_or(&&0);

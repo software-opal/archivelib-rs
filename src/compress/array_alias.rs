@@ -36,32 +36,32 @@ macro_rules! array_alias_enum {
         fn shift(&mut self, parent: &$parent, delta:isize) -> usize {
             let new_offset = match self {
             $(
-              $name::$key(ref mut idx) => cast!((cast!((*idx) as isize) + delta) as usize),
+              $name::$key(idx) => cast!((cast!((*idx) as isize) + delta) as usize),
             )*
-            $name::Custom(ref mut idx, _) => cast!((cast!((*idx) as isize) + delta) as usize),
+            $name::Custom(idx, _) => cast!((cast!((*idx) as isize) + delta) as usize),
           }
           ; self.set_offset(parent, new_offset)
         }
         fn offset(&mut self, _parent: &$parent) -> usize {
           match self {
             $(
-              $name::$key(ref mut idx) => {*idx},
+              $name::$key(idx) => {*idx},
             )*
-            $name::Custom(ref mut idx, _) => {*idx},
+            $name::Custom(idx, _) => {*idx},
           }
         }
         fn set_offset(&mut self, _parent: &$parent, offset: usize) -> usize {
           match self {
             $(
-              $name::$key(ref mut idx) => {*idx = offset; *idx},
+              $name::$key(idx) => {*idx = offset; *idx},
             )*
-            $name::Custom(ref mut idx, _) => {*idx = offset; *idx},
+            $name::Custom(idx, _) => {*idx = offset; *idx},
           }
         }
         fn slice_copy(&self, parent: &$parent) -> Box<[Self::Item]> {
           match self {
             $(
-              $name::$key(ref idx) => parent.$target_arr[*idx..].to_vec().into_boxed_slice(),
+              $name::$key( idx) => parent.$target_arr[*idx..].to_vec().into_boxed_slice(),
             )*
             $name::Custom(idx, arr) => arr[*idx..].to_vec().into_boxed_slice(),
           }
@@ -69,7 +69,7 @@ macro_rules! array_alias_enum {
         fn get(&self, parent: &$parent, index: usize) -> Self::Item {
           match self {
             $(
-              $name::$key(ref idx) => parent.$target_arr[idx + index],
+              $name::$key( idx) => parent.$target_arr[idx + index],
             )*
             $name::Custom(idx, arr) => arr[idx + index],
           }
@@ -77,9 +77,9 @@ macro_rules! array_alias_enum {
         fn set(&mut self, parent: &mut $parent, index: usize, item: Self::Item) {
           match self {
             $(
-              $name::$key(ref idx) => parent.$target_arr[idx + index] = item,
+              $name::$key( idx) => parent.$target_arr[*idx + index] = item,
             )*
-            $name::Custom(ref idx, arr) => arr[idx + index] = item,
+            $name::Custom( idx, arr) => arr[*idx + index] = item,
           }
         }
       }

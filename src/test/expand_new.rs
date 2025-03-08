@@ -1,6 +1,6 @@
 macro_rules! adversarial {
   ($(
-    $name:ident ($level: expr, $base: expr, $repeat: expr);
+    $name:ident ($level: expr_2021, $base: expr_2021, $repeat: expr_2021);
   )+) => (
     $(
       #[test]

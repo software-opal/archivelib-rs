@@ -27,9 +27,9 @@ macro_rules! invariant_failure {
   );
 }
 macro_rules! invariant_assert {
-  ($cond:expr) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
-  ($cond:expr,) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
-  ($cond:expr, $($arg:tt)+) => (
+  ($cond:expr_2021) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
+  ($cond:expr_2021,) => (invariant_assert!($cond, "Assertion failed: {}", stringify!($cond)));
+  ($cond:expr_2021, $($arg:tt)+) => (
     if !$cond {
       invariant_failure!($($arg)+);
     }
@@ -268,7 +268,7 @@ mod tests {
   #[macro_export]
   #[cfg(test)]
   macro_rules! rvec {
-    ($($val: expr => $count: expr),+) => {{
+    ($($val: expr_2021 => $count: expr_2021),+) => {{
         let mut v = Vec::new();
         $(
           v.resize(v.len() + $count, $val);

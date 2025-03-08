@@ -4,7 +4,7 @@ description = "An implementaton(in C++) of the Greenleaf ArchiveLib compression/
 build = "build.rs"
 version = "0.2.0"
 authors = ["Opal Symes <code@opal.codes>"]
-edition = "2018"
+edition = "2024"
 
 homepage = "https://github.com/software-opal/archivelib-rs"
 license = "GPL-2.0-only"

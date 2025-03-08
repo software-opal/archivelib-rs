@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! test_match_sys_decompress {
-  ($($name: ident => $compressed_data:expr,)*) => {
+  ($($name: ident => $compressed_data:expr_2021,)*) => {
     $(
       pub mod $name {
         lazy_static::lazy_static! {
@@ -37,7 +37,7 @@ macro_rules! test_match_sys_decompress {
 
 #[macro_export]
 macro_rules! hex {
-  ($data: expr) => {{
+  ($data: expr_2021) => {{
     let cleaned: std::vec::Vec<u32> = $data.chars().filter_map(|c| c.to_digit(16)).collect();
     assert!(cleaned.len() % 2 == 0);
     cleaned
@@ -49,7 +49,7 @@ macro_rules! hex {
 
 #[macro_export]
 macro_rules! test_data {
-  ($($name: ident => (in=$uncompressed_data:expr, out=$compressed_data:expr),)*) => {
+  ($($name: ident => (in=$uncompressed_data:expr_2021, out=$compressed_data:expr_2021),)*) => {
     $(
       pub mod $name {
         use archivelib::{do_compress, do_decompress};
@@ -81,7 +81,7 @@ macro_rules! test_data {
 
 #[macro_export]
 macro_rules! check_decompress_matches {
-  ($($name: ident($input: expr, $output: expr);)+ )=> {
+  ($($name: ident($input: expr_2021, $output: expr_2021);)+ )=> {
     $(
       #[test]
       fn $name() {

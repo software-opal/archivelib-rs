@@ -26,7 +26,7 @@ fn run_testcase(
 }
 
 macro_rules! test_hang {
-  ($($name: ident($input: expr);)+ )=> {
+  ($($name: ident($input: expr_2021);)+ )=> {
     $(
       #[test]
       fn $name() {

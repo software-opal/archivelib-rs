@@ -3,7 +3,7 @@ name = "archivelib"
 description = "An implementaton of the Greenleaf ArchiveLib compression/decompression algorithm"
 version = "0.2.0"
 authors = ["Opal Symes <code@opal.codes>"]
-edition = "2021"
+edition = "2024"
 
 homepage = "https://github.com/software-opal/archivelib-rs"
 license = "GPL-2.0-only"

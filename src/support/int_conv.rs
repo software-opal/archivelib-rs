@@ -3,7 +3,7 @@ macro_rules! cast_trunc {
   ($e:ident as $t:ty) => {
     $crate::cast_trunc!(($e) as $t)
   };
-  (($e:expr) as $t:ty) => {{
+  (($e:expr_2021) as $t:ty) => {{
     use std::convert::TryFrom;
     let a = $e;
     #[allow(unused_assignments)]
@@ -31,7 +31,7 @@ macro_rules! cast {
   ($e:ident as $t:ty) => {
     $crate::cast!(($e) as $t)
   };
-  (($e:expr) as $t:ty) => {{
+  (($e:expr_2021) as $t:ty) => {{
     use std::convert::TryFrom;
     let a = $e;
     match <$t>::try_from(a) {
