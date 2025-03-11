@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use std::io::Read;
 
 use crate::compress::RCompressData;
-use crate::consts::{MAX_RUN_LENGTH140_IS_256, MIN_RUN_LENGTH135_IS_3};
+use crate::consts::{MAX_RUN_LENGTH, MIN_RUN_LENGTH};
 use crate::support::BitwiseWrite;
 
 // This uses the hash chain, which is stored in arr163, to try to find the longest match
@@ -38,7 +38,7 @@ fn find_longest_run_using_byte_run_hash_table(
     }
     test_index = byte_run_hash_table[test_index].try_into().unwrap();
     let mut run_length = 0;
-    while run_length < MAX_RUN_LENGTH140_IS_256 {
+    while run_length < MAX_RUN_LENGTH {
       if uncompressed_buffer[start_index + run_length]
         != uncompressed_buffer[test_index + run_length]
       {
@@ -46,7 +46,7 @@ fn find_longest_run_using_byte_run_hash_table(
       }
       run_length += 1;
     }
-    if run_length < MIN_RUN_LENGTH135_IS_3 {
+    if run_length < MIN_RUN_LENGTH {
       // continue;
     } else if run_length > largest_run {
       let offset;
@@ -62,7 +62,7 @@ fn find_longest_run_using_byte_run_hash_table(
       } else {
         largest_run = run_length;
         largest_run_offset = Some(offset);
-        if run_length >= MAX_RUN_LENGTH140_IS_256 {
+        if run_length >= MAX_RUN_LENGTH {
           break;
         }
       }

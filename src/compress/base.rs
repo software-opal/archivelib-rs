@@ -4,7 +4,7 @@ use std::io::{Read, Write};
 use super::array_alias::ArrayAlias;
 use crate::consts::{
   BYTE_RUN_HASH_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N155_IS_8192,
-  MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH140_IS_256, MIN_COMPRESSION_FACTOR,
+  MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH, MIN_COMPRESSION_FACTOR,
 };
 pub use crate::errors::CompressError;
 use crate::support::{BitwiseWrite, BitwiseWriter};
@@ -33,9 +33,9 @@ array_alias_enum! {
 }
 
 pub struct RCompressData<R: Read, W: BitwiseWrite> {
-  /// Obfusticated name: _161
+  /// Obfuscated name: _161
   pub input_store: R,
-  /// Obfusticated name: _162
+  /// Obfuscated name: _162
   pub output_store: W,
   /// A hash table used to look up the starting indexes based on a 3-byte rolling hash.
   /// Used to reduce the search space when trying to find the index of a matching byte sequence.
@@ -60,41 +60,50 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   /// }
   /// ```
   /// 
-  /// Obfusticated name: _163
+  /// Obfuscated name: _163
   pub byte_run_hash_table: Vec<i16>,
-  /// Used to store what the 3-byte rolling hash was at a paticular offset. Allows us to 
-  ///  remove entries from `byte_run_hash_table` when we overwrite that position with 
-  ///  further data from the file.
+  /// Used to store what the 3-byte rolling hash was at a paticular offset. Allows us to remove
+  ///  entries from `byte_run_hash_table` when we overwrite that position with further data from the
+  ///  file.
   /// 
-  /// Whenever we load a byte over a previous byte in our rolling buffer we need to clear 
-  ///  that index from the `byte_run_hash_table`. To do this we store the hash of the index
-  ///  in this buffer, that way we can quickly clear it from the hash table in O(1) time.
+  /// Whenever we load a byte over a previous byte in our rolling buffer we need to clear that index
+  ///  from the `byte_run_hash_table`. To do this we store the hash of the index in this buffer,
+  ///  that way we can quickly clear it from the hash table in O(1) time.
   /// 
-  /// Obfusticated name: _164
+  /// Obfuscated name: _164
   pub buffer_offset_byte_hash: Vec<i16>,
-  /// Obfusticated name: _165
+  /// Obfuscated name: _165
   pub dat_arr165: Vec<u8>,
-  /// Obfusticated name: _166
+  /// A rolling buffer containing raw uncompressed data read from the data source. Length is
+  ///  `max_uncompressed_data_size + MAX_RUN_LENGTH + 2` ( i.e. `data_size + 258`).
+  /// 
+  /// The bytes from `0..MAX_RUN_LENGTH` are copied into `max_uncompressed_data_size..` when reading
+  ///  more than `max_uncompressed_data_size` bytes, presumably to make the run detection code
+  ///  simpler.
+  /// 
+  /// Not sure why +2 though, maybe to fix an out of bounds access?
+  /// 
+  /// Obfuscated name: _166
   pub uncompressed_buffer: Vec<u8>,
-  /// Obfusticated name: _167
+  /// Obfuscated name: _167
   pub dat_arr167: Vec<u16>,
-  /// Obfusticated name: _177
+  /// Obfuscated name: _177
   pub dat_arr177: Vec<i16>,
-  /// Obfusticated name: _180
+  /// Obfuscated name: _180
   pub dat_arr180: Vec<u8>,
-  /// Obfusticated name: _181
+  /// Obfuscated name: _181
   pub dat_arr181: Vec<u8>,
-  /// Obfusticated name: _189
+  /// Obfuscated name: _189
   pub dat_arr189: Vec<u16>,
-  /// Obfusticated name: _190
+  /// Obfuscated name: _190
   pub dat_arr190: Vec<u16>,
-  /// Obfusticated name: _191
+  /// Obfuscated name: _191
   pub dat_arr191: Vec<u16>,
-  /// Obfusticated name: _192
+  /// Obfuscated name: _192
   pub dat_arr192: Vec<u16>,
-  /// Obfusticated name: _193
+  /// Obfuscated name: _193
   pub dat_arr193: Vec<u16>,
-  /// Obfusticated name: _194
+  /// Obfuscated name: _194
   pub dat_arr194: Vec<u16>,
   // pub dat_arr_cursor178: Option<CompressU8ArrayAlias>,
   // pub dat_arr_cursor187: Option<CompressU16ArrayAlias>,
@@ -234,7 +243,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         byte_run_hash_table,
         buffer_offset_byte_hash: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
-        uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140_IS_256 + 2],
+        uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH + 2],
         dat_arr167: vec![0; 17],
         dat_arr177: vec![0; CONST_N141_IS_511 + 1],
         dat_arr180: vec![0; CONST_N141_IS_511],

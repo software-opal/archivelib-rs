@@ -1,12 +1,14 @@
 pub const MAX_COMPRESSION_FACTOR: u8 = 14;
 pub const MIN_COMPRESSION_FACTOR: u8 = 10;
 
-pub const MIN_RUN_LENGTH135_IS_3: usize = 3;
-pub const MAX_RUN_LENGTH140_IS_256: usize = 256;
-pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH140_IS_256 + 1;
+/// Obfuscated name: _135
+pub const MIN_RUN_LENGTH: usize = 3;
+/// Obfuscated name: _140
+pub const MAX_RUN_LENGTH: usize = 256;
+pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH + 1;
 
 pub const CONST_N141_IS_511: usize =
-  (u8::max_value() as usize) + (MAX_RUN_LENGTH140_IS_256 - MIN_RUN_LENGTH135_IS_3) + 3;
+  (u8::max_value() as usize) + (MAX_RUN_LENGTH - MIN_RUN_LENGTH) + 3;
 pub const CONST_N145_IS_19: usize = u16::max_value().count_ones() as usize + 3;
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 
