@@ -4,7 +4,7 @@ use std::fmt::Debug;
 use super::base::BitwiseWrite;
 
 pub struct ExpectedCallWriter {
-  calls: Vec<(u128, usize)>,
+  calls: Vec<(u16, u8)>,
   write_calls: usize,
   pub written_bits: usize,
 }
@@ -12,7 +12,10 @@ pub struct ExpectedCallWriter {
 impl ExpectedCallWriter {
   pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
     Self {
-      calls,
+      calls: calls
+        .into_iter()
+        .map(|(bits, size)| (cast!(bits as u16), cast!(size as u8)))
+        .collect(),
       write_calls: 0,
       written_bits: 0,
     }
@@ -22,10 +25,10 @@ impl ExpectedCallWriter {
   }
 }
 impl BitwiseWrite for ExpectedCallWriter {
-  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<usize>
+  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<()>
   where
-    B: TryInto<u128> + Debug + Copy,
-    L: TryInto<usize> + Debug + Copy,
+    B: TryInto<u16> + Debug + Copy,
+    L: TryInto<u8> + Debug + Copy,
   {
     let bits = bits
       .try_into()
@@ -35,6 +38,8 @@ impl BitwiseWrite for ExpectedCallWriter {
       .try_into()
       .map_err(|_| format!("Cannot convert bit_count({:#X?}) to usize", bits))
       .unwrap();
+    assert!(bit_count <= self.max_bit_count(), "Too many bits written at once");
+
     assert!(
       !self.calls.is_empty(),
       "Attempting to call write_bits({:X}, {}) when it wasn't expected; Calls expended",
@@ -52,9 +57,9 @@ impl BitwiseWrite for ExpectedCallWriter {
         actual, expected, self.write_calls
       );
     }
-    self.written_bits += bit_count;
+    self.written_bits += bit_count as usize;
     self.write_calls += 1;
-    Ok(self.written_bits % 8)
+    Ok(())
   }
   fn finalise(&mut self) -> std::io::Result<()> {
     let expected = self.calls.remove(0);

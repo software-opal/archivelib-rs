@@ -39,50 +39,50 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub output_store: W,
   /// A hash table used to look up the starting indexes based on a 3-byte rolling hash.
   /// Used to reduce the search space when trying to find the index of a matching byte sequence.
-  /// 
+  ///
   /// For data `max_size..`(key: `byte_hash + max_size`)
   ///   - `-1` means no hash has been found
   ///   - `index` means the hash was found at `index`.
   /// For data `..max_size`(key: `index`)
   ///   - `-1` means no other instances of this index's hash exist.
   ///   - `index` means there is at least 1 more instance found at `index`.
-  /// 
+  ///
   /// To find all the references the code would look like this:
   /// ```rust
-  /// fn find_all_hash_indexes(byte_run_hash_table: &[i16], byte_hash: usize): usize[] {
-  ///   let mut found_indexes = [];
-  ///   let mut last_index = byte_run_hash_table[byte_hash]
-  ///   while (last_index >= 0) {
-  ///     found_indexes.push(cast!(last_index as usize));
+  /// fn find_all_hash_indexes(byte_run_hash_table: &[i16], byte_hash: usize) -> Vec<usize> {
+  ///   let mut found_indexes = vec![];
+  ///   let mut last_index = byte_run_hash_table[byte_hash];
+  ///   while last_index >= 0 {
+  ///     found_indexes.push(last_index as usize);
   ///     last_index = byte_run_hash_table[byte_hash]
   ///   }
-  ///   return last_index;
+  ///   return found_indexes;
   /// }
   /// ```
-  /// 
+  ///
   /// Obfuscated name: _163
   pub byte_run_hash_table: Vec<i16>,
   /// Used to store what the 3-byte rolling hash was at a paticular offset. Allows us to remove
   ///  entries from `byte_run_hash_table` when we overwrite that position with further data from the
   ///  file.
-  /// 
+  ///
   /// Whenever we load a byte over a previous byte in our rolling buffer we need to clear that index
   ///  from the `byte_run_hash_table`. To do this we store the hash of the index in this buffer,
   ///  that way we can quickly clear it from the hash table in O(1) time.
-  /// 
+  ///
   /// Obfuscated name: _164
   pub buffer_offset_byte_hash: Vec<i16>,
   /// Obfuscated name: _165
   pub dat_arr165: Vec<u8>,
   /// A rolling buffer containing raw uncompressed data read from the data source. Length is
   ///  `max_uncompressed_data_size + MAX_RUN_LENGTH + 2` ( i.e. `data_size + 258`).
-  /// 
+  ///
   /// The bytes from `0..MAX_RUN_LENGTH` are copied into `max_uncompressed_data_size..` when reading
   ///  more than `max_uncompressed_data_size` bytes, presumably to make the run detection code
   ///  simpler.
-  /// 
+  ///
   /// Not sure why +2 though, maybe to fix an out of bounds access?
-  /// 
+  ///
   /// Obfuscated name: _166
   pub uncompressed_buffer: Vec<u8>,
   /// Obfuscated name: _167
@@ -160,7 +160,10 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
     formatter
       .debug_struct("RCompressData")
       .field("dat_arr163", &vec_to_nice_debug(&self.byte_run_hash_table))
-      .field("dat_arr164", &vec_to_nice_debug(&self.buffer_offset_byte_hash))
+      .field(
+        "dat_arr164",
+        &vec_to_nice_debug(&self.buffer_offset_byte_hash),
+      )
       .field("dat_arr165", &vec_to_nice_debug(&self.dat_arr165))
       .field(
         "uncompressed_buffer",

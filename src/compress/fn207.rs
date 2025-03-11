@@ -10,6 +10,8 @@ use crate::support::BitwiseWrite;
 const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
+  /// Flush buffer?
+  /// Obfuscated name: _207()
   pub fn fn207(&mut self) -> Result<()> {
     let mut var456: u32 = 0_u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];

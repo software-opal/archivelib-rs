@@ -6,6 +6,9 @@ use crate::support::BitwiseWrite;
 const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
+  ///
+  /// 
+  /// Obfuscated name: _202(_203, _204)
   pub fn fn202(&mut self, byte_or_run_length203: u16, arg204: u16) -> Result<()> {
     self.bitwise_counter185 >>= 1;
     if self.bitwise_counter185 == 0 {

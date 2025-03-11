@@ -107,10 +107,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       update_byte_run_hash(&self.uncompressed_buffer, buffer_pos, current_byte_run_hash)
         + cast!(buffer_size as i16);
 
-    // Load the first block of data into the longest run functions
     while remaining_data > MAX_RUN_LENGTH + 4 {
       self.find_longest_run(buffer_pos, current_byte_run_hash);
-      if (self.longest_run) < 3 {
+      if self.longest_run < 3 {
+        // Couldn't find a run in our previous data set, so we need to just write the byte into the output stream.
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0)?;
         insert_byte_run_hash_entry(
