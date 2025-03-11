@@ -13,25 +13,39 @@ const UCHAR_MAX: usize = 255;
 // ZLib: UPDATE_HASH macro
 fn update_byte_run_hash(
   uncompressed_buffer: &[u8],
-  buff_pos: usize,
+  buff_position: usize,
   current_byte_run_hash: i16,
 ) -> i16 {
-  ((current_byte_run_hash << CONST_N154_IS_4) ^ i16::from(uncompressed_buffer[buff_pos + 2]))
+  ((current_byte_run_hash << CONST_N154_IS_4) ^ i16::from(uncompressed_buffer[buff_position + 2]))
     & cast!(BYTE_RUN_HASH_BITMASK as i16)
 }
-fn fn447(arg163: &mut [i16], arg164: &mut [i16], buff_pos: usize, arg201: i16) {
-  let local204 = arg163[cast!(arg201 as usize)];
-  if local204 != -1 {
-    arg164[cast!(local204 as usize)] = cast!(buff_pos as i16);
+/// Insert a value into the byte run hash table.
+/// Obfusticated name: _447
+fn insert_byte_run_hash_entry(
+  byte_run_hash_table: &mut [i16],
+  buffer_offset_byte_hash: &mut [i16],
+  current_buffer_pos: usize,
+  current_byte_run_hash: i16,
+) {
+  let prev_byte_run_pos = byte_run_hash_table[cast!(current_byte_run_hash as usize)];
+  if prev_byte_run_pos != -1 {
+    buffer_offset_byte_hash[cast!(prev_byte_run_pos as usize)] = cast!(current_buffer_pos as i16);
   }
-  arg164[cast!(buff_pos as usize)] = arg201;
-  arg163[cast!(buff_pos as usize)] = local204;
-  arg163[cast!(arg201 as usize)] = cast!(buff_pos as i16);
+  buffer_offset_byte_hash[cast!(current_buffer_pos as usize)] = current_byte_run_hash;
+  byte_run_hash_table[cast!(current_buffer_pos as usize)] = prev_byte_run_pos;
+  byte_run_hash_table[cast!(current_byte_run_hash as usize)] = cast!(current_buffer_pos as i16);
 }
-fn fn448(byte_run_hash_table: &mut [i16], arg164: &mut [i16], s: usize) {
-  let local204 = arg164[s];
+
+/// Removes an entry from the hash table when we have overwritten the byte in the buffer. For example by loading another `buffer_size` bytes.
+/// Obfusticated name: _448
+fn clear_byte_run_hash_table_entry(
+  byte_run_hash_table: &mut [i16],
+  buffer_offset_byte_hash: &mut [i16],
+  buffer_position: usize,
+) {
+  let local204 = buffer_offset_byte_hash[buffer_position];
   if local204 != -1 {
-    arg164[s] = -1;
+    buffer_offset_byte_hash[buffer_position] = -1;
     byte_run_hash_table[cast!(local204 as usize)] = -1;
   }
 }
@@ -66,7 +80,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       &mut self.input_store,
       &mut self.uncompressed_buffer[..max_size279],
     )?;
-    let mut s = (remaining_data & size_bitmask280) as usize;
+    let mut buffer_end_idx = (remaining_data & size_bitmask280) as usize;
 
     self.longest_run_offset = 0;
     self.longest_run = 0;
@@ -79,15 +93,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       update_byte_run_hash(&self.uncompressed_buffer, buffer_pos, current_byte_run_hash)
         + cast!(max_size279 as i16);
 
-    // ?This must be draining the buffer until there is less that 1 full run left
+    // Load the first block of data into the longest run functions
     while remaining_data > MAX_RUN_LENGTH140_IS_256 + 4 {
       self.find_longest_run(buffer_pos, current_byte_run_hash);
       if (self.longest_run) < 3 {
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.fn202(val, 0)?;
-        fn447(
+        insert_byte_run_hash_entry(
           &mut self.byte_run_hash_table,
-          &mut self.dat_arr164,
+          &mut self.buffer_offset_byte_hash,
           buffer_pos,
           current_byte_run_hash,
         );
@@ -108,9 +122,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           if self.longest_run < 0 {
             break;
           }
-          fn447(
+          insert_byte_run_hash_entry(
             &mut self.byte_run_hash_table,
-            &mut self.dat_arr164,
+            &mut self.buffer_offset_byte_hash,
             buffer_pos,
             current_byte_run_hash,
           );
@@ -127,14 +141,21 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         None => break,
         Some(n) => n,
       };
-      self.uncompressed_buffer[s] = byte;
-      if (s) < 256 - 1 {
-        self.uncompressed_buffer[s + max_size279] = self.uncompressed_buffer[s]
+      self.uncompressed_buffer[buffer_end_idx] = byte;
+      if (buffer_end_idx) < 256 - 1 {
+        self.uncompressed_buffer[buffer_end_idx + max_size279] = self.uncompressed_buffer[buffer_end_idx]
       }
-      fn448(&mut self.byte_run_hash_table, &mut self.dat_arr164, s);
-      s = (s + 1) & size_bitmask280;
+      clear_byte_run_hash_table_entry(
+        &mut self.byte_run_hash_table,
+        &mut self.buffer_offset_byte_hash,
+        buffer_end_idx,
+      );
+      buffer_end_idx = (buffer_end_idx + 1) & size_bitmask280;
       remaining_data += 1
     }
+
+    // Now we loop over the remaining data in the buffer; `remaining_data` doesn't represent the
+    //  number of remaining bits in the file.
     while remaining_data > 0 {
       self.find_longest_run(buffer_pos, current_byte_run_hash);
       if self.longest_run > cast!(remaining_data as i16) {
@@ -146,8 +167,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         self.fn202(val, 0)?;
       } else {
         let a1 =
-          u16::try_from(self.longest_run + cast!((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16))
-            .unwrap();
+          cast!((self.longest_run + cast!((UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3) as i16)) as u16);
         let a2 = cast!((self.longest_run_offset) as u16);
         self.fn202(a1, a2)?;
       }
@@ -160,15 +180,19 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           None => break,
           Some(n) => n,
         };
-        self.uncompressed_buffer[s] = byte_or_run_length203;
-        if (s) < 256 - 1 {
-          self.uncompressed_buffer[s + max_size279] = self.uncompressed_buffer[s]
+        self.uncompressed_buffer[buffer_end_idx] = byte_or_run_length203;
+        if (buffer_end_idx) < 256 - 1 {
+          self.uncompressed_buffer[buffer_end_idx + max_size279] = self.uncompressed_buffer[buffer_end_idx]
         }
-        fn448(&mut self.byte_run_hash_table, &mut self.dat_arr164, s);
-        s = (s + 1) & size_bitmask280;
-        fn447(
+        clear_byte_run_hash_table_entry(
           &mut self.byte_run_hash_table,
-          &mut self.dat_arr164,
+          &mut self.buffer_offset_byte_hash,
+          buffer_end_idx,
+        );
+        buffer_end_idx = (buffer_end_idx + 1) & size_bitmask280;
+        insert_byte_run_hash_entry(
+          &mut self.byte_run_hash_table,
+          &mut self.buffer_offset_byte_hash,
           buffer_pos,
           current_byte_run_hash,
         );
@@ -182,9 +206,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           break;
         }
         self.longest_run -= 1;
-        fn447(
+        insert_byte_run_hash_entry(
           &mut self.byte_run_hash_table,
-          &mut self.dat_arr164,
+          &mut self.buffer_offset_byte_hash,
           buffer_pos,
           current_byte_run_hash,
         );
@@ -196,9 +220,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       }
     }
     self.fn202(
-      (END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3))
-        .try_into()
-        .unwrap(),
+      cast!((END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH135_IS_3)) as u16),
       0,
     )?;
     self.finalise_compresson197()

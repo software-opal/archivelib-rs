@@ -33,21 +33,68 @@ array_alias_enum! {
 }
 
 pub struct RCompressData<R: Read, W: BitwiseWrite> {
+  /// Obfusticated name: _161
   pub input_store: R,
+  /// Obfusticated name: _162
   pub output_store: W,
+  /// A hash table used to look up the starting indexes based on a 3-byte rolling hash.
+  /// Used to reduce the search space when trying to find the index of a matching byte sequence.
+  /// 
+  /// For data `max_size..`(key: `byte_hash + max_size`)
+  ///   - `-1` means no hash has been found
+  ///   - `index` means the hash was found at `index`.
+  /// For data `..max_size`(key: `index`)
+  ///   - `-1` means no other instances of this index's hash exist.
+  ///   - `index` means there is at least 1 more instance found at `index`.
+  /// 
+  /// To find all the references the code would look like this:
+  /// ```rust
+  /// fn find_all_hash_indexes(byte_run_hash_table: &[i16], byte_hash: usize): usize[] {
+  ///   let mut found_indexes = [];
+  ///   let mut last_index = byte_run_hash_table[byte_hash]
+  ///   while (last_index >= 0) {
+  ///     found_indexes.push(cast!(last_index as usize));
+  ///     last_index = byte_run_hash_table[byte_hash]
+  ///   }
+  ///   return last_index;
+  /// }
+  /// ```
+  /// 
+  /// Obfusticated name: _163
   pub byte_run_hash_table: Vec<i16>,
-  pub dat_arr164: Vec<i16>,
+  /// Used to store what the 3-byte rolling hash was at a paticular offset. Allows us to 
+  ///  remove entries from `byte_run_hash_table` when we overwrite that position with 
+  ///  further data from the file.
+  /// 
+  /// Whenever we load a byte over a previous byte in our rolling buffer we need to clear 
+  ///  that index from the `byte_run_hash_table`. To do this we store the hash of the index
+  ///  in this buffer, that way we can quickly clear it from the hash table in O(1) time.
+  /// 
+  /// Obfusticated name: _164
+  pub buffer_offset_byte_hash: Vec<i16>,
+  /// Obfusticated name: _165
   pub dat_arr165: Vec<u8>,
+  /// Obfusticated name: _166
   pub uncompressed_buffer: Vec<u8>,
+  /// Obfusticated name: _167
   pub dat_arr167: Vec<u16>,
+  /// Obfusticated name: _177
   pub dat_arr177: Vec<i16>,
+  /// Obfusticated name: _180
   pub dat_arr180: Vec<u8>,
+  /// Obfusticated name: _181
   pub dat_arr181: Vec<u8>,
+  /// Obfusticated name: _189
   pub dat_arr189: Vec<u16>,
+  /// Obfusticated name: _190
   pub dat_arr190: Vec<u16>,
+  /// Obfusticated name: _191
   pub dat_arr191: Vec<u16>,
+  /// Obfusticated name: _192
   pub dat_arr192: Vec<u16>,
+  /// Obfusticated name: _193
   pub dat_arr193: Vec<u16>,
+  /// Obfusticated name: _194
   pub dat_arr194: Vec<u16>,
   // pub dat_arr_cursor178: Option<CompressU8ArrayAlias>,
   // pub dat_arr_cursor187: Option<CompressU16ArrayAlias>,
@@ -104,7 +151,7 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
     formatter
       .debug_struct("RCompressData")
       .field("dat_arr163", &vec_to_nice_debug(&self.byte_run_hash_table))
-      .field("dat_arr164", &vec_to_nice_debug(&self.dat_arr164))
+      .field("dat_arr164", &vec_to_nice_debug(&self.buffer_offset_byte_hash))
       .field("dat_arr165", &vec_to_nice_debug(&self.dat_arr165))
       .field(
         "uncompressed_buffer",
@@ -185,7 +232,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         fail_uncompressible,
 
         byte_run_hash_table,
-        dat_arr164: vec![-1; max_size],
+        buffer_offset_byte_hash: vec![-1; max_size],
         dat_arr165: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH140_IS_256 + 2],
         dat_arr167: vec![0; 17],
