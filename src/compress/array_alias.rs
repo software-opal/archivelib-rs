@@ -17,6 +17,7 @@ macro_rules! array_alias_enum {
         type Parent = $parent:ty;
         type Item = $item:ty;
         $(
+          $(#[$key_attr:meta])*
           $key:ident => $target_arr:ident;
         )*
       }
@@ -27,6 +28,7 @@ macro_rules! array_alias_enum {
       #[derive(Debug, PartialEq)]
       pub enum $name<'a> {
         $(
+          $(#[$key_attr])*
           $key(usize),
         )*
         Custom(usize, &'a mut [$item]),

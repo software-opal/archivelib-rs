@@ -11,23 +11,33 @@ use crate::support::{BitwiseWrite, BitwiseWriter};
 
 pub type Result<R> = std::result::Result<R, CompressError>;
 
+// I needed to do this otherwise the compiler threw errors. What errors? Good question.
 array_alias_enum! {
   pub enum<R: Read, W: BitwiseWrite> CompressU16ArrayAlias {
     type Parent = RCompressData<R, W>;
     type Item = u16;
+    /// Obfuscated name: _167
     Array167 => dat_arr167;
+    /// Obfuscated name: _189
     Array189 => dat_arr189;
+    /// Obfuscated name: _190
     Array190 => dat_arr190;
-    Array191 => dat_arr191;
+    /// Obfuscated name: _191
+    ByteRunLengthFrequency => byte_run_length_frequency;
     Array192 => dat_arr192;
-    Array193 => dat_arr193;
+    /// Obfuscated name: _193
+    RunOffsetBitCountFrequency => run_offset_bit_count_frequency;
+    /// Obfuscated name: _194
     Array194 => dat_arr194;
   }
   pub enum<R: Read, W: BitwiseWrite> CompressU8ArrayAlias {
     type Parent = RCompressData<R, W>;
     type Item = u8;
-    Array165 => dat_arr165;
+    /// Obfuscated name: _165
+    ByteRunLengthBuffer => byte_run_length_buffer;
+    /// Obfuscated name: _180
     Array180 => dat_arr180;
+    /// Obfuscated name: _181
     Array181 => dat_arr181;
   }
 }
@@ -72,8 +82,34 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   ///
   /// Obfuscated name: _164
   pub buffer_offset_byte_hash: Vec<i16>,
+  /// This is a temporary buffer storing bytes and run lengths.
+  /// 
+  /// This is populated by `_202` and stores the following in 8-call chunks:
+  ///  - `0` -- An 8-bit bit field, where the most significant bit represents the first item and the
+  ///            least significant represents the 8th. Each bit means:
+  ///     - `0` bit means the `_202` call at this index represented a raw byte; and a single item
+  ///            was pushed onto `_165`
+  ///     - `1` bit means the `_202` call at this index represented a run length or EOF flag; and 3
+  ///            items were pushed onto `_165`
+  ///  - `1..` -- One of the following:
+  ///     - 1 byte representing a raw byte value.
+  ///     - 3 bytes representing a run length and offset:
+  ///        - 1 byte representing the `run_length - 3` (range `0..=0xFD`).
+  ///        - 2 little-endian bytes representing the negative offset to the run. Note that this is
+  ///             stored with the lowest bits in the first byte. So an offset of `0x1234` is
+  ///             represented in this array as `[0x34, 0x12]`
+  ///     - 3 bytes representing the EOF flag: `[0xFE, 0, 0]`
+  /// 
+  /// The filling of this array is supported by a counter(`_184`); the bit-field index(`_186`); and
+  /// a bitwise counter(`_185`).
+  /// 
+  /// - `_184` is the next index to be written too.
+  /// - `_185` is a bitwise counter(so counts `0x80`, `0x40`, etc.) that is bitwise-ORed with the
+  ///           bit field at index `_186` if this call represents a run or EOF.
+  /// - `_186` is index of the bit field (the `0` index in the 8-call chunk described above)
+  /// 
   /// Obfuscated name: _165
-  pub dat_arr165: Vec<u8>,
+  pub byte_run_length_buffer: Vec<u8>,
   /// A rolling buffer containing raw uncompressed data read from the data source. Length is
   ///  `max_uncompressed_data_size + MAX_RUN_LENGTH + 2` ( i.e. `data_size + 258`).
   ///
@@ -97,12 +133,29 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub dat_arr189: Vec<u16>,
   /// Obfuscated name: _190
   pub dat_arr190: Vec<u16>,
-  /// Obfuscated name: _191
-  pub dat_arr191: Vec<u16>,
+  /// Stores the number of times a given byte or run length has been seen.
+  /// 
+  /// This stores values from `0..=510`, with `0..256` representing bytes, `256..510` representing
+  ///  run lengths, and `510` representing the EOF flag. Each time a value is seen by `_202` the
+  ///  respective index is incremented. 
+  /// 
+  /// This array is used by `_207` to write to the output buffer; and then `_207` will also clear
+  ///  the array.
+  /// 
+  ///  Obfuscated name: _191
+  pub byte_run_length_frequency: Vec<u16>,
   /// Obfuscated name: _192
   pub dat_arr192: Vec<u16>,
+  /// Stores the frequency of different run length bit-lengths were seen.
+  /// 
+  /// This is written in `_202` by calculating the number of bits required to store the run length,
+  ///  and then incrementing that number in this array. 
+  /// 
+  /// This array is used by `_207` to write to the output buffer; and then `_207` will also clear
+  ///  the array.
+  /// 
   /// Obfuscated name: _193
-  pub dat_arr193: Vec<u16>,
+  pub run_offset_bit_count_frequency: Vec<u16>,
   /// Obfuscated name: _194
   pub dat_arr194: Vec<u16>,
   // pub dat_arr_cursor178: Option<CompressU8ArrayAlias>,
@@ -120,9 +173,20 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   /// ZLib: `w_mask`
   pub max_uncompressed_data_size_bitmask: usize,
   // pub dat183_IS_CONST_8162: u16,
-  pub array165_counter: usize,
-  pub bitwise_counter185: u16,
-  pub array165_tmp_counter186: usize,
+  /// Obfuscated name: _184
+  pub byte_or_run_buffer_index: usize,
+  /// Counts `0x80` to `0x0` by left-shifting by one.
+  /// 
+  /// Possible values are `0x80`, `0x40`, `0x20`, `0x10`, `0x08`, `0x04`, `0x02`, `0x01`, `0x00`
+  /// 
+  /// Obfuscated name: _185
+  pub byte_run_length_buffer_counter: u16,
+  /// This represents the index in `_165` that stores the run length bit fields.
+  /// 
+  /// See `_165` for more details
+  /// 
+  /// Obfuscated name: _186
+  pub byte_run_length_buffer_bit_flag_index: usize,
 }
 
 fn vec_to_nice_debug<T: fmt::Debug + PartialEq>(v: &[T]) -> String {
@@ -164,7 +228,7 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         "dat_arr164",
         &vec_to_nice_debug(&self.buffer_offset_byte_hash),
       )
-      .field("dat_arr165", &vec_to_nice_debug(&self.dat_arr165))
+      .field("dat_arr165", &vec_to_nice_debug(&self.byte_run_length_buffer))
       .field(
         "uncompressed_buffer",
         &vec_to_nice_debug(&self.uncompressed_buffer),
@@ -175,9 +239,9 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
       .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
       .field("dat_arr189", &vec_to_nice_debug(&self.dat_arr189))
       .field("dat_arr190", &vec_to_nice_debug(&self.dat_arr190))
-      .field("dat_arr191", &vec_to_nice_debug(&self.dat_arr191))
+      .field("dat_arr191", &vec_to_nice_debug(&self.byte_run_length_frequency))
       .field("dat_arr192", &vec_to_nice_debug(&self.dat_arr192))
-      .field("dat_arr193", &vec_to_nice_debug(&self.dat_arr193))
+      .field("dat_arr193", &vec_to_nice_debug(&self.run_offset_bit_count_frequency))
       .field("dat_arr194", &vec_to_nice_debug(&self.dat_arr194))
       .field("chars_written", &self.chars_written)
       .field("uncompressible", &self.uncompressible)
@@ -195,9 +259,9 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         &self.max_uncompressed_data_size_bitmask,
       )
       // .field("dat183_IS_CONST_8162", &self.dat183_IS_CONST_8162)
-      .field("array165_counter", &self.array165_counter)
-      .field("bitwise_counter185", &self.bitwise_counter185)
-      .field("array165_tmp_counter186", &self.array165_tmp_counter186)
+      .field("array165_counter", &self.byte_or_run_buffer_index)
+      .field("bitwise_counter185", &self.byte_run_length_buffer_counter)
+      .field("array165_tmp_counter186", &self.byte_run_length_buffer_bit_flag_index)
       .finish()
   }
 }
@@ -245,7 +309,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
         byte_run_hash_table,
         buffer_offset_byte_hash: vec![-1; max_size],
-        dat_arr165: vec![0; CONST_N155_IS_8192],
+        byte_run_length_buffer: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH + 2],
         dat_arr167: vec![0; 17],
         dat_arr177: vec![0; CONST_N141_IS_511 + 1],
@@ -253,9 +317,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat_arr181: vec![0; CONST_N152_IS_19],
         dat_arr189: vec![0; 2 * CONST_N141_IS_511 - 1],
         dat_arr190: vec![0; 2 * CONST_N141_IS_511 - 1],
-        dat_arr191: vec![0; 2 * CONST_N141_IS_511 - 1],
+        byte_run_length_frequency: vec![0; 2 * CONST_N141_IS_511 - 1],
         dat_arr192: vec![0; CONST_N141_IS_511],
-        dat_arr193: vec![0; 2 * CONST_N142_IS_15 - 1],
+        run_offset_bit_count_frequency: vec![0; 2 * CONST_N142_IS_15 - 1],
         dat_arr194: vec![0; CONST_N152_IS_19],
 
         max_uncompressed_data_size: max_size,
@@ -268,9 +332,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         dat173: 0,
         dat174: 0,
         // dat183_IS_CONST_8162: cast!(CONST_N155_IS_8192 as u16) - ((3 * 8) + 6),
-        array165_counter: 0,
-        bitwise_counter185: 0,
-        array165_tmp_counter186: 0,
+        byte_or_run_buffer_index: 0,
+        byte_run_length_buffer_counter: 0,
+        byte_run_length_buffer_bit_flag_index: 0,
       })
     }
   }

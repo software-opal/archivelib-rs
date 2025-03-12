@@ -112,7 +112,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       if self.longest_run < 3 {
         // Couldn't find a run in our previous data set, so we need to just write the byte into the output stream.
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
-        self.fn202(val, 0)?;
+        self.write_byte_or_run_into_buffer(val, 0)?;
         insert_byte_run_hash_entry(
           &mut self.byte_run_hash_table,
           &mut self.buffer_offset_byte_hash,
@@ -130,7 +130,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           .try_into()
           .unwrap();
         let a2 = self.longest_run_offset.try_into().unwrap();
-        self.fn202(a1, a2)?;
+        self.write_byte_or_run_into_buffer(a1, a2)?;
         loop {
           self.longest_run -= 1;
           if self.longest_run < 0 {
@@ -178,12 +178,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       if (self.longest_run) < 3 {
         self.longest_run = 1;
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
-        self.fn202(val, 0)?;
+        self.write_byte_or_run_into_buffer(val, 0)?;
       } else {
         let a1 =
           cast!((self.longest_run + cast!((UCHAR_MAX + 1 - MIN_RUN_LENGTH) as i16)) as u16);
         let a2 = cast!((self.longest_run_offset) as u16);
-        self.fn202(a1, a2)?;
+        self.write_byte_or_run_into_buffer(a1, a2)?;
       }
       loop {
         self.longest_run -= 1;
@@ -233,7 +233,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         remaining_data -= 1;
       }
     }
-    self.fn202(
+    self.write_byte_or_run_into_buffer(
       cast!((END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH)) as u16),
       0,
     )?;

@@ -82,7 +82,6 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
     if self.buffer.len() > 512 {
       self.flush_buffer()?;
     }
-    eprintln!("Buffer: {:?}", self.buffer);
     Ok(())
   }
   fn finalise(&mut self) -> std::io::Result<()> {

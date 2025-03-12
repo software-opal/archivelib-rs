@@ -7,11 +7,11 @@ use crate::support::BitwiseWrite;
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn finalise_compresson197(&mut self) -> Result<()> {
     if !self.uncompressible {
-      self.fn207()?;
+      self.fn207_maybe_flush_state_to_output()?;
       self.output_store.finalise()?;
     }
     // self.dat183_IS_CONST_8162 = 0;
-    self.array165_counter = 0;
+    self.byte_or_run_buffer_index = 0;
     Ok(())
   }
   pub fn write_stored_bits_to_buffer(&mut self, arg203: i16) -> Result<()> {
