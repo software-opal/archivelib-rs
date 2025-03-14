@@ -108,6 +108,14 @@ fn test_compressing_a_run_of_identical_data() {
 }
 
 #[test]
+fn test_compressing_a_small_data_block() {
+  let input = "a".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 03 28 04 4B FE 26 E4  54 74 E0 04 C0");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+
+#[test]
 fn test_compressing_known_data_ab() {
   let input = "GGaXaGXYGYXaZXGYbXbYcZZZ".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);

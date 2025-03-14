@@ -19,9 +19,9 @@ array_alias_enum! {
     /// Obfuscated name: _167
     Array167 => dat_arr167;
     /// Obfuscated name: _189
-    Array189 => dat_arr189;
+    Array189 => dat_arr189_maybe_huff_left;
     /// Obfuscated name: _190
-    Array190 => dat_arr190;
+    Array190 => dat_arr190_maybe_huff_right;
     /// Obfuscated name: _191
     ByteRunLengthFrequency => byte_run_length_frequency;
     Array192 => dat_arr192;
@@ -123,16 +123,24 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub uncompressed_buffer: Vec<u8>,
   /// Obfuscated name: _167
   pub dat_arr167: Vec<u16>,
+  /// Used by `_211` and `_225` to store the values to be added to the huffman table.
+  /// 
+  /// This is filled by `_211` starting with index 1 with all the values to represent in the huffman
+  ///  table. Then we call `_225` to bring the value with the lowest frequency to the start of the
+  ///  array. Then we remove the lowest frequency value to create a branch in our binary tree,
+  ///  inserting the branch node back into this array. We repeat until we have placed all values into
+  ///  the binary tree.
+  /// 
   /// Obfuscated name: _177
-  pub maybe_huff_used_values: Vec<i16>,
+  pub tmp_huffman_values_to_visit: Vec<i16>,
   /// Obfuscated name: _180
   pub dat_arr180: Vec<u8>,
   /// Obfuscated name: _181
   pub dat_arr181: Vec<u8>,
   /// Obfuscated name: _189
-  pub dat_arr189: Vec<u16>,
+  pub dat_arr189_maybe_huff_left: Vec<u16>,
   /// Obfuscated name: _190
-  pub dat_arr190: Vec<u16>,
+  pub dat_arr190_maybe_huff_right: Vec<u16>,
   /// Stores the number of times a given byte or run length has been seen.
   /// 
   /// This stores values from `0..=510`, with `0..256` representing bytes, `256..510` representing
@@ -239,11 +247,11 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         &vec_to_nice_debug(&self.uncompressed_buffer),
       )
       .field("dat_arr167", &vec_to_nice_debug(&self.dat_arr167))
-      .field("dat_arr177", &vec_to_nice_debug(&self.maybe_huff_used_values))
+      .field("dat_arr177", &vec_to_nice_debug(&self.tmp_huffman_values_to_visit))
       .field("dat_arr180", &vec_to_nice_debug(&self.dat_arr180))
       .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
-      .field("dat_arr189", &vec_to_nice_debug(&self.dat_arr189))
-      .field("dat_arr190", &vec_to_nice_debug(&self.dat_arr190))
+      .field("dat_arr189", &vec_to_nice_debug(&self.dat_arr189_maybe_huff_left))
+      .field("dat_arr190", &vec_to_nice_debug(&self.dat_arr190_maybe_huff_right))
       .field("byte_run_length_frequency", &vec_to_nice_debug(&self.byte_run_length_frequency))
       .field("dat_arr192", &vec_to_nice_debug(&self.dat_arr192))
       .field("run_offset_bit_count_frequency", &vec_to_nice_debug(&self.run_offset_bit_count_frequency))
@@ -317,11 +325,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         byte_run_length_buffer: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH + 2],
         dat_arr167: vec![0; 17],
-        maybe_huff_used_values: vec![0; CONST_N141_IS_511 + 1],
+        tmp_huffman_values_to_visit: vec![0; CONST_N141_IS_511 + 1],
         dat_arr180: vec![0; CONST_N141_IS_511],
         dat_arr181: vec![0; CONST_N152_IS_19],
-        dat_arr189: vec![0; 2 * CONST_N141_IS_511 - 1],
-        dat_arr190: vec![0; 2 * CONST_N141_IS_511 - 1],
+        dat_arr189_maybe_huff_left: vec![0; 2 * CONST_N141_IS_511 - 1],
+        dat_arr190_maybe_huff_right: vec![0; 2 * CONST_N141_IS_511 - 1],
         byte_run_length_frequency: vec![0; 2 * CONST_N141_IS_511 - 1],
         dat_arr192: vec![0; CONST_N141_IS_511],
         run_offset_bit_count_frequency: vec![0; 2 * CONST_N142_IS_15 - 1],

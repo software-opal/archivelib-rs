@@ -5,67 +5,96 @@ use crate::compress::{CompressU16ArrayAlias, RCompressData};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  /// ZLib: `pqremove` - maybe
+  /// Moves the least frequent value to the start of the array.
+  ///
+  /// Seems to do this by:
+  ///  - Store the value at `start_index`
+  ///  - Set `last_index` = `start_index`
+  ///  - Loop
+  ///    - Set `current_index` = `2 * last_index`
+  ///    - break; if out of bounds
+  ///    - if `current_index + 1` is in bounds:
+  ///      - if `current_index + 1` is smaller than `current_index`:
+  ///        - add 1 to `current_index`
+  ///    - if `current_index` is smaller than start value:
+  ///      - break
+  ///    - otherwise:
+  ///      - Set the value at `last_index` to the value at `current_index`
+  ///  - Set the value at `last_index` to `current_index`
+  ///
+  /// Given that, initially, we call this with the `start_idx` of `max_idx / 2` down to `1`, this is guaranteed to have visited
+  ///
   /// Obfuscated name: `void _225(int _226,ushort *_187,short *_177,short _227);`
-  pub fn fn225_maybe_move_smallest_item_to_start(
+  pub fn move_smallest_value_to_start(
     &mut self,
-    run_start226: i32,
-    maybe_value_frequency: &CompressU16ArrayAlias<'_>,
-    var227: i16,
+    start_idx: i32,
+    value_frequencies: &CompressU16ArrayAlias<'_>,
+    max_idx: i16,
   ) {
     pure_fn225(
-      cast!(run_start226 as usize),
-      &maybe_value_frequency.slice_copy(self),
-      &mut self.maybe_huff_used_values,
-      cast!(var227 as usize),
+      cast!(start_idx as usize),
+      &value_frequencies.slice_copy(self),
+      &mut self.tmp_huffman_values_to_visit,
+      cast!(max_idx as usize),
     )
   }
 }
 
 pub fn pure_fn225(
   start_idx: usize,
-  frequencies: &[u16],
+  value_frequencies: &[u16],
   values: &mut [i16],
   // This must be at most `values.len() - 1`.
-  last_idx: usize,
+  max_idx: usize,
 ) {
-  eprintln!("fn225: {}..{}", start_idx, last_idx);
-  print_table(frequencies, &values[1..=last_idx]);
-  
-  let var289 = values[start_idx];
-  let mut current_idx = start_idx;
+  // eprintln!("fn225: {}..{}", start_idx, max_idx);
+  // print_table(value_frequencies, &values[1..=max_idx]);
+
+  let start_value = values[start_idx];
+  let mut last_idx = start_idx;
   loop {
-    eprintln!("Loop start: {}, {:#05X} => {}", current_idx, var289, frequencies[cast!(var289 as usize)]);
-    let mut run_length276 = 2 * current_idx;
-    eprintln!("RL: {}", run_length276);
-    if run_length276 > last_idx {
+    let mut current_idx = 2 * last_idx;
+    if current_idx > max_idx {
       break;
     }
-    eprintln!("RL values: [+0] = {:#05X} => {}; [+1] = {:#05X} => {}", 
-    values[run_length276], frequencies[cast!((values[run_length276]) as usize)],
-    values[run_length276+1], frequencies[cast!((values[run_length276+1]) as usize)]
-  );
-
-    if run_length276 < last_idx
-      && frequencies[cast!((values[run_length276]) as usize)]
-        > frequencies[cast!((values[run_length276 + 1]) as usize)]
+    // eprint!(
+    //   "({})Comparing {:#05X}({}) and {:03X?}({:?}) to the start value {:#05X}({})",
+    //   current_idx,
+    //   values[current_idx],
+    //   frequencies[cast!((values[current_idx]) as usize)],
+    //   if current_idx < max_idx {
+    //     Some(values[current_idx + 1])
+    //   } else {
+    //     None
+    //   },
+    //   if current_idx < max_idx {
+    //     Some(frequencies[cast!((values[current_idx + 1]) as usize)])
+    //   } else {
+    //     None
+    //   },
+    //   start_value,
+    //   cast!(start_value as usize)
+    // );
+    if current_idx < max_idx
+      && value_frequencies[cast!((values[current_idx]) as usize)]
+        > value_frequencies[cast!((values[current_idx + 1]) as usize)]
     {
-      eprintln!("Incremented RL");
-      run_length276 += 1
+      current_idx += 1
     }
-    if frequencies[cast!(var289 as usize)]
-      <= frequencies[cast!((values[run_length276]) as usize)]
+    if value_frequencies[cast!(start_value as usize)]
+      <= value_frequencies[cast!((values[current_idx]) as usize)]
     {
+      // eprintln!();
       break;
     }
-    values[current_idx] = values[run_length276];
-    current_idx = run_length276
+    // eprintln!(" -- Swapping {}", current_idx);
+    values[last_idx] = values[current_idx];
+    last_idx = current_idx
   }
-  values[current_idx] = var289;
-  print_table(frequencies, &values[1..=last_idx]);
+  values[last_idx] = start_value;
+  // print_table(value_frequencies, &values[1..=max_idx]);
 
-  eprintln!()
-
+  // eprintln!();
 }
 
 fn print_table(frequencies: &[u16], input: &[i16]) {
@@ -75,45 +104,171 @@ fn print_table(frequencies: &[u16], input: &[i16]) {
   });
 
   eprintln!(
-    "[\n{}\n]",
+    "[{}{}{}]",
+    if input.len() <= 8 { " " } else { "\n  " },
     index_freqs
       .enumerate()
       .flat_map(|(i, a)| [
-        if i == 0 {"  ".to_string()
-      }else if i % 8 == 0 {
+        if i == 0 {
+          "".to_string()
+        } else if i % 8 == 0 {
           ",\n  ".to_string()
         } else {
           ", ".to_string()
         },
         a
       ])
-      .collect::<String>()
+      .collect::<String>(),
+    if input.len() <= 8 { " " } else { "\n" }
   );
+}
+
+#[cfg(test)]
+mod invariant_test {
+  use std::{collections::HashMap, hash::Hash};
+
+  use super::*;
+  use proptest::prelude::*;
+
+  fn build_values(len: usize) -> Vec<i16> {
+    let mut values = (0..(len as i16)).collect::<Vec<_>>();
+    // `values` is 1-indexed.
+    values.insert(0, 0);
+    values
+  }
+
+  fn initial_sort(mut values: &mut [i16], frequencies: &[u16], len: usize) {
+    // This matches the setup in `_211`.
+    for i in (1..=(len / 2)).rev() {
+      pure_fn225(i, &frequencies, &mut values, len);
+    }
+  }
+
+  fn assert_result_have_smallest_values_at_index_1(result: &[i16], frequencies: &[u16]) {
+    let smallest = result[1];
+    let smallest_freq = frequencies.iter().min().unwrap();
+    assert_eq!(frequencies[smallest as usize], *smallest_freq);
+  }
+
+  fn test_with_frequencies(frequencies: &[u16]) {
+    let len = frequencies.len();
+    let mut values = build_values(len);
+
+    initial_sort(&mut values, frequencies, len);
+    // Can't guarantee a specific smallest item is moved; only that one of the smallest items is moved.
+    assert_result_have_smallest_values_at_index_1(&values, frequencies);
+  }
+
+  fn test_popping_values(frequencies: &[u16]) {
+    let mut len = frequencies.len();
+    let orig_len = len;
+    let mut values = build_values(len);
+
+    initial_sort(&mut values, frequencies, len);
+
+    let mut popped_freqs = vec![];
+    while len > 2 {
+      let smallest = values[1];
+      popped_freqs.push((smallest as usize, frequencies[smallest as usize]));
+
+      values[1] = values[len];
+      len -= 1;
+      pure_fn225(1, &frequencies, &mut values, len);
+    }
+    let  mut frequencies = frequencies
+      .iter()
+      .cloned()
+      .enumerate()
+      .collect::<Vec<_>>();
+
+    frequencies.sort_by_key(|(_, f)| *f);
+    let frequencies = frequencies.into_iter().take(orig_len - 2).collect::<Vec<_>>();
+    
+    assert_eq!(
+      popped_freqs.iter().map(|v| v.1).collect::<Vec<_>>(),
+      frequencies.iter().map(|v| v.1).collect::<Vec<_>>(),
+      "\nLeft: {:?};\nRigh: {:?}",
+      popped_freqs,
+      frequencies
+    );
+  }
+
+  proptest! {
+    #[test]
+    fn test_actually_finds_smallest_value_in_8_long_array(
+      frequencies in prop::array::uniform8(1_u16..)) {
+      test_with_frequencies(&frequencies)
+    }
+    #[test]
+    fn test_actually_finds_smallest_value_in_32_long_array(
+      frequencies in prop::array::uniform32(1_u16..)) {
+      test_with_frequencies(&frequencies)
+    }
+    #[test]
+    fn test_actually_finds_smallest_value_in_512_long_array(
+      frequencies in prop::array::uniform::<_, 512>(1_u16..)) {
+      test_with_frequencies(&frequencies)
+    }
+    #[test]
+    fn test_returns_each_of_the_smallest_items_in_the_array(
+      frequencies in prop::array::uniform::<_, 8>(1_u16..)) {
+        test_popping_values(&frequencies);
+    }
+  }
 }
 
 #[cfg(test)]
 mod tests {
   use super::*;
 
-  #[test]
-  fn test_something() {
-    let mut values = vec![0, 0x04, 0x08, 0x09, 0x10];
-    let frequencies = {
-      let mut frequencies = vec![0; 0x10 + 1];
-    frequencies[0x04] = 7;
-    frequencies[0x08] = 5;
-    frequencies[0x09] = 4;
-    frequencies[0x10] = 11;
+  macro_rules! value_frequencies {
+      (
+        $(
+          $val:expr => $fre:expr
+        ),*
+        $(,)?
+      ) => {
+        {
+        let values = [
+          0,
+          $($val,)*
+        ];
+        const LAST: usize = { $($val);* } as usize;
+        let mut frequencies = [0; LAST + 1];
+        $(
+          frequencies[$val] = $fre;
+        )*
 
-    frequencies
-    };
-
-    pure_fn225(1, &frequencies, &mut values, 4);
-    
-    assert_eq!(values, vec![0, 0x09, 0x08, 0x04, 0x10]);
+        (values.len() - 1, values, frequencies)
+      }
+      };
   }
 
+  #[test]
+  fn test_frequency_store() {
+    let (size, mut values, frequencies) = value_frequencies![
+      0x04 => 5,
+      0x09 => 3,
+      0x10 => 4,
+      0x14 => 9,
+      0x17 => 9,
+      0x18 => 9,
+      0x20 => 1,
+      0x24 => 9,
+    ];
 
+    // This matches the setup in `_211`.
+    for i in (1..=(size / 2)).rev() {
+      pure_fn225(i, &frequencies, &mut values, size);
+    }
+
+    // This isn't actually in sorted order, but what's important is that the first item is the
+    //  smallest item.
+    assert_eq!(
+      &values,
+      &[0, 0x20, 0x09, 0x010, 0x14, 0x17, 0x18, 0x04, 0x24]
+    );
+  }
 
   #[test]
   fn test_fn225_0() {

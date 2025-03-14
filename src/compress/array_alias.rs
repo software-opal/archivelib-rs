@@ -56,7 +56,7 @@ macro_rules! array_alias_enum {
           match self {
             $(
               $name::$key(idx) => {
-                eprintln!("update offset {} => {}", stringify!($target_arr), *idx);
+                eprintln!("update offset {} => {}", stringify!($target_arr), offset);
                 *idx = offset; 
                 *idx
               },
