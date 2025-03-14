@@ -86,6 +86,7 @@ fn read_one(reader: &mut impl Read) -> Result<Option<u8>> {
 }
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
+  /// Obfuscated name: _184
   pub fn compress(&mut self) -> Result<()> {
     let mut buffer_pos: usize = 0;
     let size_bitmask = self.max_uncompressed_data_size_bitmask;

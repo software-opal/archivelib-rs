@@ -20,6 +20,7 @@ fn test_compressing_lots_of_data_with_breaks() {
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   assert!(result.is_ok())
 }
+
 #[test]
 fn test_compressing_lots_of_data() {
   let input = {
@@ -86,7 +87,8 @@ Hakuna matata (hakuna matata, hakuna matata)
 Hakuna matata (hakuna matata, hakuna matata)
 (Hakuna matata, hakuna matata)
 (Hakuna matata, hakuna matata)
-".as_bytes();
+"
+  .as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 08 30 69 67 FF 11 98  C2 44 79 D0 22 05 39 70  A3 3C");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
@@ -109,7 +111,7 @@ fn test_compressing_a_run_of_identical_data() {
 
 #[test]
 fn test_compressing_a_small_data_block() {
-  let input = "a".as_bytes();
+  let input = "ab".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 03 28 04 4B FE 26 E4  54 74 E0 04 C0");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])

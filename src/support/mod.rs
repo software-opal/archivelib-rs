@@ -6,6 +6,7 @@ mod debug;
 mod bit_iter;
 mod max_size_writer;
 mod writer;
+pub mod binary_tree_printer;
 
 #[cfg(feature = "new_impl")]
 mod lah_reader;

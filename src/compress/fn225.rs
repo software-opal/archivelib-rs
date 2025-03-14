@@ -97,36 +97,8 @@ pub fn pure_fn225(
   // eprintln!();
 }
 
-fn print_table(frequencies: &[u16], input: &[i16]) {
-  let index_freqs = input.iter().map(|value| {
-    let freq = frequencies[cast!((*value) as usize)];
-    format!("{:#05X} => {}", value, freq)
-  });
-
-  eprintln!(
-    "[{}{}{}]",
-    if input.len() <= 8 { " " } else { "\n  " },
-    index_freqs
-      .enumerate()
-      .flat_map(|(i, a)| [
-        if i == 0 {
-          "".to_string()
-        } else if i % 8 == 0 {
-          ",\n  ".to_string()
-        } else {
-          ", ".to_string()
-        },
-        a
-      ])
-      .collect::<String>(),
-    if input.len() <= 8 { " " } else { "\n" }
-  );
-}
-
 #[cfg(test)]
 mod invariant_test {
-  use std::{collections::HashMap, hash::Hash};
-
   use super::*;
   use proptest::prelude::*;
 

@@ -8,33 +8,33 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn230(
     &mut self,
     bits_to_load219: i32,
-    item209: &CompressU8ArrayAlias<'_>,
-    var231: &mut CompressU16ArrayAlias<'_>,
+    tree_value_depths: &CompressU8ArrayAlias<'_>,
+    values_in_tree: &mut CompressU16ArrayAlias<'_>,
   ) {
     // Sibling method is fn258
     // Called with:
     // (CONST_N141_IS_511, dat_arr180, dat_arr192)
     // (CONST_N145_IS_19, dat_arr181, dat_arr194)
     // (CONST_N142_IS_15, dat_arr181, dat_arr194)
-    let item209_cpy = item209.slice_copy(self);
+    let tree_value_depths = tree_value_depths.slice_copy(self);
     let result = pure_fn230(
       cast!(bits_to_load219 as usize),
-      &self.dat_arr167,
-      &item209_cpy,
+      &self.huffman_tree_depth_counts,
+      &tree_value_depths,
     );
     for (i, &val) in result.iter().enumerate() {
-      var231.set(self, i, val);
+      values_in_tree.set(self, i, val);
     }
   }
 }
 
-fn pure_fn230(length: usize, dat_arr167: &[u16], item209: &[u8]) -> Vec<u16> {
+fn pure_fn230(length: usize, huffman_tree_depth_counts: &[u16], tree_value_depths: &[u8]) -> Vec<u16> {
   let mut lookup_table288 = [0_u16; 18];
   let mut var231 = vec![0_u16; length];
   for i in 1..=16 {
-    lookup_table288[i + 1] = ((lookup_table288[i] + dat_arr167[i]) << 1) as u16;
+    lookup_table288[i + 1] = ((lookup_table288[i] + huffman_tree_depth_counts[i]) << 1) as u16;
   }
-  for (i, &lookup_offset) in item209.iter().take(length).enumerate() {
+  for (i, &lookup_offset) in tree_value_depths.iter().take(length).enumerate() {
     var231[i] = lookup_table288[cast!(lookup_offset as usize)];
     lookup_table288[cast!(lookup_offset as usize)] += 1;
   }
@@ -53,7 +53,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr167 = vec![0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    cd.huffman_tree_depth_counts = vec![0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr181 = [0, 3, 2, 3, 0, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut input_dat_arr194 = [3, 5, 6, 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 

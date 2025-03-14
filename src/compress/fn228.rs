@@ -7,29 +7,33 @@ use crate::support::BitwiseWrite;
 mod part_one;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn228(
+  pub fn calculate_huffman_node_depth(
     &mut self,
-    var229: i32,
-    dat_arr_cursor178: &mut CompressU8ArrayAlias<'_>,
-    dat_arr_cursor188: &CompressU16ArrayAlias<'_>,
+    root_node_value: i32,
+    tree_value_depths: &mut CompressU8ArrayAlias<'_>,
+    values_in_tree: &CompressU16ArrayAlias<'_>,
   ) {
-    let new_arr167 = part_one::pure_fn228_part_one(
-      &self.dat_arr189_maybe_huff_left,
-      &self.dat_arr190_maybe_huff_right,
-      cast!((self.dat174_maybe_table_size) as usize),
-      cast!(var229 as usize),
+    let huffman_tree_depth_counts = part_one::pure_fn228_part_one(
+      &self.tmp_huffman_left_branch_nodes,
+      &self.tmp_huffman_right_branch_nodes,
+      cast!((self.tmp_huffman_table_min_node_value) as usize),
+      cast!(root_node_value as usize),
     );
-    for (i, &val) in new_arr167.iter().enumerate() {
-      self.dat_arr167[i] = val;
+    eprintln!("depths: {:?}", huffman_tree_depth_counts);
+    for (i, &val) in huffman_tree_depth_counts.iter().enumerate() {
+      self.huffman_tree_depth_counts[i] = val;
     }
 
     let mut offset = 0;
-    for (run_start226, &var289) in new_arr167.iter().enumerate().rev() {
+    // We can now set the depths of each leaf node by looping over the depth counter in reverse order and assigning the depth to that many items in `values_in_tree`.
+    // Note: `values_in_tree` is in ascending frequency order.
+    for (idx, &var289) in huffman_tree_depth_counts.iter().enumerate().rev() {
+      eprintln!("i: {}, {}, {}", idx, var289, offset);
       for _ in 0..var289 {
-        dat_arr_cursor178.set(
+        tree_value_depths.set(
           self,
-          dat_arr_cursor188.get(self, offset) as usize,
-          cast!(run_start226 as u8),
+          values_in_tree.get(self, offset) as usize,
+          cast!(idx as u8),
         );
         offset += 1;
       }
@@ -46,7 +50,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -81,7 +85,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -116,10 +120,10 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 19;
+    cd.tmp_huffman_table_min_node_value = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       20,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -135,7 +139,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 19, 14, 2, 10, 12, 0, 13, 24, 26,
       8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -172,7 +176,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 20, 11, 21, 22, 23, 9, 25, 27,
       28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -209,10 +213,10 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 19;
+    cd.tmp_huffman_table_min_node_value = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![6, 7, 1, 14, 2, 11, 10, 12, 0, 13, 9, 8, 0, 0, 0, 0, 0, 0, 0];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       29,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -228,7 +232,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 15, 0, 0, 2, 19, 20, 8, 21, 22, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -265,7 +269,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 7, 6, 0, 9, 1, 23, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -302,13 +306,13 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0,
     ];
-    cd.dat174_maybe_table_size = 15;
+    cd.tmp_huffman_table_min_node_value = 15;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![
       6, 8, 0, 57416, 57417, 57418, 14, 31, 1, 2, 57419, 57420, 57421, 57422, 57423, 57424, 57425,
       57426, 57427,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       16,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -324,7 +328,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -360,7 +364,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -397,7 +401,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0,
     ];
-    cd.dat174_maybe_table_size = 511;
+    cd.tmp_huffman_table_min_node_value = 511;
     let mut dat_arr_cursor178 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -447,7 +451,7 @@ mod tests {
       484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501,
       502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       562,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -482,7 +486,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -519,7 +523,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -556,7 +560,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 511;
+    cd.tmp_huffman_table_min_node_value = 511;
     let mut dat_arr_cursor178 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -606,7 +610,7 @@ mod tests {
       482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499,
       500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       606,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -641,7 +645,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 2, 4, 18, 1, 10, 9, 22, 0, 13, 24, 26,
       8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -678,7 +682,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 15, 16, 7, 17, 8, 19, 20, 21, 23, 23, 9, 25,
       27, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -715,12 +719,12 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 15;
+    cd.tmp_huffman_table_min_node_value = 15;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![
       0, 6, 5, 3, 2, 7, 4, 8, 1, 10, 9, 30, 13, 5, 62, 50459, 50460, 50461, 50462,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -736,7 +740,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 13, 7, 20, 10, 23, 24, 9, 8,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -773,7 +777,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 2, 12, 21, 22, 11, 25, 26, 27,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -810,10 +814,10 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 19;
+    cd.tmp_huffman_table_min_node_value = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![0, 1, 6, 13, 2, 7, 12, 10, 11, 9, 8, 0, 0, 0, 0, 0, 0, 0, 0];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       28,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -829,7 +833,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 8, 6, 10, 9, 18, 20, 22, 23, 24, 9, 8,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -866,7 +870,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 15, 4, 2, 5, 16, 17, 19, 21, 23, 11, 25, 26,
       27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -903,12 +907,12 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 15;
+    cd.tmp_huffman_table_min_node_value = 15;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![
       0, 1, 3, 7, 4, 8, 2, 6, 5, 10, 9, 13, 29, 62, 54555, 54556, 54557, 54558, 54559,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -924,7 +928,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -961,7 +965,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -998,7 +1002,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 511;
+    cd.tmp_huffman_table_min_node_value = 511;
     let mut dat_arr_cursor178 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1048,7 +1052,7 @@ mod tests {
       483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500,
       501, 502, 503, 504, 505, 506, 507, 508, 509, 510,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       590,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -1083,7 +1087,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 19, 20, 8, 21, 22, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1119,7 +1123,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 6, 0, 9, 1, 23, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1156,10 +1160,10 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0,
     ];
-    cd.dat174_maybe_table_size = 19;
+    cd.tmp_huffman_table_min_node_value = 19;
     let mut dat_arr_cursor178 = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut dat_arr_cursor188 = vec![2, 7, 6, 0, 8, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       24,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),
@@ -1175,7 +1179,7 @@ mod tests {
     let input = [0_u8; 0];
     let mut output = [0_u8; 0];
     let mut cd = RCompressData::new_with_io_writer(&input[..], &mut output[..], 10, true).unwrap();
-    cd.dat_arr189_maybe_huff_left = vec![
+    cd.tmp_huffman_left_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1210,7 +1214,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat_arr190_maybe_huff_right = vec![
+    cd.tmp_huffman_right_branch_nodes = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1245,7 +1249,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    cd.dat174_maybe_table_size = 511;
+    cd.tmp_huffman_table_min_node_value = 511;
     let mut dat_arr_cursor178 = vec![
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1295,7 +1299,7 @@ mod tests {
       492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
       510,
     ];
-    cd.fn228(
+    cd.calculate_huffman_node_depth(
       511,
       &mut CompressU8ArrayAlias::Custom(0, &mut dat_arr_cursor178),
       &CompressU16ArrayAlias::Custom(0, &mut dat_arr_cursor188),

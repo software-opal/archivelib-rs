@@ -1,93 +1,168 @@
+/// Takes a huffman tree and returns an array containing the number of leaves at each depth.
+///
+/// For example, a huffman tree containing 2 elements would return an array [0,2]; and a balanced
+///  tree with 4 elements would return `[0,0,4]`.
 pub fn pure_fn228_part_one(
-  dat_arr189: &[u16],
-  dat_arr190: &[u16],
+  huffman_left_branch_nodes: &[u16],
+  huffman_right_branch_nodes: &[u16],
   series_start: usize,
   initial_index: usize,
 ) -> [u16; 17] {
-  #![allow(unreachable_code)]
-  let mut dat_arr167 = [0_u16; 17];
-  calculate_pointer_depths(
-    dat_arr189,
-    dat_arr190,
-    &mut dat_arr167,
+  let mut huffman_tree_depth_counts = [0_u16; 17];
+  calculate_huffman_tree_depths(
+    huffman_left_branch_nodes,
+    huffman_right_branch_nodes,
+    &mut huffman_tree_depth_counts,
     0,
     series_start,
     initial_index,
   );
+  // With a tree of depth <= 16, this equals 0x10000. But when we get a deeper
+  // tree, it ends up greater than `0x10000`.
   let mut var458: u32 = 0;
-  for (i, &v) in dat_arr167.iter().enumerate().skip(1) {
+  for (i, &v) in huffman_tree_depth_counts.iter().enumerate().skip(1) {
     var458 += u32::from(v) << (16 - i);
   }
+  // There are `var458 - 0x10000` nodes at depth 17 or deeper. This loop appears to be emulating a
+  //  tree "rebalance". 
+  // 
+  // It appears to simulate bringing nodes from depth 15 down to depth 16. And if there are no nodes
+  //  at depth 15, then till pull 1 from depth 14 and promote one from depth 16. This repeats until
+  //  the entire tree is "balanced" at a maximum depth of 16. 
+  //
+  // This is likely used as a way to avoid the huffman table's worst case encoding where each
+  //  frequency follows the fabonichi sequence resulting in a lopsided table. In practice though,
+  //  such an input is hard to generate and even less likely to appear in the real world.
   while var458 != (1 << 16) {
-    pending_test!();
-    dat_arr167[16] -= 1;
-    let mut run_start226 = 15;
-    while run_start226 > 0 {
-      if dat_arr167[run_start226] == 0 {
-        run_start226 -= 1;
+    // The tree is over 16 branches deep.
+    huffman_tree_depth_counts[16] -= 1;
+    let mut idx = 15;
+    while idx > 0 {
+      if huffman_tree_depth_counts[idx] == 0 {
+        idx -= 1;
       } else {
-        dat_arr167[run_start226] -= 1;
-        dat_arr167[run_start226 + 1] += 2;
+        huffman_tree_depth_counts[idx] -= 1;
+        huffman_tree_depth_counts[idx + 1] += 2;
         break;
       }
     }
     var458 -= 1;
   }
-  dat_arr167
+  huffman_tree_depth_counts
 }
 
-pub fn calculate_pointer_depths(
+pub fn calculate_huffman_tree_depths(
   left_array_ptr: &[u16],
   right_array_ptr: &[u16],
   depth_store_ptr: &mut [u16],
   depth: usize,
   series_start: usize,
-  curr_idx: usize,
+  curr_node_value: usize,
 ) {
-  /*
-  * Pointer depth calculation?
-
-  * `left_array_ptr` & `right_array_ptr` contain a series(from `series_start`
-  to `curr_idx`) of integers that are `< curr_idx`. If they are between
-  `series_start` and `curr_idx`, then it's a pointer to another array index.
-  Otherwise it's not. This function calculates the number of non-pointer values
-  at each depth by following the pointers until a non-pointer, then
-  incrementing the count of depth by 1.
-
-  * Note that the pointers will link to the index of both arrays, and need to
-  be explored in both arrays. Each value is unique and there are no loops.
-
-  * Does `left_array_ptr` and `right_array_ptr` represent a binary tree?
-  */
-  if curr_idx < series_start {
+  // Values before `series_start` represent leaf nodes, values after it represent branches.
+  if curr_node_value < series_start {
+    // We've been given a leaf, so increment the current depth by 1.
     if depth < 16 {
       depth_store_ptr[depth] += 1;
     } else {
       depth_store_ptr[16] += 1;
     }
   } else {
-    calculate_pointer_depths(
+    // We've been given a branch node, so recurse down the left and right branches of the tree.
+    calculate_huffman_tree_depths(
       left_array_ptr,
       right_array_ptr,
       depth_store_ptr,
       depth + 1,
       series_start,
-      left_array_ptr[curr_idx] as usize,
+      left_array_ptr[curr_node_value] as usize,
     );
-    calculate_pointer_depths(
+    calculate_huffman_tree_depths(
       left_array_ptr,
       right_array_ptr,
       depth_store_ptr,
       depth + 1,
       series_start,
-      right_array_ptr[curr_idx] as usize,
+      right_array_ptr[curr_node_value] as usize,
     );
   };
 }
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+   use super::*;
+
+  #[test]
+  fn test_16_deep_unbalanced_tree() {
+    // An unbalanced tree, with only the right node containing branches.
+    // At a depth of 17, we start to see errors.
+    let left = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16,
+    ];
+    let right = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
+      29, 30, 31, 32, 33, 34, 35, 0,
+    ];
+    assert_eq!(
+      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+      pure_fn228_part_one(&left, &right, 20, 20)
+    );
+  }
+ 
+  #[test]
+  fn test_17_deep_unbalanced_tree() {
+    // An unbalanced tree, with only the right node containing branches.
+    // At a depth of 17, we enter the while loop.
+    let left = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17,
+    ];
+    let right = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
+      29, 30, 31, 32, 33, 34, 35, 36, 0,
+    ];
+    
+    assert_eq!(
+      // The "rebalance" moves a node from depth 15 to 16, and promotes the 2 nodes at depth 17 to
+      //  depth 16; meaning a total of 4 nodes at depth 16.
+      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 4],
+      pure_fn228_part_one(&left, &right, 20, 20)
+    );
+  }
+  #[test]
+  fn test_18_deep_unbalanced_tree() {
+    let left = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18
+    ];
+    let right = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
+      29, 30, 31, 32, 33, 34, 35, 36, 37, 0,
+    ];
+    
+    assert_eq!(
+      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 4],
+      pure_fn228_part_one(&left, &right, 20, 20)
+    );
+  }
+  #[test]
+  fn test_20_deep_unbalanced_tree() {
+    let left = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 0
+    ];
+    let right = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
+      29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 0,
+    ];    
+    assert_eq!(
+      // The "rebalance" moves all the nodes below depth 16 to depth 16, along with any necessary
+      //  nodes from higher depths to ensure it's still a binary tree.
+      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 8],
+      pure_fn228_part_one(&left, &right, 20, 20)
+    );
+  }
 
   #[test]
   fn test_fn228_0() {
