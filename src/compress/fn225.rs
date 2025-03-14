@@ -5,40 +5,115 @@ use crate::compress::{CompressU16ArrayAlias, RCompressData};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn225(&mut self, run_start226: i32, var187: &CompressU16ArrayAlias<'_>, var227: i16) {
+  /// ZLib: `pqremove` - maybe
+  /// Obfuscated name: `void _225(int _226,ushort *_187,short *_177,short _227);`
+  pub fn fn225_maybe_move_smallest_item_to_start(
+    &mut self,
+    run_start226: i32,
+    maybe_value_frequency: &CompressU16ArrayAlias<'_>,
+    var227: i16,
+  ) {
     pure_fn225(
       cast!(run_start226 as usize),
-      &var187.slice_copy(self),
-      &mut self.dat_arr177,
+      &maybe_value_frequency.slice_copy(self),
+      &mut self.maybe_huff_used_values,
       cast!(var227 as usize),
     )
   }
 }
 
-pub fn pure_fn225(mut run_start226: usize, var187: &[u16], var177: &mut [i16], upper_bound: usize) {
-  let var289 = var177[run_start226];
+pub fn pure_fn225(
+  start_idx: usize,
+  frequencies: &[u16],
+  values: &mut [i16],
+  // This must be at most `values.len() - 1`.
+  last_idx: usize,
+) {
+  eprintln!("fn225: {}..{}", start_idx, last_idx);
+  print_table(frequencies, &values[1..=last_idx]);
+  
+  let var289 = values[start_idx];
+  let mut current_idx = start_idx;
   loop {
-    let mut run_length276 = 2 * run_start226;
-    if run_length276 > upper_bound {
+    eprintln!("Loop start: {}, {:#05X} => {}", current_idx, var289, frequencies[cast!(var289 as usize)]);
+    let mut run_length276 = 2 * current_idx;
+    eprintln!("RL: {}", run_length276);
+    if run_length276 > last_idx {
       break;
     }
-    if run_length276 < upper_bound
-      && var187[cast!((var177[run_length276]) as usize)]
-        > var187[cast!((var177[run_length276 + 1]) as usize)]
+    eprintln!("RL values: [+0] = {:#05X} => {}; [+1] = {:#05X} => {}", 
+    values[run_length276], frequencies[cast!((values[run_length276]) as usize)],
+    values[run_length276+1], frequencies[cast!((values[run_length276+1]) as usize)]
+  );
+
+    if run_length276 < last_idx
+      && frequencies[cast!((values[run_length276]) as usize)]
+        > frequencies[cast!((values[run_length276 + 1]) as usize)]
     {
+      eprintln!("Incremented RL");
       run_length276 += 1
     }
-    if var187[cast!(var289 as usize)] <= var187[cast!((var177[run_length276]) as usize)] {
+    if frequencies[cast!(var289 as usize)]
+      <= frequencies[cast!((values[run_length276]) as usize)]
+    {
       break;
     }
-    var177[run_start226] = var177[run_length276];
-    run_start226 = run_length276
+    values[current_idx] = values[run_length276];
+    current_idx = run_length276
   }
-  var177[run_start226] = var289;
+  values[current_idx] = var289;
+  print_table(frequencies, &values[1..=last_idx]);
+
+  eprintln!()
+
 }
+
+fn print_table(frequencies: &[u16], input: &[i16]) {
+  let index_freqs = input.iter().map(|value| {
+    let freq = frequencies[cast!((*value) as usize)];
+    format!("{:#05X} => {}", value, freq)
+  });
+
+  eprintln!(
+    "[\n{}\n]",
+    index_freqs
+      .enumerate()
+      .flat_map(|(i, a)| [
+        if i == 0 {"  ".to_string()
+      }else if i % 8 == 0 {
+          ",\n  ".to_string()
+        } else {
+          ", ".to_string()
+        },
+        a
+      ])
+      .collect::<String>()
+  );
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  #[test]
+  fn test_something() {
+    let mut values = vec![0, 0x04, 0x08, 0x09, 0x10];
+    let frequencies = {
+      let mut frequencies = vec![0; 0x10 + 1];
+    frequencies[0x04] = 7;
+    frequencies[0x08] = 5;
+    frequencies[0x09] = 4;
+    frequencies[0x10] = 11;
+
+    frequencies
+    };
+
+    pure_fn225(1, &frequencies, &mut values, 4);
+    
+    assert_eq!(values, vec![0, 0x09, 0x08, 0x04, 0x10]);
+  }
+
+
 
   #[test]
   fn test_fn225_0() {

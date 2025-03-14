@@ -5,7 +5,8 @@ use crate::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn finalise_compresson197(&mut self) -> Result<()> {
+  /// Obfuscated name: `void _197()`
+  pub fn finalise_compresson(&mut self) -> Result<()> {
     if !self.uncompressible {
       self.fn207_maybe_flush_state_to_output()?;
       self.output_store.finalise()?;

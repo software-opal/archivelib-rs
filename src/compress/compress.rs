@@ -190,11 +190,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         if self.longest_run < 0 {
           break;
         }
-        let byte_or_run_length203 = match read_one(&mut self.input_store)? {
+        let input_byte = match read_one(&mut self.input_store)? {
           None => break,
           Some(n) => n,
         };
-        self.uncompressed_buffer[buffer_end_idx] = byte_or_run_length203;
+        self.uncompressed_buffer[buffer_end_idx] = input_byte;
         if (buffer_end_idx) < 256 - 1 {
           self.uncompressed_buffer[buffer_end_idx + buffer_size] = self.uncompressed_buffer[buffer_end_idx]
         }
@@ -237,6 +237,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       cast!((END_OF_FILE_FLAG + (UCHAR_MAX + 1 - MIN_RUN_LENGTH)) as u16),
       0,
     )?;
-    self.finalise_compresson197()
+    self.finalise_compresson()
   }
 }

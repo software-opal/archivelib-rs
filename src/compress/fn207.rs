@@ -11,21 +11,25 @@ const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Flush buffer?
-  /// Obfuscated name: _207()
+  /// 
+  /// ZLib: `_tr_flush_block` - maybe
+  /// Obfuscated name: `void _207()`
   pub fn fn207_maybe_flush_state_to_output(&mut self) -> Result<()> {
     let mut var456: u32 = 0_u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
-    let mut var229 = self.fn211(
+    eprintln!("Before {:#?}", self);
+    let mut var229 = self.fn211_maybe_build_huffman_table(
       cast!(CONST_N141_IS_511 as i32),
       &mut CompressU16ArrayAlias::ByteRunLengthFrequency(0),
       &mut CompressU8ArrayAlias::Array180(0),
       &mut CompressU16ArrayAlias::Array192(0),
     )?;
+    eprintln!("After {:#?}", self);
     let var455 = self.byte_run_length_frequency[cast!(var229 as usize)];
     self.output_store.write_bits(u32::from(var455), 16)?;
     if var229 >= cast!(CONST_N141_IS_511 as u32) {
       self.fn216(&mut var217);
-      var229 = self.fn211(
+      var229 = self.fn211_maybe_build_huffman_table(
         cast!(CONST_N145_IS_19 as i32),
         &mut CompressU16ArrayAlias::Custom(0, &mut var217),
         &mut CompressU8ArrayAlias::Array181(0),
@@ -60,7 +64,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         .output_store
         .write_bits(cast!(var229 as u32), cast!(CONST_N143_IS_9 as usize))?;
     }
-    var229 = self.fn211(
+    var229 = self.fn211_maybe_build_huffman_table(
       cast!(CONST_N142_IS_15 as i32),
       &mut CompressU16ArrayAlias::RunOffsetBitCountFrequency(0),
       &mut CompressU8ArrayAlias::Array181(0),

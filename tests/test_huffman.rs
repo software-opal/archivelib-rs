@@ -37,6 +37,61 @@ fn test_compressing_lots_of_data() {
 }
 
 #[test]
+fn test_compressing_hakuna_matata() {
+  let input = "
+Hakuna matata
+What a wonderful phrase
+Hakuna matata
+Ain't no passing craze
+It means no worries for the rest of your days
+It's our problem-free philosophy
+Hakuna matata
+
+Why, when he was a young warthog
+When I was a young warthog
+Very nice, thanks
+
+He found his aroma lacked a certain appeal
+He could clear the Savannah after every meal
+I'm a sensitive soul, though I seem thick-skinned
+And it hurt that my friends never stood downwind
+
+And oh, the shame (he was ashamed)
+Thought of changin' my name (what's in a name?)
+But I got downhearted (how did ya feel?)
+Every time that I
+Hey, Pumbaa! Not in front of the kids
+Oh, sorry
+
+Hakuna matata
+What a wonderful phrase
+Hakuna matata
+Ain't no passing craze
+It means no worries for the rest of your days
+Yeah, sing it kid
+It's our problem-free philosophy
+Hakuna matata
+
+Hakuna matata, hakuna matata
+Hakuna matata
+It means no worries for the rest of your days
+It's our problem-free philosophy
+Hakuna matata (hakuna matata, hakuna matata)
+Hakuna matata (hakuna matata, hakuna matata)
+Hakuna matata
+Hakuna matata
+
+Hakuna matata (hakuna matata, hakuna matata)
+(Hakuna matata, hakuna matata)
+Hakuna matata (hakuna matata, hakuna matata)
+(Hakuna matata, hakuna matata)
+(Hakuna matata, hakuna matata)
+".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 08 30 69 67 FF 11 98  C2 44 79 D0 22 05 39 70  A3 3C");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+#[test]
 fn test_compressing_a_little_bit_of_data() {
   let input = "abcdabcdZabcd".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
@@ -54,7 +109,7 @@ fn test_compressing_a_run_of_identical_data() {
 
 #[test]
 fn test_compressing_known_data_ab() {
-  let input = "ab".as_bytes();
+  let input = "GGaXaGXYGYXaZXGYbXbYcZZZ".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 03 28 04 4B FE 26  F3  0F 80 13");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])

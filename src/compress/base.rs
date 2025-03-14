@@ -124,7 +124,7 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   /// Obfuscated name: _167
   pub dat_arr167: Vec<u16>,
   /// Obfuscated name: _177
-  pub dat_arr177: Vec<i16>,
+  pub maybe_huff_used_values: Vec<i16>,
   /// Obfuscated name: _180
   pub dat_arr180: Vec<u8>,
   /// Obfuscated name: _181
@@ -167,7 +167,7 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   pub longest_run: i16,
   pub longest_run_offset: i16,
   pub dat173: i16,
-  pub dat174: i16,
+  pub dat174_maybe_table_size: i16,
   /// ZLib: `w_size`
   pub max_uncompressed_data_size: usize,
   /// ZLib: `w_mask`
@@ -214,7 +214,12 @@ fn vec_to_nice_debug<T: fmt::Debug + PartialEq>(v: &[T]) -> String {
     if base.len() > 1 {
       base += ", ";
     }
-    base += &format!("{:?} => {}", last, count);
+    base += &match count {
+      0 => "".to_owned(),
+      1 => format!("{:?}", last),
+      2 => format!("{:?}, {:?}", last, last),
+      _ => format!("{:?} => {}", last, count),
+    };
   }
   base + "]"
 }
@@ -223,33 +228,33 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
   fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
     formatter
       .debug_struct("RCompressData")
-      .field("dat_arr163", &vec_to_nice_debug(&self.byte_run_hash_table))
+      .field("byte_run_hash_table", &vec_to_nice_debug(&self.byte_run_hash_table))
       .field(
-        "dat_arr164",
+        "buffer_offset_byte_hash",
         &vec_to_nice_debug(&self.buffer_offset_byte_hash),
       )
-      .field("dat_arr165", &vec_to_nice_debug(&self.byte_run_length_buffer))
+      .field("byte_run_length_buffer", &vec_to_nice_debug(&self.byte_run_length_buffer))
       .field(
         "uncompressed_buffer",
         &vec_to_nice_debug(&self.uncompressed_buffer),
       )
       .field("dat_arr167", &vec_to_nice_debug(&self.dat_arr167))
-      .field("dat_arr177", &vec_to_nice_debug(&self.dat_arr177))
+      .field("dat_arr177", &vec_to_nice_debug(&self.maybe_huff_used_values))
       .field("dat_arr180", &vec_to_nice_debug(&self.dat_arr180))
       .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
       .field("dat_arr189", &vec_to_nice_debug(&self.dat_arr189))
       .field("dat_arr190", &vec_to_nice_debug(&self.dat_arr190))
-      .field("dat_arr191", &vec_to_nice_debug(&self.byte_run_length_frequency))
+      .field("byte_run_length_frequency", &vec_to_nice_debug(&self.byte_run_length_frequency))
       .field("dat_arr192", &vec_to_nice_debug(&self.dat_arr192))
-      .field("dat_arr193", &vec_to_nice_debug(&self.run_offset_bit_count_frequency))
+      .field("run_offset_bit_count_frequency", &vec_to_nice_debug(&self.run_offset_bit_count_frequency))
       .field("dat_arr194", &vec_to_nice_debug(&self.dat_arr194))
       .field("chars_written", &self.chars_written)
       .field("uncompressible", &self.uncompressible)
       .field("fail_uncompressible", &self.fail_uncompressible)
-      .field("dat168", &self.longest_run)
-      .field("dat169", &self.longest_run_offset)
+      .field("longest_run", &self.longest_run)
+      .field("longest_run_offset", &self.longest_run_offset)
       .field("dat173", &self.dat173)
-      .field("dat174", &self.dat174)
+      .field("dat174", &self.dat174_maybe_table_size)
       .field(
         "max_uncompressed_data_size",
         &self.max_uncompressed_data_size,
@@ -259,9 +264,9 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         &self.max_uncompressed_data_size_bitmask,
       )
       // .field("dat183_IS_CONST_8162", &self.dat183_IS_CONST_8162)
-      .field("array165_counter", &self.byte_or_run_buffer_index)
-      .field("bitwise_counter185", &self.byte_run_length_buffer_counter)
-      .field("array165_tmp_counter186", &self.byte_run_length_buffer_bit_flag_index)
+      .field("byte_or_run_buffer_index", &self.byte_or_run_buffer_index)
+      .field("byte_run_length_buffer_counter", &self.byte_run_length_buffer_counter)
+      .field("byte_run_length_buffer_bit_flag_index", &self.byte_run_length_buffer_bit_flag_index)
       .finish()
   }
 }
@@ -312,7 +317,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         byte_run_length_buffer: vec![0; CONST_N155_IS_8192],
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH + 2],
         dat_arr167: vec![0; 17],
-        dat_arr177: vec![0; CONST_N141_IS_511 + 1],
+        maybe_huff_used_values: vec![0; CONST_N141_IS_511 + 1],
         dat_arr180: vec![0; CONST_N141_IS_511],
         dat_arr181: vec![0; CONST_N152_IS_19],
         dat_arr189: vec![0; 2 * CONST_N141_IS_511 - 1],
@@ -330,7 +335,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         longest_run: 0,
         longest_run_offset: 0,
         dat173: 0,
-        dat174: 0,
+        dat174_maybe_table_size: 0,
         // dat183_IS_CONST_8162: cast!(CONST_N155_IS_8192 as u16) - ((3 * 8) + 6),
         byte_or_run_buffer_index: 0,
         byte_run_length_buffer_counter: 0,
