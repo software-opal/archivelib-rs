@@ -47,9 +47,6 @@ pub fn pure_fn225(
   // This must be at most `values.len() - 1`.
   max_idx: usize,
 ) {
-  // eprintln!("fn225: {}..{}", start_idx, max_idx);
-  // print_table(value_frequencies, &values[1..=max_idx]);
-
   let start_value = values[start_idx];
   let mut last_idx = start_idx;
   loop {
@@ -84,17 +81,12 @@ pub fn pure_fn225(
     if value_frequencies[cast!(start_value as usize)]
       <= value_frequencies[cast!((values[current_idx]) as usize)]
     {
-      // eprintln!();
       break;
     }
-    // eprintln!(" -- Swapping {}", current_idx);
     values[last_idx] = values[current_idx];
     last_idx = current_idx
   }
   values[last_idx] = start_value;
-  // print_table(value_frequencies, &values[1..=max_idx]);
-
-  // eprintln!();
 }
 
 #[cfg(test)]
@@ -147,15 +139,14 @@ mod invariant_test {
       len -= 1;
       pure_fn225(1, &frequencies, &mut values, len);
     }
-    let  mut frequencies = frequencies
-      .iter()
-      .cloned()
-      .enumerate()
-      .collect::<Vec<_>>();
+    let mut frequencies = frequencies.iter().cloned().enumerate().collect::<Vec<_>>();
 
     frequencies.sort_by_key(|(_, f)| *f);
-    let frequencies = frequencies.into_iter().take(orig_len - 2).collect::<Vec<_>>();
-    
+    let frequencies = frequencies
+      .into_iter()
+      .take(orig_len - 2)
+      .collect::<Vec<_>>();
+
     assert_eq!(
       popped_freqs.iter().map(|v| v.1).collect::<Vec<_>>(),
       frequencies.iter().map(|v| v.1).collect::<Vec<_>>(),

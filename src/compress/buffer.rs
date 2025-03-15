@@ -20,9 +20,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     `arg203` appears to be the bits in the file most of the time
     */
     let i: usize = arg203.try_into().unwrap();
-    self
-      .output_store
-      .write_bits(u32::from(self.byte_run_length_huff_encoding[i]), self.byte_run_length_huff_bit_length[i])?;
+    self.output_store.write_bits(
+      u32::from(self.byte_run_length_huff_encoding[i]),
+      self.byte_run_length_huff_bit_length[i],
+    )?;
     Ok(())
   }
 }

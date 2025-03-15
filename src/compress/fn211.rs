@@ -4,7 +4,6 @@ use std::io::Read;
 use super::array_alias::ArrayAlias;
 use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
 use crate::support::BitwiseWrite;
-use crate::support::binary_tree_printer::print_tree;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Builds a huffman tree in `_189` and `_190` and returns the root node's value.
@@ -47,11 +46,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// We then calculate the depths of the huffman tree's nodes, storing them in `tree_value_depths`.
   ///  We then use the depths to assign both the node's depth, and it's huffman encoding, storing
   ///  the results in `tree_value_depths` and `values_in_tree`.
-  /// 
+  ///
   /// To determine the exact huffman encoding for a specific value we would look up the value's
   ///  encoding in `values_in_tree`, and the number of bits used for that encoding in
   ///  `tree_value_depths`.
-  /// 
+  ///
   /// ZLib: `build_tree`
   ///
   /// Obfuscated name: `int _211(int _212, ushort *_213, uchar *_214, ushort *_215)`
@@ -96,7 +95,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       // `maybe_huff_used_values` starts at index 1 (index 0 appears unused).
       // Setup the `maybe_huff_used_values` to have the item with the smallest frequency at index 1
       let mut idx = (remaining_items / 2).try_into().unwrap();
-      eprintln!("item_counter: {}; idx: {}", remaining_items, idx);
       // Moves the item in `maybe_huff_used_values` with the lowest frequency to the start of the list.
       while idx >= 1 {
         self.move_smallest_value_to_start(idx, value_frequencies, cast!(remaining_items as i16));
@@ -157,13 +155,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
       // Reset the array's offset back to the beginning.
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
-      eprintln!("AAAAAAAAAA ::::: AAAAAAAAAA");
-      print_tree(
-        branch_value,
-        self.tmp_huffman_table_min_node_value,
-        &self.tmp_huffman_left_branch_nodes,
-        &self.tmp_huffman_right_branch_nodes,
-      );
 
       self.calculate_huffman_node_depth(
         cast!(branch_value as i32),
@@ -174,7 +165,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
       tree_value_depths.set_offset(self, dat_arr_cursor178_offset);
       self.assign_huffman_encoding(data_values_length, tree_value_depths, values_in_tree);
-      eprintln!("{:02X?}", values_in_tree.slice_copy(self));
       Ok(branch_value)
     }
   }

@@ -2,7 +2,7 @@
 ///
 /// For example, a huffman tree containing 2 elements would return an array [0,2]; and a balanced
 ///  tree with 4 elements would return `[0,0,4]`.
-/// 
+///
 /// Split from `_228`.
 pub fn pure_fn228_part_one(
   huffman_left_branch_nodes: &[u16],
@@ -26,11 +26,11 @@ pub fn pure_fn228_part_one(
     var458 += u32::from(v) << (16 - i);
   }
   // There are `var458 - 0x10000` nodes at depth 17 or deeper. This loop appears to be emulating a
-  //  tree "rebalance". 
-  // 
+  //  tree "rebalance".
+  //
   // It appears to simulate bringing nodes from depth 15 down to depth 16. And if there are no nodes
   //  at depth 15, then till pull 1 from depth 14 and promote one from depth 16. This repeats until
-  //  the entire tree is "balanced" at a maximum depth of 16. 
+  //  the entire tree is "balanced" at a maximum depth of 16.
   //
   // This is likely used as a way to avoid the huffman table's worst case encoding where each
   //  frequency follows the fabonichi sequence resulting in a lopsided table. In practice though,
@@ -93,7 +93,7 @@ pub fn calculate_huffman_tree_depths(
 
 #[cfg(test)]
 mod tests {
-   use super::*;
+  use super::*;
 
   #[test]
   fn test_16_deep_unbalanced_tree() {
@@ -112,7 +112,7 @@ mod tests {
       pure_fn228_part_one(&left, &right, 20, 20)
     );
   }
- 
+
   #[test]
   fn test_17_deep_unbalanced_tree() {
     // An unbalanced tree, with only the right node containing branches.
@@ -125,7 +125,7 @@ mod tests {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
       29, 30, 31, 32, 33, 34, 35, 36, 0,
     ];
-    
+
     assert_eq!(
       // The "rebalance" moves a node from depth 15 to 16, and promotes the 2 nodes at depth 17 to
       //  depth 16; meaning a total of 4 nodes at depth 16.
@@ -137,13 +137,13 @@ mod tests {
   fn test_18_deep_unbalanced_tree() {
     let left = [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-      11, 12, 13, 14, 15, 16, 17, 18
+      11, 12, 13, 14, 15, 16, 17, 18,
     ];
     let right = [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
       29, 30, 31, 32, 33, 34, 35, 36, 37, 0,
     ];
-    
+
     assert_eq!(
       [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 4],
       pure_fn228_part_one(&left, &right, 20, 20)
@@ -153,12 +153,12 @@ mod tests {
   fn test_20_deep_unbalanced_tree() {
     let left = [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-      11, 12, 13, 14, 15, 16, 17, 18, 19, 0
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 0,
     ];
     let right = [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 25, 26, 27, 28,
       29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 0,
-    ];    
+    ];
     assert_eq!(
       // The "rebalance" moves all the nodes below depth 16 to depth 16, along with any necessary
       //  nodes from higher depths to ensure it's still a binary tree.

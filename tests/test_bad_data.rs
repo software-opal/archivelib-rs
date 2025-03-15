@@ -1,5 +1,5 @@
-use std::{collections::HashSet};
 use rand::seq::SliceRandom;
+use std::collections::HashSet;
 
 fn is_without_runs(test: &[u8]) -> bool {
   let exp: usize = test.len() - 2;

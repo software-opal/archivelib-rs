@@ -45,13 +45,14 @@ fn generate_huffman_encoding(
   for i in 1..=16 {
     next_bit_for_depth[i + 1] = (next_bit_for_depth[i] + huffman_tree_depth_counts[i]) << 1;
   }
-  println!("{:04X?}", next_bit_for_depth);
   for (value, &value_node_depth) in tree_value_depths
     .iter()
     .take(data_values_length)
     .enumerate()
   {
-    if value_node_depth == 0 {continue;}
+    if value_node_depth == 0 {
+      continue;
+    }
     // Note: Values where `value_node_depth` is zero (I.E. not in the tree) will be filled with an
     //  incrementing number.
     value_to_bits[value] = next_bit_for_depth[cast!(value_node_depth as usize)];

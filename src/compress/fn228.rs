@@ -8,7 +8,7 @@ mod part_one;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Calculates the node depths for each leaf in the tree.
-  /// 
+  ///
   /// This operates in two parts:
   ///  - The first part calculates the number of leaves are at each depth. This step also rebalances
   ///     the tree (by adjusting depth counts) if the tree is more than 16 nodes deep. Presumably to
@@ -16,14 +16,14 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   ///  - Then using this depth count, we assign each leaf node a depth irrespective of their actual
   ///     location in the tree. This ensures the depth rebalancing is applied to the resulting
   ///     encoding.
-  /// 
+  ///
   /// Conversion note: This function previously operated attributes on the C++ class that were
   ///                   reassigned to different arrays and array offsets based on the exact huffman
   ///                   table being generated. In Rust that's a lot harder due to the borrow checker
   ///                   existing; so instead we pass an enum where each enum value represents a
   ///                   different array; and each operation expects a `self` parameter to perform
   ///                   the operation on.
-  /// 
+  ///
   /// Obfuscated name: void _228(int _229)
   pub fn calculate_huffman_node_depth(
     &mut self,
@@ -37,7 +37,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       cast!((self.tmp_huffman_table_min_node_value) as usize),
       cast!(root_node_value as usize),
     );
-    eprintln!("depths: {:?}", huffman_tree_depth_counts);
     for (i, &val) in huffman_tree_depth_counts.iter().enumerate() {
       self.huffman_tree_depth_counts[i] = val;
     }
@@ -45,10 +44,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let mut offset = 0;
     // We can now set the depths of each *leaf* node by looping over the depth counter in reverse
     // order and assigning the depth to that many items in `values_in_tree`.
-    // 
+    //
     // Note: `values_in_tree` contains only the leaf nodes in ascending frequency order.
     for (idx, &var289) in huffman_tree_depth_counts.iter().enumerate().rev() {
-      eprintln!("i: {}, {}, {}", idx, var289, offset);
       for _ in 0..var289 {
         tree_value_depths.set(
           self,
@@ -58,7 +56,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         offset += 1;
       }
     }
-    eprintln!("{:?}", tree_value_depths.slice_copy(self));
   }
 }
 

@@ -55,11 +55,7 @@ macro_rules! array_alias_enum {
         fn set_offset(&mut self, _parent: &$parent, offset: usize) -> usize {
           match self {
             $(
-              $name::$key(idx) => {
-                eprintln!("update offset {} => {}", stringify!($target_arr), offset);
-                *idx = offset; 
-                *idx
-              },
+              $name::$key(idx) => {                *idx = offset;                 *idx              },
             )*
             $name::Custom(idx, _) => {*idx = offset; *idx},
           }
@@ -83,10 +79,7 @@ macro_rules! array_alias_enum {
         fn set(&mut self, parent: &mut $parent, index: usize, item: Self::Item) {
           match self {
             $(
-              $name::$key( idx) => {
-                eprintln!("set {}[{}] = {:#05X}", stringify!($target_arr), *idx + index, item);
-                parent.$target_arr[*idx + index] = item
-              },
+              $name::$key( idx) => {                parent.$target_arr[*idx + index] = item              },
             )*
             $name::Custom( idx, arr) => arr[*idx + index] = item,
           }

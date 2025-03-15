@@ -38,7 +38,10 @@ impl BitwiseWrite for ExpectedCallWriter {
       .try_into()
       .map_err(|_| format!("Cannot convert bit_count({:#X?}) to usize", bits))
       .unwrap();
-    assert!(bit_count <= self.max_bit_count(), "Too many bits written at once");
+    assert!(
+      bit_count <= self.max_bit_count(),
+      "Too many bits written at once"
+    );
 
     assert!(
       !self.calls.is_empty(),

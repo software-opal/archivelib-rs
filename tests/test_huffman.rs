@@ -110,14 +110,16 @@ fn test_compressing_a_run_of_identical_data() {
 }
 
 #[test]
-fn test_compressing_a_sample_data() {
+fn test_compressing_the_example_data() {
   let input = "I am what I am; ABABABAB".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
-  let compressed_ab = hex!("
+  let compressed_ab = hex!(
+    "
     00 11 43 49 B5 4F FA 0C  F2 06 E0 A8 39 01 FC 38
     18 3B 69 3A DA 5C DC 54  40 50 2A 32 55 9B 9F 0C
     FC FC
-  ");
+  "
+  );
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
 #[test]

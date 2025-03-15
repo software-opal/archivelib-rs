@@ -3,8 +3,7 @@ use std::io::Read;
 
 use crate::compress::{RCompressData, Result};
 use crate::consts::{
-  BYTE_RUN_HASH_BITMASK, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH,
-  MIN_RUN_LENGTH,
+  BYTE_RUN_HASH_BITMASK, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH,
 };
 use crate::support::BitwiseWrite;
 
@@ -20,9 +19,9 @@ fn update_byte_run_hash(
     & cast!(BYTE_RUN_HASH_BITMASK as i16)
 }
 /// Insert a value into the byte run hash table.
-/// 
+///
 /// See `RCompressData.byte_run_hash_table` for more details.
-/// 
+///
 /// Obfuscated name: _447
 fn insert_byte_run_hash_entry(
   byte_run_hash_table: &mut [i16],
@@ -33,7 +32,7 @@ fn insert_byte_run_hash_entry(
   let prev_byte_run_pos = byte_run_hash_table[cast!(current_byte_run_hash as usize)];
   if prev_byte_run_pos != -1 {
     // Another offset has the same hash, so we need to update our hash table so we can still follow
-    //  the links to all the occurrences of this hash 
+    //  the links to all the occurrences of this hash
     buffer_offset_byte_hash[cast!(prev_byte_run_pos as usize)] = cast!(current_buffer_pos as i16);
   }
   buffer_offset_byte_hash[cast!(current_buffer_pos as usize)] = current_byte_run_hash;
@@ -42,10 +41,10 @@ fn insert_byte_run_hash_entry(
 }
 
 /// Removes an entry from the hash table when we have overwritten the byte in the buffer.
-/// 
+///
 /// See `RCompressData.byte_run_hash_table` & `RCompressData.buffer_offset_byte_hash` for more
 ///  details.
-/// 
+///
 /// Obfuscated name: _448
 fn clear_byte_run_hash_table_entry(
   byte_run_hash_table: &mut [i16],
@@ -158,7 +157,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       };
       self.uncompressed_buffer[buffer_end_idx] = byte;
       if (buffer_end_idx) < 256 - 1 {
-        self.uncompressed_buffer[buffer_end_idx + buffer_size] = self.uncompressed_buffer[buffer_end_idx]
+        self.uncompressed_buffer[buffer_end_idx + buffer_size] =
+          self.uncompressed_buffer[buffer_end_idx]
       }
       clear_byte_run_hash_table_entry(
         &mut self.byte_run_hash_table,
@@ -181,8 +181,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         let val = u16::from(self.uncompressed_buffer[buffer_pos]);
         self.write_byte_or_run_into_buffer(val, 0)?;
       } else {
-        let a1 =
-          cast!((self.longest_run + cast!((UCHAR_MAX + 1 - MIN_RUN_LENGTH) as i16)) as u16);
+        let a1 = cast!((self.longest_run + cast!((UCHAR_MAX + 1 - MIN_RUN_LENGTH) as i16)) as u16);
         let a2 = cast!((self.longest_run_offset) as u16);
         self.write_byte_or_run_into_buffer(a1, a2)?;
       }
@@ -197,7 +196,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         };
         self.uncompressed_buffer[buffer_end_idx] = input_byte;
         if (buffer_end_idx) < 256 - 1 {
-          self.uncompressed_buffer[buffer_end_idx + buffer_size] = self.uncompressed_buffer[buffer_end_idx]
+          self.uncompressed_buffer[buffer_end_idx + buffer_size] =
+            self.uncompressed_buffer[buffer_end_idx]
         }
         clear_byte_run_hash_table_entry(
           &mut self.byte_run_hash_table,

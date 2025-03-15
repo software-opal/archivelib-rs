@@ -91,32 +91,32 @@ The huffman tree is generated in `build_huffman_encoding` (`_211`).
 Of note, any value in the tree greater than or equal to `0x1FF` (I.E. `EOF flag + 1`) represents a branch in the tree, and anything less than that value represents a leaf node.
 
 ```
-Tree             | Frequency
-0x20A            - 1
- ┝ 0x208         - 8
- │ ┝ 0x205       - 4
- │ │ ┝ 0x061     - 2 -- `a`
- │ │ ┕ 0x1FF     - 2
- │ │   ┝ 0x03B   - 1 -- `;`
- │ │   ┕ 0x1FE   - 1 -- EOF
- │ ┕ 0x020       - 4 -- ` `
- ┕ 0x209         - 1
-   ┝ 0x206       - 1
-   │ ┝ 0x201     - 2
-   │ │ ┝ 0x074   - 1 -- `t`
-   │ │ ┕ 0x101   - 1 -- Run of 4 bytes
-   │ ┕ 0x202     - 1
-   │   ┝ 0x049   - 1 -- `I`
-   │   ┕ 0x077   - 1 -- `w`
-   ┕ 0x207       - 1
-     ┝ 0x203     - 1
-     │ ┝ 0x041   - 1 -- `A`
-     │ ┕ 0x103   - 1 -- Run of 6 bytes
-     ┕ 0x204     - 1
-       ┝ 0x068   - 1 -- `h`
-       ┕ 0x200   - 1
-         ┝ 0x042 - 1 -- `B`
-         ┕ 0x06D - 1 -- `m`
+Tree              | Value/Node | Frequency
+┐                       0x20A  - 17
+├─0-┐                   0x208  - 8
+│   ├─0-┐               0x205  - 4
+│   │   ├─0-          0x061    - 2
+│   │   └─1-┐           0x1FF  - 2
+│   │       ├─0-      0x03B    - 1
+│   │       └─1-      0x1FE    - 1
+│   └─1-              0x020    - 4
+└─1-┐                   0x209  - 9
+    ├─0-┐               0x206  - 4
+    │   ├─0-┐           0x201  - 2
+    │   │   ├─0-      0x074    - 1
+    │   │   └─1-      0x101    - 1
+    │   └─1-┐           0x202  - 2
+    │       ├─0-      0x049    - 1
+    │       └─1-      0x077    - 1
+    └─1-┐               0x207  - 5
+        ├─0-┐           0x203  - 2
+        │   ├─0-      0x041    - 1
+        │   └─1-      0x103    - 1
+        └─1-┐           0x204  - 3
+            ├─0-      0x068    - 1
+            └─1-┐       0x200  - 2
+                ├─0-  0x042    - 1
+                └─1-  0x06D    - 1
 ```
 
 As part of this process, the leaf nodes are also inserted into `values_in_tree` in the order they were inserted.
@@ -157,21 +157,59 @@ And then using these depths we are able to build a huffman encoding for this dat
 
 Or a tree that looks like this:
 ```
-┬─0─┬─0─ 0x020
-│   ┕─1─┬─0- 0x061 -- 
-│       ┕─1─┬─0- 0x041
-│           ┕─1─ 0x042
-┕─1─┬─0─┬─0─┬─0─ 0x049 --
-    │   │   ┕─1─ 0x068 -- 
-    │   ┕─1─┬─0- 0x06D -- 
-    │       ┕─1─ 0x074 -- 
-    ┕─1─┬─0─┬─0─ 0x077 --
-        │   ┕─1─ 0x101 -- 
-        ┕─1─┬─0- 0x103 -- 
-            ┕─1─┬─0- 0x03B
-                ┕─1─ 0x1FE
+┐
+├─0─┐
+│   ├─0─ 0x020
+│   └─1─┐
+│       ├─0- 0x061 
+│       └─1─┐
+│           ├─0- 0x041
+│           └─1─ 0x042
+└─1─┐
+    ├─0─┐
+    │   ├─0─┐
+    │   │   ├─0─ 0x049
+    │   │   └─1─ 0x068 
+    │   └─1─┐
+    │       ├─0- 0x06D 
+    │       └─1─ 0x074 
+    └─1─┐
+        ├─0─┐
+        │   ├─0─ 0x077
+        │   └─1─ 0x101 
+        └─1─┐
+            ├─0- 0x103 
+            └─1─┐
+                ├─0- 0x03B
+                └─1─ 0x1FE
 ```
-Note how the tree looks the same, but the node values are moved, placing higher frequency values at the start and lower frequencies at the bottom. 
+Note how the tree has the same size as before, but the values are moved to place the higher frequency values at the start and lower frequencies at the bottom.
+
+In the generated huffman tree, `0x035` has an encoding of `0b0010`, but in this sorted tree, it has an encoding of `0b11110`. This doesn't change the effectiveness of the tree, as `0x042` (the value at `0b11110` in the originally generated tree) has the same frequency (`1`).
+
+## Actually writing information to the bit buffer
+
+The first two bytes will be the frequency of the root node, or the total frequency of all the leaves in `byte_run_length_frequency`.
+
+In our example, this is `17` or `0x0011`; which is written in big-endian order, so `0x00 0x11` are written to the file.
+
+
+
+The next bits that are written are:
+
+Writing 5 bits from 0b01000
+Writing 3 bits from 0b011
+Writing 3 bits from 0b010
+Writing 3 bits from 0b010
+Writing 2 bits from 0b01
+Writing 3 bits from 0b101
+Writing 3 bits from 0b101
+Writing 3 bits from 0b010
+Writing 3 bits from 0b100
+
+Writing by 0x43
+Writing by 0x49
+Writing by 0xB5
 
 
 

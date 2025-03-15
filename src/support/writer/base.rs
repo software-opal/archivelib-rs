@@ -71,6 +71,13 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
       .map_err(|_| format!("Cannot convert bit_count({:#X?}) to u8", bits))
       .unwrap();
     assert!(bit_count <= 16);
+    if bit_count == 0 {
+      return Ok(());
+    }
+
+    let trunc_bits = bits & (0xFFFF >> (16 - bit_count));
+    eprintln!("Writing {} bits from {:#018b}", bit_count, trunc_bits);
+
     if bit_count > 0 {
       let bit_array = bits.to_bits();
       self.buffer.extend(

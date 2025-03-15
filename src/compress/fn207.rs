@@ -11,13 +11,10 @@ const CHAR_BIT: usize = 8;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Flush buffer?
-  /// 
+  ///
   /// ZLib: `_tr_flush_block` - maybe
   /// Obfuscated name: `void _207()`
   pub fn fn207_maybe_flush_state_to_output(&mut self) -> Result<()> {
-    eprintln!("{:02X?}", self.byte_run_length_buffer);
-    eprintln!("{:02X?}", &self.byte_run_length_frequency[..CONST_N141_IS_511]);
-    eprintln!("{:02X?}",& self.run_offset_bit_count_frequency[..16]);
     let mut var456: u32 = 0_u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
 
@@ -27,7 +24,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       &mut CompressU8ArrayAlias::ByteRunLengthHuffBitLength(0),
       &mut CompressU16ArrayAlias::ByteRunLengthHuffEncoding(0),
     )?;
-    panic!();
+
     // Huffman tables have the property that the frequency of the root node is the sum of the
     //  frequencies of all the nodes in the tree. This saves us having to count the frequencies
     //  again.
@@ -37,6 +34,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     if run_length_root_node >= cast!(CONST_N141_IS_511 as u32) {
       // The root node represents a branch, meaning there were 2 or mode nodes in the tree.
       self.fn216(&mut var217);
+      eprintln!("var217: {:02X?}", var217);
       run_length_root_node = self.build_huffman_encoding(
         cast!(CONST_N145_IS_19 as i32),
         &mut CompressU16ArrayAlias::Custom(0, &mut var217),
@@ -44,19 +42,23 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         &mut CompressU16ArrayAlias::Array194(0),
       )?;
       if run_length_root_node >= cast!(CONST_N145_IS_19 as u32) {
+        eprintln!("218");
         self.fn218(
           cast!(CONST_N145_IS_19 as i16),
           cast!(CONST_N147_IS_5 as i16),
           3_i16,
         )?;
       } else {
+        eprintln!("not 218");
         self
           .output_store
           .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
-        self
-          .output_store
-          .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N147_IS_5 as usize))?;
+        self.output_store.write_bits(
+          cast!(run_length_root_node as u32),
+          cast!(CONST_N147_IS_5 as usize),
+        )?;
       }
+      panic!();
       self.fn222()?;
     } else {
       // Byte/Run length root node represents a value(I.E. there is only 1 node).
@@ -69,9 +71,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       self
         .output_store
         .write_bits(0_u8, cast!(CONST_N143_IS_9 as usize))?;
-      self
-        .output_store
-        .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N143_IS_9 as usize))?;
+      self.output_store.write_bits(
+        cast!(run_length_root_node as u32),
+        cast!(CONST_N143_IS_9 as usize),
+      )?;
     }
     run_length_root_node = self.build_huffman_encoding(
       cast!(CONST_N142_IS_15 as i32),
@@ -89,9 +92,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       self
         .output_store
         .write_bits(0_u8, cast!(CONST_N540_IS_5 as usize))?;
-      self
-        .output_store
-        .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N540_IS_5 as usize))?;
+      self.output_store.write_bits(
+        cast!(run_length_root_node as u32),
+        cast!(CONST_N540_IS_5 as usize),
+      )?;
     }
     let mut var454 = 0_u32;
     for run_start226 in 0..frequency_sum {
