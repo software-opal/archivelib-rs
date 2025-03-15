@@ -3,13 +3,15 @@ use std::io::Read;
 
 use super::array_alias::ArrayAlias;
 use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
-use crate::support::binary_tree_printer::print_tree;
 use crate::support::BitwiseWrite;
+use crate::support::binary_tree_printer::print_tree;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Builds a huffman tree in `_189` and `_190` and returns the root node's value.
   ///
   /// Returns the "value" of the tree's root node.
+  ///
+  /// Values in the range `0.._212` are "real values"; and `_212..` are binary tree nodes.
   ///
   /// The huffman trees are built from an array mapping `value`s to `frequency`. This is stored in
   ///  `value_frequencies` (`_213`).
@@ -20,38 +22,42 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// We first find all the values with a non zero frequency, and store them in
   ///  `tmp_huffman_values_to_visit` (`_177`) starting with index `1`. So for a frequency table
   ///  `[0,5,4,0,1]` we would expected that list to equal `[0, 0x01, 0x02, 0x04]`.
-  /// 
+  ///
   /// Then we call `_225` a number of times to update the `_177` array to put the value with the
   /// lowest frequency at the `1` index in the array. So we would expect the above array to have
   /// `0x04` at index 1.
-  /// 
+  ///
   /// Then whilst we have more than 2 items in `_177`, we:
   /// - We then pop that lowest frequency value off the array. We do this by swapping index `1` with
   ///   the last item, and then shortening the array's length.
   /// - We append the lowest frequency value to the end of `_215`
   /// - We then call `_225` once to place the next lowest frequency item to the start of the array.
-  /// - We append the 2nd lowest frequency value (now at position 1 in `_177` after the `_225` call) to the
-  ///    end of `_215`
-  /// - We then combine the lowest frequency value and the 2nd lowest frequency (now at position 1 in
-  ///    the `_177`) into a "node". This node's value starts at `max_data_value` (e.g. `0x1FF` for
-  ///    byte data) and is incremented each time a node is created.
+  /// - We append the 2nd lowest frequency value (now at position 1 in `_177` after the `_225` call)
+  ///    to the end of `_215`
+  /// - We then combine the lowest frequency value and the 2nd lowest frequency (now at position 1
+  ///    in the `_177`) into a "node". This node's value starts at `max_data_value` (e.g. `0x1FF`
+  ///    for byte data) and is incremented each time a node is created.
   /// - This node's value is placed at index 1, and the frequency is written to the frequency array
   ///    as the sum of it's two leaf node's frequencies. Then the lowest and 2nd lowest values are
   ///    written into the `_189[node_value]` and `_190[node_value]` respectively.
-  /// 
-  /// This means that we've now got a root node, and the binary tree stored in `_189` and `_190`; and we have an ascending order list of nodes in `_215`.
-  /// 
-  /// Then we do stuff??
-  /// 
-  /// We can then use `_189` and `_190` to traverse the binary tree by looking up the root node's
-  /// value in the tree to find it's two leaves; and then proceeding down.
   ///
-  /// ZLib: `build_tree` 
+  /// This means that we've now got a root node, and the binary tree stored in `_189` and `_190`;
+  ///  and we have an ascending order list of nodes in `_215`.
+  ///
+  /// We then calculate the depths of the huffman tree's nodes, storing them in `tree_value_depths`.
+  ///  We then use the depths to assign both the node's depth, and it's huffman encoding, storing
+  ///  the results in `tree_value_depths` and `values_in_tree`.
   /// 
+  /// To determine the exact huffman encoding for a specific value we would look up the value's
+  ///  encoding in `values_in_tree`, and the number of bits used for that encoding in
+  ///  `tree_value_depths`.
+  /// 
+  /// ZLib: `build_tree`
+  ///
   /// Obfuscated name: `int _211(int _212, ushort *_213, uchar *_214, ushort *_215)`
   pub fn fn211_maybe_build_huffman_table(
     &mut self,
-    max_data_value: i32,
+    data_values_length: i32,
     // array aliases act like a mutable pointer to an array pointer.
     // The act like an array, but also allow changing which index is the start of the array.
     // We need to do this to allow us to mutate these arrays across multiple methods.
@@ -64,8 +70,8 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let dat_arr_cursor178_offset = tree_value_depths.offset(self);
     let values_in_tree_orig_offset = values_in_tree.offset(self);
 
-    self.tmp_huffman_table_min_node_value = cast!(max_data_value as i16);
-    let mut next_branch_idx = cast!(max_data_value as u32);
+    self.tmp_huffman_table_min_node_value = cast!(data_values_length as i16);
+    let mut next_branch_idx = cast!(data_values_length as u32);
     // Note: 1-indexed.
     let mut remaining_items = 0;
     self.tmp_huffman_values_to_visit[1] = 0;
@@ -148,11 +154,16 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
       // At this point we have a binary tree stored in `_189` and `_190` with the root node at
       //  `branch_value`. Traversal is by looking up `branch_value` in `_189` and `_190`.
- 
+
       // Reset the array's offset back to the beginning.
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
       eprintln!("AAAAAAAAAA ::::: AAAAAAAAAA");
-      print_tree(branch_value, self.tmp_huffman_table_min_node_value, &self.tmp_huffman_left_branch_nodes, &self.tmp_huffman_right_branch_nodes);
+      print_tree(
+        branch_value,
+        self.tmp_huffman_table_min_node_value,
+        &self.tmp_huffman_left_branch_nodes,
+        &self.tmp_huffman_right_branch_nodes,
+      );
 
       self.calculate_huffman_node_depth(
         cast!(branch_value as i32),
@@ -160,10 +171,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         values_in_tree,
       );
 
-      
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
       tree_value_depths.set_offset(self, dat_arr_cursor178_offset);
-      self.fn230(max_data_value, tree_value_depths, values_in_tree);
+      self.assign_huffman_encoding(data_values_length, tree_value_depths, values_in_tree);
+      panic!();
       Ok(branch_value)
     }
   }

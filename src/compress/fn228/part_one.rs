@@ -2,6 +2,8 @@
 ///
 /// For example, a huffman tree containing 2 elements would return an array [0,2]; and a balanced
 ///  tree with 4 elements would return `[0,0,4]`.
+/// 
+/// Split from `_228`.
 pub fn pure_fn228_part_one(
   huffman_left_branch_nodes: &[u16],
   huffman_right_branch_nodes: &[u16],
@@ -51,6 +53,7 @@ pub fn pure_fn228_part_one(
   huffman_tree_depth_counts
 }
 
+/// Obfuscated name: `void _232(int _226)`
 pub fn calculate_huffman_tree_depths(
   left_array_ptr: &[u16],
   right_array_ptr: &[u16],
