@@ -55,7 +55,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// ZLib: `build_tree`
   ///
   /// Obfuscated name: `int _211(int _212, ushort *_213, uchar *_214, ushort *_215)`
-  pub fn fn211_maybe_build_huffman_table(
+  pub fn build_huffman_encoding(
     &mut self,
     data_values_length: i32,
     // array aliases act like a mutable pointer to an array pointer.
@@ -174,7 +174,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
       tree_value_depths.set_offset(self, dat_arr_cursor178_offset);
       self.assign_huffman_encoding(data_values_length, tree_value_depths, values_in_tree);
-      panic!();
+      eprintln!("{:02X?}", values_in_tree.slice_copy(self));
       Ok(branch_value)
     }
   }

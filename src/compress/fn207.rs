@@ -15,27 +15,35 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// ZLib: `_tr_flush_block` - maybe
   /// Obfuscated name: `void _207()`
   pub fn fn207_maybe_flush_state_to_output(&mut self) -> Result<()> {
+    eprintln!("{:02X?}", self.byte_run_length_buffer);
+    eprintln!("{:02X?}", &self.byte_run_length_frequency[..CONST_N141_IS_511]);
+    eprintln!("{:02X?}",& self.run_offset_bit_count_frequency[..16]);
     let mut var456: u32 = 0_u32;
     let mut var217 = [0; 2 * CONST_N145_IS_19 - 1];
-    eprintln!("Before {:#?}", self);
-    let mut var229 = self.fn211_maybe_build_huffman_table(
+
+    let mut run_length_root_node = self.build_huffman_encoding(
       cast!(CONST_N141_IS_511 as i32),
       &mut CompressU16ArrayAlias::ByteRunLengthFrequency(0),
-      &mut CompressU8ArrayAlias::Array180(0),
-      &mut CompressU16ArrayAlias::Array192(0),
+      &mut CompressU8ArrayAlias::ByteRunLengthHuffBitLength(0),
+      &mut CompressU16ArrayAlias::ByteRunLengthHuffEncoding(0),
     )?;
-    eprintln!("After {:#?}", self);
-    let var455 = self.byte_run_length_frequency[cast!(var229 as usize)];
-    self.output_store.write_bits(u32::from(var455), 16)?;
-    if var229 >= cast!(CONST_N141_IS_511 as u32) {
+    panic!();
+    // Huffman tables have the property that the frequency of the root node is the sum of the
+    //  frequencies of all the nodes in the tree. This saves us having to count the frequencies
+    //  again.
+    let frequency_sum = self.byte_run_length_frequency[cast!(run_length_root_node as usize)];
+    self.output_store.write_bits(u32::from(frequency_sum), 16)?;
+
+    if run_length_root_node >= cast!(CONST_N141_IS_511 as u32) {
+      // The root node represents a branch, meaning there were 2 or mode nodes in the tree.
       self.fn216(&mut var217);
-      var229 = self.fn211_maybe_build_huffman_table(
+      run_length_root_node = self.build_huffman_encoding(
         cast!(CONST_N145_IS_19 as i32),
         &mut CompressU16ArrayAlias::Custom(0, &mut var217),
         &mut CompressU8ArrayAlias::Array181(0),
         &mut CompressU16ArrayAlias::Array194(0),
       )?;
-      if var229 >= cast!(CONST_N145_IS_19 as u32) {
+      if run_length_root_node >= cast!(CONST_N145_IS_19 as u32) {
         self.fn218(
           cast!(CONST_N145_IS_19 as i16),
           cast!(CONST_N147_IS_5 as i16),
@@ -47,10 +55,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
         self
           .output_store
-          .write_bits(cast!(var229 as u32), cast!(CONST_N147_IS_5 as usize))?;
+          .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N147_IS_5 as usize))?;
       }
       self.fn222()?;
     } else {
+      // Byte/Run length root node represents a value(I.E. there is only 1 node).
       self
         .output_store
         .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
@@ -62,15 +71,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         .write_bits(0_u8, cast!(CONST_N143_IS_9 as usize))?;
       self
         .output_store
-        .write_bits(cast!(var229 as u32), cast!(CONST_N143_IS_9 as usize))?;
+        .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N143_IS_9 as usize))?;
     }
-    var229 = self.fn211_maybe_build_huffman_table(
+    run_length_root_node = self.build_huffman_encoding(
       cast!(CONST_N142_IS_15 as i32),
       &mut CompressU16ArrayAlias::RunOffsetBitCountFrequency(0),
       &mut CompressU8ArrayAlias::Array181(0),
       &mut CompressU16ArrayAlias::Array194(0),
     )?;
-    if var229 >= cast!(CONST_N142_IS_15 as u32) {
+    if run_length_root_node >= cast!(CONST_N142_IS_15 as u32) {
       self.fn218(
         cast!(CONST_N142_IS_15 as i16),
         cast!(CONST_N540_IS_5 as i16),
@@ -82,10 +91,10 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         .write_bits(0_u8, cast!(CONST_N540_IS_5 as usize))?;
       self
         .output_store
-        .write_bits(cast!(var229 as u32), cast!(CONST_N540_IS_5 as usize))?;
+        .write_bits(cast!(run_length_root_node as u32), cast!(CONST_N540_IS_5 as usize))?;
     }
     let mut var454 = 0_u32;
-    for run_start226 in 0..var455 {
+    for run_start226 in 0..frequency_sum {
       if run_start226 % 8 == 0 {
         var456 = u32::from(self.byte_run_length_buffer[cast!(var454 as usize)]);
         var454 += 1;

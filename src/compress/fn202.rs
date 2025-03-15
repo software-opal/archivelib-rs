@@ -7,33 +7,37 @@ use crate::support::BitwiseWrite;
 const CHAR_BIT: usize = 8;
 /// This was moved out of the `RCompressData` struct and into a constant as it was only changed in
 ///  the `finalize_compression` (`_197`) method.
-/// 
+///
 /// This is calculated as the `_163.len()`(`= 8192`) minus the maximum number of entries that can be
 ///  added in the next iteration (8 calls * 3 bytes max) minus some extra padding for reasons
-/// 
+///
 /// Obfuscated name: `->_183`
 const BITS_BEFORE_FLUSH: usize = CONST_N155_IS_8192 - ((3 * CHAR_BIT) + 6);
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Write a byte, run, or EOF into the byte run buffer.
-  /// 
+  ///
   /// This is called in three ways from the `compress` method:
   ///  - When writing a single byte: `(byte_value, 0)`
   ///  - When writing a run: `(0x100 + run_length - MIN_RUN_LEN, run_offset)`
   ///  - When writing EOF: `(0x100 + MAX_RUN_LEN + 1 - MIN_RUN_LEN, 0)`
-  /// 
+  ///
   /// With the variable's bounds being:
   ///  - `byte_value` falls in the bounds `0..=255`
   ///  - `run_length` falls in the bounds `MIN_RUN_LEN..=MAX_RUN_LEN`(`3..=256`)
-  /// 
+  ///
   /// The first argument is effectively a 9 bit number where the 9th bit is `0` if the byte is a raw
   ///  byte value; and `1` if it's a run or EOF.
-  /// 
+  ///
   /// These are stored in `_165` using the scheme described in that field's documentation. This
   ///  function also flushes the buffer when it fills up.
-  /// 
+  ///
   /// Obfuscated name: `void _202(ushort _203, ushort _204)`
-  pub fn write_byte_or_run_into_buffer(&mut self, run_length_plus_256_or_byte: u16, run_offset_or_zero: u16) -> Result<()> {
+  pub fn write_byte_or_run_into_buffer(
+    &mut self,
+    run_length_plus_256_or_byte: u16,
+    run_offset_or_zero: u16,
+  ) -> Result<()> {
     self.byte_run_length_buffer_counter >>= 1;
     if self.byte_run_length_buffer_counter == 0 {
       self.byte_run_length_buffer_counter = 1 << (CHAR_BIT - 1);
@@ -79,14 +83,15 @@ pub fn write_byte_or_run_into_buffer(
   byte_run_length_buffer[byte_or_run_buffer_index] = cast_trunc!(run_length_plus_256_or_byte as u8);
   byte_or_run_buffer_index += 1;
 
-  // ??
+  // Used when constructing the byte_run_length huffman table.
   byte_run_length_frequency[cast!(run_length_plus_256_or_byte as usize)] += 1;
   if run_length_plus_256_or_byte >= (1 << CHAR_BIT) {
-    // Either a run of bits, or EOF flag.
+    // Either a run of bytes, or EOF flag.
 
     // Set the bit representing this index in the bit flag index to indicate that this entry
     //  represents a run of bytes or the EOF
-    byte_run_length_buffer[byte_run_length_buffer_bit_flag_index] |= cast!(byte_run_length_buffer_counter as u8);
+    byte_run_length_buffer[byte_run_length_buffer_bit_flag_index] |=
+      cast!(byte_run_length_buffer_counter as u8);
 
     // Now write the the run offset into the next two array entries in little-endian order, so a run
     //  offset of `0x1234` is stored as `[0x34, 0x12]`

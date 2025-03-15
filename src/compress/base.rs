@@ -24,7 +24,8 @@ array_alias_enum! {
     Array190 => tmp_huffman_right_branch_nodes;
     /// Obfuscated name: _191
     ByteRunLengthFrequency => byte_run_length_frequency;
-    Array192 => dat_arr192;
+    /// Obfuscated name: _192
+    ByteRunLengthHuffEncoding => byte_run_length_huff_encoding;
     /// Obfuscated name: _193
     RunOffsetBitCountFrequency => run_offset_bit_count_frequency;
     /// Obfuscated name: _194
@@ -36,7 +37,7 @@ array_alias_enum! {
     /// Obfuscated name: _165
     ByteRunLengthBuffer => byte_run_length_buffer;
     /// Obfuscated name: _180
-    Array180 => dat_arr180;
+    ByteRunLengthHuffBitLength => byte_run_length_huff_bit_length;
     /// Obfuscated name: _181
     Array181 => dat_arr181;
   }
@@ -137,8 +138,12 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   /// 
   /// Obfuscated name: _177
   pub tmp_huffman_values_to_visit: Vec<i16>,
+  /// Contains the byte or run length's huffman encoding bit length.
+  /// 
+  /// Used in conjunction with `_192` to write the encoding bits.
+  /// 
   /// Obfuscated name: _180
-  pub dat_arr180: Vec<u8>,
+  pub byte_run_length_huff_bit_length: Vec<u8>,
   /// Obfuscated name: _181
   pub dat_arr181: Vec<u8>,
   /// Obfuscated name: _189
@@ -151,13 +156,21 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   ///  run lengths, and `510` representing the EOF flag. Each time a value is seen by `_202` the
   ///  respective index is incremented. 
   /// 
-  /// This array is used by `_207` to write to the output buffer; and then `_207` will also clear
-  ///  the array.
+  /// This array is used by `_207` to build a huffman table of the byte/run length, and then write
+  ///  to the output buffer. This array is cleared by `_207` after writing a given chunk to the bit
+  ///  writer.
   /// 
   ///  Obfuscated name: _191
   pub byte_run_length_frequency: Vec<u16>,
+  /// Contains the huffman encoding for each byte or run length value.
+  /// 
+  /// This contains the bit sequence to write. The number of bits to write for each value is
+  ///  contained in `_180`.
+  /// 
+  /// Therefore for any given value we will write `_180[value]` bits of `_192[value]`.
+  /// 
   /// Obfuscated name: _192
-  pub dat_arr192: Vec<u16>,
+  pub byte_run_length_huff_encoding: Vec<u16>,
   /// Stores the frequency of different run length bit-lengths were seen.
   /// 
   /// This is written in `_202` by calculating the number of bits required to store the run length,
@@ -258,12 +271,12 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
       )
       .field("dat_arr167", &vec_to_nice_debug(&self.huffman_tree_depth_counts))
       .field("dat_arr177", &vec_to_nice_debug(&self.tmp_huffman_values_to_visit))
-      .field("dat_arr180", &vec_to_nice_debug(&self.dat_arr180))
+      .field("dat_arr180", &vec_to_nice_debug(&self.byte_run_length_huff_bit_length))
       .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
       .field("dat_arr189", &vec_to_nice_debug(&self.tmp_huffman_left_branch_nodes))
       .field("dat_arr190", &vec_to_nice_debug(&self.tmp_huffman_right_branch_nodes))
       .field("byte_run_length_frequency", &vec_to_nice_debug(&self.byte_run_length_frequency))
-      .field("dat_arr192", &vec_to_nice_debug(&self.dat_arr192))
+      .field("dat_arr192", &vec_to_nice_debug(&self.byte_run_length_huff_encoding))
       .field("run_offset_bit_count_frequency", &vec_to_nice_debug(&self.run_offset_bit_count_frequency))
       .field("dat_arr194", &vec_to_nice_debug(&self.dat_arr194))
       .field("chars_written", &self.chars_written)
@@ -338,12 +351,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         uncompressed_buffer: vec![0; max_size + MAX_RUN_LENGTH + 2],
         huffman_tree_depth_counts: vec![0; 17],
         tmp_huffman_values_to_visit: vec![0; CONST_N141_IS_511 + 1],
-        dat_arr180: vec![0; CONST_N141_IS_511],
+        byte_run_length_huff_bit_length: vec![0; CONST_N141_IS_511],
         dat_arr181: vec![0; CONST_N152_IS_19],
         tmp_huffman_left_branch_nodes: vec![0; 2 * CONST_N141_IS_511 - 1],
         tmp_huffman_right_branch_nodes: vec![0; 2 * CONST_N141_IS_511 - 1],
         byte_run_length_frequency: vec![0; 2 * CONST_N141_IS_511 - 1],
-        dat_arr192: vec![0; CONST_N141_IS_511],
+        byte_run_length_huff_encoding: vec![0; CONST_N141_IS_511],
         run_offset_bit_count_frequency: vec![0; 2 * CONST_N142_IS_15 - 1],
         dat_arr194: vec![0; CONST_N152_IS_19],
 

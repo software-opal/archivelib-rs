@@ -58,6 +58,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         offset += 1;
       }
     }
+    eprintln!("{:?}", tree_value_depths.slice_copy(self));
   }
 }
 

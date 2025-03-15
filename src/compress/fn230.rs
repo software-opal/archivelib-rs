@@ -51,6 +51,7 @@ fn generate_huffman_encoding(
     .take(data_values_length)
     .enumerate()
   {
+    if value_node_depth == 0 {continue;}
     // Note: Values where `value_node_depth` is zero (I.E. not in the tree) will be filled with an
     //  incrementing number.
     value_to_bits[value] = next_bit_for_depth[cast!(value_node_depth as usize)];

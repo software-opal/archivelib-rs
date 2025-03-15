@@ -8,7 +8,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn222(&mut self) -> Result<()> {
     pure_fn222(
       &mut self.output_store,
-      &self.dat_arr180,
+      &self.byte_run_length_huff_bit_length,
       &self.dat_arr181,
       &self.dat_arr194,
     )

@@ -10,16 +10,16 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       *v = 0;
     }
     let mut bits_to_load219: usize = CONST_N141_IS_511;
-    while bits_to_load219 > 0 && self.dat_arr180[cast!(bits_to_load219 as usize) - 1] == 0 {
+    while bits_to_load219 > 0 && self.byte_run_length_huff_bit_length[cast!(bits_to_load219 as usize) - 1] == 0 {
       bits_to_load219 -= 1
     }
     let mut run_start226: usize = 0;
     while run_start226 < bits_to_load219 {
-      let var289: usize = self.dat_arr180[run_start226] as usize;
+      let var289: usize = self.byte_run_length_huff_bit_length[run_start226] as usize;
       run_start226 += 1;
       if var289 == 0 {
         let mut var277 = 1;
-        while (run_start226) < bits_to_load219 && self.dat_arr180[run_start226] == 0 {
+        while (run_start226) < bits_to_load219 && self.byte_run_length_huff_bit_length[run_start226] == 0 {
           run_start226 += 1;
           var277 += 1
         }
