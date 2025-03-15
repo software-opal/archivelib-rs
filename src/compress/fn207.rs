@@ -58,7 +58,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           cast!(CONST_N147_IS_5 as usize),
         )?;
       }
-      panic!();
       self.fn222()?;
     } else {
       // Byte/Run length root node represents a value(I.E. there is only 1 node).
