@@ -5,40 +5,53 @@ use crate::consts::{CONST_N141_IS_511, CONST_N145_IS_19};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn216(&mut self, var217: &mut [u16]) {
-    for v in var217.iter_mut().take(CONST_N145_IS_19) {
+  /// Writes into `_217` based on data in the bit lengths.
+  ///
+  /// Combines the bit length of each value's encoding with the distance between encoded values.
+  ///
+  /// - `0` -- `0..=2` gap between values, or `19` gap.
+  /// - `1` -- `3..=18` gap between values, or `19` gap.
+  /// - `2` -- `20..` gap between values.
+  /// - `3..` -- value bit length, with `1` bit length mapping to `3`.
+  ///
+  /// Obfuscated name: `void _216(ushort *_217);`
+  pub fn build_byte_length_encoding_lengths(&mut self, var217_frequency_data: &mut [u16]) {
+    for v in var217_frequency_data.iter_mut().take(CONST_N145_IS_19) {
       *v = 0;
     }
-    let mut bits_to_load219: usize = CONST_N141_IS_511;
-    while bits_to_load219 > 0
-      && self.byte_run_length_huff_bit_length[cast!(bits_to_load219 as usize) - 1] == 0
+    // Find the first value in the table
+    let mut largest_value: usize = CONST_N141_IS_511;
+    while largest_value > 0
+      && self.byte_run_length_huff_bit_length[cast!(largest_value as usize) - 1] == 0
     {
-      bits_to_load219 -= 1
+      largest_value -= 1
     }
-    let mut run_start226: usize = 0;
-    while run_start226 < bits_to_load219 {
-      let var289: usize = self.byte_run_length_huff_bit_length[run_start226] as usize;
-      run_start226 += 1;
-      if var289 == 0 {
-        let mut var277 = 1;
-        while (run_start226) < bits_to_load219
-          && self.byte_run_length_huff_bit_length[run_start226] == 0
-        {
-          run_start226 += 1;
-          var277 += 1
+    eprintln!("{:#05X}", largest_value);
+    let mut idx: usize = 0;
+    while idx < largest_value {
+      let bit_length: usize = self.byte_run_length_huff_bit_length[idx] as usize;
+      eprintln!("BL: {:#05X}: {}", idx, bit_length);
+      idx += 1;
+      if bit_length == 0 {
+        // The current index isn't in the output.
+        let mut distance_to_next_value: i32 = 1;
+        while (idx) < largest_value && self.byte_run_length_huff_bit_length[idx] == 0 {
+          idx += 1;
+          distance_to_next_value += 1
         }
-        if var277 <= 2 {
-          var217[0] += cast!(var277 as u16);
-        } else if var277 <= 18 {
-          var217[1] += 1;
-        } else if var277 == 19 {
-          var217[0] += 1;
-          var217[1] += 1;
+        eprintln!("{}", distance_to_next_value);
+        if distance_to_next_value <= 2 {
+          var217_frequency_data[0] += cast!(distance_to_next_value as u16);
+        } else if distance_to_next_value <= 18 {
+          var217_frequency_data[1] += 1;
+        } else if distance_to_next_value == 19 {
+          var217_frequency_data[0] += 1;
+          var217_frequency_data[1] += 1;
         } else {
-          var217[2] += 1
+          var217_frequency_data[2] += 1
         }
       } else {
-        var217[var289 + 2] += 1
+        var217_frequency_data[bit_length + 2] += 1
       }
     }
   }

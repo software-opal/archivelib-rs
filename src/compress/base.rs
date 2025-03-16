@@ -29,7 +29,7 @@ array_alias_enum! {
     /// Obfuscated name: _193
     RunOffsetBitCountFrequency => run_offset_bit_count_frequency;
     /// Obfuscated name: _194
-    Array194 => dat_arr194;
+    BitLengthHuffmanEncoding => bit_length_huffman_encoding;
   }
   pub enum<R: Read, W: BitwiseWrite> CompressU8ArrayAlias {
     type Parent = RCompressData<R, W>;
@@ -39,7 +39,7 @@ array_alias_enum! {
     /// Obfuscated name: _180
     ByteRunLengthHuffBitLength => byte_run_length_huff_bit_length;
     /// Obfuscated name: _181
-    Array181 => dat_arr181;
+    BitLengthHuffBitLength => bit_length_huff_bit_length;
   }
 }
 
@@ -144,8 +144,12 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   ///
   /// Obfuscated name: _180
   pub byte_run_length_huff_bit_length: Vec<u8>,
+  /// Used in `_207` to store the bit lengths of a bit length huffman table.
+  ///
+  /// Used in conjunction with `_194`.
+  ///
   /// Obfuscated name: _181
-  pub dat_arr181: Vec<u8>,
+  pub bit_length_huff_bit_length: Vec<u8>,
   /// Obfuscated name: _189
   pub tmp_huffman_left_branch_nodes: Vec<u16>,
   /// Obfuscated name: _190
@@ -181,8 +185,12 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   ///
   /// Obfuscated name: _193
   pub run_offset_bit_count_frequency: Vec<u16>,
+  /// Stores the encoding of the bit length huffman table.
+  ///
+  /// Used in conjunction with `_181`.
+  ///
   /// Obfuscated name: _194
-  pub dat_arr194: Vec<u16>,
+  pub bit_length_huffman_encoding: Vec<u16>,
   // pub dat_arr_cursor178: Option<CompressU8ArrayAlias>,
   // pub dat_arr_cursor187: Option<CompressU16ArrayAlias>,
   // pub dat_arr_cursor188: Option<CompressU16ArrayAlias>,
@@ -287,7 +295,10 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         "dat_arr180",
         &vec_to_nice_debug(&self.byte_run_length_huff_bit_length),
       )
-      .field("dat_arr181", &vec_to_nice_debug(&self.dat_arr181))
+      .field(
+        "dat_arr181",
+        &vec_to_nice_debug(&self.bit_length_huff_bit_length),
+      )
       .field(
         "dat_arr189",
         &vec_to_nice_debug(&self.tmp_huffman_left_branch_nodes),
@@ -308,7 +319,10 @@ impl<R: Read, W: BitwiseWrite> fmt::Debug for RCompressData<R, W> {
         "run_offset_bit_count_frequency",
         &vec_to_nice_debug(&self.run_offset_bit_count_frequency),
       )
-      .field("dat_arr194", &vec_to_nice_debug(&self.dat_arr194))
+      .field(
+        "dat_arr194",
+        &vec_to_nice_debug(&self.bit_length_huffman_encoding),
+      )
       .field("chars_written", &self.chars_written)
       .field("uncompressible", &self.uncompressible)
       .field("fail_uncompressible", &self.fail_uncompressible)
@@ -388,13 +402,13 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         huffman_tree_depth_counts: vec![0; 17],
         tmp_huffman_values_to_visit: vec![0; CONST_N141_IS_511 + 1],
         byte_run_length_huff_bit_length: vec![0; CONST_N141_IS_511],
-        dat_arr181: vec![0; CONST_N152_IS_19],
+        bit_length_huff_bit_length: vec![0; CONST_N152_IS_19],
         tmp_huffman_left_branch_nodes: vec![0; 2 * CONST_N141_IS_511 - 1],
         tmp_huffman_right_branch_nodes: vec![0; 2 * CONST_N141_IS_511 - 1],
         byte_run_length_frequency: vec![0; 2 * CONST_N141_IS_511 - 1],
         byte_run_length_huff_encoding: vec![0; CONST_N141_IS_511],
         run_offset_bit_count_frequency: vec![0; 2 * CONST_N142_IS_15 - 1],
-        dat_arr194: vec![0; CONST_N152_IS_19],
+        bit_length_huffman_encoding: vec![0; CONST_N152_IS_19],
 
         max_uncompressed_data_size: max_size,
         max_uncompressed_data_size_bitmask: (max_size - 1),

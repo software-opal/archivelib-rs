@@ -4,18 +4,17 @@ use std::io::Read;
 use super::array_alias::ArrayAlias;
 use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
 use crate::support::BitwiseWrite;
+use crate::support::binary_tree_printer::{print_tree, print_tree_from_encoding};
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Builds a huffman tree in `_189` and `_190` and returns the root node's value.
-  ///
-  /// Returns the "value" of the tree's root node.
   ///
   /// Values in the range `0.._212` are "real values"; and `_212..` are binary tree nodes.
   ///
   /// The huffman trees are built from an array mapping `value`s to `frequency`. This is stored in
   ///  `value_frequencies` (`_213`).
   ///
-  /// For example if `0x01` was seen 5 times; we would expect `value_frequencies[0x01] == 6`. And if
+  /// For example if `0x01` was seen 6 times; we would expect `value_frequencies[0x01] == 6`. And if
   ///  `0x03` was not seen then we would expect `value_frequencies[0x03] == 0`.
   ///
   /// We first find all the values with a non zero frequency, and store them in
@@ -28,11 +27,12 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   ///
   /// Then whilst we have more than 2 items in `_177`, we:
   /// - We then pop that lowest frequency value off the array. We do this by swapping index `1` with
-  ///   the last item, and then shortening the array's length.
-  /// - We append the lowest frequency value to the end of `_215`
+  ///    the last item, and then shortening the array's length.
+  /// - If the lowest frequency value is a leaf(`0.._212`), then we append the lowest frequency
+  ///    value to the end of `_215`
   /// - We then call `_225` once to place the next lowest frequency item to the start of the array.
-  /// - We append the 2nd lowest frequency value (now at position 1 in `_177` after the `_225` call)
-  ///    to the end of `_215`
+  /// - If the lowest frequency value is a leaf(`0.._212`), then we append the 2nd lowest frequency
+  ///    value (now at position 1 in `_177` after the `_225` call) to the end of `_215`
   /// - We then combine the lowest frequency value and the 2nd lowest frequency (now at position 1
   ///    in the `_177`) into a "node". This node's value starts at `max_data_value` (e.g. `0x1FF`
   ///    for byte data) and is incremented each time a node is created.
@@ -63,7 +63,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     // On the future I'll probably rewrite the huffman table generation to be more rust-y.
     value_frequencies: &mut CompressU16ArrayAlias<'_>,
     tree_value_depths: &mut CompressU8ArrayAlias<'_>,
-    // This array contains all the nodes(except the root) in the tree in ascending frequency order.
+    // This array contains all the leaves of the tree in ascending frequency order.
     values_in_tree: &mut CompressU16ArrayAlias<'_>,
   ) -> Result<u32> {
     let dat_arr_cursor178_offset = tree_value_depths.offset(self);
@@ -149,12 +149,18 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           break;
         }
       }
-
       // At this point we have a binary tree stored in `_189` and `_190` with the root node at
       //  `branch_value`. Traversal is by looking up `branch_value` in `_189` and `_190`.
 
       // Reset the array's offset back to the beginning.
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
+
+      print_tree(
+        branch_value,
+        data_values_length,
+        &self.tmp_huffman_left_branch_nodes,
+        &self.tmp_huffman_right_branch_nodes,
+      );
 
       self.calculate_huffman_node_depth(
         cast!(branch_value as i32),
@@ -165,6 +171,13 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       values_in_tree.set_offset(self, values_in_tree_orig_offset);
       tree_value_depths.set_offset(self, dat_arr_cursor178_offset);
       self.assign_huffman_encoding(data_values_length, tree_value_depths, values_in_tree);
+
+      print_tree_from_encoding(
+        data_values_length,
+        &tree_value_depths.slice_copy(self),
+        &values_in_tree.slice_copy(self),
+      );
+
       Ok(branch_value)
     }
   }

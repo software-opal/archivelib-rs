@@ -31,33 +31,36 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let frequency_sum = self.byte_run_length_frequency[cast!(run_length_root_node as usize)];
     self.output_store.write_bits(u32::from(frequency_sum), 16)?;
 
+    // `run_length_root_node` represents a single value if it's in the range `0..511`.
+    // `run_length_root_node` represents a root node of a huffman tree if it's in the range `511..`.
     if run_length_root_node >= cast!(CONST_N141_IS_511 as u32) {
       // The root node represents a branch, meaning there were 2 or mode nodes in the tree.
-      self.fn216(&mut var217);
+      self.build_byte_length_encoding_lengths(&mut var217);
       eprintln!("var217: {:02X?}", var217);
-      run_length_root_node = self.build_huffman_encoding(
+      let bit_length_root_node = self.build_huffman_encoding(
         cast!(CONST_N145_IS_19 as i32),
         &mut CompressU16ArrayAlias::Custom(0, &mut var217),
-        &mut CompressU8ArrayAlias::Array181(0),
-        &mut CompressU16ArrayAlias::Array194(0),
+        &mut CompressU8ArrayAlias::BitLengthHuffBitLength(0),
+        &mut CompressU16ArrayAlias::BitLengthHuffmanEncoding(0),
       )?;
-      if run_length_root_node >= cast!(CONST_N145_IS_19 as u32) {
-        eprintln!("218");
-        self.fn218(
+      if bit_length_root_node >= cast!(CONST_N145_IS_19 as u32) {
+        // There are 2 or more nodes in the bit length encoding.
+        self.write_bit_length_table_data_to_output(
           cast!(CONST_N145_IS_19 as i16),
           cast!(CONST_N147_IS_5 as i16),
           3_i16,
         )?;
       } else {
-        eprintln!("not 218");
+        // 1 node in the bit length encoding.
         self
           .output_store
           .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
         self.output_store.write_bits(
-          cast!(run_length_root_node as u32),
+          cast!(bit_length_root_node as u32),
           cast!(CONST_N147_IS_5 as usize),
         )?;
       }
+      eprintln!("Starting 222");
       self.fn222()?;
     } else {
       // Byte/Run length root node represents a value(I.E. there is only 1 node).
@@ -78,11 +81,11 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     run_length_root_node = self.build_huffman_encoding(
       cast!(CONST_N142_IS_15 as i32),
       &mut CompressU16ArrayAlias::RunOffsetBitCountFrequency(0),
-      &mut CompressU8ArrayAlias::Array181(0),
-      &mut CompressU16ArrayAlias::Array194(0),
+      &mut CompressU8ArrayAlias::BitLengthHuffBitLength(0),
+      &mut CompressU16ArrayAlias::BitLengthHuffmanEncoding(0),
     )?;
     if run_length_root_node >= cast!(CONST_N142_IS_15 as u32) {
-      self.fn218(
+      self.write_bit_length_table_data_to_output(
         cast!(CONST_N142_IS_15 as i16),
         cast!(CONST_N540_IS_5 as i16),
         -1_i16,

@@ -76,7 +76,12 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
     }
 
     let trunc_bits = bits & (0xFFFF >> (16 - bit_count));
-    eprintln!("Writing {} bits from {:#018b}", bit_count, trunc_bits);
+    eprintln!(
+      "Writing {} bits from {:#0width$b}",
+      bit_count,
+      trunc_bits,
+      width = (2 + bit_count) as usize
+    );
 
     if bit_count > 0 {
       let bit_array = bits.to_bits();
