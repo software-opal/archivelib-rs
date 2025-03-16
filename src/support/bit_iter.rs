@@ -23,7 +23,7 @@ macro_rules! implBitwise {
     #[allow(clippy::use_self)]
     impl FromBits for $type {
       fn size() -> usize {
-        <Self>::max_value().count_ones() as usize
+        cast!((<Self>::BITS) as usize)
       }
       fn from_bits<I>(bits: I) -> Self
       where

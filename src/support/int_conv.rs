@@ -8,7 +8,7 @@ macro_rules! cast_trunc {
     let a = $e;
     #[allow(unused_assignments)]
     let mut b = a;
-    b = <$t>::max_value().into();
+    b = <$t>::MAX.into();
     match <$t>::try_from(a & b) {
       Ok(v) => v,
       Err(_) => {

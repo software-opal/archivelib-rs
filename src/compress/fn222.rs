@@ -17,7 +17,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
 pub fn pure_fn222<W>(out: &mut W, arr180: &[u8], arr181: &[u8], arr194: &[u16]) -> Result<()>
 where
-  W: BitwiseWrite + Sized,
+  W: BitwiseWrite,
 {
   let mut bits_to_load219 = CONST_N141_IS_511;
   while bits_to_load219 > 0 && arr180[bits_to_load219 - 1] == 0 {

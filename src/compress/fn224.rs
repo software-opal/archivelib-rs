@@ -15,7 +15,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
 
 pub fn pure_fn224<W>(var204: u16, out: &mut W, arr181: &[u8], arr194: &[u16]) -> Result<()>
 where
-  W: BitwiseWrite + Sized,
+  W: BitwiseWrite,
 {
   // Calculate the number of bits needed to represent var204.
   let byte_or_run_length203 = 16 - (var204.leading_zeros() as usize);

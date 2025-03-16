@@ -4,6 +4,12 @@
 #![deny(clippy::style::wrong_self_convention)]
 #![deny(clippy::unseparated_literal_suffix)]
 
+// Try to improve safety by requiring safer casts.
+#![warn(clippy::cast_lossless)]
+#![warn(clippy::cast_precision_loss)]
+#![warn(clippy::cast_possible_wrap)]
+#![warn(clippy::checked_conversions)]
+
 #[macro_use]
 mod support;
 

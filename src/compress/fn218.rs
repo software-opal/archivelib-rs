@@ -3,7 +3,7 @@ use std::io::Read;
 use crate::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
 
-const USHRT_MAX: u16 = u16::max_value();
+const USHRT_MAX: u16 = u16::MAX;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   pub fn fn218(&mut self, bits_to_write: i16, bit_length: i16, run_start_check: i16) -> Result<()> {
@@ -25,7 +25,7 @@ fn pure_fn218<W>(
   run_start_check: i8,
 ) -> Result<()>
 where
-  W: BitwiseWrite + Sized,
+  W: BitwiseWrite,
 {
   assert!(run_start_check == -1 || run_start_check == 3);
   while bits_to_write > 0 && arr181[bits_to_write - 1] == 0 {

@@ -27,9 +27,9 @@ Arguments:
 
 #[derive(Copy, Clone, Debug)]
 enum Mode {
-  COMPRESS,
-  DECOMPRESS,
-  VALIDATE,
+  Compress,
+  Decompress,
+  Validate,
 }
 
 struct Args {
@@ -54,11 +54,11 @@ impl Args {
       if has_seen_dash_dash {
         file_args.push(arg);
       } else if arg == "-c" || arg == "--compress" {
-        mode = Some(Mode::COMPRESS)
+        mode = Some(Mode::Compress)
       } else if arg == "-d" || arg == "--decompress" {
-        mode = Some(Mode::DECOMPRESS)
+        mode = Some(Mode::Decompress)
       } else if arg == "-V" || arg == "--validate" {
-        mode = Some(Mode::VALIDATE)
+        mode = Some(Mode::Validate)
       } else if arg == "-x" && arg == "--abort-on-panic" {
         abort_on_panic = true;
       } else if arg == "-0" {
@@ -136,16 +136,16 @@ impl Args {
 }
 fn run(input: &[u8], mode: Mode, level: CompressionLevel) -> Result<Box<[u8]>, Box<dyn Error>> {
   match mode {
-    Mode::COMPRESS => {
-      let result = archivelib::do_compress_level(&input, level)?;
+    Mode::Compress => {
+      let result = archivelib::do_compress_level(input, level)?;
       Ok(result)
     }
-    Mode::DECOMPRESS => {
-      let result = archivelib::do_decompress_level(&input, level)?;
+    Mode::Decompress => {
+      let result = archivelib::do_decompress_level(input, level)?;
       Ok(result)
     }
-    Mode::VALIDATE => {
-      let compressed = archivelib::do_compress_level(&input, level)?;
+    Mode::Validate => {
+      let compressed = archivelib::do_compress_level(input, level)?;
       let result = archivelib::do_decompress_level(&compressed, level)?;
       if input == &result[..] {
         Ok(result)
