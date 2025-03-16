@@ -22,11 +22,9 @@ jobs:
           rustc --version
           cargo --version
       - name: Run `cargo check`
-        run: cargo build --verbose
-      - 
-      - uses: actions-rs/cargo@v1
-        run: cargo build --verbose --release --bins --lib
-      - uses: actions/upload-artifact@v1
+        run: cargo check
+      - run: cargo build --verbose --release --bins --lib
+      - uses: actions/upload-artifact@v4
         with:
           name: rust-${{ matrix.rust }}-build-${{ matrix.os }}
           path: target
@@ -42,7 +40,7 @@ jobs:
           cmake ..
           make
           rm -r CMakeFiles
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: c-orig
           path: archivelib-sys-orig/build
@@ -58,7 +56,7 @@ jobs:
           cmake ..
           make
           rm -r CMakeFiles
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: c-refactored
           path: archivelib-sys-refactored/build
