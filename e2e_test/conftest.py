@@ -2,9 +2,9 @@ import os
 import pathlib
 import stat
 import subprocess
+import tomllib
 
 import pytest
-import toml
 
 from ._support import Executor
 
@@ -23,7 +23,7 @@ def project_root():
 
 @pytest.fixture
 def cargo_toml(project_root):
-    return toml.load(project_root / "Cargo.toml")
+    return tomllib.load(project_root / "Cargo.toml")
 
 
 def run_make(system_folder):

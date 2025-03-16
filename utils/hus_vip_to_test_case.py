@@ -59,7 +59,7 @@ def main():
         with (out_folder / f"{name}.rs").open("w") as f:
             f.write("#[macro_use]\nmod macros;\n\n")
             f.write("test_match_sys_decompress! {\n")
-            for (name, compressed_data) in sorted(data.items()):
+            for name, compressed_data in sorted(data.items()):
                 f.write(
                     f"  // SHA1 of data: {hashlib.sha1(compressed_data).hexdigest()}\n"
                 )

@@ -11,7 +11,11 @@ add_definitions(-DAL_CUSTOM -DAL_SYMANTEC)
 set ( FLAGS "" )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set ( FLAGS "${FLAGS} -fstack-protector -fsanitize-memory-track-origins -O3 -fno-stack-arrays" )
+  set ( FLAGS "${FLAGS} -fstack-protector -fsanitize-memory-track-origins -O3" )
+  if (NOT CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+    # Apple Clang doesn't support this option
+    set ( FLAGS "${FLAGS} -fno-stack-array" )
+  endif ()
   set ( SANITIZERS "undefined" "address" "bounds" )
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set ( FLAGS "${FLAGS} -fstack-protector-strong -fstack-protector-all --coverage -O3 --param ssp-buffer-size=1 -fno-stack-arrays" )
@@ -32,5 +36,5 @@ file (GLOB_RECURSE sources c-lib/*.c c-lib/*.cpp)
 
 include_directories(c-lib c-lib/include)
 
-add_executable(unalzip c-src/unalzip ${sources})
-add_executable(alzip c-src/alzip ${sources})
+add_executable(unalzip c-src/unalzip.cpp ${sources})
+add_executable(alzip c-src/alzip.cpp ${sources})

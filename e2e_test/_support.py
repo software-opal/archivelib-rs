@@ -115,7 +115,7 @@ class Error:
             cls.classify_btree_error_2(error),
             cls.classify_huge_buffer(error),
         ]
-        for (etype, checks) in errors:
+        for etype, checks in errors:
             if any(checks.values()):
                 return cls(etype, error)
         import pprint

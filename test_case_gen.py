@@ -246,16 +246,16 @@ def output_test_case(
     (out / "input.dat").write_bytes(input)
     (out / "input.txt").write_text(bytes_to_test_hex(input))
     (out / "input.rs").write_text(bytes_to_rust_array(input))
-    for (o, name) in [(sys_out, "sys_"), (new_out, "new_")]:
+    for o, name in [(sys_out, "sys_"), (new_out, "new_")]:
         if o is not None:
             (out / f"{name}output.dat").write_bytes(o)
             (out / f"{name}output.txt").write_text(bytes_to_test_hex(o))
             (out / f"{name}output.rs").write_text(bytes_to_rust_array(o))
-    for (o, name) in [(sys_err, "sys_"), (new_err, "new_")]:
+    for o, name in [(sys_err, "sys_"), (new_err, "new_")]:
         if o is not None:
             (out / f"{name}err.txt").write_bytes(o)
 
-    for (orig, exec, target) in [
+    for orig, exec, target in [
         (sys_cov, UNZIP_EXEC_SYS, "sys"),
         (new_cov, UNZIP_EXEC_NEW, "new"),
     ]:
@@ -369,7 +369,7 @@ def run(input: bytes):
 
 
 def tmin_test_case(cout, tmin_out, item):
-    if not item or len(item) > (2 ** 14):
+    if not item or len(item) > (2**14):
         # tmin doesn't like the empty file
         return b""
     with tempfile.NamedTemporaryFile("rb") as tout:

@@ -6,33 +6,22 @@ jobs:
   cargo-clippy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
-          components: rustfmt, clippy
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable && rustup component add rustfmt clippy
       - name: Versions
         run: |
           rustc --version
           cargo --version
           cargo clippy -- --version
-      - name: Annotate commit with clippy warnings
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all
       - name: Check `cargo format`
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all --check
+      - name: "Run clippy"
+        run: cargo clippy --all
   black:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: install deps
@@ -41,12 +30,12 @@ jobs:
           poetry install
           poetry run pip freeze
       - name: black
-        run: poetry run black --py36 --check --diff .
+        run: poetry run black --check --diff .
   isort:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: install deps
@@ -55,4 +44,4 @@ jobs:
           poetry install
           poetry run pip freeze
       - name: black
-        run: poetry run isort --check-only --recursive --diff .
+        run: poetry run isort --check-only --diff .

@@ -38,7 +38,7 @@ Looking at each line, we can see the first entry is written in binary, this is a
     - A run of length `4` (`3 + 0x01`). Runs must be 3 bytes long so a 3 byte run is written with
        `0x00` to give a few more values to work with.
     - An start offset of `-10` (`1 + 0x09 + 0x00 << 16`). The offset starts at `-1` allowing `0x00`
-       to point to the byte prior.
+       to point to the byte prior. And note it is written in little endian order (for bonus confusion).
   - 4 bytes `; AB`
   - A run with data `0x03, 0x01, 0x00`, which copies `ABABAB`. The byte meaning is:
     - A run length of `6` (`3 + 0x03`).
@@ -82,11 +82,15 @@ During this compression pass other data is written, specifically:
  - The offset bit lengths into `run_offset_bit_count_frequency` (`_193`), so a offset of `0x0004`
     would increment the `3` bit length; and `0x00FF` would increment the `8` bit length.
 
-## Building a byte length frequency huffman encoding
+## Writing to the bit buffer
 
-Using the byte frequency data generated above, we can now produce a huffman tree from which to derive our huffman encoding. Note that the implementation doesn't actually use the huffman tree to determine the encoding, but more on that later.
+This is performed in `_207`, which takes the data loaded above and writes it out to the buffer.
 
-The huffman tree is generated in `build_huffman_encoding` (`_211`).
+### Building a byte length frequency huffman encoding
+
+Using the byte frequency data generated above, we can now produce a huffman tree from which to derive our huffman encoding. Note that the implementation is a little weird with how it assigns the nodes to their encodings, but more on that later.
+
+The huffman tree is generated in `build_huffman_encoding` (`_211`) and the resulting encoding is stored in `_192` and `_180`.
 
 Of note, any value in the tree greater than or equal to `0x1FF` (I.E. `EOF flag + 1`) represents a branch in the tree, and anything less than that value represents a leaf node.
 
@@ -121,7 +125,7 @@ Tree              | Value/Node | Frequency
 
 As part of this process, the leaf nodes are also inserted into `values_in_tree` in the order they were inserted.
 
-Now we assign each value a depth based on it's position in the `values_in_tree` map:
+Now we assign each value a depth based on it's position in the `values_in_tree` map, for this table, this is stored in `_180`:
 
 - `[0x020] => 2` -- 4 space bytes.
 - `[0x03B] => 5` -- 1 semicolon byte.
@@ -137,7 +141,7 @@ Now we assign each value a depth based on it's position in the `values_in_tree` 
 - `[0x103] => 4` -- A run length of `6` for the `ABABAB` repeat. 
 - `[0x1FE] => 5` -- EOF flag.
 
-And then using these depths we are able to build a huffman encoding for this data:
+And then using these depths we are able to build a huffman encoding for this data. For this encoding, this is stored in `_192` :
 
 - `[0x020] => 0b00   ` -- 4 space bytes.
 - `[0x03B] => 0b11110` -- 1 semicolon byte.
@@ -152,8 +156,6 @@ And then using these depths we are able to build a huffman encoding for this dat
 - `[0x101] => 0b1101 ` -- A run length of `4` for the `I am` repeat.
 - `[0x103] => 0b1110 ` -- A run length of `6` for the `ABABAB` repeat. 
 - `[0x1FE] => 0b11111` -- EOF flag.
-
-
 
 Or a tree that looks like this:
 ```
@@ -187,29 +189,119 @@ Note how the tree has the same size as before, but the values are moved to place
 
 In the generated huffman tree, `0x035` has an encoding of `0b0010`, but in this sorted tree, it has an encoding of `0b11110`. This doesn't change the effectiveness of the tree, as `0x042` (the value at `0b11110` in the originally generated tree) has the same frequency (`1`).
 
-## Actually writing information to the bit buffer
+### Writing our first bits.
 
 The first two bytes will be the frequency of the root node, or the total frequency of all the leaves in `byte_run_length_frequency`.
 
 In our example, this is `17` or `0x0011`; which is written in big-endian order, so `0x00 0x11` are written to the file.
 
+Note: If the above table only has 1 node, then 
 
+### Huffman table 2, electric boogaloo
 
-The next bits that are written are:
+Now we build a second huffman table based on the data in the first table. Here we're trying to encode the bit lengths, and the distances between sequential values.
 
-Writing 5 bits from 0b01000
-Writing 3 bits from 0b011
-Writing 3 bits from 0b010
-Writing 3 bits from 0b010
-Writing 2 bits from 0b01
-Writing 3 bits from 0b101
-Writing 3 bits from 0b101
-Writing 3 bits from 0b010
-Writing 3 bits from 0b100
+To do this, we use the bit length array from the prior steps:
 
-Writing by 0x43
-Writing by 0x49
-Writing by 0xB5
+From 0 to the largest value in the array (in our case `0x1FE`) we:
+- If the current value has an encoding (I.E. the bit length is non-zero)
+  - Increment the frequency of `2 + bit_length`(so the range `(2+1)..=(2+16)`, or `3..19`).
+- Otherwise, count the number of blank entries between this index and the next index with a value.
+  - If the distance is `<= 2`, increment the `0` frequency
+  - If the distance is `<=18`, increment the `1` frequency
+  - If the distance is `19` increment both `0` and `1` frequencies
+  - Otherwise increment the `2` frequency.
+
+So given the bit length input `[0, 2, 0, 0, 0, 0, 2, 1, 0, 0]`, we would iterate over the range `0..8` (I.E. stopping at the last index with a bit length). And our iterations would look like:
+
+- `i = 0`:
+  - `0` bit length, therefore count the number of values until a value with a bit length. This gives us `1`
+  - Increment the `[0]` frequency
+- `i = 1`:
+  - `2` bit length, therefore increment the `[4]` frequency.
+- `i = 2`:
+  - `0` bit length, therefore count until the next value. This gives us `4`.
+  - Increment the `[1]` frequency
+- `i = 6`:
+  - `2` bit length, therefore increment the `[4]` frequency.
+- `i = 7`:
+  - `1` bit length, therefore increment the `[3]` frequency.
+
+If we now apply this to the huffman table generated above we get:
+- `i = 0x000` -- `32` (`0x020`) gap, so increment `[2]`
+- `i = 0x020` -- Bit length of `2`, so increment `[4]`
+- `i = 0x021` -- `26` (`0x01A`) gap, so increment `[2]`
+- `i = 0x03B` -- Bit length of `5`, so increment `[7]`
+- etc.
+
+At the end we end up with the following data: `[03, 05, 05, 00, 01, 01, 09, 02, ...]`. Which we can then turn into a huffman encoding stored in `_181` and `_194` using the method described above:
+
+```
+┐
+├─0─┐
+│   ├─0─ 0x001
+│   └─1─ 0x002
+└─1─┐
+    ├─0─ 0x006
+    └─1─┐
+        ├─0─ 0x000
+        └─1─┐
+            ├─0─ 0x007
+            └─1─┐
+                ├─0─ 0x004
+                └─1─ 0x005
+```
+
+Now we start writing out this huffman table's information.
+
+#### Writing bit length information
+
+> *Note on 1-node huffman tree*
+>
+> If the generated bit length tree has only 1 node, then the data is not written using `_218`, it is
+>  instead written directly in `_207`. Specifically we write:
+>  - 5 bits of zeros `0b00000`
+>  - 5 bits of the root node's value
+>
+> For example, if the only value was `0x005`, then we would only write 10 bits `0b00000 0b00101`,
+>  skipping over this entire section.
+
+We now call `_218` with the constants `19, 5, 3`:
+- `19` is the length of the huffman table we generated (so `16 + 3`).
+- `5` is the bit length required to print the length (so 5 bits of `0b1_0011`).
+- `3` is a magic number represents the value in the encoding where the meaning shifts from gaps to bit lengths. Presumably this saves some space in the encoded result.
+
+The first thing we write is the largest value in the bit length table, plus one. In our case the largest value is `0x007`, so we would write `0x008`. And we write this out using `5` bits, so `0b01000`. 
+
+Now we're going to write out the lengths of the huffman encoding in order starting with value `0x000`, going until `0x007`(a range of `0..8`).
+
+We'll do this using 3 bits for each entry:
+
+- `0x000` -- represented by 3 bits, so `0b011`
+- `0x001` -- represented by 3 bits, so `0b010`
+- `0x002` -- represented by 3 bits, so `0b010`
+
+Now we've written out the "gaps" part of the values, we now write out 2 bits representing the gap until the next value(up to 3), skipping over those entries. Because our next value is `0x004`, we skip over one and write out `0b01`. If our next value was more than 3 away, say `0x008`, then we would write out `0b11` and continue writing at at `0x006` (so we'd write `0b000` and `0b000`; representing the depths for `0x006` and `0x007` respectively).
+
+Then we continue until we've reached the last value
+
+- `0x004` -- represented by 5 bits, so `0b101`
+- `0x005` -- represented by 5 bits, so `0b101`
+- `0x006` -- represented by 5 bits, so `0b010`
+- `0x007` -- represented by 5 bits, so `0b100`
+
+This means we've now written the following bits to the file:
+
+```
+0000_0000 0001_0001 0100_0011 0100_1001 1011_0101 0100
+└────────┬────────┘ └┬───┘└┬┘ └┬┘└┬─┘└┤ └┬┘└┬─┘└┬─┘└┬┘
+  byte/run length    │     └┬──┴──┘   │  └──┴┬───┴───┘
+  total frequency    │  bit lengths   │  bit lengths
+                     │            gap size
+              used length of bit
+                 length table
+```
+
 
 
 

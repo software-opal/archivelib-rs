@@ -1,8 +1,8 @@
 import subprocess
-import zlib
 import sys
+import zlib
 
-COUNTS = [2 ** 8, 2 ** 9]
+COUNTS = [2**8, 2**9]
 FILES = [
     "aabb",
     "b",
@@ -117,7 +117,6 @@ for fileName, fileContent in fileContents:
         )
 
         fileCompressContent[f"{fileName}.al{level}"] = output
-
 
 
 def inversion(input):
