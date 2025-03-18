@@ -12,8 +12,7 @@ pub const END_OF_FILE_FLAG: usize = MAX_RUN_LENGTH + 1;
 /// The data `0..256` represents bytes, `256..510` represents run lengths, `510` represents EOF.
 ///
 /// Obfuscated name: `_141`
-pub const CONST_N141_IS_511: usize =
-  (u8::MAX as usize) + (MAX_RUN_LENGTH - MIN_RUN_LENGTH) + 3;
+pub const CONST_N141_IS_511: usize = (u8::MAX as usize) + (MAX_RUN_LENGTH - MIN_RUN_LENGTH) + 3;
 /// During compression, this is used as the size of the byte/run table's bit length huffman table.
 ///
 /// Used when calling `_218`.

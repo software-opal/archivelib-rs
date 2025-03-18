@@ -54,24 +54,6 @@ pub fn pure_fn225(
     if current_idx > max_idx {
       break;
     }
-    // eprint!(
-    //   "({})Comparing {:#05X}({}) and {:03X?}({:?}) to the start value {:#05X}({})",
-    //   current_idx,
-    //   values[current_idx],
-    //   frequencies[cast!((values[current_idx]) as usize)],
-    //   if current_idx < max_idx {
-    //     Some(values[current_idx + 1])
-    //   } else {
-    //     None
-    //   },
-    //   if current_idx < max_idx {
-    //     Some(frequencies[cast!((values[current_idx + 1]) as usize)])
-    //   } else {
-    //     None
-    //   },
-    //   start_value,
-    //   cast!(start_value as usize)
-    // );
     if current_idx < max_idx
       && value_frequencies[cast!((values[current_idx]) as usize)]
         > value_frequencies[cast!((values[current_idx + 1]) as usize)]

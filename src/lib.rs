@@ -3,7 +3,6 @@
 #![deny(clippy::style::assertions_on_constants)]
 #![deny(clippy::style::wrong_self_convention)]
 #![deny(clippy::unseparated_literal_suffix)]
-
 // Try to improve safety by requiring safer casts.
 #![warn(clippy::cast_lossless)]
 #![warn(clippy::cast_precision_loss)]

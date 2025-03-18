@@ -135,7 +135,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   }
 
   /// Write the given byte/run length's huffman encoding to the output buffer.
-  /// 
+  ///
   /// Obfuscated name: `void _223(short _203)`
   pub fn write_stored_bits_to_buffer(&mut self, byte_or_run_length_value: i16) -> Result<()> {
     /*
