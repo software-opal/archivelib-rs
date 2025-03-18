@@ -5,7 +5,7 @@ use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn222(&mut self) -> Result<()> {
+  pub fn write_byte_run_huff_tree_to_file(&mut self) -> Result<()> {
     pure_fn222(
       &mut self.output_store,
       &self.byte_run_length_huff_bit_length,
@@ -15,42 +15,70 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   }
 }
 
-pub fn pure_fn222<W>(out: &mut W, arr180: &[u8], arr181: &[u8], arr194: &[u16]) -> Result<()>
+pub fn pure_fn222<W>(
+  out: &mut W,
+  byte_run_length_huff_bit_length: &[u8],
+  bit_length_huff_bit_length: &[u8],
+  bit_length_huffman_encoding: &[u16],
+) -> Result<()>
 where
   W: BitwiseWrite,
 {
-  let mut bits_to_load219 = CONST_N141_IS_511;
-  while bits_to_load219 > 0 && arr180[bits_to_load219 - 1] == 0 {
-    bits_to_load219 -= 1
+  let mut last_entry = CONST_N141_IS_511;
+  while last_entry > 0 && byte_run_length_huff_bit_length[last_entry - 1] == 0 {
+    last_entry -= 1
   }
-  out.write_bits(bits_to_load219, CONST_N143_IS_9)?;
-  let mut run_start226 = 0;
-  while run_start226 < bits_to_load219 {
-    let var289 = arr180[run_start226] as usize;
-    run_start226 += 1;
-    if var289 == 0 {
-      let mut var277 = 1;
-      while (run_start226) < bits_to_load219 && arr180[run_start226] == 0 {
-        run_start226 += 1;
-        var277 += 1
+  out.write_bits(last_entry, CONST_N143_IS_9)?;
+
+  let mut idx = 0;
+  while idx < last_entry {
+    let bit_length = byte_run_length_huff_bit_length[idx] as usize;
+    eprintln!("I {:#05X}: len: {}", idx, bit_length);
+    idx += 1;
+    if bit_length == 0 {
+      // Current `idx` represents a node that's not present in the tree.
+      let mut gap_size = 1;
+      // Count the number of values until the next value that is present in the tree.
+      while (idx) < last_entry && byte_run_length_huff_bit_length[idx] == 0 {
+        idx += 1;
+        gap_size += 1
       }
-      if var277 <= 2 {
-        for _ in 0..var277 {
-          out.write_bits(arr194[0], arr181[0])?;
+      eprintln!("gap: {}", gap_size);
+      if gap_size <= 2 {
+        for _ in 0..gap_size {
+          out.write_bits(
+            bit_length_huffman_encoding[0],
+            bit_length_huff_bit_length[0],
+          )?;
         }
-      } else if var277 <= 18 {
-        out.write_bits(arr194[1], arr181[1])?;
-        out.write_bits(var277 - 3, 4)?;
-      } else if var277 == 19 {
-        out.write_bits(arr194[0], arr181[0])?;
-        out.write_bits(arr194[1], arr181[1])?;
+      } else if gap_size <= 18 {
+        out.write_bits(
+          bit_length_huffman_encoding[1],
+          bit_length_huff_bit_length[1],
+        )?;
+        out.write_bits(gap_size - 3, 4)?;
+      } else if gap_size == 19 {
+        out.write_bits(
+          bit_length_huffman_encoding[0],
+          bit_length_huff_bit_length[0],
+        )?;
+        out.write_bits(
+          bit_length_huffman_encoding[1],
+          bit_length_huff_bit_length[1],
+        )?;
         out.write_bits(15, 4)?;
       } else {
-        out.write_bits(arr194[2], arr181[2])?;
-        out.write_bits(var277 - 20, CONST_N143_IS_9)?;
+        out.write_bits(
+          bit_length_huffman_encoding[2],
+          bit_length_huff_bit_length[2],
+        )?;
+        out.write_bits(gap_size - 20, CONST_N143_IS_9)?;
       }
     } else {
-      out.write_bits(arr194[var289 + 2], arr181[var289 + 2])?;
+      out.write_bits(
+        bit_length_huffman_encoding[bit_length + 2],
+        bit_length_huff_bit_length[bit_length + 2],
+      )?;
     }
   }
   Ok(())

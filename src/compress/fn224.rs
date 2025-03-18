@@ -3,7 +3,7 @@ use crate::support::BitwiseWrite;
 use std::io::Read;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
-  pub fn fn224(&mut self, var204: u16) -> Result<()> {
+  pub fn write_run_offset_value_to_file(&mut self, var204: u16) -> Result<()> {
     pure_fn224(
       var204,
       &mut self.output_store,

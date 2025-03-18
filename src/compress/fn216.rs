@@ -30,7 +30,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let mut idx: usize = 0;
     while idx < largest_value {
       let bit_length: usize = self.byte_run_length_huff_bit_length[idx] as usize;
-      eprintln!("BL: {:#05X}: {}", idx, bit_length);
       idx += 1;
       if bit_length == 0 {
         // The current index isn't in the output.
