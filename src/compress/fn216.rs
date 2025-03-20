@@ -26,7 +26,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     {
       largest_value -= 1
     }
-    eprintln!("{:#05X}", largest_value);
     let mut idx: usize = 0;
     while idx < largest_value {
       let bit_length: usize = self.byte_run_length_huff_bit_length[idx] as usize;
@@ -38,7 +37,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
           idx += 1;
           distance_to_next_value += 1
         }
-        eprintln!("{}", distance_to_next_value);
         if distance_to_next_value <= 2 {
           var217_frequency_data[0] += cast!(distance_to_next_value as u16);
         } else if distance_to_next_value <= 18 {

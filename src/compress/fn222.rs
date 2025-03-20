@@ -33,7 +33,6 @@ where
   let mut idx = 0;
   while idx < last_entry {
     let bit_length = byte_run_length_huff_bit_length[idx] as usize;
-    eprintln!("I {:#05X}: len: {}", idx, bit_length);
     idx += 1;
     if bit_length == 0 {
       // Current `idx` represents a node that's not present in the tree.
@@ -43,7 +42,6 @@ where
         idx += 1;
         gap_size += 1
       }
-      eprintln!("gap: {}", gap_size);
       if gap_size <= 2 {
         for _ in 0..gap_size {
           out.write_bits(
