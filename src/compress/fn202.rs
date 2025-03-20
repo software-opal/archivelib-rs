@@ -12,7 +12,7 @@ const CHAR_BIT: usize = 8;
 ///  added in the next iteration (8 calls * 3 bytes max) minus some extra padding for reasons
 ///
 /// Obfuscated name: `->_183`
-const BITS_BEFORE_FLUSH: usize = CONST_N155_IS_8192 - ((3 * CHAR_BIT) + 6);
+const BYTES_BEFORE_FLUSH: usize = CONST_N155_IS_8192 - ((3 * CHAR_BIT) + 6);
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Write a byte, run, or EOF into the byte run buffer.
@@ -41,7 +41,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     self.byte_run_length_buffer_counter >>= 1;
     if self.byte_run_length_buffer_counter == 0 {
       self.byte_run_length_buffer_counter = 1 << (CHAR_BIT - 1);
-      if self.byte_or_run_buffer_index >= BITS_BEFORE_FLUSH {
+      if self.byte_or_run_buffer_index >= BYTES_BEFORE_FLUSH {
         self.fn207_maybe_flush_state_to_output()?;
         self.byte_or_run_buffer_index = 0;
       }
