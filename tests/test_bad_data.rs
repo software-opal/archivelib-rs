@@ -1,3 +1,7 @@
+#[macro_use]
+mod utils;
+
+use archivelib::assert_bytes_eq;
 use rand::seq::SliceRandom;
 use std::collections::HashSet;
 
@@ -213,7 +217,6 @@ fn test_compressing_specially_crafted() {
     );
     input
   };
-  panic!();
 
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   let compressed_ab =

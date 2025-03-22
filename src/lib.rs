@@ -16,6 +16,9 @@ mod support;
 #[macro_use]
 mod test;
 
+mod compress_rewrite;
+mod huffman;
+
 mod level;
 
 #[cfg(not(feature = "new_impl"))]
@@ -32,27 +35,41 @@ pub use self::config::ArchivelibConfig;
 pub use self::errors::*;
 pub use self::level::CompressionLevel;
 
+pub use compress_rewrite::Compressor;
+pub use huffman::builder::frequency::build_from_frequency;
+pub use huffman::sorts::{
+  ARCHIVE_LIB_SORT_ALGORITHM, ArchiveLibSortAlgorithm, MODERN_SORT_ALGORITHM, ModernSortAlgorithm,
+  SortAlgorithm,
+};
+
 #[cfg(feature = "sys")]
 pub mod sys {
   pub use archivelib_sys::{do_compress, do_compress_level, do_decompress, do_decompress_level};
 }
 
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-  ArchivelibConfig::default()
-    .compress(input)
-    .map_err(|err| format!("{}", err))
+  do_compress_level(input, CompressionLevel::Level0)
 }
 
+// #[cfg(feature = "new_impl")]
+// pub fn do_compress_level(
+//   input: &[u8],
+//   compression_level: CompressionLevel,
+// ) -> Result<Box<[u8]>, std::string::String> {
+//   let mut arr = vec![];
+//   self::compress_rewrite::ArchivelibConfig::from(compression_level)
+//     .compress(input, &mut arr)
+//     .map_err(|err| format!("{}", err))
+//     .and_then(|_| Ok(arr.into_boxed_slice()))
+// }
+// #[cfg(not(feature = "new_impl"))]
 pub fn do_compress_level(
   input: &[u8],
   compression_level: CompressionLevel,
 ) -> Result<Box<[u8]>, std::string::String> {
-  (ArchivelibConfig {
-    level: compression_level,
-    ..ArchivelibConfig::default()
-  })
-  .compress(input)
-  .map_err(|err| format!("{}", err))
+  ArchivelibConfig::from(compression_level)
+    .compress(input)
+    .map_err(|err| format!("{}", err))
 }
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {

@@ -64,6 +64,8 @@ impl SortAlgorithm for ArchiveLibSortAlgorithm {
   }
 }
 
+pub const ARCHIVE_LIB_SORT_ALGORITHM: ArchiveLibSortAlgorithm = ArchiveLibSortAlgorithm {};
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -79,7 +81,7 @@ mod tests {
   #[test]
   fn test_initial_sorting() {
     let algo = ArchiveLibSortAlgorithm {};
-    let nodes = nodes_from_freq((1..20));
+    let nodes = nodes_from_freq(1..20);
     let deque = algo.initial_sort(nodes);
     assert_eq!(deque.get(1), Some(&Node::Leaf(0, 1)));
   }

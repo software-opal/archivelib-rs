@@ -66,21 +66,18 @@ impl<R: Read> InputRingBuffer<R> {
     }
   }
 
-  pub(crate) fn initial_load(&mut self) -> Result<()> {
-  }
-
   pub(crate) fn ensure_buffer_filled(&mut self) -> Result<()> {
     match self.buffer_state {
       BufferState::NotLoaded => {
         let size = read_all(&mut self.reader, &mut self.buffer[0..self.nominal_size])?;
-    
+
         self.remaining_data = size;
         self.buffer_end_position = size % self.nominal_size;
-    
+
         self.byte_run_hash.record_byte(self.buffer[0]);
         self.byte_run_hash.record_byte(self.buffer[1]);
         self.byte_run_hash.record_byte(self.buffer[2]);
-    
+
         self.buffer_state = BufferState::InitialLoad;
         return Ok(());
       }
@@ -113,7 +110,6 @@ impl<R: Read> InputRingBuffer<R> {
           self
             .byte_run_hash
             .clear_entry_at_position(self.buffer_end_position);
-          // }
           self.buffer_end_position = (self.buffer_end_position + 1) % self.nominal_size;
 
           self.remaining_data += 1
@@ -124,10 +120,9 @@ impl<R: Read> InputRingBuffer<R> {
       _ => {}
     }
 
+    // This loop advances the ring buffer by 1, replacing the front element with a byte from the
+    //  file.
     while self.data_to_advance > 0 {
-      if self.data_to_advance <= 0 {
-        break;
-      }
       let byte = match read_one(&mut self.reader)? {
         None => break,
         Some(n) => n,
@@ -149,6 +144,8 @@ impl<R: Read> InputRingBuffer<R> {
       self.data_to_advance -= 1;
     }
 
+    // This loop advances our position in the buffer, and is only used when we approach the end of
+    //  the buffer.
     while self.data_to_advance > 0 {
       self.byte_run_hash.insert_byte_hash(self.buffer_position);
       self.buffer_position = (self.buffer_position + 1) % self.nominal_size;
@@ -168,17 +165,8 @@ impl<R: Read> InputRingBuffer<R> {
     let mut longest_run = None;
 
     for test_position in self.byte_run_hash.possible_run_positions() {
-      eprintln!("Testing position: {}", test_position);
-
       let mut run_length = 0;
       while run_length < max_length {
-        eprintln!(
-          "Testing [{}] = {} == [{}] = {}",
-          start_position + run_length,
-          self.buffer[start_position + run_length],
-          test_position + run_length,
-          self.buffer[test_position + run_length]
-        );
         if self.buffer[start_position + run_length] != self.buffer[test_position + run_length] {
           break;
         }

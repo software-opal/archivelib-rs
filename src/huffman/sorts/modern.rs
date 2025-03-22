@@ -19,3 +19,5 @@ impl SortAlgorithm for ModernSortAlgorithm {
     nodes.push(Reverse(new_node));
   }
 }
+
+pub const MODERN_SORT_ALGORITHM: ModernSortAlgorithm = ModernSortAlgorithm {};

@@ -1,8 +1,8 @@
 mod archivelib;
-pub use self::archivelib::ArchiveLibSortAlgorithm;
+pub use self::archivelib::{ARCHIVE_LIB_SORT_ALGORITHM, ArchiveLibSortAlgorithm};
 
 mod modern;
-pub use self::modern::ModernSortAlgorithm;
+pub use self::modern::{MODERN_SORT_ALGORITHM, ModernSortAlgorithm};
 
 use super::tree::Node;
 

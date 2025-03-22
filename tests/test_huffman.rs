@@ -102,6 +102,22 @@ fn test_compressing_a_little_bit_of_data() {
 }
 
 #[test]
+fn test_compressing_nothing() {
+  let input = "".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 01 00 00 1F E0 00");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+
+#[test]
+fn test_compressing_1_a() {
+  let input = "a".as_bytes();
+  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let compressed_ab = hex!("00 02 20 04 3F F1 36 C4  40 04");
+  assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
+}
+
+#[test]
 fn test_compressing_a_run_of_identical_data() {
   let input = "aaaa".as_bytes();
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);

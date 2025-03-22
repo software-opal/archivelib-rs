@@ -75,6 +75,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         cast!(CONST_N143_IS_9 as usize),
       )?;
     }
+    eprintln!("_OUOEUOEUOUOE");
     run_length_root_node = self.build_huffman_encoding(
       cast!(CONST_N142_IS_15 as i32),
       &mut CompressU16ArrayAlias::RunOffsetBitCountFrequency(0),

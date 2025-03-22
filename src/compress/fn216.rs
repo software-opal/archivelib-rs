@@ -33,7 +33,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       if bit_length == 0 {
         // The current index isn't in the output.
         let mut distance_to_next_value: i32 = 1;
-        while (idx) < largest_value && self.byte_run_length_huff_bit_length[idx] == 0 {
+        while idx < largest_value && self.byte_run_length_huff_bit_length[idx] == 0 {
           idx += 1;
           distance_to_next_value += 1
         }

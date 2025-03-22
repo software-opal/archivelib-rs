@@ -31,7 +31,6 @@ impl ByteRunHashTable {
   }
 
   pub fn insert_byte_hash(&mut self, position: usize) {
-    eprintln!("Inserting {}: {:#014b}", position, self.current_hash);
     let byte_hash = self.current_hash;
     if let Some(previous_position) = self.hash_table[byte_hash] {
       // We have a value for this hash, and we're about to update what position is in there, so
@@ -50,7 +49,6 @@ impl ByteRunHashTable {
   }
 
   pub fn clear_entry_at_position(&mut self, position: usize) {
-    eprintln!("Clearing {}, {:?}", position, self.inverse_table[position]);
     if let Some(hash_table_idx) = self.inverse_table[position] {
       self.hash_table[hash_table_idx] = None;
       self.inverse_table[position] = None;
@@ -174,7 +172,9 @@ mod test {
     table.insert_byte_hash(1);
     table.insert_byte_hash(2);
 
-    assert_eq!(table.possible_run_positions().collect::<Vec<_>>(), [2, 1, 0]);
+    assert_eq!(
+      table.possible_run_positions().collect::<Vec<_>>(),
+      [2, 1, 0]
+    );
   }
-
 }

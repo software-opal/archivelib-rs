@@ -27,7 +27,7 @@ pub enum EncodingFailure {
 
 pub fn build_from_frequency(
   leaf_frequency_data: &[u16],
-  sort_algorithm: impl SortAlgorithm,
+  sort_algorithm: &impl SortAlgorithm,
 ) -> Result<(RootNode, Vec<Encoding>), EncodingFailure> {
   let leaf_freq_size = leaf_frequency_data.len();
   let (leaves_in_visit_order, root_node) = build_initial_tree(leaf_frequency_data, sort_algorithm)?;
@@ -65,7 +65,7 @@ pub fn build_from_frequency(
 
 fn build_initial_tree(
   leaf_frequency_data: &[u16],
-  sort_algorithm: impl SortAlgorithm,
+  sort_algorithm: &impl SortAlgorithm,
 ) -> Result<(Vec<usize>, Node), EncodingFailure> {
   let nodes_to_visit: Vec<_> = leaf_frequency_data
     .into_iter()
@@ -160,13 +160,13 @@ fn do_count_leaf_node_depths(depths: &mut [u16; 18], node: &Node, current_depth:
 
 #[cfg(test)]
 mod tests {
-  use crate::huffman::sorts::{ArchiveLibSortAlgorithm, ModernSortAlgorithm};
+  use crate::huffman::sorts::{ARCHIVE_LIB_SORT_ALGORITHM, MODERN_SORT_ALGORITHM};
 
   use super::*;
   #[test]
   fn test_empty_frequency_data() {
     assert_eq!(
-      build_from_frequency(&[0, 0, 0], ModernSortAlgorithm {}),
+      build_from_frequency(&[0, 0, 0], &MODERN_SORT_ALGORITHM),
       Err(EncodingFailure::NoNodes)
     );
   }
@@ -174,7 +174,7 @@ mod tests {
   #[test]
   fn test_one_frequency_only() {
     assert_eq!(
-      build_from_frequency(&[10, 0, 0], ModernSortAlgorithm {}),
+      build_from_frequency(&[10, 0, 0], &MODERN_SORT_ALGORITHM),
       Ok((RootNode::Leaf(0, 10), vec![(0, 0); 3]))
     );
   }
@@ -182,14 +182,14 @@ mod tests {
   #[test]
   fn test_two_frequencies() {
     assert_eq!(
-      build_from_frequency(&[10, 20, 0], ModernSortAlgorithm {}),
+      build_from_frequency(&[10, 20, 0], &MODERN_SORT_ALGORITHM),
       Ok((RootNode::Node(30), vec![(0, 1), (1, 1), (0, 0)]))
     );
   }
   #[test]
   fn test_empty_frequency_data_with_al_sorting() {
     assert_eq!(
-      build_from_frequency(&[0, 0, 0], ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&[0, 0, 0], &ARCHIVE_LIB_SORT_ALGORITHM),
       Err(EncodingFailure::NoNodes)
     );
   }
@@ -197,7 +197,7 @@ mod tests {
   #[test]
   fn test_one_frequency_only_with_al_sorting() {
     assert_eq!(
-      build_from_frequency(&[10, 0, 0], ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&[10, 0, 0], &ARCHIVE_LIB_SORT_ALGORITHM),
       Ok((RootNode::Leaf(0, 10), vec![(0, 0); 3]))
     );
   }
@@ -205,7 +205,7 @@ mod tests {
   #[test]
   fn test_two_frequencies_with_al_sorting() {
     assert_eq!(
-      build_from_frequency(&[10, 20, 0], ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&[10, 20, 0], &ARCHIVE_LIB_SORT_ALGORITHM),
       Ok((RootNode::Node(30), vec![(0, 1), (1, 1), (0, 0)]))
     );
   }
@@ -213,7 +213,7 @@ mod tests {
   #[test]
   fn test_three_frequencies_with_al_sorting() {
     assert_eq!(
-      build_from_frequency(&[10, 20, 30, 0], ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&[10, 20, 30, 0], &ARCHIVE_LIB_SORT_ALGORITHM),
       Ok((
         RootNode::Node(60),
         vec![(0b10, 2), (0b11, 2), (0b0, 1), (0, 0)]
@@ -224,7 +224,7 @@ mod tests {
   #[test]
   fn test_four_frequencies_with_al_sorting() {
     assert_eq!(
-      build_from_frequency(&[10, 20, 30, 9000, 0], ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&[10, 20, 30, 9000, 0], &ARCHIVE_LIB_SORT_ALGORITHM),
       Ok((
         RootNode::Node(9060),
         vec![(0b110, 3), (0b111, 3), (0b10, 2), (0b0, 1), (0, 0)]
@@ -265,7 +265,7 @@ mod tests {
     expected_encoding[0x1FE] = (0b11111, 5);
 
     assert_eq!(
-      build_from_frequency(&freq, ArchiveLibSortAlgorithm {}),
+      build_from_frequency(&freq, &ARCHIVE_LIB_SORT_ALGORITHM),
       Ok((RootNode::Node(17), expected_encoding))
     );
   }
