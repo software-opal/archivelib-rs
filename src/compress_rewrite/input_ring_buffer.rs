@@ -160,13 +160,17 @@ impl<R: Read> InputRingBuffer<R> {
   }
 
   pub fn find_longest_run(&self) -> Option<(usize, usize)> {
-    let max_length = MAX_RUN_LENGTH.min(self.remaining_data);
+    assert_eq!(
+      self.data_to_advance, 0,
+      "Cannot operate on buffer whilst data is yet to be loaded"
+    );
     let start_position = self.buffer_position;
     let mut longest_run = None;
 
     for test_position in self.byte_run_hash.possible_run_positions() {
       let mut run_length = 0;
-      while run_length < max_length {
+      while run_length < MAX_RUN_LENGTH {
+        // QUIRK: This code can read beyond `remaining_data`.
         if self.buffer[start_position + run_length] != self.buffer[test_position + run_length] {
           break;
         }
@@ -188,6 +192,8 @@ impl<R: Read> InputRingBuffer<R> {
     }
 
     longest_run
+      .map(|(run_len, off)| (run_len.min(self.remaining_data), off))
+      .filter(|(run_len, _)| *run_len >= MIN_RUN_LENGTH)
   }
 
   pub fn advance_by(&mut self, count: usize) -> () {
@@ -195,10 +201,73 @@ impl<R: Read> InputRingBuffer<R> {
   }
 
   pub fn next_byte(&self) -> Option<u8> {
+    assert_eq!(
+      self.data_to_advance, 0,
+      "Cannot operate on buffer whilst data is yet to be loaded"
+    );
     if self.remaining_data > 0 {
       Some(self.buffer[self.buffer_position])
     } else {
       None
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::InputRingBuffer;
+
+  #[test]
+  fn test_find_longest_run_reads_off_end_of_buffer_when_finding_runs() {
+    let mut buffer = InputRingBuffer::new(&[0, 0, 0, 0, 0x39, 0, 0, 0][..], 0x1000);
+    buffer.ensure_buffer_filled().unwrap();
+
+    buffer.advance_by(1);
+    buffer.ensure_buffer_filled().unwrap();
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, Some((3, 0)));
+
+    buffer.advance_by(4);
+    buffer.ensure_buffer_filled().unwrap();
+
+    // For the love of pete, this reads off the "end" of the array :sob:
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, Some((3, 4)));
+  }
+
+  #[test]
+  fn test_find_longest_run_without_nul_bytes() {
+    let mut buffer = InputRingBuffer::new(
+      &[0x01, 0x01, 0x01, 0x01, 0x39, 0x01, 0x01, 0x01][..],
+      0x1000,
+    );
+    buffer.ensure_buffer_filled().unwrap();
+
+    buffer.advance_by(1);
+    buffer.ensure_buffer_filled().unwrap();
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, Some((3, 0)));
+
+    buffer.advance_by(4);
+    buffer.ensure_buffer_filled().unwrap();
+
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, Some((3, 3)));
+  }
+
+  #[test]
+  fn test_prevents_too_short_runs_from_returning_as_a_real_run() {
+    let mut buffer = InputRingBuffer::new(&[0xFF, 0x00, 0x00, 0x00][..], 0x1000);
+    buffer.ensure_buffer_filled().unwrap();
+
+    buffer.advance_by(1);
+    buffer.ensure_buffer_filled().unwrap();
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, None);
+
+    buffer.advance_by(1);
+    buffer.ensure_buffer_filled().unwrap();
+    let longest = buffer.find_longest_run();
+    assert_eq!(longest, None);
   }
 }

@@ -4,6 +4,7 @@ const BYTE_RUN_HASH_BITMASK: usize = BYTE_RUN_HASH_SIZE - 1;
 
 pub const MAX_RUN_COPY_CHECK_ATTEMPTS: usize = 128;
 
+#[derive(Debug)]
 pub struct ByteRunHashTable {
   buffer_size: usize,
   hash_table: Vec<Option<usize>>,
@@ -26,8 +27,8 @@ impl ByteRunHashTable {
   }
 
   pub fn next_byte_hash(&self, existing_hash: usize, next_byte: u8) -> usize {
-    return self.buffer_size + ((existing_hash << 4) ^ (usize::from(next_byte)))
-      & BYTE_RUN_HASH_BITMASK;
+    return self.buffer_size
+      + (((existing_hash << 4) ^ (usize::from(next_byte))) & BYTE_RUN_HASH_BITMASK);
   }
 
   pub fn insert_byte_hash(&mut self, position: usize) {

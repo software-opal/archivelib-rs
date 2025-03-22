@@ -144,7 +144,7 @@ fn build_byte_run_encoding_output(encoding: &[(u16, usize)]) -> (Vec<Output>, [u
 
 #[cfg(test)]
 mod test {
-  use crate::{ARCHIVE_LIB_SORT_ALGORITHM, huffman::builder::frequency};
+  use crate::ARCHIVE_LIB_SORT_ALGORITHM;
 
   use super::*;
 

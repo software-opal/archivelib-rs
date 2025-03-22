@@ -37,12 +37,26 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
   }
 
   pub fn compress(&mut self) -> Result<()> {
-    loop {
+    while self.fill_lzss_buffer()? {
+      self.dump_lzss_buffer()?;
+    }
+
+    self.dump_lzss_buffer()?;
+
+    self.writer.finalise()?;
+
+    Ok(())
+  }
+
+  fn fill_lzss_buffer(&mut self) -> Result<bool> {
+    while !self.lzss_buffer.is_full() {
       self.input_file_ring_buffer.ensure_buffer_filled()?;
       let next_byte = if let Some(next_byte) = self.input_file_ring_buffer.next_byte() {
         next_byte
       } else {
-        break;
+        self.lzss_buffer.insert_element(LzssEntry::EoF);
+
+        return Ok(false);
       };
 
       if let Some((run, offset)) = self.input_file_ring_buffer.find_longest_run() {
@@ -52,19 +66,8 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
         self.lzss_buffer.insert_element(LzssEntry::Byte(next_byte));
         self.input_file_ring_buffer.advance_by(1);
       }
-
-      if self.lzss_buffer.is_full() {
-        self.dump_lzss_buffer()?;
-      }
     }
-
-    self.lzss_buffer.insert_element(LzssEntry::EoF);
-
-    self.dump_lzss_buffer()?;
-
-    self.writer.finalise()?;
-
-    Ok(())
+    return Ok(true);
   }
 
   fn dump_lzss_buffer(&mut self) -> Result<()> {
@@ -130,7 +133,7 @@ mod test {
     compressor.compress().unwrap();
   }
   #[test]
-  fn test_long_repeating_data(data in prop::array::uniform8(0_u8..), repeats in 1_usize..0x1_00_00) {
+  fn test_long_repeating_data(data in prop::array::uniform8(0_u8..), repeats in 1_usize..0x1_00) {
     let mut input = Vec::with_capacity(repeats * data.len());
     for _ in 0..repeats {
       input.extend(data);
@@ -181,263 +184,311 @@ mod test {
     compressor.compress().unwrap();
   }
 
-  //   #[test]
-  //   fn test_compress_an_empty_file() {
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       "".as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_lzss_offsets_full_output() {
+    let mut output = vec![];
+    let input = [0x00_u8, 0x00, 0x00, 0x00, 0x39, 0x00, 0x00, 0x00];
+    let mut compressor = Compressor::new(
+      &input[..],
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    compressor.compress().unwrap();
 
-  //     assert_eq!(output, []);
-  //   }
+    assert_bytes_eq!(
+      [
+        0x00, 0x05, 0x28, 0x05, 0x3F, 0xF8, 0x49, 0x2C, 0xA7, 0x4C, 0x84, 0x02, 0x46, 0x98
+      ],
+      output
+    );
+  }
 
-  //   #[test]
-  //   fn test_compress_abc() {
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       "abc".as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_lzss_offsets() {
+    let mut output = vec![];
+    let input = [0x00_u8, 0x00, 0x00, 0x00, 0x39, 0x00, 0x00, 0x00];
+    let mut compressor = Compressor::new(
+      &input[..],
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::Byte(99),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(
+      [
+        LzssEntry::Byte(0x00),
+        LzssEntry::Run(0x03, 0),
+        LzssEntry::Byte(0x39),
+        LzssEntry::Run(0x03, 4),
+        LzssEntry::EoF
+      ],
+      *compressor.lzss_buffer.data,
+    );
+  }
 
-  //   #[test]
-  //   fn test_compress_abcabc() {
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       "abcabc".as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_compress_an_empty_file() {
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      "".as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::Byte(99),
-  //         LzssEntry::Run(3, 2),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(output, []);
+  }
 
-  //   #[test]
-  //   fn test_compress_aaaabbbb() {
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       "aaaabbbb".as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_compress_abc() {
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      "abc".as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Run(3, 0),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::Run(3, 0),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Byte(98),
+        LzssEntry::Byte(99),
+        LzssEntry::EoF
+      ]
+    );
+  }
 
-  //   #[test]
-  //   fn test_compress_aaaa() {
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       "aaaa".as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_compress_abcabc() {
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      "abcabc".as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [LzssEntry::Byte(97), LzssEntry::Run(3, 0), LzssEntry::EoF]
-  //     );
-  //   }
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Byte(98),
+        LzssEntry::Byte(99),
+        LzssEntry::Run(3, 2),
+        LzssEntry::EoF
+      ]
+    );
+  }
 
-  //   #[test]
-  //   fn test_compress_1024_as_then_b() {
-  //     let input = format!("{}b", ["a"; 1024].join(""));
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       input.as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+  #[test]
+  fn test_compress_aaaabbbb() {
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      "aaaabbbb".as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(255, 0),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
-  //   #[test]
-  //   fn test_compress_1024_as_then_4_bs() {
-  //     let input = format!("{}bbbb", ["a"; 1024].join(""));
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       input.as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Run(3, 0),
+        LzssEntry::Byte(98),
+        LzssEntry::Run(3, 0),
+        LzssEntry::EoF
+      ]
+    );
+  }
 
-  //     compressor.compress().unwrap();
+  #[test]
+  fn test_compress_aaaa() {
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      "aaaa".as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(255, 0),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::Run(3, 0),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //   #[test]
-  //   fn test_compress_2048_as() {
-  //     let input = ["a"; 4096].join("");
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       input.as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [LzssEntry::Byte(97), LzssEntry::Run(3, 0), LzssEntry::EoF]
+    );
+  }
 
-  //     compressor.compress().unwrap();
+  #[test]
+  fn test_compress_1024_as_then_b() {
+    let input = format!("{}b", ["a"; 1024].join(""));
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      input.as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(255, 0),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //   #[test]
-  //   fn test_compress_4096_as_then_4096_bs() {
-  //     let input = ["a"; 4096].join("") + &["b"; 4096].join("");
-  //     let mut output = vec![];
-  //     let mut compressor = Compressor::new(
-  //       input.as_bytes(),
-  //       BitwiseWriter::new(&mut output),
-  //       10,
-  //       ARCHIVE_LIB_SORT_ALGORITHM,
-  //     )
-  //     .unwrap();
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(255, 0),
+        LzssEntry::Byte(98),
+        LzssEntry::EoF
+      ]
+    );
+  }
+  #[test]
+  fn test_compress_1024_as_then_4_bs() {
+    let input = format!("{}bbbb", ["a"; 1024].join(""));
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      input.as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
 
-  //     compressor.compress().unwrap();
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
 
-  //     assert_eq!(
-  //       compressor.lzss_buffer.data,
-  //       [
-  //         LzssEntry::Byte(97),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(255, 0),
-  //         LzssEntry::Byte(98),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(256, 0),
-  //         LzssEntry::Run(255, 0),
-  //         LzssEntry::EoF
-  //       ]
-  //     );
-  //   }
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(255, 0),
+        LzssEntry::Byte(98),
+        LzssEntry::Run(3, 0),
+        LzssEntry::EoF
+      ]
+    );
+  }
+
+  #[test]
+  fn test_compress_2048_as() {
+    let input = ["a"; 4096].join("");
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      input.as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
+
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(255, 0),
+        LzssEntry::EoF
+      ]
+    );
+  }
+
+  #[test]
+  fn test_compress_4096_as_then_4096_bs() {
+    let input = ["a"; 4096].join("") + &["b"; 4096].join("");
+    let mut output = vec![];
+    let mut compressor = Compressor::new(
+      input.as_bytes(),
+      BitwiseWriter::new(&mut output),
+      10,
+      ARCHIVE_LIB_SORT_ALGORITHM,
+    )
+    .unwrap();
+
+    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+
+    assert_eq!(
+      compressor.lzss_buffer.data,
+      [
+        LzssEntry::Byte(97),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(255, 0),
+        LzssEntry::Byte(98),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(256, 0),
+        LzssEntry::Run(255, 0),
+        LzssEntry::EoF
+      ]
+    );
+  }
 }
