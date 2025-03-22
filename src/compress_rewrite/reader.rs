@@ -73,12 +73,6 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
     let byte_encoding: (RootNode, Vec<(u16, usize)>) =
       build_from_frequency(&lzss_byte_freq, &self.sort_algorithm).unwrap();
 
-    for (idx, (bits, bit_len)) in byte_encoding.1.iter().enumerate() {
-      if *bit_len > 0 {
-        eprintln!("Bits {}: {:#02$b}", idx, bits, bit_len);
-      }
-    }
-
     let mut output = vec![(byte_encoding.0.frequency(), 16)];
 
     output.append(&mut write_byte_frequency_tree(

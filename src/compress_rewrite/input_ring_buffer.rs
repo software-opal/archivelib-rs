@@ -186,9 +186,7 @@ impl<R: Read> InputRingBuffer<R> {
         }
       }
     }
-    eprintln!("Longest: {:?}", longest_run);
 
-    // TODO: Clamp longest run to remaining data.
     longest_run
   }
 

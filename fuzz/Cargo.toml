@@ -4,19 +4,20 @@ name = "archivelib-fuzz"
 version = "0.0.1"
 authors = ["Automatically generated"]
 publish = false
+edition = "2024"
 
 [package.metadata]
 cargo-fuzz = true
 
 [dependencies.archivelib]
 path = ".."
-features = ["new_impl"]
+features = ["new_impl", "sys"]
+
 [dependencies.libfuzzer-sys]
 git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
 
 [dependencies.archivelib-sys]
-path = "../archivelib-sys"
-# path = "../archivelib-sys2"
+path = "../archivelib-sys-orig"
 
 [[bin]]
 name = "fuzz_compress_correctness"

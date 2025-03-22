@@ -1,26 +1,3 @@
-macro_rules! pending_test {
-  () => ({
-    pending_test!("?")
-  });
-  ($msg:expr_2021) => ({
-    #[cfg(any(feature = "fuzz-afl", feature = "fuzz-hfuzz"))]
-    {
-      eprintln!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
-      std::process::abort();
-    }
-    #[cfg(all(not(feature = "fuzz-afl"), not(feature = "fuzz-hfuzz")))]
-    {
-      unimplemented!("{}:{} is pending a test case: {}", file!(), line!(), $msg);
-    }
-  });
-  ($msg:expr_2021,) => ({
-    pending_test!($msg)
-  });
-  ($fmt:expr_2021, $($arg:tt)+) => ({
-    pending_test!(&format_args!($fmt, $($arg)+))
-  });
-}
-
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
   ($compressed: expr_2021) => {{

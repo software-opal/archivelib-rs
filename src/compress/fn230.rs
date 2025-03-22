@@ -30,15 +30,6 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     );
     // Copy the value to encoding mapping into the tree
     for (i, &val) in result.iter().enumerate() {
-      let depth = *tree_value_depths.get(i).unwrap() as usize;
-      if depth != 0 {
-        eprintln!(
-          "Encoding of {:#05X}: {:#0width$b}",
-          i,
-          val,
-          width = 2 + depth
-        )
-      }
       value_huffman_encoding.set(self, i, val);
     }
   }

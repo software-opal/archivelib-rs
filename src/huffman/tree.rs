@@ -30,10 +30,3 @@ impl PartialOrd<Node> for Node {
     self.frequency().partial_cmp(&other.frequency())
   }
 }
-
-struct HuffmanTree {
-  root_node: Node,
-  left_nodes: Vec<Node>,
-  right_nodes: Vec<Node>,
-  // leaf_frequency: Vec<
-}

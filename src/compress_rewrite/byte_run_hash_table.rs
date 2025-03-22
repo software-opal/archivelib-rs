@@ -38,11 +38,6 @@ impl ByteRunHashTable {
       //  table when we go to clear it.
       self.inverse_table[previous_position] = Some(position);
       self.hash_table[position] = Some(previous_position)
-    } else {
-      assert_eq!(
-        self.hash_table[position], None,
-        "Possibly invalid hash table."
-      );
     }
     self.inverse_table[position] = Some(byte_hash);
     self.hash_table[byte_hash] = Some(position);
