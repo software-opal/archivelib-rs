@@ -137,7 +137,7 @@ mod tests {
     let node_start_at = bit_depth.len();
 
     let (root_node, left_nodes, right_nodes) =
-      build_tree_from_encoding(node_start_at as i32, &bit_depth, &bit_values);
+      build_tree_from_encoding(cast!(node_start_at as i32), &bit_depth, &bit_values);
 
     // 0b00
     assert_eq!(left_nodes[root_node], 1);

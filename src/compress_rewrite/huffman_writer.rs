@@ -17,7 +17,7 @@ pub fn write_byte_frequency_tree(
   if let RootNode::Leaf(value, _) = root {
     vec![(0, 5), (0, 5), (0, 9), (cast!((*value) as u16), 9)]
   } else {
-    let (encoding_output, byte_encoding_freq) = build_byte_run_encoding_output(&encoding);
+    let (encoding_output, byte_encoding_freq) = build_byte_run_encoding_output(encoding);
     let (byte_encoding_root, byte_encoding_encoding) =
       build_from_frequency(&byte_encoding_freq, sort_algorithm).unwrap();
 

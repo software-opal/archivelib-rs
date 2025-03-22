@@ -39,14 +39,14 @@ impl<W: std::io::Write> BitwiseWriter<W> {
         // for bit in this_byte {
         //   byte = (byte << 1) | (if bit { 1 } else { 0 })
         // }
-        let byte = ((self.buffer[0] as u8) << 7)
-          | ((self.buffer[1] as u8) << 6)
-          | ((self.buffer[2] as u8) << 5)
-          | ((self.buffer[3] as u8) << 4)
-          | ((self.buffer[4] as u8) << 3)
-          | ((self.buffer[5] as u8) << 2)
-          | ((self.buffer[6] as u8) << 1)
-          | (self.buffer[7] as u8);
+        let byte = (u8::from(self.buffer[0]) << 7)
+          | (u8::from(self.buffer[1]) << 6)
+          | (u8::from(self.buffer[2]) << 5)
+          | (u8::from(self.buffer[3]) << 4)
+          | (u8::from(self.buffer[4]) << 3)
+          | (u8::from(self.buffer[5]) << 2)
+          | (u8::from(self.buffer[6]) << 1)
+          | u8::from(self.buffer[7]);
         self.buffer.drain(..8);
         to_write.push(byte);
       }
@@ -89,7 +89,7 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
     Ok(())
   }
   fn finalise(&mut self) -> std::io::Result<()> {
-    if self.buffer.len() == 0 {
+    if self.buffer.is_empty() {
       return Ok(());
     }
     let unwritten = self.buffer.len() % 8;
@@ -106,7 +106,7 @@ mod tests {
 
   #[test]
   fn test_bool_to_u8() {
-    assert_eq!(true as u8, 1);
+    assert_eq!(u8::from(true), 1);
   }
 
   #[test]
@@ -151,7 +151,7 @@ mod tests {
     for _ in 0..1024 {
       writer.write_bits(0xFF, 8).unwrap();
     }
-    assert!(buf.len() > 0);
+    assert!(!buf.is_empty());
   }
   #[test]
   fn test_doesnt_flush_after_a_single_bit_write() {

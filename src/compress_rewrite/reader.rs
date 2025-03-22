@@ -30,7 +30,7 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
     }
     Ok(Self {
       writer,
-      sort_algorithm: sort_algorithm,
+      sort_algorithm,
       input_file_ring_buffer: InputRingBuffer::new(reader, 1 << compression_factor),
       lzss_buffer: LzssBuffer::new(),
     })
@@ -67,7 +67,7 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
         self.input_file_ring_buffer.advance_by(1);
       }
     }
-    return Ok(true);
+    Ok(true)
   }
 
   fn dump_lzss_buffer(&mut self) -> Result<()> {
@@ -218,7 +218,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       [
@@ -243,7 +243,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(output, []);
   }
@@ -259,7 +259,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -283,7 +283,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -308,7 +308,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -333,7 +333,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -353,7 +353,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -380,7 +380,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -409,7 +409,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,
@@ -448,7 +448,7 @@ mod test {
     )
     .unwrap();
 
-    assert_eq!(false, compressor.fill_lzss_buffer().unwrap());
+    assert!(!compressor.fill_lzss_buffer().unwrap());
 
     assert_eq!(
       compressor.lzss_buffer.data,

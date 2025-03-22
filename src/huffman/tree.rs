@@ -1,4 +1,4 @@
-#[derive(PartialEq, Eq, Ord, Debug)]
+#[derive(PartialEq, Eq, Debug, PartialOrd, Ord)]
 pub enum Node {
   Leaf(usize, u16),
   Branch(Box<Node>, Box<Node>, u16),
@@ -25,8 +25,3 @@ impl Node {
   }
 }
 
-impl PartialOrd<Node> for Node {
-  fn partial_cmp(&self, other: &Node) -> Option<std::cmp::Ordering> {
-    self.frequency().partial_cmp(&other.frequency())
-  }
-}

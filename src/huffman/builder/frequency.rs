@@ -1,6 +1,3 @@
-use core::panic;
-use std::{cmp::min, u16, usize};
-
 use crate::huffman::{sorts::SortAlgorithm, tree::Node};
 
 // Bits, Bit length
@@ -68,7 +65,7 @@ fn build_initial_tree(
   sort_algorithm: &impl SortAlgorithm,
 ) -> Result<(Vec<usize>, Node), EncodingFailure> {
   let nodes_to_visit: Vec<_> = leaf_frequency_data
-    .into_iter()
+    .iter()
     .enumerate()
     .filter_map(|(idx, &freq)| {
       if freq > 0 {
@@ -142,7 +139,7 @@ fn count_leaf_node_depths(root_node: &Node) -> [u16; 17] {
   } else {
     let mut fixed_size_depth = [0; 17];
     fixed_size_depth.copy_from_slice(&depths[0..17]);
-    return fixed_size_depth;
+    fixed_size_depth
   }
 }
 fn do_count_leaf_node_depths(depths: &mut [u16; 18], node: &Node, current_depth: usize) {
@@ -151,9 +148,9 @@ fn do_count_leaf_node_depths(depths: &mut [u16; 18], node: &Node, current_depth:
       depths[current_depth] += 1;
     }
     Node::Branch(left, right, _) => {
-      let next_depth = min(current_depth + 1, 17);
-      do_count_leaf_node_depths(depths, &left, next_depth);
-      do_count_leaf_node_depths(depths, &right, next_depth);
+      let next_depth = 17.min(current_depth + 1);
+      do_count_leaf_node_depths(depths, left, next_depth);
+      do_count_leaf_node_depths(depths, right, next_depth);
     }
   }
 }

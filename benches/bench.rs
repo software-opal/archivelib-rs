@@ -2,7 +2,7 @@
 #![feature(concat_idents)]
 
 extern crate test;
-use archivelib::{CompressionLevel, do_compress_level, do_decompress_level};
+use archivelib::{CompressionLevel, do_compress_level};
 use test::Bencher;
 
 macro_rules! compress {
@@ -34,7 +34,7 @@ compress! {compress_small, [0xa5; 2048]}
 compress! {compress_random, {
   use rand::RngCore;
   let mut buffer = [0; 16384];
-  rand::thread_rng().fill_bytes(&mut buffer);
+  rand::rng().fill_bytes(&mut buffer);
   buffer
 }}
 

@@ -11,7 +11,7 @@ fn test_compressing_lots_of_data_with_breaks() {
   let input = {
     let mut input: Vec<u8> = Vec::with_capacity(1 << 12);
     input.extend("aByZ".as_bytes());
-    for i in (0 as usize)..(1 << 10) {
+    for i in 0_usize..(1 << 10) {
       input.extend_from_within(0..3);
       input.push((i & 255) as u8);
     }
@@ -40,7 +40,7 @@ fn test_compressing_lots_of_data() {
 #[test]
 fn test_compressing_a_little_bit_of_data() {
   let input = "abcdabcdZabcd".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 08 30 69 67 FF 11 98  C2 44 79 D0 22 05 39 70  A3 3C");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
@@ -48,7 +48,7 @@ fn test_compressing_a_little_bit_of_data() {
 #[test]
 fn test_compressing_nothing() {
   let input = "".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 01 00 00 1F E0 00");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
@@ -56,7 +56,7 @@ fn test_compressing_nothing() {
 #[test]
 fn test_compressing_1_a() {
   let input = "a".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 02 20 04 3F F1 36 C4  40 04");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
@@ -64,7 +64,7 @@ fn test_compressing_1_a() {
 #[test]
 fn test_compressing_a_run_of_identical_data() {
   let input = "aaaa".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 03 28 04 4B FE 26 E4  54 74 E0 04 C0");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
@@ -72,7 +72,7 @@ fn test_compressing_a_run_of_identical_data() {
 #[test]
 fn test_compressing_the_example_data() {
   let input = "I am what I am; ABABABAB".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!(
     "
     00 11 43 49 B5 4F FA 0C  F2 06 E0 A8 39 01 FC 38
@@ -85,7 +85,7 @@ fn test_compressing_the_example_data() {
 #[test]
 fn test_compressing_a_small_data_block() {
   let input = "aabc".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 05 30 04 6D 7F C4 DD  76 1A 00 0D 70");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }
@@ -93,7 +93,7 @@ fn test_compressing_a_small_data_block() {
 #[test]
 fn test_compressing_known_data_ab() {
   let input = "ab".as_bytes();
-  let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
+  let result = archivelib::do_compress_level(input, archivelib::CompressionLevel::Level0);
   let compressed_ab = hex!("00 03 28 04 4B FE 26  F3  0F 80 13");
   assert_bytes_eq!(compressed_ab, &result.unwrap()[..])
 }

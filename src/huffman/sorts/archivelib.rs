@@ -48,8 +48,8 @@ impl SortAlgorithm for ArchiveLibSortAlgorithm {
     // The original implementation copied the last node over the first and reduced the length by
     //  one. We need to emulate this to prevent issues.
     nodes.swap(1, nodes.len() - 1);
-    let val = nodes.pop_back();
-    val
+    
+    nodes.pop_back()
   }
   fn insert_node(&self, nodes: &mut VecDeque<Node>, new_node: Node) {
     let null_node = nodes.pop_front().unwrap();

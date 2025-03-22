@@ -1,7 +1,7 @@
 #![deny(clippy::fallible_impl_from)]
-#![deny(clippy::restriction::wrong_pub_self_convention)]
-#![deny(clippy::style::assertions_on_constants)]
-#![deny(clippy::style::wrong_self_convention)]
+#![deny(clippy::wrong_pub_self_convention)]
+#![deny(clippy::assertions_on_constants)]
+#![deny(clippy::wrong_self_convention)]
 #![deny(clippy::unseparated_literal_suffix)]
 // Try to improve safety by requiring safer casts.
 #![warn(clippy::cast_lossless)]
@@ -59,8 +59,7 @@ pub fn do_compress_level(
   let mut arr = vec![];
   self::compress_rewrite::ArchivelibConfig::from(compression_level)
     .compress(input, &mut arr)
-    .map_err(|err| format!("{}", err))
-    .and_then(|_| Ok(arr.into_boxed_slice()))
+    .map_err(|err| format!("{}", err)).map(|_| arr.into_boxed_slice())
 }
 #[cfg(not(feature = "new_impl"))]
 pub fn do_compress_level(

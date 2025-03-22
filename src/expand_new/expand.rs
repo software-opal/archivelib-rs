@@ -45,7 +45,7 @@ impl ExpandData {
     };
     if self.items_until_next_header == 0 {
       // Replicate the undefined behavior from the C version
-      self.items_until_next_header = u16::max_value().try_into().unwrap();
+      self.items_until_next_header = u16::MAX.into();
     } else {
       self.items_until_next_header -= 1;
     }

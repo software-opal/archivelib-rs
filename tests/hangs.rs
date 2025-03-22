@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use archivelib::CompressionLevel;
-use humthreads;
 
 const TEST_TIMEOUT: Duration = Duration::from_secs(5);
 

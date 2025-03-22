@@ -1,4 +1,4 @@
 pub mod builder;
 pub mod sorts;
-pub(self) mod tree;
+ mod tree;
 // pub(crate) mod print;

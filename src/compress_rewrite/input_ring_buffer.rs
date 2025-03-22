@@ -83,7 +83,7 @@ impl<R: Read> InputRingBuffer<R> {
       }
       BufferState::InitialLoad => {
         while self.remaining_data > MAX_RUN_LENGTH + 4 {
-          if self.data_to_advance <= 0 {
+          if self.data_to_advance == 0 {
             return Ok(());
           }
 
@@ -196,7 +196,7 @@ impl<R: Read> InputRingBuffer<R> {
       .filter(|(run_len, _)| *run_len >= MIN_RUN_LENGTH)
   }
 
-  pub fn advance_by(&mut self, count: usize) -> () {
+  pub fn advance_by(&mut self, count: usize) {
     self.data_to_advance += count;
   }
 

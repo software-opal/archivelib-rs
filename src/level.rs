@@ -1,4 +1,4 @@
-#![allow(clippy::pub_enum_variant_names)]
+#![allow(clippy::enum_variant_names)]
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum CompressionLevel {

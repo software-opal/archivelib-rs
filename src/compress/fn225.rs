@@ -77,16 +77,16 @@ mod invariant_test {
   use proptest::prelude::*;
 
   fn build_values(len: usize) -> Vec<i16> {
-    let mut values = (0..(len as i16)).collect::<Vec<_>>();
+    let mut values = (0..cast!(len as i16)).collect::<Vec<_>>();
     // `values` is 1-indexed.
     values.insert(0, 0);
     values
   }
 
-  fn initial_sort(mut values: &mut [i16], frequencies: &[u16], len: usize) {
+  fn initial_sort(values: &mut [i16], frequencies: &[u16], len: usize) {
     // This matches the setup in `_211`.
     for i in (1..=(len / 2)).rev() {
-      pure_fn225(i, &frequencies, &mut values, len);
+      pure_fn225(i, frequencies, values, len);
     }
   }
 
@@ -119,7 +119,7 @@ mod invariant_test {
 
       values[1] = values[len];
       len -= 1;
-      pure_fn225(1, &frequencies, &mut values, len);
+      pure_fn225(1, frequencies, &mut values, len);
     }
     let mut frequencies = frequencies.iter().cloned().enumerate().collect::<Vec<_>>();
 
@@ -174,10 +174,11 @@ mod tests {
         $(,)?
       ) => {
         {
-        let values = [
-          0,
-          $($val,)*
-        ];
+          let values = [
+            0,
+            $($val,)*
+            ];
+            #[allow(clippy::no_effect)]
         const LAST: usize = { $($val);* } as usize;
         let mut frequencies = [0; LAST + 1];
         $(

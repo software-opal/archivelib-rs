@@ -1,5 +1,5 @@
-/// The C library handles end of file in a somewhat confusing way. The library will repeatedly
-/// read the last 8 bits of a file until the parent loop has read past the end of file enough times
+//! The C library handles end of file in a somewhat confusing way. The library will repeatedly
+//! read the last 8 bits of a file until the parent loop has read past the end of file enough times
 
 #[macro_use]
 mod utils;

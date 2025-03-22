@@ -49,14 +49,14 @@ impl LzssEntry {
   fn lookup_value(&self) -> usize {
     match self {
       Self::Byte(b) => (*b).into(),
-      Self::Run(run, _) => 0x100 + usize::from(*run) - 3,
+      Self::Run(run, _) => 0x100 + (*run) - 3,
       Self::EoF => EOF_FLAG,
     }
   }
   fn offset_value(&self) -> Option<usize> {
     match self {
       Self::Byte(_) => None,
-      Self::Run(_, offset) => Some((*offset).into()),
+      Self::Run(_, offset) => Some(*offset),
       Self::EoF => Some(0),
     }
   }
@@ -122,7 +122,7 @@ impl LzssBuffer {
   }
 
   pub fn is_full(&self) -> bool {
-    return self.data.len() % 8 == 0 && self.current_byte_length >= MAX_BYTE_LENGTH;
+    self.data.len() % 8 == 0 && self.current_byte_length >= MAX_BYTE_LENGTH
   }
 
   pub fn drain_as_output(&mut self) -> impl Iterator<Item = Output> {

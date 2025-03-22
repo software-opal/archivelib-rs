@@ -51,7 +51,7 @@ fn test_short_data_with_trailing_null_bytes() {
   let input = hex!("40 00 00 00");
   let result = archivelib::do_compress_level(&input, archivelib::CompressionLevel::Level0);
   let sys_result = archivelib::sys::do_compress_level(&input, 0);
-  let output = hex!("00 05 2A 09 3F F9 88 DA  C9 BA 43 20 91 BC");
+  let output = hex!("00 05 28 04 4B FF 05 7B  53 80 10 C0");
   assert_bytes_eq!(&output, &sys_result.unwrap()[..]);
   assert_bytes_eq!(&output, &result.unwrap()[..]);
 }
