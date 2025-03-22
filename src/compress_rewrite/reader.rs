@@ -3,13 +3,13 @@ use crate::{
   compress::Result,
   huffman::{builder::frequency::RootNode, sorts::SortAlgorithm},
   support::BitwiseWrite,
+  lzss::{LzssBuffer, LzssEntry, Output},
 };
 use std::io::Read;
 
 use super::{
   huffman_writer::{write_bit_length_tree, write_byte_frequency_tree},
   input_ring_buffer::InputRingBuffer,
-  lzss::{LzssBuffer, LzssEntry, Output},
 };
 
 pub const MIN_COMPRESSION_FACTOR: u8 = 10;

@@ -1,11 +1,8 @@
 use std::io::Read;
 
-use crate::compress::Result;
+use crate::{compress::Result, consts_rewrite::{MAX_RUN_LENGTH, MIN_RUN_LENGTH}};
 
 use super::byte_run_hash_table::ByteRunHashTable;
-
-pub const MIN_RUN_LENGTH: usize = 3;
-pub const MAX_RUN_LENGTH: usize = 256;
 
 fn read_all(reader: &mut impl Read, target: &mut [u8]) -> Result<usize> {
   let mut idx = 0;

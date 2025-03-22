@@ -44,29 +44,14 @@ impl ArchivelibConfig {
     }
     Ok(out.into_boxed_slice())
   }
-  #[cfg(not(feature = "new_impl"))]
   pub fn decompress_stream<R, W>(&self, input: R, output: W) -> Result<(), DecompressError>
   where
     R: Read,
     W: Write,
   {
-    use crate::expand;
-    use crate::support::BitReader;
-
-    let mut reader = BitReader::from(input);
-    let mut expander = expand::RExpandData::new(reader, output, self.level.compression_factor())?;
-    expander.expand()
+    // let mut reader = BitReader::from(input);
+    // let mut expander = expand::RExpandData::new(reader, output, self.level.compression_factor())?;
+    // expander.expand()
+    Ok(())
   }
-  #[cfg(feature = "new_impl")]
-  pub fn decompress_stream<R, W>(&self, input: R, mut output: W) -> Result<(), DecompressError>
-  where
-    R: Read,
-    W: Write,
-  {
-    use crate::expand_new;
-    use crate::support::CorrectLookAheadBitwiseReader;
-
-    let mut reader = CorrectLookAheadBitwiseReader::from_reader(input);
-    expand_new::expand(&mut reader, &mut output, self.level)
-  }
-  }
+}

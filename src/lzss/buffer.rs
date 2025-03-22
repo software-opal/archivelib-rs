@@ -1,10 +1,10 @@
-use super::input_ring_buffer::{MAX_RUN_LENGTH, MIN_RUN_LENGTH};
+use crate::{consts_rewrite::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH}, lzss::utils::bit_size};
 
-pub const EOF_FLAG: usize = 0x1FE;
+use super::entry::LzssEntry;
+
 pub const BYTE_RUN_MAX_VALUE: usize = EOF_FLAG;
-
+pub const MAX_BUFFER_BEFORE_FLUSH: usize = 8192 - ((3 * 8) + 6);
 pub const RUN_OFFSET_MAX_BIT_LENGTH: usize = 14;
-pub const MAX_BYTE_LENGTH: usize = 8192 - ((3 * 8) + 6);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Output {
@@ -18,50 +18,6 @@ impl Output {
       panic!("Invalid byte {:#05X}", byte)
     };
     Output::ByteEncoded(byte)
-  }
-}
-
-fn bit_size(mut offset: usize) -> usize {
-  let mut bits = 0;
-  while offset != 0 {
-    bits += 1;
-    offset >>= 1;
-  }
-  bits
-}
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum LzssEntry {
-  Byte(u8),
-  /// (run length, offset)
-  /// Offset starts at `0` indicating the run starts at the byte prior.
-  Run(usize, usize),
-  EoF,
-}
-impl LzssEntry {
-  fn byte_size(&self) -> usize {
-    match self {
-      Self::Byte(_) => 1,
-      Self::Run(_, _) => 3,
-      Self::EoF => 3,
-    }
-  }
-  fn lookup_value(&self) -> usize {
-    match self {
-      Self::Byte(b) => (*b).into(),
-      Self::Run(run, _) => 0x100 + (*run) - 3,
-      Self::EoF => EOF_FLAG,
-    }
-  }
-  fn offset_value(&self) -> Option<usize> {
-    match self {
-      Self::Byte(_) => None,
-      Self::Run(_, offset) => Some(*offset),
-      Self::EoF => Some(0),
-    }
-  }
-  fn offset_bit_size(&self) -> Option<usize> {
-    self.offset_value().map(bit_size)
   }
 }
 
@@ -122,7 +78,7 @@ impl LzssBuffer {
   }
 
   pub fn is_full(&self) -> bool {
-    self.data.len() % 8 == 0 && self.current_byte_length >= MAX_BYTE_LENGTH
+    self.data.len() % 8 == 0 && self.current_byte_length >= MAX_BUFFER_BEFORE_FLUSH
   }
 
   pub fn drain_as_output(&mut self) -> impl Iterator<Item = Output> {

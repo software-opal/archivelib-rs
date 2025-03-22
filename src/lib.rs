@@ -17,8 +17,11 @@ mod support;
 mod test;
 
 mod compress_rewrite;
+mod consts_rewrite;
 mod expand_rewrite;
+
 mod huffman;
+mod lzss;
 
 mod level;
 
@@ -52,10 +55,10 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }
 
-#[cfg(feature = "new_impl")]
-pub use compress_rewrite::do_compress_level;
 #[cfg(not(feature = "new_impl"))]
 pub use compress::do_compress_level;
+#[cfg(feature = "new_impl")]
+pub use compress_rewrite::do_compress_level;
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   ArchivelibConfig::default()

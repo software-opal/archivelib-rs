@@ -2,7 +2,6 @@ mod byte_run_hash_table;
 mod config;
 mod huffman_writer;
 mod input_ring_buffer;
-mod lzss;
 mod reader;
 pub use self::reader::Compressor;
 use crate::CompressionLevel;
