@@ -17,6 +17,7 @@ mod support;
 mod test;
 
 mod compress_rewrite;
+mod expand_rewrite;
 mod huffman;
 
 mod level;
@@ -52,24 +53,9 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
 }
 
 #[cfg(feature = "new_impl")]
-pub fn do_compress_level(
-  input: &[u8],
-  compression_level: CompressionLevel,
-) -> Result<Box<[u8]>, std::string::String> {
-  let mut arr = vec![];
-  self::compress_rewrite::ArchivelibConfig::from(compression_level)
-    .compress(input, &mut arr)
-    .map_err(|err| format!("{}", err)).map(|_| arr.into_boxed_slice())
-}
+pub use compress_rewrite::do_compress_level;
 #[cfg(not(feature = "new_impl"))]
-pub fn do_compress_level(
-  input: &[u8],
-  compression_level: CompressionLevel,
-) -> Result<Box<[u8]>, std::string::String> {
-  ArchivelibConfig::from(compression_level)
-    .compress(input)
-    .map_err(|err| format!("{}", err))
-}
+pub use compress::do_compress_level;
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   ArchivelibConfig::default()
