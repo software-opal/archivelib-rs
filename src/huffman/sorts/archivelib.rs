@@ -127,14 +127,22 @@ mod tests {
     let algo = ArchiveLibSortAlgorithm {};
     let nodes = nodes_from_freq((1..=300).rev());
     let mut deque: VecDeque<Node> = algo.initial_sort(nodes);
-    assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(0, 1)));
-    assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(1, 2)));
-    algo.insert_node(&mut deque, Node::Leaf(10, 9000));
+    assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(299, 1)));
+    assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(298, 2)));
+    algo.insert_node(&mut deque, Node::Branch(
+      Box::new(Node::Leaf(299, 1)),
+      Box::new(Node::Leaf(298, 2)),
+      3
+    ));
     assert_eq!(
       algo.pop_smallest_node(&mut deque),
-      Some(Node::Leaf(10, 9000))
+      Some(Node::Branch(
+        Box::new(Node::Leaf(299, 1)),
+        Box::new(Node::Leaf(298, 2)),
+        3
+      ))
     );
-    assert_eq!(algo.pop_smallest_node(&mut deque), None);
+    assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(297, 3)));
   }
 
   #[test]

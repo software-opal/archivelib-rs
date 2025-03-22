@@ -1,4 +1,4 @@
-use super::input_ring_buffer::MIN_RUN_LENGTH;
+use super::input_ring_buffer::{MAX_RUN_LENGTH, MIN_RUN_LENGTH};
 
 pub const EOF_FLAG: usize = 0x1FE;
 pub const BYTE_RUN_MAX_VALUE: usize = EOF_FLAG;
@@ -11,6 +11,14 @@ pub enum Output {
   ByteEncoded(usize),
   OffsetEncoded(usize),
   Bits(u16, usize),
+}
+impl Output {
+  fn byte_encoded(byte: usize) -> Self {
+    if byte > EOF_FLAG {
+      panic!("Invalid byte {:#05X}", byte)
+    };
+    Output::ByteEncoded(byte)
+  }
 }
 
 fn bit_size(mut offset: usize) -> usize {
@@ -71,6 +79,19 @@ impl LzssBuffer {
   }
 
   pub fn insert_element(&mut self, entry: LzssEntry) -> usize {
+    if let LzssEntry::Run(run_len, _offset) = entry {
+      assert!(
+        MIN_RUN_LENGTH <= run_len,
+        "Run length out of bounds: {:}",
+        run_len
+      );
+      assert!(
+        run_len <= MAX_RUN_LENGTH,
+        "Run length out of bounds: {:}",
+        run_len
+      );
+    }
+
     self.current_byte_length += entry.byte_size();
     if self.data.len() % 8 == 0 {
       self.current_byte_length += 1;
@@ -106,17 +127,17 @@ impl LzssBuffer {
 
   pub fn drain_as_output(&mut self) -> impl Iterator<Item = Output> {
     self.data.drain(..).flat_map(|entry| match entry {
-      LzssEntry::Byte(byte) => vec![Output::ByteEncoded(byte as usize)],
-      LzssEntry::EoF => vec![Output::ByteEncoded(EOF_FLAG), Output::OffsetEncoded(0)],
+      LzssEntry::Byte(byte) => vec![Output::byte_encoded(byte as usize)],
+      LzssEntry::EoF => vec![Output::byte_encoded(EOF_FLAG), Output::OffsetEncoded(0)],
       LzssEntry::Run(run, 0) => vec![
-        Output::ByteEncoded(0x100 - MIN_RUN_LENGTH + run),
+        Output::byte_encoded(0x100 - MIN_RUN_LENGTH + run),
         Output::OffsetEncoded(0),
       ],
       LzssEntry::Run(run, offset) => {
         let offset_bits = bit_size(offset);
 
         vec![
-          Output::ByteEncoded(0x100 + run),
+          Output::byte_encoded(0x100 - MIN_RUN_LENGTH + run),
           Output::OffsetEncoded(offset_bits),
           Output::Bits(cast!(offset as u16), offset_bits - 1),
         ]

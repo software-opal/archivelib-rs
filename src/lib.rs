@@ -51,18 +51,18 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }
 
-// #[cfg(feature = "new_impl")]
-// pub fn do_compress_level(
-//   input: &[u8],
-//   compression_level: CompressionLevel,
-// ) -> Result<Box<[u8]>, std::string::String> {
-//   let mut arr = vec![];
-//   self::compress_rewrite::ArchivelibConfig::from(compression_level)
-//     .compress(input, &mut arr)
-//     .map_err(|err| format!("{}", err))
-//     .and_then(|_| Ok(arr.into_boxed_slice()))
-// }
-// #[cfg(not(feature = "new_impl"))]
+#[cfg(feature = "new_impl")]
+pub fn do_compress_level(
+  input: &[u8],
+  compression_level: CompressionLevel,
+) -> Result<Box<[u8]>, std::string::String> {
+  let mut arr = vec![];
+  self::compress_rewrite::ArchivelibConfig::from(compression_level)
+    .compress(input, &mut arr)
+    .map_err(|err| format!("{}", err))
+    .and_then(|_| Ok(arr.into_boxed_slice()))
+}
+#[cfg(not(feature = "new_impl"))]
 pub fn do_compress_level(
   input: &[u8],
   compression_level: CompressionLevel,

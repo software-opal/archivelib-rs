@@ -160,6 +160,7 @@ mod test {
     assert_eq!(table.hash_table[2883], None);
   }
 
+  #[test]
   fn test_possible_run_positions() {
     let mut table = ByteRunHashTable::new(1 << 10);
 
