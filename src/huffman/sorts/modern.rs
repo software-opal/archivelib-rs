@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, collections::BinaryHeap};
+use std::collections::BinaryHeap;
 
 use crate::huffman::tree::Node;
 

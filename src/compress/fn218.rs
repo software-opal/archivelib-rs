@@ -44,15 +44,15 @@ where
   while last_entry > 0 && bit_length_huff_bit_length[last_entry - 1] == 0 {
     last_entry -= 1
   }
-  out.write_bits(last_entry, bit_length)?;
+  out.write_bits(cast!(last_entry as u16), bit_length)?;
   let mut idx: usize = 0;
   while idx < last_entry {
     let bit_length = bit_length_huff_bit_length[idx];
     idx += 1;
     if bit_length <= 6 {
-      out.write_bits(bit_length, 3)?;
+      out.write_bits(cast!(bit_length as u16), 3)?;
     } else {
-      out.write_bits(USHRT_MAX << 1, bit_length - 3)?;
+      out.write_bits(USHRT_MAX << 1, cast!((bit_length - 3 ) as usize))?;
     }
     // The original code has this as `run_start_check` == `idx`; however given the function only has
     //  2 calling sites, and the only values that are passed are `3` and `-1`, I've chosen to simply
@@ -63,7 +63,7 @@ where
       }
       // Write out `0b00` if the smallest encoded value uses a 1 bit encoding; `0b01` for a 2 bit
       //  encoding etc. up to `0b11` for a 3 or higher bit encoding.
-      out.write_bits(idx - 3, 2)?;
+      out.write_bits(cast!((idx - 3) as u16), 2)?;
     }
   }
   Ok(())

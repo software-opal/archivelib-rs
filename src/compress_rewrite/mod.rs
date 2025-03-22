@@ -1,19 +1,13 @@
 mod byte_run_hash_table;
+mod config;
 mod huffman_writer;
 mod input_ring_buffer;
 mod lzss;
 mod reader;
-mod config;
-
-use crate::{  CompressionLevel,};
-
 pub use self::reader::Compressor;
-pub use self::config::ArchivelibConfig;
+use crate::CompressionLevel;
 
-
-pub fn do_compress(
-  input: &[u8],
-) -> Result<Box<[u8]>, std::string::String> {
+pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }
 pub fn do_compress_level(
@@ -26,5 +20,3 @@ pub fn do_compress_level(
     .map_err(|err| format!("{}", err))
     .map(|_| arr.into_boxed_slice())
 }
-
-

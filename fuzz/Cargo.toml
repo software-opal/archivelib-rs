@@ -9,6 +9,9 @@ edition = "2024"
 [package.metadata]
 cargo-fuzz = true
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(fuzzing)'] }
+
 [dependencies.archivelib]
 path = ".."
 features = ["new_impl", "sys"]

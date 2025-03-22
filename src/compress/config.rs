@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use crate::errors::{CompressError, DecompressError};
+use crate::errors::CompressError;
 use crate::level::CompressionLevel;
 use crate::support::MaxSizeWriter;
 

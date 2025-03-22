@@ -1,21 +1,16 @@
-use std::convert::TryInto;
-use std::fmt::Debug;
 
 use super::base::BitwiseWrite;
 
 pub struct ExpectedCallWriter {
-  calls: Vec<(u16, u8)>,
+  calls: Vec<(u16, usize)>,
   write_calls: usize,
   pub written_bits: usize,
 }
 
 impl ExpectedCallWriter {
-  pub fn from_vec(calls: Vec<(u128, usize)>) -> Self {
+  pub fn from_vec(calls: Vec<(u16, usize)>) -> Self {
     Self {
-      calls: calls
-        .into_iter()
-        .map(|(bits, size)| (cast!(bits as u16), cast!(size as u8)))
-        .collect(),
+      calls,
       write_calls: 0,
       written_bits: 0,
     }
@@ -25,19 +20,7 @@ impl ExpectedCallWriter {
   }
 }
 impl BitwiseWrite for ExpectedCallWriter {
-  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<()>
-  where
-    B: TryInto<u16> + Debug + Copy,
-    L: TryInto<u8> + Debug + Copy,
-  {
-    let bits = bits
-      .try_into()
-      .map_err(|_| format!("Cannot convert bits({:#X?}) to u128", bits))
-      .unwrap();
-    let bit_count = bit_count
-      .try_into()
-      .map_err(|_| format!("Cannot convert bit_count({:#X?}) to usize", bits))
-      .unwrap();
+  fn write_bits(&mut self, bits: u16, bit_count: usize) -> std::io::Result<()> {
     assert!(
       bit_count <= self.max_bit_count(),
       "Too many bits written at once"

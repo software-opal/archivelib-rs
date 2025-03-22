@@ -28,7 +28,7 @@ where
   while last_entry > 0 && byte_run_length_huff_bit_length[last_entry - 1] == 0 {
     last_entry -= 1
   }
-  out.write_bits(last_entry, CONST_N143_IS_9)?;
+  out.write_bits(cast!(last_entry as u16), CONST_N143_IS_9)?;
 
   let mut idx = 0;
   while idx < last_entry {
@@ -46,36 +46,36 @@ where
         for _ in 0..gap_size {
           out.write_bits(
             bit_length_huffman_encoding[0],
-            bit_length_huff_bit_length[0],
+            cast!((bit_length_huff_bit_length[0]) as usize),
           )?;
         }
       } else if gap_size <= 18 {
         out.write_bits(
           bit_length_huffman_encoding[1],
-          bit_length_huff_bit_length[1],
+          cast!((bit_length_huff_bit_length[1]) as usize),
         )?;
         out.write_bits(gap_size - 3, 4)?;
       } else if gap_size == 19 {
         out.write_bits(
           bit_length_huffman_encoding[0],
-          bit_length_huff_bit_length[0],
+          cast!((bit_length_huff_bit_length[0]) as usize),
         )?;
         out.write_bits(
           bit_length_huffman_encoding[1],
-          bit_length_huff_bit_length[1],
+          cast!((bit_length_huff_bit_length[1]) as usize),
         )?;
         out.write_bits(15, 4)?;
       } else {
         out.write_bits(
           bit_length_huffman_encoding[2],
-          bit_length_huff_bit_length[2],
+          cast!((bit_length_huff_bit_length[2]) as usize),
         )?;
         out.write_bits(gap_size - 20, CONST_N143_IS_9)?;
       }
     } else {
       out.write_bits(
         bit_length_huffman_encoding[bit_length + 2],
-        bit_length_huff_bit_length[bit_length + 2],
+        cast!((bit_length_huff_bit_length[bit_length + 2]) as usize),
       )?;
     }
   }

@@ -1,20 +1,14 @@
-use std::convert::TryInto;
-use std::fmt::Debug;
-
 use crate::support::bit_iter::ToBits;
 
 pub trait BitwiseWrite {
-  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<()>
-  where
-    B: TryInto<u16> + Debug + Copy,
-    L: TryInto<u8> + Debug + Copy;
+  fn write_bits(&mut self, bits: u16, bit_count: usize) -> std::io::Result<()>;
   fn finalise(&mut self) -> std::io::Result<()>;
 
   /// Largest number of bits that can be written in a single operation.
   ///
   /// Must match the size of `write_bits`'s `bits` argument.
-  fn max_bit_count(&self) -> u8 {
-    u16::BITS as u8
+  fn max_bit_count(&self) -> usize {
+    u16::BITS as usize
   }
 }
 
@@ -57,20 +51,12 @@ impl<W: std::io::Write> BitwiseWriter<W> {
 }
 
 impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
-  fn write_bits<B, L>(&mut self, bits: B, bit_count: L) -> std::io::Result<()>
-  where
-    B: TryInto<u16> + Debug + Copy,
-    L: TryInto<u8> + Debug + Copy,
+  fn write_bits(&mut self, bits: u16, bit_count: usize) -> std::io::Result<()>
   {
-    let bits = bits
-      .try_into()
-      .map_err(|_| format!("Cannot convert bits({:#X?}) to u16", bits))
-      .unwrap();
-    let bit_count = bit_count
-      .try_into()
-      .map_err(|_| format!("Cannot convert bit_count({:#X?}) to u8", bits))
-      .unwrap();
-    assert!(bit_count <= 16);
+    assert!(
+      bit_count <= self.max_bit_count(),
+      "Too many bits written at once"
+    );
     if bit_count == 0 {
       return Ok(());
     }
@@ -130,7 +116,7 @@ mod tests {
   fn test_finalise_pads_last_byte_with_zeros() {
     let mut buf = Vec::new();
     let mut writer = BitwiseWriter::new(&mut buf);
-    writer.write_bits(0xF_u32, 2).unwrap();
+    writer.write_bits(0xF_u16, 2).unwrap();
     writer.finalise().unwrap();
     assert_bytes_eq!([0b1100_0000], buf);
   }

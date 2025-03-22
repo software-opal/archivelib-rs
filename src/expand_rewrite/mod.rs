@@ -1,3 +1,8 @@
+use crate::CompressionLevel;
+
+use self::config::ArchivelibConfig;
+
+mod config;
 
 pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   ArchivelibConfig::default()

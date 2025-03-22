@@ -28,7 +28,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     //  frequencies of all the nodes in the tree. This saves us having to count the frequencies
     //  again.
     let frequency_sum = self.byte_run_length_frequency[cast!(run_length_root_node as usize)];
-    self.output_store.write_bits(u32::from(frequency_sum), 16)?;
+    self.output_store.write_bits(cast!(frequency_sum as u16), 16)?;
 
     // `run_length_root_node` represents a single value if it's in the range `0..511`.
     // `run_length_root_node` represents a root node of a huffman tree if it's in the range `511..`.
@@ -52,9 +52,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
         // 1 node in the bit length encoding.
         self
           .output_store
-          .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
+          .write_bits(0, cast!(CONST_N147_IS_5 as usize))?;
         self.output_store.write_bits(
-          cast!(bit_length_root_node as u32),
+          cast!(bit_length_root_node as u16),
           cast!(CONST_N147_IS_5 as usize),
         )?;
       }
@@ -63,15 +63,15 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
       // Byte/Run length root node represents a value(I.E. there is only 1 node).
       self
         .output_store
-        .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
+        .write_bits(0, cast!(CONST_N147_IS_5 as usize))?;
       self
         .output_store
-        .write_bits(0_u8, cast!(CONST_N147_IS_5 as usize))?;
+        .write_bits(0, cast!(CONST_N147_IS_5 as usize))?;
       self
         .output_store
-        .write_bits(0_u8, cast!(CONST_N143_IS_9 as usize))?;
+        .write_bits(0, cast!(CONST_N143_IS_9 as usize))?;
       self.output_store.write_bits(
-        cast!(run_length_root_node as u32),
+        cast!(run_length_root_node as u16),
         cast!(CONST_N143_IS_9 as usize),
       )?;
     }
@@ -90,9 +90,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     } else {
       self
         .output_store
-        .write_bits(0_u8, cast!(CONST_N540_IS_5 as usize))?;
+        .write_bits(0, cast!(CONST_N540_IS_5 as usize))?;
       self.output_store.write_bits(
-        cast!(run_length_root_node as u32),
+        cast!(run_length_root_node as u16),
         cast!(CONST_N540_IS_5 as usize),
       )?;
     }
@@ -144,7 +144,7 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     let byte_or_run_length_value: usize = byte_or_run_length_value.try_into().unwrap();
     self.output_store.write_bits(
       self.byte_run_length_huff_encoding[byte_or_run_length_value],
-      self.byte_run_length_huff_bit_length[byte_or_run_length_value],
+      cast!((self.byte_run_length_huff_bit_length[byte_or_run_length_value]) as usize),
     )?;
     Ok(())
   }
