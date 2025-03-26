@@ -1,5 +1,3 @@
-use std::os::unix::raw::dev_t;
-
 use crate::{
   expand_rewrite::{DecompressError, Result},
   huffman::tree::Node,

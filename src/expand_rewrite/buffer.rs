@@ -1,7 +1,5 @@
 use std::{collections::VecDeque, io::Write};
 
-use crate::consts_rewrite::MAX_RUN_LENGTH;
-
 use super::{DecompressError, Result};
 
 pub struct ExpandHistoryBuffer<W: Write> {
@@ -45,7 +43,7 @@ impl<W: Write> ExpandHistoryBuffer<W> {
           let max = run_bytes.len();
 
           while bytes > 0 {
-            let written = (bytes.min(max));
+            let written = bytes.min(max);
             self.write_bytes(&run_bytes[..written])?;
             bytes -= written;
           }

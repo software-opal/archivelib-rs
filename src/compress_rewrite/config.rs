@@ -37,6 +37,8 @@ impl From<CompressionLevel> for ArchivelibConfig<ArchiveLibSortAlgorithm> {
 }
 
 impl<S: SortAlgorithm> ArchivelibConfig<S> {
+  #![allow(dead_code)]
+
   pub fn with_sort_algorithm<NewS: SortAlgorithm>(
     self,
     sort_algorithm: NewS,

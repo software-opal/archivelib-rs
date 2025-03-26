@@ -85,6 +85,7 @@ impl LzssBuffer {
   }
 
   pub fn drain_as_output(&mut self) -> impl Iterator<Item = Output> {
+    self.current_byte_length = 0;
     self.data.drain(..).flat_map(|entry| match entry {
       LzssEntry::Byte(byte) => vec![Output::byte_encoded(byte as usize)],
       LzssEntry::EoF => vec![Output::byte_encoded(EOF_FLAG), Output::OffsetEncoded(0)],

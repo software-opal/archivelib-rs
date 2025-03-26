@@ -110,7 +110,7 @@ pub fn read_bit_length_tree<R: BitwiseRead>(
 
 #[cfg(test)]
 mod test {
-  use crate::{expand_rewrite::DecompressError, support::BitBasedBitwiseReader};
+  use crate::{expand_rewrite::DecompressError, support::reader::BitBasedBitwiseReader};
 
   use super::*;
 

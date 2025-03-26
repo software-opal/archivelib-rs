@@ -24,6 +24,7 @@ pub use self::base::{
 pub use self::config::ArchivelibConfig;
 use crate::CompressionLevel;
 
+#[allow(dead_code)]
 pub fn do_compress_level(
   input: &[u8],
   compression_level: CompressionLevel,
@@ -33,6 +34,7 @@ pub fn do_compress_level(
     .map_err(|err| format!("{}", err))
 }
 
+#[allow(dead_code)]
 pub fn do_compress(input: &[u8]) -> std::result::Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }

@@ -29,6 +29,8 @@ impl From<CompressionLevel> for ArchivelibConfig {
 }
 
 impl ArchivelibConfig {
+  #![allow(dead_code)]
+
   pub fn compress(&self, input: &[u8]) -> Result<Box<[u8]>, CompressError> {
     // Pre-allocate some memory to hold the decompressed stream; 16*input is arbitary.
     let mut out: Vec<u8> = Vec::with_capacity(256);
@@ -44,6 +46,7 @@ impl ArchivelibConfig {
     }
     Ok(out.into_boxed_slice())
   }
+
   pub fn compress_stream<R, W>(&self, input: R, output: W) -> Result<(), CompressError>
   where
     R: Read,

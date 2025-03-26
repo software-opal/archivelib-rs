@@ -48,6 +48,8 @@ fn main() {
   builder.flag_if_supported("-fstack-protector");
   // builder.flag_if_supported("-fsanitize-memory-track-origins");
   builder.flag_if_supported("-fsanitize=memory");
+  builder.flag_if_supported("-Wno-deprecated-declarations");
+  builder.flag_if_supported("-Wno-single-bit-bitfield-constant-conversion");
   if !cfg!(windows) {
     builder.define("AL_UNIX", None);
     builder.define("AL_SUN4", None);

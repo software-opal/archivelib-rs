@@ -1,3 +1,5 @@
+use crate::support::writer::base::truncate_bits;
+
 use super::base::BitwiseWrite;
 
 pub struct ExpectedCallWriter {
@@ -31,8 +33,9 @@ impl BitwiseWrite for ExpectedCallWriter {
       bits,
       bit_count
     );
-    let actual = (bits, bit_count);
-    let expected = self.calls.remove(0);
+    let actual = (truncate_bits(bits, bit_count), bit_count);
+    let (exp_bits, exp_bit_count) = self.calls.remove(0);
+    let expected = (truncate_bits(exp_bits, exp_bit_count), exp_bit_count);
     if self.calls.is_empty() {
       assert_eq!(actual.0, expected.0);
     } else {

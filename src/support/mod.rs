@@ -6,8 +6,8 @@ mod debug;
 pub mod binary_tree_printer;
 mod bit_iter;
 mod max_size_writer;
-mod reader;
-mod writer;
+pub mod reader;
+pub mod writer;
 
 #[cfg(feature = "new_impl")]
 mod lah_reader;
@@ -15,8 +15,8 @@ mod lah_reader;
 pub use self::lah_reader::*;
 
 pub use self::max_size_writer::*;
-pub use self::reader::*;
-pub use self::writer::*;
+pub use self::reader::{BitwiseRead, BitwiseReader};
+pub use self::writer::{BitwiseWrite, BitwiseWriter};
 
 #[cfg(not(feature = "new_impl"))]
 mod bitreader;

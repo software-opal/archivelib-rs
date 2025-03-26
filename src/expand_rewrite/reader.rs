@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, io::Write};
+use std::io::Write;
 
 use crate::{
   consts::{MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR, MIN_RUN_LENGTH},
@@ -49,7 +49,6 @@ impl<R: BitwiseRead, W: Write> Extractor<R, W> {
 
     for _ in 0..lzss_entries {
       let byte_or_run = read_encoding(&mut self.reader, &byte_tree)?;
-      eprint!("ByteOrRun({})", byte_or_run);
       match byte_or_run {
         v @ 0..=255 => self.buffer.write_byte(cast!(v as u8))?,
         v @ 256..EOF_FLAG => {
@@ -62,7 +61,6 @@ impl<R: BitwiseRead, W: Write> Extractor<R, W> {
             2..=16 => (1 << (offset_bit_len - 1)) | self.reader.read_bits(offset_bit_len - 1)?,
             17.. => unreachable!("Wat! {:?}", offset_tree),
           };
-          eprint!("Offset({})", offset);
 
           if run_len > MAX_RUN_LENGTH {
             return Err(DecompressError::InvalidRunLength(run_len));
@@ -76,7 +74,6 @@ impl<R: BitwiseRead, W: Write> Extractor<R, W> {
         }
         _ => unreachable!(),
       }
-      eprintln!();
     }
     return Ok(true);
   }
@@ -86,7 +83,7 @@ impl<R: BitwiseRead, W: Write> Extractor<R, W> {
 
 #[cfg(test)]
 mod test {
-  use crate::support::BitBasedBitwiseReader;
+  use crate::support::reader::BitBasedBitwiseReader;
 
   use super::*;
 

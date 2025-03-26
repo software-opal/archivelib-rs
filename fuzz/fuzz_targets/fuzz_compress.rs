@@ -1,10 +1,8 @@
-#![no_main]
+#![cfg_attr(fuzzing, no_main)]
 
-#[cfg(fuzzing)]
 #[macro_use]
-extern crate libfuzzer_sys;
+mod helper;
 
-#[cfg(fuzzing)]
-fuzz_target!(|data: &[u8]| {
+fuzz_with_main! { |data: &[u8]| {
   let _ = archivelib::do_compress(&data);
-});
+}}

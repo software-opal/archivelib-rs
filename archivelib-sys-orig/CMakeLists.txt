@@ -12,6 +12,7 @@ set ( FLAGS "" )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set ( FLAGS "${FLAGS} -fstack-protector -fsanitize-memory-track-origins -O3" )
+  set ( FLAGS "${FLAGS} -Wno-deprecated-declarations" )
   if (NOT CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
     # Apple Clang doesn't support this option
     set ( FLAGS "${FLAGS} -fno-stack-array" )

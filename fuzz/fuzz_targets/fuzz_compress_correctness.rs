@@ -1,12 +1,10 @@
-#![no_main]
+#![cfg_attr(fuzzing, no_main)]
 
-#[cfg(fuzzing)]
 #[macro_use]
-extern crate libfuzzer_sys;
+mod helper;
 
-#[cfg(fuzzing)]
-fuzz_target!(|data: &[u8]| {
+fuzz_with_main! { |data: &[u8]| {
   let compressed_sample = archivelib_sys::do_compress(&data).unwrap();
   let compressed_test = archivelib::do_compress(&data).unwrap();
   assert_eq!(compressed_sample[..], compressed_test[..]);
-});
+}}

@@ -10,14 +10,15 @@
 #![warn(clippy::checked_conversions)]
 
 #[macro_use]
-mod support;
+pub mod support;
 
 #[cfg(test)]
 #[macro_use]
 mod test;
 
-mod compress_rewrite;
 pub mod consts_rewrite;
+
+mod compress_rewrite;
 pub mod expand_rewrite;
 
 mod huffman;
@@ -54,9 +55,6 @@ pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }
 
-#[cfg(not(feature = "new_impl"))]
-pub use compress::do_compress_level;
-#[cfg(feature = "new_impl")]
 pub use compress_rewrite::do_compress_level;
 
 pub use expand_rewrite::do_decompress;
