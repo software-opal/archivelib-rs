@@ -1,4 +1,4 @@
-use crate::support::bit_iter::ToBits;
+use crate::support::writer::base::to_bits;
 
 use super::BitwiseWrite;
 
@@ -51,12 +51,7 @@ impl<W: std::io::Write> BitwiseWrite for BitwiseWriter<W> {
     }
 
     if bit_count > 0 {
-      let bit_array = bits.to_bits();
-      self.buffer.extend(
-        bit_array
-          .iter()
-          .skip(bit_array.len() - (bit_count as usize)),
-      );
+      self.buffer.extend(to_bits(bits, bit_count))
     }
     if self.buffer.len() > 512 {
       self.flush_buffer()?;
