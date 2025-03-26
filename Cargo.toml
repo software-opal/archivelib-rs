@@ -53,5 +53,5 @@ members = [
   "archivelib-sys-orig",
   # "archivelib-sys-refactored",
   "cli",
-  # "fuzz",
+  "fuzz",
 ]
