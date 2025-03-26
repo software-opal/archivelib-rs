@@ -1,6 +1,9 @@
 use std::io::Read;
 
-use crate::{compress::Result, consts_rewrite::{MAX_RUN_LENGTH, MIN_RUN_LENGTH}};
+use crate::{
+  compress::Result,
+  consts_rewrite::{MAX_RUN_LENGTH, MIN_RUN_LENGTH},
+};
 
 use super::byte_run_hash_table::ByteRunHashTable;
 
@@ -167,7 +170,8 @@ impl<R: Read> InputRingBuffer<R> {
     for test_position in self.byte_run_hash.possible_run_positions() {
       let mut run_length = 0;
       while run_length < MAX_RUN_LENGTH {
-        // QUIRK: This code can read beyond `remaining_data`.
+        // QUIRK: This code can read beyond `remaining_data`. It is important that it does this so
+        // it selects the same run position as the original code, ensuring bit-wise equivalence.
         if self.buffer[start_position + run_length] != self.buffer[test_position + run_length] {
           break;
         }

@@ -27,8 +27,7 @@ impl ByteRunHashTable {
   }
 
   pub fn next_byte_hash(&self, existing_hash: usize, next_byte: u8) -> usize {
-    self.buffer_size
-      + (((existing_hash << 4) ^ (usize::from(next_byte))) & BYTE_RUN_HASH_BITMASK)
+    self.buffer_size + (((existing_hash << 4) ^ (usize::from(next_byte))) & BYTE_RUN_HASH_BITMASK)
   }
 
   pub fn insert_byte_hash(&mut self, position: usize) {

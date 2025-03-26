@@ -12,9 +12,6 @@ cargo-fuzz = true
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(fuzzing)'] }
 
-[dependencies]
-afl = "*"
-
 [dependencies.archivelib]
 path = ".."
 features = ["new_impl", "sys"]
@@ -30,6 +27,10 @@ name = "fuzz_compress_correctness"
 path = "fuzz_targets/fuzz_compress_correctness.rs"
 
 [[bin]]
+name = "fuzz_compress_decompress"
+path = "fuzz_targets/fuzz_compress_decompress.rs"
+
+[[bin]]
 name = "fuzz_compress"
 path = "fuzz_targets/fuzz_compress.rs"
 
@@ -40,19 +41,3 @@ path = "fuzz_targets/fuzz_decompress_correctness.rs"
 [[bin]]
 name = "fuzz_decompress"
 path = "fuzz_targets/fuzz_decompress.rs"
-
-[[bin]]
-name = "afl_compress_correctness"
-path = "fuzz_targets/afl_compress_correctness.rs"
-
-[[bin]]
-name = "afl_compress"
-path = "fuzz_targets/afl_compress.rs"
-
-[[bin]]
-name = "afl_decompress_correctness"
-path = "fuzz_targets/afl_decompress_correctness.rs"
-
-[[bin]]
-name = "afl_decompress"
-path = "fuzz_targets/afl_decompress.rs"

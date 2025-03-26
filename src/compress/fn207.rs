@@ -28,7 +28,9 @@ impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
     //  frequencies of all the nodes in the tree. This saves us having to count the frequencies
     //  again.
     let frequency_sum = self.byte_run_length_frequency[cast!(run_length_root_node as usize)];
-    self.output_store.write_bits(cast!(frequency_sum as u16), 16)?;
+    self
+      .output_store
+      .write_bits(cast!(frequency_sum as u16), 16)?;
 
     // `run_length_root_node` represents a single value if it's in the range `0..511`.
     // `run_length_root_node` represents a root node of a huffman tree if it's in the range `511..`.

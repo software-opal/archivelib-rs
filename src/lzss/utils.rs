@@ -1,6 +1,3 @@
-
-
-
 pub fn bit_size(mut offset: usize) -> usize {
   let mut bits = 0;
   while offset != 0 {

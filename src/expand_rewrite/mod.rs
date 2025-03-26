@@ -1,8 +1,14 @@
+mod buffer;
 mod config;
+mod error;
+mod huffman_reader;
 mod reader;
 
-use self::config::ArchivelibConfig;
-use crate::{CompressionLevel, DecompressError};
+use crate::CompressionLevel;
+
+pub use config::ArchivelibConfig;
+pub use error::DecompressError;
+pub use reader::Extractor;
 
 pub type Result<T> = std::result::Result<T, DecompressError>;
 

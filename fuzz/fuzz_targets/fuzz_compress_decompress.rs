@@ -10,5 +10,7 @@ extern crate archivelib;
 
 #[cfg(fuzzing)]
 fuzz_target!(|data: &[u8]| {
-  check_rust_against_sys_decompress!(data);
+  let compressed = archivelib::do_compress(&data).unwrap();
+  let decompressed = archivelib::do_decompress(&compressed).unwrap();
+  assert_eq!(data, &decompressed[..]);
 });

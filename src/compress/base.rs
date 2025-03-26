@@ -54,7 +54,7 @@ pub struct RCompressData<R: Read, W: BitwiseWrite> {
   /// For data `max_size..`(key: `byte_hash + max_size`)
   ///   - `-1` means no hash has been found
   ///   - `index` means the hash was found at `index`.
-  /// 
+  ///
   /// For data `..max_size`(key: `index`)
   ///   - `-1` means no other instances of this index's hash exist.
   ///   - `index` means there is at least 1 more instance found at `index`.

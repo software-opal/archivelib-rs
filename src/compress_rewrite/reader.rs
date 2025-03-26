@@ -2,8 +2,8 @@ use crate::{
   CompressError, build_from_frequency,
   compress::Result,
   huffman::{builder::frequency::RootNode, sorts::SortAlgorithm},
-  support::BitwiseWrite,
   lzss::{LzssBuffer, LzssEntry, Output},
+  support::BitwiseWrite,
 };
 use std::io::Read;
 
@@ -71,6 +71,7 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
   }
 
   fn dump_lzss_buffer(&mut self) -> Result<()> {
+    eprintln!("AAAA {:?}", self.lzss_buffer.data);
     let (lzss_byte_freq, lzss_offset_bitlen_freq) = self.lzss_buffer.generate_frequency_tables();
 
     let byte_encoding: (RootNode, Vec<(u16, usize)>) =
@@ -92,6 +93,18 @@ impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
       &offset_bitlen_encoding.1,
       super::huffman_writer::BitLengthTreeType::OffsetBitLength,
     ));
+
+    eprintln!("{:?}", byte_encoding);
+    eprintln!("{:?}", offset_bitlen_encoding);
+    eprintln!("{:?}", output);
+    eprintln!(
+      "{}",
+      output
+        .iter()
+        .map(|(bit, count)| format!("{:01$b}", bit, count))
+        .collect::<Vec<_>>()
+        .join("_")
+    );
 
     output.extend(
       self

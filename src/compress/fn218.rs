@@ -52,7 +52,7 @@ where
     if bit_length <= 6 {
       out.write_bits(cast!(bit_length as u16), 3)?;
     } else {
-      out.write_bits(USHRT_MAX << 1, cast!((bit_length - 3 ) as usize))?;
+      out.write_bits(USHRT_MAX << 1, cast!((bit_length - 3) as usize))?;
     }
     // The original code has this as `run_start_check` == `idx`; however given the function only has
     //  2 calling sites, and the only values that are passed are `3` and `-1`, I've chosen to simply

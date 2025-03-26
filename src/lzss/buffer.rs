@@ -1,4 +1,7 @@
-use crate::{consts_rewrite::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH}, lzss::utils::bit_size};
+use crate::{
+  consts_rewrite::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH},
+  lzss::utils::bit_size,
+};
 
 use super::entry::LzssEntry;
 

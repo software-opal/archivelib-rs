@@ -1,4 +1,3 @@
-
 use super::base::BitwiseWrite;
 
 pub struct ExpectedCallWriter {

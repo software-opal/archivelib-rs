@@ -1,8 +1,6 @@
-
-
-mod entry;
 mod buffer;
+mod entry;
 mod utils;
 
-pub use entry::LzssEntry;
 pub use buffer::{LzssBuffer, Output};
+pub use entry::LzssEntry;

@@ -46,6 +46,19 @@ macro_rules! hex {
       .collect::<std::vec::Vec<_>>()
   }};
 }
+#[macro_export]
+macro_rules! binary {
+  ($data: expr_2021) => {
+    $data
+      .chars()
+      .filter_map(|c| match c {
+        '0' => false,
+        '1' => true,
+        _ => panic!("invalid character {:?}", c),
+      })
+      .collect()
+  };
+}
 
 #[macro_export]
 macro_rules! test_data {

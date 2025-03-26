@@ -47,9 +47,7 @@ impl SortAlgorithm for ArchiveLibSortAlgorithm {
     self.shuffle_smallest_to_front(nodes, 1);
     // The original implementation copied the last node over the first and reduced the length by
     //  one. We need to emulate this to prevent issues.
-    nodes.swap(1, nodes.len() - 1);
-    
-    nodes.pop_back()
+    nodes.swap_remove_back(1)
   }
   fn insert_node(&self, nodes: &mut VecDeque<Node>, new_node: Node) {
     let null_node = nodes.pop_front().unwrap();
@@ -129,18 +127,13 @@ mod tests {
     let mut deque: VecDeque<Node> = algo.initial_sort(nodes);
     assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(299, 1)));
     assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(298, 2)));
-    algo.insert_node(&mut deque, Node::Branch(
-      Box::new(Node::Leaf(299, 1)),
-      Box::new(Node::Leaf(298, 2)),
-      3
-    ));
+    algo.insert_node(
+      &mut deque,
+      Node::branch(Node::Leaf(299, 1), Node::Leaf(298, 2)),
+    );
     assert_eq!(
       algo.pop_smallest_node(&mut deque),
-      Some(Node::Branch(
-        Box::new(Node::Leaf(299, 1)),
-        Box::new(Node::Leaf(298, 2)),
-        3
-      ))
+      Some(Node::branch(Node::Leaf(299, 1), Node::Leaf(298, 2),))
     );
     assert_eq!(algo.pop_smallest_node(&mut deque), Some(Node::Leaf(297, 3)));
   }

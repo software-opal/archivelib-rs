@@ -2,7 +2,6 @@ use crate::consts_rewrite::EOF_FLAG;
 
 use super::utils::bit_size;
 
-
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LzssEntry {
   Byte(u8),
@@ -33,7 +32,7 @@ impl LzssEntry {
       Self::EoF => Some(0),
     }
   }
-pub   fn offset_bit_size(&self) -> Option<usize> {
+  pub fn offset_bit_size(&self) -> Option<usize> {
     self.offset_value().map(bit_size)
   }
 }

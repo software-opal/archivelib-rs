@@ -1,8 +1,9 @@
 use std::io::{Read, Write};
 
-use crate::errors::DecompressError;
 use crate::level::CompressionLevel;
-use crate::support::MaxSizeWriter;
+use crate::support::{BitwiseReader, MaxSizeWriter};
+
+use super::{DecompressError, Extractor};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct ArchivelibConfig {
@@ -30,7 +31,7 @@ impl From<CompressionLevel> for ArchivelibConfig {
 
 impl ArchivelibConfig {
   pub fn decompress(&self, input: &[u8]) -> Result<Box<[u8]>, DecompressError> {
-    // Pre-allocate some memory to hold the decompressed stream; 16*input is arbitary.
+    // Pre-allocate some memory to hold the decompressed stream.
     let mut out: Vec<u8> = Vec::with_capacity(256);
     match self.max_size {
       Some(limit) => {
@@ -49,9 +50,9 @@ impl ArchivelibConfig {
     R: Read,
     W: Write,
   {
-    // let mut reader = BitReader::from(input);
-    // let mut expander = expand::RExpandData::new(reader, output, self.level.compression_factor())?;
-    // expander.expand()
+    let reader = BitwiseReader::new(input);
+    let mut extractor = Extractor::new(reader, output, self.level.compression_factor())?;
+    extractor.extract()?;
     Ok(())
   }
 }

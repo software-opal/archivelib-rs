@@ -72,7 +72,7 @@ pub fn write_bit_length_tree(
       if idx == 3 && tree_type == BitLengthTreeType::ByteEncodingLength {
         // The original code has this as `run_start_check` == `idx`; however given the function only has
         //  2 calling sites, and the only values that are passed are `3` and `-1`, I've chosen to simply
-        //  check for `== 3` twice.
+        //  check for `== 3`.
 
         while idx < 6 && encoding[idx].1 == 0 {
           idx += 1
