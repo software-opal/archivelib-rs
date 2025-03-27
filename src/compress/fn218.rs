@@ -71,7 +71,7 @@ where
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::ExpectedCallWriter;
+  use crate::support::writer::ExpectedCallWriter;
 
   #[test]
   fn test_fn218_0() {

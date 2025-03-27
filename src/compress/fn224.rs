@@ -31,8 +31,9 @@ where
 
 #[cfg(test)]
 mod tests {
+  use crate::support::writer::ExpectedCallWriter;
+
   use super::*;
-  use crate::support::ExpectedCallWriter;
 
   #[test]
   fn test_fn224_0() {
