@@ -1,5 +1,5 @@
 #![deny(clippy::fallible_impl_from)]
-#![deny(clippy::wrong_pub_self_convention)]
+#![deny(clippy::wrong_self_convention)]
 #![deny(clippy::assertions_on_constants)]
 #![deny(clippy::wrong_self_convention)]
 #![deny(clippy::unseparated_literal_suffix)]
@@ -16,28 +16,18 @@ pub mod support;
 #[macro_use]
 mod test;
 
-pub mod consts_rewrite;
+pub mod compress;
+pub mod expand;
 
-mod compress_rewrite;
-pub mod expand_rewrite;
-
+mod consts;
 mod huffman;
 mod lzss;
 
 mod level;
 
-#[cfg(not(feature = "new_impl"))]
-mod expand;
-#[cfg(feature = "new_impl")]
-mod expand_new;
+#[cfg(feature = "ported")]
+pub mod ported;
 
-mod compress;
-mod config;
-mod consts;
-mod errors;
-
-pub use self::config::ArchivelibConfig;
-pub use self::errors::*;
 pub use self::level::CompressionLevel;
 
 pub use huffman::builder::frequency::build_from_frequency;
@@ -54,26 +44,9 @@ pub mod sys {
 pub fn do_compress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
 }
+pub use compress::do_compress_level;
+pub use compress::do_compress_level_bitstream;
 
-pub use compress_rewrite::do_compress_level;
-
-pub use expand_rewrite::do_decompress;
-pub use expand_rewrite::do_decompress_level;
-
-// pub fn do_decompress(input: &[u8]) -> Result<Box<[u8]>, std::string::String> {
-//   ArchivelibConfig::default()
-//     .decompress(input)
-//     .map_err(|err| format!("{}", err))
-// }
-
-// pub fn do_decompress_level(
-//   input: &[u8],
-//   compression_level: CompressionLevel,
-// ) -> Result<Box<[u8]>, std::string::String> {
-//   (ArchivelibConfig {
-//     level: compression_level,
-//     ..ArchivelibConfig::default()
-//   })
-//   .decompress(input)
-//   .map_err(|err| format!("{}", err))
-// }
+pub use expand::do_decompress;
+pub use expand::do_decompress_level;
+pub use expand::do_decompress_level_bitstream;

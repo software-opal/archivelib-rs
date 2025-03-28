@@ -28,8 +28,8 @@ name = "alzip"
 path = "src/executables/compress.rs"
 
 [features]
-default = ["new_impl"]
-new_impl = []
+default = []
+ported = []
 sys = ["dep:archivelib-sys"]
 
 "fuzz-afl" = []

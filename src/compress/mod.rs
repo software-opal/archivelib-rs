@@ -1,40 +1,39 @@
-#[macro_use]
-mod array_alias;
-
-mod base;
-mod buffer;
-#[allow(clippy::module_inception)]
-mod compress;
+mod byte_run_hash_table;
 mod config;
-mod find_longest_run;
-mod fn202;
-mod fn207;
-mod fn211;
-mod fn216;
-mod fn218;
-mod fn222;
-mod fn224;
-mod fn225;
-mod fn228;
-mod fn230;
+mod error;
+mod huffman_writer;
+mod input_ring_buffer;
+mod reader;
+use std::io::Read;
 
-pub use self::base::{
-  CompressError, CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result,
-};
-pub use self::config::ArchivelibConfig;
-use crate::CompressionLevel;
+pub use self::error::CompressError;
+pub use self::reader::Compressor;
+use crate::{CompressionLevel, support::BitwiseWrite};
 
-#[allow(dead_code)]
-pub fn do_compress_level(
-  input: &[u8],
-  compression_level: CompressionLevel,
-) -> std::result::Result<Box<[u8]>, std::string::String> {
-  ArchivelibConfig::from(compression_level)
-    .compress(input)
-    .map_err(|err| format!("{}", err))
-}
+pub type Result<T> = std::result::Result<T, CompressError>;
 
 #[allow(dead_code)]
 pub fn do_compress(input: &[u8]) -> std::result::Result<Box<[u8]>, std::string::String> {
   do_compress_level(input, CompressionLevel::Level0)
+}
+
+pub fn do_compress_level(
+  input: &[u8],
+  compression_level: CompressionLevel,
+) -> std::result::Result<Box<[u8]>, std::string::String> {
+  let mut arr = vec![];
+  self::config::ArchivelibConfig::from(compression_level)
+    .compress(input, &mut arr)
+    .map_err(|err| format!("{}", err))
+    .map(|_| arr.into_boxed_slice())
+}
+
+pub fn do_compress_level_bitstream(
+  input: impl Read,
+  writer: impl BitwiseWrite,
+  compression_level: CompressionLevel,
+) -> std::result::Result<(), std::string::String> {
+  self::config::ArchivelibConfig::from(compression_level)
+    .compress_bitstream(input, writer)
+    .map_err(|err| format!("{}", err))
 }

@@ -1,6 +1,4 @@
-use crate::consts_rewrite::EOF_FLAG;
-
-use super::utils::bit_size;
+use crate::{consts::EOF_FLAG, support::bit_utils::bit_size};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LzssEntry {

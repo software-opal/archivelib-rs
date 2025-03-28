@@ -1,3 +1,5 @@
+mod binary_tree_printer;
+
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {
   ($compressed: expr_2021) => {{

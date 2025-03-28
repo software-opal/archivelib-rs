@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub fn print_tree(root_node: u32, node_start_at: i32, left_nodes: &[u16], right_nodes: &[u16]) {
   eprintln!("{:#05X}", root_node);
   do_print_tree(

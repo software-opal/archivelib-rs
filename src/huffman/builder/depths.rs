@@ -1,5 +1,5 @@
 use crate::{
-  expand_rewrite::{DecompressError, Result},
+  expand::{DecompressError, Result},
   huffman::tree::Node,
 };
 
@@ -49,7 +49,7 @@ fn validate_depths(depths: &[u16]) -> Result<()> {
     depth_counter[*node_depth as usize] += 1;
   }
   let mut previous_nodes = 0;
-  for count in depth_counter[1..].into_iter().rev() {
+  for count in depth_counter[1..].iter().rev() {
     let this_depth_count = count + previous_nodes;
     if this_depth_count % 2 != 0 {
       return Err(DecompressError::InvalidBinaryTree);

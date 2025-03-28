@@ -1,7 +1,6 @@
-use crate::support::writer::base::truncate_bits;
+use crate::support::bit_utils::truncate_bits;
 
 use super::base::BitwiseWrite;
-
 pub struct ExpectedCallWriter {
   calls: Vec<(u16, usize)>,
   write_calls: usize,
@@ -45,7 +44,7 @@ impl BitwiseWrite for ExpectedCallWriter {
         actual, expected, self.write_calls
       );
     }
-    self.written_bits += bit_count as usize;
+    self.written_bits += bit_count;
     self.write_calls += 1;
     Ok(())
   }

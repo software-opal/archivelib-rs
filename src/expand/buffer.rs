@@ -1,123 +1,137 @@
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
-use std::io::Write;
+use std::{collections::VecDeque, io::Write};
 
-impl<R: BitRead, W: Write> RExpandData<R, W> {
-  pub fn read_bits(&mut self, bits_to_load219: i16) -> Result<()> {
-    self.input_store.read_bits(cast!(bits_to_load219 as u8))?;
-    self.bits182 = self.input_store.current_bits();
-    if self.input_store.is_eof() {
-      self.error_counter243 += 1;
+use super::{DecompressError, Result};
+
+pub struct ExpandHistoryBuffer<W: Write> {
+  history_bytes: VecDeque<u8>,
+  buffer_size: usize,
+  writer: W,
+}
+
+impl<W: Write> ExpandHistoryBuffer<W> {
+  pub fn new(writer: W, buffer_size: usize) -> Self {
+    Self {
+      writer,
+      buffer_size,
+      history_bytes: VecDeque::with_capacity(buffer_size),
     }
+  }
+
+  pub fn write_byte(&mut self, byte: u8) -> Result<()> {
+    self.write_bytes(&[byte])
+  }
+
+  pub fn write_run(&mut self, run_len: usize, run_offset: usize) -> Result<()> {
+    if run_offset > self.history_bytes.len() {
+      return Err(DecompressError::InvalidRunOffset(run_offset));
+    }
+    match run_offset {
+      0 => {
+        // Optimise a 0 run offset, meaning copy on the last character a specific number of times.
+        if let Some(fill) = self.history_bytes.back() {
+          self.write_bytes(&vec![*fill; run_len])
+        } else {
+          Err(DecompressError::InvalidRunOffset(run_offset))
+        }
+      }
+      _ => {
+        let run_bytes = self.history(run_len, run_offset)?;
+        if run_bytes.len() == run_len {
+          self.write_bytes(&run_bytes)
+        } else {
+          let mut bytes = run_len;
+          let max = run_bytes.len();
+
+          while bytes > 0 {
+            let written = bytes.min(max);
+            self.write_bytes(&run_bytes[..written])?;
+            bytes -= written;
+          }
+          Ok(())
+        }
+      }
+    }
+  }
+
+  fn write_bytes(&mut self, bytes: &[u8]) -> Result<()> {
+    if self.history_bytes.len() + bytes.len() >= self.buffer_size {
+      self.history_bytes.drain(self.buffer_size - bytes.len()..);
+    }
+    self.history_bytes.extend(bytes);
+    self.writer.write_all(bytes)?;
     Ok(())
   }
 
-  pub fn get_bits(&mut self, bits_to_load219: i16) -> Result<u16> {
-    if bits_to_load219 == 0 {
-      return Ok(0);
+  fn history(&self, length: usize, offset: usize) -> Result<Vec<u8>> {
+    if offset >= self.history_bytes.len() {
+      Err(DecompressError::InvalidRunOffset(offset))
+    } else if length == 0 {
+      Ok(vec![])
+    } else {
+      let buffer_len = self.history_bytes.len();
+      let start = buffer_len - offset - 1;
+      if length == 1 {
+        Ok(vec![self.history_bytes[start]])
+      } else {
+        Ok(
+          self
+            .history_bytes
+            .iter()
+            .skip(start)
+            .take(length)
+            .copied()
+            .collect(),
+        )
+      }
     }
-    let bits: u16 = self.bits182 >> (2 * 8 - bits_to_load219);
-    self.read_bits(bits_to_load219)?;
-    Ok(bits)
   }
 }
 
 #[cfg(test)]
-mod tests {
-  use super::*;
-  use crate::support::ExactCallBitReader;
+mod test {
+  use core::panic;
 
-  // const data: Vec<u8> =
+  use super::*;
 
   #[test]
-  fn test_reads_data_the_same_as_original() {
-    let data = vec![
-      0x00, 0x12, 0x43, 0x88, 0x81, 0xA7, 0xFF, 0x0D, 0x9A, 0xC8, 0xF4, 0x61, 0xB4, 0x81, 0x94,
-      0x00, 0x20, 0x9B, 0xD4, 0x90, 0x00, 0x00, 0x19, 0x3C, 0x00, 0x62, 0xA5, 0xC1, 0x81, 0xAF,
-      0xF0,
-    ];
-    let length = data.len();
-    let out = vec![];
-    let expected_call_results = ExactCallBitReader::new(vec![
-      (16, 0x0012),
-      (16, 0x4388),
-      (5, 0x7110),
-      (3, 0x8881),
-      (3, 0x440d),
-      (3, 0x2069),
-      (2, 0x81a7),
-      (3, 0x0d3f),
-      (3, 0x69ff),
-      (3, 0x4ffe),
-      (3, 0x7ff0),
-      (3, 0xff86),
-      (9, 0x0d9a),
-      (2, 0x366b),
-      (9, 0xd647),
-      (3, 0xb23d),
-      (3, 0x91e8),
-      (3, 0x8f46),
-      (3, 0x7a30),
-      (2, 0xe8c3),
-      (4, 0x8c36),
-      (4, 0xc369),
-      (3, 0x1b48),
-      (2, 0x6d20),
-      (9, 0x40ca),
-      (2, 0x0328),
-      (2, 0x0ca0),
-      (9, 0x4002),
-      (2, 0x0008),
-      (2, 0x0020),
-      (9, 0x4137),
-      (2, 0x04de),
-      (2, 0x137a),
-      (9, 0xf524),
-      (4, 0x5240),
-      (2, 0x4900),
-      (5, 0x2000),
-      (3, 0x0000),
-      (3, 0x0000),
-      (3, 0x0000),
-      (3, 0x0003),
-      (3, 0x0019),
-      (3, 0x00c9),
-      (3, 0x064f),
-      (3, 0x3278),
-      (3, 0x93c0),
-      (3, 0x9e00),
-      (3, 0xf001),
-      (5, 0x0031),
-      (1, 0x0062),
-      (1, 0x00c5),
-      (1, 0x018a),
-      (1, 0x0315),
-      (1, 0x062a),
-      (1, 0x0c54),
-      (1, 0x18a9),
-      (1, 0x3152),
-      (1, 0x62a5),
-      (1, 0xc54b),
-      (4, 0x54b8),
-      (1, 0xa970),
-      (4, 0x9706),
-      (3, 0xb830),
-      (4, 0x8303),
-      (1, 0x0606),
-      (7, 0x035f),
-      (1, 0x06bf),
-      (1, 0x0d7f),
-      (1, 0x1aff),
-      (1, 0x35fe),
-      (1, 0x6bfc),
-      (1, 0xd7f8),
-      (4, 0x7f80),
-      (1, 0xff00),
-      (5, 0xe000),
-      (4, 0x0000),
-    ]);
-    let mut test = RExpandData::new(expected_call_results, out, length, 10).unwrap();
+  fn test_write_more_than_buffer_size_bytes() {
+    let mut output = vec![];
+    let mut buffer = ExpandHistoryBuffer::new(&mut output, 32);
+    buffer.write_bytes(&[0xAA; 31]).unwrap();
+    buffer.write_bytes(&[0xBB]).unwrap();
+    buffer.write_bytes(&[0xCC; 2]).unwrap();
+    assert_eq!(buffer.history_bytes.len(), 32);
+    assert_eq!(output[30..], [0xAA, 0xBB, 0xCC, 0xCC]);
+  }
 
-    test.expand().unwrap();
+  #[test]
+  fn test_write_run_offset_out_of_bound() {
+    let mut output = vec![];
+    let mut buffer = ExpandHistoryBuffer::new(&mut output, 8);
+    buffer.write_bytes(&[0xAA, 0xBB, 0xCC]).unwrap();
+    match buffer.write_run(3, 3) {
+      Err(DecompressError::InvalidRunOffset(3)) => {}
+      Err(e) => panic!("Incorrect error: {:?}", e),
+      Ok(_) => panic!("Incorrectly passed"),
+    }
+  }
+
+  #[test]
+  fn test_write_run_data() {
+    let mut output = vec![];
+    let mut buffer = ExpandHistoryBuffer::new(&mut output, 8);
+    buffer.write_bytes(&[0xAA, 0xBB, 0xCC]).unwrap();
+    buffer.write_run(3, 2).unwrap();
+    buffer.write_run(60, 5).unwrap();
+
+    assert_eq!(buffer.history_bytes.len(), 8);
+    assert_eq!(
+      output,
+      [0xAA, 0xBB, 0xCC]
+        .into_iter()
+        .cycle()
+        .take(66)
+        .collect::<Vec<_>>()
+    );
   }
 }

@@ -1,6 +1,6 @@
 use crate::{
-  consts_rewrite::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH},
-  lzss::utils::bit_size,
+  consts::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH},
+  support::bit_utils::bit_size,
 };
 
 use super::entry::LzssEntry;

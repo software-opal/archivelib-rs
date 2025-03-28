@@ -1,7 +1,10 @@
+use super::Result;
 use crate::{
-  CompressError, build_from_frequency,
-  compress::Result,
-  huffman::{builder::frequency::RootNode, sorts::SortAlgorithm},
+  CompressionLevel,
+  huffman::{
+    builder::frequency::{RootNode, build_from_frequency},
+    sorts::SortAlgorithm,
+  },
   lzss::{LzssBuffer, LzssEntry, Output},
   support::BitwiseWrite,
 };
@@ -12,9 +15,6 @@ use super::{
   input_ring_buffer::InputRingBuffer,
 };
 
-pub const MIN_COMPRESSION_FACTOR: u8 = 10;
-pub const MAX_COMPRESSION_FACTOR: u8 = 14;
-
 pub struct Compressor<R: Read, W: BitwiseWrite, S: SortAlgorithm> {
   writer: W,
 
@@ -24,16 +24,14 @@ pub struct Compressor<R: Read, W: BitwiseWrite, S: SortAlgorithm> {
 }
 
 impl<R: Read, W: BitwiseWrite, S: SortAlgorithm> Compressor<R, W, S> {
-  pub fn new(reader: R, writer: W, compression_factor: u8, sort_algorithm: S) -> Result<Self> {
-    if !(MIN_COMPRESSION_FACTOR..=MAX_COMPRESSION_FACTOR).contains(&compression_factor) {
-      return Err(CompressError::IllegalCompressionLevel(compression_factor));
-    }
-    Ok(Self {
+  pub fn new(reader: R, writer: W, compression_level: CompressionLevel, sort_algorithm: S) -> Self {
+    let compression_factor = compression_level.compression_factor();
+    Self {
       writer,
       sort_algorithm,
       input_file_ring_buffer: InputRingBuffer::new(reader, 1 << compression_factor),
       lzss_buffer: LzssBuffer::new(),
-    })
+    }
   }
 
   pub fn compress(&mut self) -> Result<()> {
@@ -125,10 +123,9 @@ mod test {
     let mut compressor = Compressor::new(
       &data[..],
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     compressor.compress().unwrap();
   }
@@ -142,10 +139,9 @@ mod test {
     let mut compressor = Compressor::new(
       &input[..],
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     compressor.compress().unwrap();
   }
@@ -158,10 +154,9 @@ mod test {
     let mut compressor = Compressor::new(
       input.as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     compressor.compress().unwrap();
   }
@@ -176,10 +171,9 @@ mod test {
     let mut compressor = Compressor::new(
       &input[..],
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     compressor.compress().unwrap();
   }
@@ -191,10 +185,9 @@ mod test {
     let mut compressor = Compressor::new(
       &input[..],
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     compressor.compress().unwrap();
 
@@ -213,10 +206,9 @@ mod test {
     let mut compressor = Compressor::new(
       &input[..],
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -238,10 +230,9 @@ mod test {
     let mut compressor = Compressor::new(
       "".as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -254,10 +245,9 @@ mod test {
     let mut compressor = Compressor::new(
       "abc".as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -278,10 +268,9 @@ mod test {
     let mut compressor = Compressor::new(
       "abcabc".as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -303,10 +292,9 @@ mod test {
     let mut compressor = Compressor::new(
       "aaaabbbb".as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -328,10 +316,9 @@ mod test {
     let mut compressor = Compressor::new(
       "aaaa".as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -348,10 +335,9 @@ mod test {
     let mut compressor = Compressor::new(
       input.as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -375,10 +361,9 @@ mod test {
     let mut compressor = Compressor::new(
       input.as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -404,10 +389,9 @@ mod test {
     let mut compressor = Compressor::new(
       input.as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 
@@ -443,10 +427,9 @@ mod test {
     let mut compressor = Compressor::new(
       input.as_bytes(),
       BitwiseWriter::new(&mut output),
-      10,
+      CompressionLevel::Level0,
       ARCHIVE_LIB_SORT_ALGORITHM,
-    )
-    .unwrap();
+    );
 
     assert!(!compressor.fill_lzss_buffer().unwrap());
 

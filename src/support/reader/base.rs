@@ -7,12 +7,12 @@ pub trait BitwiseRead {
     assert!(bit_count <= self.max_bit_count());
     let mut out = 0;
     for _ in 0..bit_count {
-      out = (out << 1) | (self.read_bit()? as u16)
+      out = (out << 1) | u16::from(self.read_bit()?)
     }
     Ok(out)
   }
 
-  fn iter_bits<'a>(&'a mut self) -> BitwiseReadBitIterator<'a, Self>
+  fn iter_bits(& mut self) -> BitwiseReadBitIterator<'_, Self>
   where
     Self: Sized,
   {
@@ -57,7 +57,7 @@ impl<'a, R: BitwiseRead> BitwiseReadBitIterator<'a, R> {
   }
 }
 
-impl<'a, R: BitwiseRead> Iterator for BitwiseReadBitIterator<'a, R> {
+impl<R: BitwiseRead> Iterator for BitwiseReadBitIterator<'_, R> {
   type Item = bool;
   fn next(&mut self) -> Option<bool> {
     self.error_checked = false;
@@ -76,7 +76,7 @@ impl<'a, R: BitwiseRead> Iterator for BitwiseReadBitIterator<'a, R> {
   }
 }
 
-impl<'a, R: BitwiseRead> Drop for BitwiseReadBitIterator<'a, R> {
+impl<R: BitwiseRead> Drop for BitwiseReadBitIterator<'_, R> {
   fn drop(&mut self) {
     assert!(
       self.error_checked,

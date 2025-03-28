@@ -1,15 +1,18 @@
 #[macro_export]
-macro_rules! cast {
+macro_rules! cast_trunc {
   ($e:ident as $t:ty) => {
-    $crate::cast!(($e) as $t)
+    $crate::cast_trunc!(($e) as $t)
   };
   (($e:expr_2021) as $t:ty) => {{
     use std::convert::TryFrom;
     let a = $e;
-    match <$t>::try_from(a) {
+    #[allow(unused_assignments)]
+    let mut b = a;
+    b = <$t>::MAX.into();
+    match <$t>::try_from(a & b) {
       Ok(v) => v,
       Err(_) => {
-        panic!(
+        unreachable!(
           "Conversion of {}(=={}) to {} failed at {}:{}:{}",
           stringify!($e),
           a,

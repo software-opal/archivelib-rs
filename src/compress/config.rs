@@ -1,25 +1,34 @@
-use std::io::{Read, Write};
-
-use crate::errors::CompressError;
-use crate::level::CompressionLevel;
-use crate::support::MaxSizeWriter;
+use super::Compressor;
+use super::Result;
+use crate::CompressionLevel;
+use crate::huffman::sorts::ARCHIVE_LIB_SORT_ALGORITHM;
+use crate::huffman::sorts::ArchiveLibSortAlgorithm;
+use crate::huffman::sorts::MODERN_SORT_ALGORITHM;
+use crate::huffman::sorts::ModernSortAlgorithm;
+use crate::huffman::sorts::SortAlgorithm;
+use crate::support::writer::BitwiseWrite;
+use crate::support::writer::BitwiseWriter;
+use std::io::Read;
+use std::io::Write;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub struct ArchivelibConfig {
+pub struct ArchivelibConfig<S: SortAlgorithm> {
   pub level: CompressionLevel,
   pub max_size: Option<usize>,
+  pub sort_algorithm: S,
 }
 
-impl Default for ArchivelibConfig {
+impl Default for ArchivelibConfig<ArchiveLibSortAlgorithm> {
   fn default() -> Self {
     Self {
       level: CompressionLevel::Level0,
       max_size: Some(65536),
+      sort_algorithm: ARCHIVE_LIB_SORT_ALGORITHM,
     }
   }
 }
 
-impl From<CompressionLevel> for ArchivelibConfig {
+impl From<CompressionLevel> for ArchivelibConfig<ArchiveLibSortAlgorithm> {
   fn from(level: CompressionLevel) -> Self {
     Self {
       level,
@@ -28,38 +37,34 @@ impl From<CompressionLevel> for ArchivelibConfig {
   }
 }
 
-impl ArchivelibConfig {
+impl<S: SortAlgorithm> ArchivelibConfig<S> {
   #![allow(dead_code)]
 
-  pub fn compress(&self, input: &[u8]) -> Result<Box<[u8]>, CompressError> {
-    // Pre-allocate some memory to hold the decompressed stream; 16*input is arbitary.
-    let mut out: Vec<u8> = Vec::with_capacity(256);
-    match self.max_size {
-      Some(limit) => {
-        let mut writer = MaxSizeWriter::wrap(out, limit);
-        self.compress_stream(input, &mut writer)?;
-        out = writer.into_inner();
-      }
-      None => {
-        self.compress_stream(input, &mut out)?;
-      }
+  pub fn with_sort_algorithm<NewS: SortAlgorithm>(
+    self,
+    sort_algorithm: NewS,
+  ) -> ArchivelibConfig<NewS> {
+    ArchivelibConfig {
+      sort_algorithm,
+      level: self.level,
+      max_size: self.max_size,
     }
-    Ok(out.into_boxed_slice())
   }
 
-  pub fn compress_stream<R, W>(&self, input: R, output: W) -> Result<(), CompressError>
-  where
-    R: Read,
-    W: Write,
-  {
-    use crate::compress;
+  pub fn with_modern_sort_algorithm(self) -> ArchivelibConfig<ModernSortAlgorithm> {
+    self.with_sort_algorithm(MODERN_SORT_ALGORITHM)
+  }
+  pub fn with_archive_lib_sort_algorithm(self) -> ArchivelibConfig<ArchiveLibSortAlgorithm> {
+    self.with_sort_algorithm(ARCHIVE_LIB_SORT_ALGORITHM)
+  }
 
-    let mut res = compress::RCompressData::new_with_io_writer(
-      input,
-      output,
-      self.level.compression_factor(),
-      false,
-    )?;
-    res.compress()
+  pub fn compressor<R: Read, W: BitwiseWrite>(self, reader: R, writer: W) -> Compressor<R, W, S> {
+    Compressor::new(reader, writer, self.level, self.sort_algorithm)
+  }
+  pub fn compress(self, reader: impl Read, writer: impl Write) -> Result<()> {
+    self.compress_bitstream(reader, BitwiseWriter::new(writer))
+  }
+  pub fn compress_bitstream(self, reader: impl Read, writer: impl BitwiseWrite) -> Result<()> {
+    self.compressor(reader, writer).compress()
   }
 }

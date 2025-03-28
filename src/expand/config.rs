@@ -1,7 +1,7 @@
 use std::io::{Read, Write};
 
 use crate::level::CompressionLevel;
-use crate::support::{BitwiseReader, MaxSizeWriter};
+use crate::support::{BitwiseRead, BitwiseReader, MaxSizeWriter};
 
 use super::{DecompressError, Extractor};
 
@@ -51,8 +51,13 @@ impl ArchivelibConfig {
     W: Write,
   {
     let reader = BitwiseReader::new(input);
-    let mut extractor = Extractor::new(reader, output, self.level.compression_factor())?;
-    extractor.extract()?;
-    Ok(())
+    self.decompress_bitstream(reader, output)
+  }
+  pub fn decompress_bitstream<R, W>(&self, reader: R, output: W) -> Result<(), DecompressError>
+  where
+    R: BitwiseRead,
+    W: Write,
+  {
+    Extractor::new(reader, output, self.level).extract()
   }
 }

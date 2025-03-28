@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! test_match_sys_decompress {
-  ($($name: ident => $compressed_data:expr_2021,)*) => {
+  ($($(#[$attr:meta])* $name: ident => $compressed_data:expr_2021,)*) => {
     $(
       pub mod $name {
         lazy_static::lazy_static! {
@@ -11,22 +11,27 @@ macro_rules! test_match_sys_decompress {
         }
 
         #[test]
+        $(#[$attr])*
         fn test_decompress_level_0() {
           let _ = archivelib::check_rust_against_sys_decompress!(archivelib_sys::do_decompress_level; &DATA[..], CompressionLevel::Level0);
         }
         #[test]
+        $(#[$attr])*
         fn test_decompress_level_1() {
           let _ = archivelib::check_rust_against_sys_decompress!(archivelib_sys::do_decompress_level; &DATA[..], CompressionLevel::Level1);
         }
         #[test]
+        $(#[$attr])*
         fn test_decompress_level_2() {
           let _ = archivelib::check_rust_against_sys_decompress!(archivelib_sys::do_decompress_level; &DATA[..], CompressionLevel::Level2);
         }
         #[test]
+        $(#[$attr])*
         fn test_decompress_level_3() {
           let _ = archivelib::check_rust_against_sys_decompress!(archivelib_sys::do_decompress_level; &DATA[..], CompressionLevel::Level3);
         }
         #[test]
+        $(#[$attr])*
         fn test_decompress_level_4() {
           let _ = archivelib::check_rust_against_sys_decompress!(archivelib_sys::do_decompress_level; &DATA[..], CompressionLevel::Level4);
         }
@@ -62,7 +67,7 @@ macro_rules! binary {
 
 #[macro_export]
 macro_rules! test_data {
-  ($($name: ident => (in=$uncompressed_data:expr_2021, out=$compressed_data:expr_2021),)*) => {
+  ($($(#[$attr:meta])* $name: ident => (in=$uncompressed_data:expr_2021, out=$compressed_data:expr_2021),)*) => {
     $(
       pub mod $name {
         use archivelib::{do_compress, do_decompress};
@@ -78,11 +83,13 @@ macro_rules! test_data {
         }
 
         #[test]
+        $(#[$attr])*
         fn test_compress() {
           let compress_output = do_compress(&UNCOMPRESSED[..]).unwrap();
           archivelib::assert_bytes_eq!(&COMPRESSED[..], &compress_output);
         }
         #[test]
+        $(#[$attr])*
         fn test_decompress() {
           let decompress_output = do_decompress(&COMPRESSED[..]).unwrap();
           archivelib::assert_bytes_eq!(&UNCOMPRESSED[..], &decompress_output);
@@ -94,9 +101,10 @@ macro_rules! test_data {
 
 #[macro_export]
 macro_rules! check_decompress_matches {
-  ($($name: ident($input: expr_2021, $output: expr_2021);)+ )=> {
+  ($($(#[$attr:meta])* $name: ident($input: expr_2021, $output: expr_2021);)+ )=> {
     $(
       #[test]
+      $(#[$attr])*
       fn $name() {
         let input: &[u8] = &$input;
         let expected = $output;

@@ -1,8 +1,8 @@
 use std::io::Write;
 
 use crate::{
-  consts::{MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR, MIN_RUN_LENGTH},
-  consts_rewrite::{EOF_FLAG, MAX_RUN_LENGTH},
+  CompressionLevel,
+  consts::{EOF_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH},
   support::BitwiseRead,
 };
 
@@ -20,15 +20,13 @@ pub struct Extractor<R: BitwiseRead, W: Write> {
 }
 
 impl<R: BitwiseRead, W: Write> Extractor<R, W> {
-  pub fn new(reader: R, writer: W, compression_factor: u8) -> Result<Self> {
-    if !(MIN_COMPRESSION_FACTOR..=MAX_COMPRESSION_FACTOR).contains(&compression_factor) {
-      return Err(DecompressError::IllegalCompressionLevel(compression_factor));
-    }
+  pub fn new(reader: R, writer: W, level: CompressionLevel) -> Self {
+    let compression_factor = level.compression_factor();
     let buffer_size = 1 << compression_factor;
-    Ok(Self {
+    Self {
       reader,
       buffer: ExpandHistoryBuffer::new(writer, buffer_size),
-    })
+    }
   }
 
   pub fn extract(&mut self) -> Result<()> {
@@ -75,7 +73,7 @@ impl<R: BitwiseRead, W: Write> Extractor<R, W> {
         _ => unreachable!(),
       }
     }
-    return Ok(true);
+    Ok(true)
   }
 
   fn set_eof(&mut self) {}
@@ -98,7 +96,7 @@ mod test {
     );
 
     let mut output = vec![];
-    let mut extractor = Extractor::new(reader, &mut output, 10).unwrap();
+    let mut extractor = Extractor::new(reader, &mut output, CompressionLevel::Level0);
 
     extractor.extract().unwrap();
 

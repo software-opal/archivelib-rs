@@ -1,4 +1,4 @@
-use crate::consts_rewrite::EOF_FLAG;
+use crate::consts::EOF_FLAG;
 use crate::huffman::builder::depths::huffman_depths_to_tree;
 use crate::huffman::tree::Node;
 use crate::support::BitwiseRead;
@@ -110,7 +110,7 @@ pub fn read_bit_length_tree<R: BitwiseRead>(
 
 #[cfg(test)]
 mod test {
-  use crate::{expand_rewrite::DecompressError, support::reader::BitBasedBitwiseReader};
+  use crate::{expand::DecompressError, support::reader::BitBasedBitwiseReader};
 
   use super::*;
 

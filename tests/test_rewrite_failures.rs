@@ -7,7 +7,7 @@ fn test_rewrite_compress_decompress_failure() {
 
   let compressed = archivelib::do_compress(input).unwrap();
 
-  let uncompressed = archivelib::expand_rewrite::do_decompress(&compressed).unwrap();
+  let uncompressed = archivelib::expand::do_decompress(&compressed).unwrap();
 
   assert_bytes_eq!(input, uncompressed);
 }

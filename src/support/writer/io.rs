@@ -1,4 +1,4 @@
-use crate::support::writer::base::to_bits;
+use crate::support::bit_utils::to_bits;
 
 use super::BitwiseWrite;
 
@@ -92,9 +92,9 @@ mod tests {
   fn test_write_odd_number_of_bits() {
     let mut buf = Vec::new();
     let mut writer = BitwiseWriter::new(&mut buf);
-    writer.write_bits(0xD2C3_u16, 12).unwrap();
+    writer.write_bits(0x0F1E_u16, 12).unwrap();
     writer.flush_buffer().unwrap();
-    assert_bytes_eq!([0x2C], buf);
+    assert_bytes_eq!([0xF1], buf);
   }
   #[test]
   fn test_finalise_pads_last_byte_with_zeros() {

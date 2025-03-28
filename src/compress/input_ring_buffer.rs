@@ -2,7 +2,7 @@ use std::io::Read;
 
 use crate::{
   compress::Result,
-  consts_rewrite::{MAX_RUN_LENGTH, MIN_RUN_LENGTH},
+  consts::{MAX_RUN_LENGTH, MIN_RUN_LENGTH},
 };
 
 use super::byte_run_hash_table::ByteRunHashTable;

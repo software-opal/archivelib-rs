@@ -14,7 +14,7 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(fuzzing)'] }
 
 [dependencies.archivelib]
 path = ".."
-features = ["new_impl", "sys"]
+features = ["ported", "sys"]
 
 [dependencies.libfuzzer-sys]
 git = "https://github.com/rust-fuzz/libfuzzer-sys.git"

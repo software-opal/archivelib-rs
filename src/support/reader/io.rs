@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::support::bit_iter::ToBits;
+use crate::support::bit_utils::to_bits;
 
 use super::BitwiseRead;
 
@@ -20,10 +20,8 @@ impl<R: std::io::Read> BitwiseReader<R> {
   pub fn fill_buffer(&mut self) -> std::io::Result<()> {
     if self.buffer.is_empty() {
       let mut buf = [0];
-      match self.inner.read(&mut buf)? {
-        1 => self.buffer.extend(buf[0].to_bits()),
-        _ => {}
-      }
+      if self.inner.read(&mut buf)? ==         1 { self.buffer.extend(to_bits(buf[0].into(), 8))
+       }
     }
     Ok(())
   }

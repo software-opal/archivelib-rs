@@ -1,4 +1,4 @@
-use crate::support::bit_iter::ToBits;
+use crate::support::bit_utils::to_bits;
 
 use super::BitwiseRead;
 
@@ -35,15 +35,9 @@ impl BitBasedBitwiseReader {
       &string
         .chars()
         .flat_map(|c| match c {
-          '0'..='9' | 'a'..='f' | 'A'..='F' => c
-            .to_digit(16)
-            .unwrap()
-            .to_bits()
-            .into_iter()
-            .rev()
-            .take(4)
-            .rev()
-            .collect::<Vec<_>>(),
+          '0'..='9' | 'a'..='f' | 'A'..='F' => {
+            to_bits(c.to_digit(16).unwrap() as u16, 4).collect::<Vec<_>>()
+          }
           ' ' | '\n' => vec![],
           _ => panic!("Invalid character: {:?}", c),
         })

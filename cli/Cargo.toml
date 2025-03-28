@@ -18,7 +18,7 @@ path = "src/executables/fuzz_hongg.rs"
 required-features = ["fuzz-hfuzz"]
 
 [dependencies]
-archivelib = { path = "../", features=["new_impl"]}
+archivelib = { path = "../" }
 
 afl = { version = "*", optional = true }
 honggfuzz = { version = "*", optional = true }
