@@ -2,11 +2,11 @@ use std::fmt;
 use std::io::{Read, Write};
 
 use super::array_alias::ArrayAlias;
-use crate::consts::{
+use crate::ported::consts::{
   BYTE_RUN_HASH_SIZE, CONST_N141_IS_511, CONST_N142_IS_15, CONST_N152_IS_19, CONST_N155_IS_8192,
   MAX_COMPRESSION_FACTOR, MAX_RUN_LENGTH, MIN_COMPRESSION_FACTOR,
 };
-pub use crate::errors::CompressError;
+pub use crate::ported::errors::CompressError;
 use crate::support::{BitwiseWrite, BitwiseWriter};
 
 pub type Result<R> = std::result::Result<R, CompressError>;

@@ -1,3 +1,8 @@
+use archivelib::{
+  CompressionLevel,
+  support::{BitwiseReader, debug::io::MatchingWriter},
+};
+
 #[macro_use]
 mod utils;
 
@@ -158,4 +163,28 @@ test_match_sys_decompress! {
       75 67 52 60 93 A7 3A 54  A1 4A 15 1F 51 F5 9D 61  B6 1A 26 66 22 68 14 E9  57 01 3D 9E 28 0D FD C6
       F3 FB FB 0D FF BF 00
   "),
+}
+
+#[cfg(feature = "ported")]
+#[test]
+fn test_x_coords_decompression_level_0_using_ported() {
+  use archivelib::assert_bytes_eq;
+
+  let sys_result = archivelib_sys::do_decompress_level(&x_coords::DATA, 0).unwrap();
+  let ported_result =
+    archivelib::ported::do_decompress_level(&x_coords::DATA, CompressionLevel::Level0).unwrap();
+
+  assert_bytes_eq!(sys_result, &ported_result);
+}
+
+#[test]
+fn test_x_coords_decompression_level_0_using_reimplemented() {
+  let sys_result = archivelib_sys::do_decompress_level(&x_coords::DATA, 0).unwrap();
+
+  archivelib::do_decompress_level_bitstream(
+    BitwiseReader::new(&x_coords::DATA[..]),
+    MatchingWriter::new(&sys_result),
+    CompressionLevel::Level0,
+  )
+  .unwrap();
 }

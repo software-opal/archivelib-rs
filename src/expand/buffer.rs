@@ -54,11 +54,20 @@ impl<W: Write> ExpandHistoryBuffer<W> {
   }
 
   fn write_bytes(&mut self, bytes: &[u8]) -> Result<()> {
-    if self.history_bytes.len() + bytes.len() >= self.buffer_size {
-      self.history_bytes.drain(self.buffer_size - bytes.len()..);
-    }
-    self.history_bytes.extend(bytes);
     self.writer.write_all(bytes)?;
+
+    let remaining_spaces = self.buffer_size - self.history_bytes.len();
+    if remaining_spaces >= bytes.len() {
+      self.history_bytes.extend(bytes);
+    } else if bytes.len() < self.buffer_size {
+      self.history_bytes.drain(..(bytes.len() - remaining_spaces));
+      self.history_bytes.extend(bytes);
+    } else if bytes.len() >= self.buffer_size {
+      self.history_bytes.clear();
+      self
+        .history_bytes
+        .extend(bytes[(bytes.len() - self.buffer_size)..].into_iter());
+    }
     Ok(())
   }
 
@@ -133,5 +142,42 @@ mod test {
         .take(66)
         .collect::<Vec<_>>()
     );
+  }
+
+  #[test]
+  fn test_some_runs() {
+    let mut output = vec![];
+    let mut buffer = ExpandHistoryBuffer::new(&mut output, 8);
+    buffer.write_bytes(&[00, 11, 22, 33]).unwrap();
+    buffer.write_bytes(&[44, 55, 66, 77]).unwrap();
+    buffer.write_run(3, 3).unwrap();
+    buffer.write_run(3, 3).unwrap();
+
+    assert_eq!(
+      output,
+      [
+        00, 11, 22, 33, // Write 1
+        44, 55, 66, 77, // Write 2
+        44, 55, 66, // Run 1
+        77, 44, 55 // Run 2
+      ]
+    );
+  }
+  #[test]
+  fn test_runs_lon() {
+    let mut output = vec![];
+    let mut buffer = ExpandHistoryBuffer::new(&mut output, 8);
+    buffer.write_bytes(&[44, 55, 66, 77]).unwrap();
+    buffer.write_run(9, 2).unwrap();
+    buffer.write_run(3, 3).unwrap();
+
+    assert_eq!(
+      output,
+      [
+        44, 55, 66, 77, // Write 1
+        55, 66, 77, 55, 66, 77, 55, 66, 77, // Run 1
+        77, 55, 66, // Run 2
+      ]
+    )
   }
 }

@@ -20,8 +20,9 @@ impl<R: std::io::Read> BitwiseReader<R> {
   pub fn fill_buffer(&mut self) -> std::io::Result<()> {
     if self.buffer.is_empty() {
       let mut buf = [0];
-      if self.inner.read(&mut buf)? ==         1 { self.buffer.extend(to_bits(buf[0].into(), 8))
-       }
+      if self.inner.read(&mut buf)? == 1 {
+        self.buffer.extend(to_bits(buf[0].into(), 8))
+      }
     }
     Ok(())
   }

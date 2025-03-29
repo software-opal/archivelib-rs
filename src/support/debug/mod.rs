@@ -1,4 +1,5 @@
-mod binary_tree_printer;
+pub mod binary_tree_printer;
+pub mod io;
 
 #[macro_export]
 macro_rules! check_rust_against_sys_decompress {

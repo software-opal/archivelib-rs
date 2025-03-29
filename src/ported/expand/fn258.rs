@@ -1,6 +1,7 @@
-use crate::expand::base::DecompressError::InternalError;
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
+use crate::cast_trunc;
+use crate::ported::expand::base::DecompressError::InternalError;
+use crate::ported::expand::{RExpandData, Result};
+use crate::ported::support::BitRead;
 use std::io::Write;
 
 pub enum Fn258Mode {

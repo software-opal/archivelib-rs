@@ -24,10 +24,8 @@ pub const CONST_N145_IS_19: usize = u16::BITS as usize + 3;
 /// Obfuscated name: `_152`
 pub const CONST_N152_IS_19: usize = CONST_N145_IS_19;
 
-#[cfg(not(feature = "new_impl"))]
 /// Obfuscated name: `_148`
 pub const CONST_N148_IS_4096: usize = 4096;
-#[cfg(not(feature = "new_impl"))]
 /// Obfuscated name: `_149`
 pub const CONST_N149_IS_256: usize = 256;
 

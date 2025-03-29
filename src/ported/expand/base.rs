@@ -1,9 +1,9 @@
-use crate::consts::{
+pub use crate::ported::DecompressError;
+use crate::ported::consts::{
   CONST_N141_IS_511, CONST_N148_IS_4096, CONST_N149_IS_256, CONST_N152_IS_19,
   MAX_COMPRESSION_FACTOR, MIN_COMPRESSION_FACTOR,
 };
-pub use crate::errors::DecompressError;
-use crate::support::BitRead;
+use crate::ported::support::BitRead;
 use std::io::Write;
 pub type Result<R> = std::result::Result<R, DecompressError>;
 

@@ -1,5 +1,3 @@
-use std::io::Read;
-
 use archivelib::assert_bytes_eq;
 
 #[macro_use]

@@ -1,8 +1,8 @@
 use std::convert::TryInto;
 use std::io::Read;
 
-use crate::compress::RCompressData;
-use crate::consts::{MAX_RUN_LENGTH, MIN_RUN_LENGTH};
+use crate::ported::compress::RCompressData;
+use crate::ported::consts::{MAX_RUN_LENGTH, MIN_RUN_LENGTH};
 use crate::support::BitwiseWrite;
 
 // This uses the hash chain, which is stored in arr163, to try to find the longest match

@@ -1,6 +1,6 @@
-use crate::consts::CONST_N142_IS_15;
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
+use crate::ported::consts::CONST_N142_IS_15;
+use crate::ported::expand::{RExpandData, Result};
+use crate::ported::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
@@ -15,7 +15,6 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         run_length276 = self.dat_arr189[cast!(run_length276 as usize)];
       }
       var283 >>= 1;
-      pending_test!();
     }
     let bits = i16::from(self.dat_arr181[cast!(run_length276 as usize)]);
     self.read_bits(bits)?;

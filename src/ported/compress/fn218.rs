@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::compress::{RCompressData, Result};
+use crate::ported::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
 
 const USHRT_MAX: u16 = u16::MAX;

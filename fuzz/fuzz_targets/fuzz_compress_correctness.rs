@@ -1,9 +1,6 @@
 #![cfg_attr(fuzzing, no_main)]
 
-use archivelib::{
-  CompressionLevel,
-  support::{BitwiseWrite, writer::MatchingBitWriter},
-};
+use archivelib::{CompressionLevel, support::writer::MatchingBitWriter};
 
 #[macro_use]
 mod helper;

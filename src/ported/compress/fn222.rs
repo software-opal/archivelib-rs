@@ -1,7 +1,7 @@
 use std::io::Read;
 
-use crate::compress::{RCompressData, Result};
-use crate::consts::{CONST_N141_IS_511, CONST_N143_IS_9};
+use crate::ported::compress::{RCompressData, Result};
+use crate::ported::consts::{CONST_N141_IS_511, CONST_N143_IS_9};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {

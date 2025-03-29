@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use crate::compress::{RCompressData, Result};
+use crate::ported::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {

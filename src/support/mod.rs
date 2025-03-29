@@ -1,7 +1,7 @@
 #[macro_use]
-mod int_conv;
+pub mod int_conv;
 #[macro_use]
-mod debug;
+pub mod debug;
 
 pub mod bit_utils;
 mod max_size_writer;

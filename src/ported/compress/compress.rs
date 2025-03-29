@@ -1,8 +1,8 @@
 use std::convert::TryInto;
 use std::io::Read;
 
-use crate::compress::{RCompressData, Result};
-use crate::consts::{
+use crate::ported::compress::{RCompressData, Result};
+use crate::ported::consts::{
   BYTE_RUN_HASH_BITMASK, CONST_N154_IS_4, END_OF_FILE_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH,
 };
 use crate::support::BitwiseWrite;

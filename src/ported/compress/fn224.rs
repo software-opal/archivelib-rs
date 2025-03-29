@@ -1,4 +1,4 @@
-use crate::compress::{RCompressData, Result};
+use crate::ported::compress::{RCompressData, Result};
 use crate::support::BitwiseWrite;
 use std::io::Read;
 

@@ -1,7 +1,7 @@
 #![cfg_attr(fuzzing, no_main)]
 
+pub use archivelib::support::debug::io::MatchingWriter;
 use archivelib::{CompressionLevel, support::BitwiseReader};
-use helper::MatchingWriter;
 
 #[macro_use]
 mod helper;

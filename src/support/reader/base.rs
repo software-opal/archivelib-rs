@@ -12,7 +12,7 @@ pub trait BitwiseRead {
     Ok(out)
   }
 
-  fn iter_bits(& mut self) -> BitwiseReadBitIterator<'_, Self>
+  fn iter_bits(&mut self) -> BitwiseReadBitIterator<'_, Self>
   where
     Self: Sized,
   {

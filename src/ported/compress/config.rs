@@ -1,7 +1,8 @@
 use std::io::{Read, Write};
 
-use crate::errors::CompressError;
 use crate::level::CompressionLevel;
+use crate::ported::compress::RCompressData;
+use crate::ported::errors::CompressError;
 use crate::support::MaxSizeWriter;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -52,14 +53,8 @@ impl ArchivelibConfig {
     R: Read,
     W: Write,
   {
-    use crate::compress;
-
-    let mut res = compress::RCompressData::new_with_io_writer(
-      input,
-      output,
-      self.level.compression_factor(),
-      false,
-    )?;
+    let mut res =
+      RCompressData::new_with_io_writer(input, output, self.level.compression_factor(), false)?;
     res.compress()
   }
 }

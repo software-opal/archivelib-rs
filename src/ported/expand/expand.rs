@@ -1,6 +1,6 @@
-use crate::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH140, MIN_RUN_LENGTH135_IS_3};
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
+use crate::ported::consts::{END_OF_FILE_FLAG, MAX_RUN_LENGTH, MIN_RUN_LENGTH};
+use crate::ported::expand::{RExpandData, Result};
+use crate::ported::support::BitRead;
 use std::io::Write;
 
 const UCHAR_MAX: usize = 255;
@@ -29,7 +29,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
         // byte_or_run_length203 >= 0x100 indicates a flag
         // run_length276 = byte_or_run_length203 - 0x100 + 3; which is the length
         // of the run. Flag value of byte_or_run_length203 ==
-        let run_length276 = byte_or_run_length203 - (UCHAR_MAX + 1) + MIN_RUN_LENGTH135_IS_3;
+        let run_length276 = byte_or_run_length203 - (UCHAR_MAX + 1) + MIN_RUN_LENGTH;
         if run_length276 == END_OF_FILE_FLAG {
           // byte_or_run_length203 == 0x1FE. End of file.
           break;
@@ -38,8 +38,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
             .wrapping_sub(self.calculate_run_offset()? as usize)
             .wrapping_sub(1)
             & size_bitmask280;
-          if run_start226 < max_size279 - MAX_RUN_LENGTH140 - 1
-            && buffer_pos < max_size279 - MAX_RUN_LENGTH140 - 1
+          if run_start226 < max_size279 - MAX_RUN_LENGTH - 1
+            && buffer_pos < max_size279 - MAX_RUN_LENGTH - 1
           {
             for _ in 0..run_length276 {
               self.uncompressed_buffer[buffer_pos] = self.uncompressed_buffer[run_start226];

@@ -4,7 +4,7 @@ macro_rules! test_match_sys_decompress {
     $(
       pub mod $name {
         lazy_static::lazy_static! {
-          static ref DATA: Vec<u8> = {
+          pub static ref DATA: Vec<u8> = {
             let data = $compressed_data;
             data.to_vec()
           };

@@ -1,7 +1,7 @@
 use super::fn258::Fn258Mode;
-use crate::consts::CONST_N149_IS_256;
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
+use crate::ported::consts::CONST_N149_IS_256;
+use crate::ported::expand::{RExpandData, Result};
+use crate::ported::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
@@ -67,8 +67,8 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::consts::{CONST_N145_IS_19, CONST_N147_IS_5};
-  use crate::support::BitReader;
+  use crate::ported::consts::{CONST_N145_IS_19, CONST_N147_IS_5};
+  use crate::ported::support::BitReader;
 
   #[test]
   fn test_name() {
@@ -79,7 +79,7 @@ mod tests {
       0xF0,
     ];
     let length = data.len();
-    let mut test = RExpandData::new(BitReader::from(&data[..]), out, length, 10).unwrap();
+    let mut test = RExpandData::new(BitReader::from(&data[..]), out, 10).unwrap();
 
     test.read_bits(16).unwrap();
     test.get_bits(16).unwrap();

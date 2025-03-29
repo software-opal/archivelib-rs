@@ -1,6 +1,9 @@
 pub fn truncate_bits(bits: u16, len: usize) -> u16 {
-  if len == 0 { 0 } else{
-  bits & (0xFFFF >> (16 - len))}
+  if len == 0 {
+    0
+  } else {
+    bits & (0xFFFF >> (16 - len))
+  }
 }
 
 /// Iterates from highest bit to lowest bit
@@ -30,7 +33,10 @@ mod test {
 
   #[test]
   fn test_to_bits() {
-    assert_eq!(to_bits(0xF1, 6).collect::<Vec<_>>(), [true, true, false, false, false ,true]);
+    assert_eq!(
+      to_bits(0xF1, 6).collect::<Vec<_>>(),
+      [true, true, false, false, false, true]
+    );
     assert_eq!(to_bits(0x0, 16).collect::<Vec<_>>(), [false; 16]);
     assert_eq!(to_bits(0xFF, 0).collect::<Vec<_>>(), []);
   }

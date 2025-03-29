@@ -1,8 +1,11 @@
 use std::io::Read;
 
-use crate::compress::{RCompressData, Result};
-use crate::consts::CONST_N155_IS_8192;
+use crate::cast_trunc;
+use crate::ported::compress::Result;
+use crate::ported::consts::CONST_N155_IS_8192;
 use crate::support::BitwiseWrite;
+
+use super::RCompressData;
 
 const CHAR_BIT: usize = 8;
 /// This was moved out of the `RCompressData` struct and into a constant as it was only changed in

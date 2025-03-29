@@ -2,9 +2,9 @@ use std::convert::TryInto;
 use std::io::Read;
 
 use super::array_alias::ArrayAlias;
-use crate::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
+use crate::ported::compress::{CompressU8ArrayAlias, CompressU16ArrayAlias, RCompressData, Result};
 use crate::support::BitwiseWrite;
-use crate::support::binary_tree_printer::{print_tree, print_tree_from_encoding};
+use crate::support::debug::binary_tree_printer::{print_tree, print_tree_from_encoding};
 
 impl<R: Read, W: BitwiseWrite> RCompressData<R, W> {
   /// Builds a huffman tree in `_189` and `_190` and returns the root node's value.

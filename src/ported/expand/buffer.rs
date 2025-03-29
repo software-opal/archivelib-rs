@@ -1,5 +1,5 @@
-use crate::expand::{RExpandData, Result};
-use crate::support::BitRead;
+use crate::ported::expand::{RExpandData, Result};
+use crate::ported::support::BitRead;
 use std::io::Write;
 
 impl<R: BitRead, W: Write> RExpandData<R, W> {
@@ -25,7 +25,7 @@ impl<R: BitRead, W: Write> RExpandData<R, W> {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::support::ExactCallBitReader;
+  use crate::ported::support::ExactCallBitReader;
 
   // const data: Vec<u8> =
 
@@ -36,7 +36,6 @@ mod tests {
       0x00, 0x20, 0x9B, 0xD4, 0x90, 0x00, 0x00, 0x19, 0x3C, 0x00, 0x62, 0xA5, 0xC1, 0x81, 0xAF,
       0xF0,
     ];
-    let length = data.len();
     let out = vec![];
     let expected_call_results = ExactCallBitReader::new(vec![
       (16, 0x0012),
@@ -116,7 +115,7 @@ mod tests {
       (5, 0xe000),
       (4, 0x0000),
     ]);
-    let mut test = RExpandData::new(expected_call_results, out, length, 10).unwrap();
+    let mut test = RExpandData::new(expected_call_results, out, 10).unwrap();
 
     test.expand().unwrap();
   }
