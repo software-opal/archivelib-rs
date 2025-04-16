@@ -4,5 +4,5 @@
 mod helper;
 
 fuzz_with_main! { |data: &[u8]| {
-  let _ = archivelib::do_compress(&data);
+  let _ = archivelib::do_compress(data);
 }}
