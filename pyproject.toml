@@ -12,7 +12,7 @@ python = "^3.12"
 
 [tool.poetry.group.dev.dependencies]
 attrs = "^25.3"
-black = "^25.1"
+black = "^26.3"
 isort = "^6.0"
 pytest = "^8.3"
 pytest-xdist = "^3.6"
