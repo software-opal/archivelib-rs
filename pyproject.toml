@@ -14,7 +14,7 @@ python = "^3.12"
 attrs = "^25.3"
 black = "^25.1"
 isort = "^6.0"
-pytest = "^8.3"
+pytest = ">=8.3,<10.0"
 pytest-xdist = "^3.6"
 
 [build-system]
